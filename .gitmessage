@@ -1,0 +1,27 @@
+# VAGUS App Commit Message Template
+
+# Format: <Module>: <Description>
+# 
+# Available modules:
+# - Nutrition: Nutrition planning, meal tracking, AI nutrition features
+# - Workout: Exercise plans, workout tracking, fitness features
+# - Messaging: Chat, communication, file sharing
+# - Auth: Authentication, user management, profiles
+# - Admin: Admin panel, analytics, user management
+# - Coach: Coach-specific features, client management
+# - Notifications: Push notifications, OneSignal integration
+# - AI: AI features, usage tracking, smart features
+# - UI: User interface improvements, styling, components
+# - Core: Core app functionality, services, utilities
+# - Fix: Bug fixes across modules
+# - Docs: Documentation updates
+# - Config: Configuration changes, dependencies
+#
+# Examples:
+# - Nutrition: Added AI usage meter widget
+# - Workout: Updated Plan Viewer PDF export
+# - Messaging: Fixed file preview bug
+# - Auth: Improved login flow with biometric auth
+# - UI: Enhanced dashboard with dark mode support
+
+<Module>: <Brief description of changes>
