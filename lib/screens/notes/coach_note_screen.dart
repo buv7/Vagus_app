@@ -5,6 +5,7 @@ import 'smart_panel.dart';
 import 'note_version_viewer.dart';
 import 'voice_recorder.dart';
 import '../../widgets/files/attach_to_note_button.dart';
+import '../../services/ai/embedding_helper.dart';
 
 class CoachNoteScreen extends StatefulWidget {
   final Map<String, dynamic>? existingNote;
@@ -81,6 +82,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
         'updated_by': user.id,
       };
 
+      String noteId;
       if (widget.existingNote != null) {
         // Save current version before updating
         await _saveVersionSnapshot();
@@ -89,10 +91,15 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
         data['version'] = _currentVersion + 1;
         
         await supabase.from('coach_notes').update(data).eq('id', widget.existingNote!['id']);
+        noteId = widget.existingNote!['id'];
         _currentVersion++;
       } else {
-        await supabase.from('coach_notes').insert(data);
+        final result = await supabase.from('coach_notes').insert(data).select('id').single();
+        noteId = result['id'];
       }
+
+      // Asynchronously update embedding (don't block the save)
+      _updateNoteEmbedding(noteId, '$title $body');
 
       setState(() => _saving = false);
       if (mounted) {
@@ -139,6 +146,14 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
   String _getAttachmentsSummary() {
     if (_attachments.isEmpty) return 'No attachments';
     return '${_attachments.length} attachment${_attachments.length == 1 ? '' : 's'}';
+  }
+
+  void _updateNoteEmbedding(String noteId, String content) {
+    // Asynchronously update embedding without blocking the UI
+    EmbeddingHelper().upsertNoteEmbedding(noteId, content).catchError((e) {
+      // Silent failure - don't crash the app
+      print('Failed to update note embedding: $e');
+    });
   }
 
   void _openVersionHistory() {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:math';
 import 'coach_note_screen.dart';
+import '../../services/ai/embedding_helper.dart';
 
 class SmartPanel extends StatelessWidget {
   final TextEditingController noteController;
@@ -12,6 +13,9 @@ class SmartPanel extends StatelessWidget {
     required this.noteController,
     this.clientId,
   });
+
+  // Module-level toggle for vector-based duplicate detection
+  static const bool useVectorDupDetect = true; // default true
 
   void _runAction(BuildContext context, String type) async {
     final currentText = noteController.text.trim();
@@ -56,10 +60,68 @@ class SmartPanel extends StatelessWidget {
       final user = supabase.auth.currentUser;
       if (user == null) return;
 
+      // Try vector-based duplicate detection first if enabled
+      if (useVectorDupDetect) {
+        try {
+          final embeddingHelper = EmbeddingHelper();
+          
+          // First, we need to create a temporary note to get an ID for embedding search
+          // This is a simplified approach - in production, you might want to handle this differently
+          final tempNoteResult = await supabase
+              .from('coach_notes')
+              .insert({
+                'title': 'Temp for embedding search',
+                'body': currentText,
+                'coach_id': user.id,
+                if (clientId != null) 'client_id': clientId,
+              })
+              .select('id')
+              .single();
+
+          final tempNoteId = tempNoteResult['id'] as String;
+          
+          // Get similar notes using embeddings
+          final similarNotes = await embeddingHelper.similarNotes(noteId: tempNoteId, k: 5);
+          
+          // Clean up the temporary note
+          await supabase
+              .from('coach_notes')
+              .delete()
+              .eq('id', tempNoteId);
+
+          // Check if any similar note has high similarity (≥ 0.85)
+          for (final similar in similarNotes) {
+            final similarity = similar['similarity'] as double;
+            if (similarity >= 0.85) {
+              // Fetch the full note details
+              final noteResult = await supabase
+                  .from('coach_notes')
+                  .select('id, title, body, created_at, client_id')
+                  .eq('id', similar['note_id'])
+                  .single();
+
+              if (noteResult != null) {
+                _showDuplicateResult(
+                  context, 
+                  noteResult, 
+                  similarity, 
+                  'Vector similarity: ${(similarity * 100).toStringAsFixed(1)}%'
+                );
+                return;
+              }
+            }
+          }
+        } catch (e) {
+          // Fall back to Jaccard similarity if vector search fails
+          print('Vector duplicate detection failed, falling back to Jaccard: $e');
+        }
+      }
+
+      // Fallback to Jaccard similarity (existing implementation)
       // Fetch recent notes for the same client/coach
       var request = supabase
           .from('coach_notes')
-          .select('id, title, body, created_at')
+          .select('id, title, body, created_at, client_id')
           .eq('coach_id', user.id);
       
       // Only filter by client_id if it's provided
