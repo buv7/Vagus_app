@@ -14,7 +14,7 @@ class AIClient {
     defaultValue: 'https://openrouter.ai/api/v1',
   );
   
-  final AIUsageService _usageService = AIUsageService();
+  final AIUsageService _usageService = AIUsageService.instance;
 
   Future<String> chat({
     required String model,
@@ -126,7 +126,7 @@ class AIClient {
         }
         
         // Exponential backoff
-        await Future.delayed(Duration(milliseconds: pow(2, attempt) * 1000));
+        await Future.delayed(Duration(milliseconds: (pow(2, attempt) * 1000).toInt()));
       }
     }
 

@@ -194,4 +194,48 @@ class AIUsageService {
       return 100; // Default limit
     }
   }
+
+  /// Check if user can make a request (for rate limiting)
+  Future<bool> canMakeRequest(String requestType) async {
+    try {
+      final remaining = await getRemainingRequests();
+      return remaining > 0;
+    } catch (e) {
+      debugPrint('❌ Error checking if can make request: $e');
+      return true; // Allow request on error
+    }
+  }
+
+  /// Increment usage for a specific request type and model
+  Future<void> incrementUsage(String requestType, String model) async {
+    try {
+      // Estimate tokens based on request type
+      int estimatedTokens = 100; // Default estimate
+      
+      switch (requestType) {
+        case 'chat':
+          estimatedTokens = 150;
+          break;
+        case 'embedding':
+          estimatedTokens = 50;
+          break;
+        case 'summarize':
+          estimatedTokens = 200;
+          break;
+        case 'tags':
+          estimatedTokens = 100;
+          break;
+        default:
+          estimatedTokens = 100;
+      }
+
+      await recordUsageWithMetadata(
+        tokensUsed: estimatedTokens,
+        requestType: requestType,
+        additionalData: {'model': model},
+      );
+    } catch (e) {
+      debugPrint('❌ Error incrementing usage: $e');
+    }
+  }
 }

@@ -2,9 +2,7 @@
 create extension if not exists vector;
 create extension if not exists pgcrypto;
 
--- NOTE: Adjust ownership in USING/WITH CHECK below if coach_notes uses created_by instead of coach_id.
-
--- ===== NOTE EMBEDDINGS =====
+-- NOTE EMBEDDINGS
 create table if not exists public.note_embeddings (
   id uuid primary key default gen_random_uuid(),
   note_id uuid not null references public.coach_notes(id) on delete cascade,
@@ -25,7 +23,7 @@ begin
         exists (
           select 1 from public.coach_notes n
           where n.id = note_embeddings.note_id
-            and (n.coach_id = auth.uid() or n.created_by = auth.uid())
+            and n.coach_id = auth.uid()
         )
       );
   end if;
@@ -37,13 +35,13 @@ begin
         exists (
           select 1 from public.coach_notes n
           where n.id = note_embeddings.note_id
-            and (n.coach_id = auth.uid() or n.created_by = auth.uid())
+            and n.coach_id = auth.uid()
         )
       );
   end if;
 end $$;
 
--- ===== MESSAGE EMBEDDINGS (FK may vary; keep conservative RLS) =====
+-- MESSAGE EMBEDDINGS (FK may vary; keep conservative RLS)
 create table if not exists public.message_embeddings (
   id uuid primary key default gen_random_uuid(),
   message_id uuid not null,
@@ -71,7 +69,7 @@ begin
   end if;
 end $$;
 
--- ===== WORKOUT EMBEDDINGS (FK may vary; keep conservative RLS) =====
+-- WORKOUT EMBEDDINGS (FK may vary; keep conservative RLS)
 create table if not exists public.workout_embeddings (
   id uuid primary key default gen_random_uuid(),
   workout_id uuid not null,
@@ -99,7 +97,7 @@ begin
   end if;
 end $$;
 
--- ===== SIMILARITY SEARCH FUNCTION =====
+-- SIMILARITY SEARCH FUNCTION
 create or replace function similar_notes(
   source_embedding vector(1536),
   exclude_note_id uuid default null,
@@ -122,7 +120,7 @@ begin
     and exists (
       select 1 from public.coach_notes n
       where n.id = ne.note_id
-        and (n.coach_id = auth.uid() or n.created_by = auth.uid())
+        and n.coach_id = auth.uid()
     )
   order by ne.embedding <=> source_embedding
   limit limit_count;

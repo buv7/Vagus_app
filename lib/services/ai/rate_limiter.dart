@@ -7,7 +7,7 @@ class RateLimiter {
   RateLimiter._internal();
 
   final Map<String, _TokenBucket> _buckets = {};
-  final AIUsageService _usageService = AIUsageService();
+  final AIUsageService _usageService = AIUsageService.instance;
 
   // Default limits per minute (fallback if usage service unavailable)
   static const Map<String, int> _defaultLimits = {
@@ -28,7 +28,8 @@ class RateLimiter {
       // Get limit from usage service or use default
       int limit;
       try {
-        final plan = await _usageService.getCurrentPlan();
+        final usage = await _usageService.getCurrentUsage();
+        final plan = usage?['plan'] ?? 'basic';
         limit = _getPlanLimit(task, plan);
       } catch (e) {
         limit = _defaultLimits[task] ?? 10;
