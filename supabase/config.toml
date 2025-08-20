@@ -2,6 +2,9 @@
 # working directory name when running `supabase init`.
 project_id = "vagus-app"
 
+# Note: This project_id is for local development only.
+# For production deployment, the actual project reference is set via GitHub Secrets.
+
 [api]
 # Port to use for the API URL.
 port = 54321

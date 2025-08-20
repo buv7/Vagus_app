@@ -1,0 +1,27 @@
+name: Test Supabase Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Test Supabase CLI
+        run: supabase --version
+
+      - name: Test Project Link
+        run: |
+          echo "Testing project link..."
+          echo "Project Ref: ${{ secrets.SUPABASE_PROJECT_REF }}"
+          echo "Token exists: ${{ secrets.SUPABASE_ACCESS_TOKEN != '' }}"
+          
+          # Try to link without actually linking
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} --dry-run || echo "Link test failed"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
