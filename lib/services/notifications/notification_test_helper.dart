@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 
 /// Test helper for OneSignal notifications
 /// Use this to test push notification functionality
+/// NOTE: OneSignal dependency removed - this is now a stub helper
 class NotificationTestHelper {
   NotificationTestHelper._();
   static final NotificationTestHelper instance = NotificationTestHelper._();
@@ -32,7 +32,7 @@ class NotificationTestHelper {
           .single();
 
       if (response == null || response['onesignal_id'] == null) {
-        debugPrint('❌ No OneSignal ID found for user');
+        debugPrint('❌ No OneSignal ID found for user (OneSignal disabled)');
         return false;
       }
 
@@ -68,29 +68,27 @@ class NotificationTestHelper {
 
   /// Check if OneSignal is properly initialized
   bool get isOneSignalReady {
-    return OneSignal.User.pushSubscription.id != null;
+    // OneSignal dependency removed - stub implementation
+    return false;
   }
 
   /// Get current OneSignal subscription ID
   String? get currentSubscriptionId {
-    return OneSignal.User.pushSubscription.id;
+    // OneSignal dependency removed - stub implementation
+    return null;
   }
 
   /// Check notification permission status
   Future<bool> getPermissionStatus() async {
-    final state = await OneSignal.Notifications.permission;
-    return state;
+    // OneSignal dependency removed - stub implementation
+    return false;
   }
 
   /// Request notification permissions
   Future<bool> requestPermissions() async {
-    try {
-      final result = await OneSignal.Notifications.requestPermission(true);
-      return result;
-    } catch (e) {
-      debugPrint('❌ Error requesting notification permissions: $e');
-      return false;
-    }
+    // OneSignal dependency removed - stub implementation
+    debugPrint('⚠️ OneSignal permissions disabled');
+    return false;
   }
 
   /// Test local notification display

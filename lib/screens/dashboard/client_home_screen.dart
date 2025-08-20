@@ -12,6 +12,10 @@ import '../../widgets/progress/metrics_card.dart';
 import '../../widgets/progress/photos_card.dart';
 import '../../widgets/progress/checkins_card.dart';
 import '../../widgets/progress/export_card.dart';
+import '../../components/progress/ComplianceStatsCard.dart';
+import '../progress/ClientCheckInCalendar.dart';
+import '../calendar/CalendarScreen.dart';
+import '../calendar/BookingForm.dart';
 
 // Safe image handling helpers
 bool _isValidHttpUrl(String? url) {
@@ -501,6 +505,44 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 ),
               ),
 
+              const SizedBox(height: 16),
+
+              // ✅ CALENDAR BUTTON
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CalendarScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.calendar_today),
+                label: const Text('Calendar'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // ✅ BOOK A SESSION BUTTON
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BookingForm(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.event_available),
+                label: const Text('Book a Session'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                ),
+              ),
+
               const SizedBox(height: 32),
               const Divider(),
               const SizedBox(height: 16),
@@ -510,6 +552,32 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 "📊 Progress Tracking",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 16),
+
+              // Compliance Stats Card (top row)
+              const ComplianceStatsCard(),
+
+              const SizedBox(height: 16),
+
+              // Check-In Calendar Button
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ClientCheckInCalendar(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.calendar_today),
+                label: const Text('Check-In Calendar'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+
               const SizedBox(height: 16),
 
               // Metrics Card

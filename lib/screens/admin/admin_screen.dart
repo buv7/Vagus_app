@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'audit_log_screen.dart';
 import 'admin_analytics_screen.dart';
+import 'admin_approval_panel.dart';
 import '../auth/login_screen.dart';
 
 class AdminScreen extends StatefulWidget {
@@ -121,6 +122,13 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
+  void _goToCoachApprovals() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AdminApprovalPanel()),
+    );
+  }
+
   void _goToAnalytics() {
     Navigator.push(
       context,
@@ -166,6 +174,11 @@ class _AdminScreenState extends State<AdminScreen> {
       appBar: AppBar(
         title: const Text("🛠️ Admin: User Roles"),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.verified_user),
+            tooltip: 'Coach Approvals',
+            onPressed: _goToCoachApprovals,
+          ),
           IconButton(
             icon: const Icon(Icons.bar_chart),
             tooltip: 'Analytics',

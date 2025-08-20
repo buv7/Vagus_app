@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import '../auth/device_list_screen.dart';
+import '../auth/become_coach_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -209,6 +211,50 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),
+            const SizedBox(height: 24),
+            
+            // Security Settings Section
+            const Divider(),
+            const SizedBox(height: 16),
+            const Text(
+              "🔐 Security Settings",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            
+            // Device Management
+            ListTile(
+              leading: const Icon(Icons.devices_other),
+              title: const Text("Manage devices"),
+              subtitle: const Text("View and manage your signed-in devices"),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const DeviceListScreen(),
+                  ),
+                );
+              },
+            ),
+            
+            // Coach Application (only for clients)
+            if (_role == 'client')
+              ListTile(
+                leading: const Icon(Icons.sports_gymnastics),
+                title: const Text("Apply to become a Coach"),
+                subtitle: const Text("Submit your coaching application"),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BecomeCoachScreen(),
+                    ),
+                  );
+                },
+              ),
+            
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: _saveProfile,

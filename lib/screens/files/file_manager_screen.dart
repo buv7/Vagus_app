@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../widgets/ai/ai_usage_meter.dart';
 import '../../widgets/ai/ai_usage_test_widget.dart';
+import 'upload_photos_screen.dart';
+import 'coach_file_feedback_screen.dart';
 
 /// File Manager Screen for VAGUS app
 /// Allows users to upload, view, and manage files
@@ -294,6 +296,38 @@ class _FileManagerScreenState extends State<FileManagerScreen> {
               )
             : const Icon(Icons.upload),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      persistentFooterButtons: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UploadPhotosScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.photo_library),
+              label: const Text('Photo Gallery'),
+            ),
+                         ElevatedButton.icon(
+               onPressed: () {
+                 Navigator.push(
+                   context,
+                   MaterialPageRoute(
+                     builder: (context) => const CoachFileFeedbackScreen(),
+                   ),
+                 );
+               },
+               icon: const Icon(Icons.feedback),
+               label: const Text('Coach Feedback'),
+             ),
+          ],
+        ),
+      ],
     );
   }
 

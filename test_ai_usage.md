@@ -1,137 +1,55 @@
-# 🧪 AI Usage Tracking Test Guide
+# Coach Notes Section 4 Testing Checklist
 
-## Prerequisites
-- ✅ Supabase Edge Function `update-ai-usage` deployed
-- ✅ Environment variables set in Supabase dashboard
-- ✅ Database migration `create_ai_usage_table.sql` executed
-- ✅ Flutter app running with test widget
+## Database Schema Tests
+- [ ] Run `supabase_progress_setup.sql` in Supabase SQL Editor
+- [ ] Verify `coach_notes` table has new columns: `updated_at`, `updated_by`, `is_deleted`, `version`
+- [ ] Verify `coach_note_versions` table exists with proper structure
+- [ ] Verify `coach_note_attachments` table exists with proper structure
+- [ ] Verify RLS policies are in place for new tables
 
-## 🚀 Deployment Verification
+## Version History Tests
+- [ ] Create a new note (should have version 1)
+- [ ] Edit the note (should create version 2 and save snapshot)
+- [ ] Check version viewer shows previous versions
+- [ ] Test revert functionality (should create new version, not overwrite)
+- [ ] Verify version badges appear in note cards and editor
 
-### 1. Check Edge Function Status
-```bash
-supabase functions list
-```
-Should show `update-ai-usage` as deployed.
+## Attachment Tests
+- [ ] Test file attachment through existing `AttachToNoteButton`
+- [ ] Verify files upload to `notes/{userId}/{noteId}/...` path
+- [ ] Check attachment chips appear in note cards
+- [ ] Test file preview functionality
 
-### 2. Verify Environment Variables
-In Supabase Dashboard → Project Settings → Functions → Environment Variables:
-- `SUPABASE_URL` = `https://kydrpnrmqbedjflklgue.supabase.co`
-- `SUPABASE_SERVICE_ROLE_KEY` = [your service role key]
+## Transcription Tests
+- [ ] Test voice recorder with audio file
+- [ ] Verify audio uploads to storage
+- [ ] Test transcription AI service (requires API key configuration)
+- [ ] Verify transcribed text inserts into note editor
 
-### 3. Test Edge Function Directly
-```bash
-curl -X POST https://kydrpnrmqbedjflklgue.supabase.co/functions/v1/update-ai-usage \
-  -H "Content-Type: application/json" \
-  -d '{"user_id": "test-user-id", "tokens_used": 100}'
-```
+## Smart Panel Duplicate Detection Tests
+- [ ] Create multiple notes with similar content
+- [ ] Test duplicate detection button
+- [ ] Verify similarity calculation works
+- [ ] Test "View Similar Note" navigation
 
-Expected response:
-```json
-{
-  "success": true,
-  "message": "AI usage updated successfully",
-  "data": {...}
-}
-```
+## UI Integration Tests
+- [ ] Verify "Attach" button works in note editor
+- [ ] Check "Versions (N)" button appears in app bar
+- [ ] Test filter options in note list screen
+- [ ] Verify version badges and attachment indicators
 
-## 📱 Flutter App Testing
+## Configuration Tests
+- [ ] Set up `TRANSCRIPTION_ENDPOINT` in environment/config
+- [ ] Set up `TRANSCRIPTION_API_KEY` in environment/config
+- [ ] Test transcription service connectivity
 
-### 1. Navigate to File Manager
-- Open VAGUS app
-- Go to File Manager screen
-- You should see:
-  - AI Usage Meter at the top
-  - AI Usage Test Panel below it
+## Performance Tests
+- [ ] Test with 50+ notes for duplicate detection
+- [ ] Verify version history loads quickly
+- [ ] Check attachment upload performance
 
-### 2. Test Basic Usage Recording
-1. Tap **"Test 50 Tokens"** button
-2. Watch for success message: "✅ Successfully recorded 50 tokens"
-3. AI Usage Meter should update automatically
-4. Check Supabase logs for Edge Function execution
-
-### 3. Test Detailed Usage Recording
-1. Tap **"Test Detailed (75)"** button
-2. Watch for success message with metadata
-3. Verify usage meter updates
-
-### 4. Test Data Refresh
-1. Tap **"Refresh Data"** button
-2. Should show current usage summary
-3. Verify numbers match the meter display
-
-## 🔍 Verification Steps
-
-### 1. Check Database
-In Supabase Dashboard → Table Editor → `ai_usage`:
-- Should see records with your user_id
-- Month/year should be current month
-- `tokens_used` should match test values
-- `updated_at` should be recent
-
-### 2. Check Edge Function Logs
-In Supabase Dashboard → Functions → `update-ai-usage` → Logs:
-- Should see successful executions
-- Check for any error messages
-
-### 3. Verify Real-time Updates
-- Make multiple test calls
-- AI Usage Meter should update immediately
-- Token counts should accumulate correctly
-
-## 🚨 Troubleshooting
-
-### Edge Function Not Found
-```bash
-# Redeploy the function
-supabase functions deploy update-ai-usage --no-verify-jwt
-```
-
-### Environment Variables Missing
-- Check Supabase Dashboard → Project Settings → Functions → Environment Variables
-- Ensure both variables are set correctly
-
-### Database Errors
-- Verify migration was run: `supabase db push`
-- Check RLS policies are correct
-- Ensure user is authenticated
-
-### Usage Not Updating
-- Check Edge Function logs for errors
-- Verify request body format
-- Ensure user_id is valid UUID
-
-## ✅ Success Criteria
-
-The AI Usage Tracking system is working correctly when:
-
-1. **Edge Function responds** with `{ "success": true }`
-2. **Database records** are created/updated in `ai_usage` table
-3. **AI Usage Meter** displays current usage data
-4. **Test buttons** successfully record usage
-5. **Real-time updates** work without page refresh
-6. **No Firebase dependencies** are required
-
-## 🎯 Next Steps
-
-After successful testing:
-
-1. **Remove test widget** from production code
-2. **Integrate with real AI requests** using `AIUsageService`
-3. **Set up monitoring** for usage limits
-4. **Configure alerts** for high usage users
-
-## 📊 Expected Data Flow
-
-```
-User Action → Flutter App → AIUsageService → Edge Function → Database → UI Update
-     ↓              ↓            ↓              ↓           ↓         ↓
-Test Button → recordUsage() → update-ai-usage → ai_usage → Meter Refresh
-```
-
-## 🔐 Security Notes
-
-- Edge Function uses service role key (admin access)
-- RLS policies ensure users only see their own data
-- All requests are validated and sanitized
-- CORS is properly configured for cross-origin requests
+## Error Handling Tests
+- [ ] Test transcription with invalid audio file
+- [ ] Test version creation with network issues
+- [ ] Verify graceful error messages
+- [ ] Test attachment upload failures

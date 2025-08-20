@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'note_file_picker.dart';
 import 'note_reminder_setter.dart';
 import 'smart_panel.dart';
+import 'note_version_viewer.dart';
+import 'voice_recorder.dart';
+import '../../widgets/files/attach_to_note_button.dart';
 
 class CoachNoteScreen extends StatefulWidget {
   final Map<String, dynamic>? existingNote;
@@ -22,10 +22,11 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
   final TextEditingController _bodyController = TextEditingController();
   final TextEditingController _tagController = TextEditingController();
   DateTime? _reminderDate;
-  List<File> _attachments = [];
+  List<Map<String, dynamic>> _attachments = [];
   List<String> _tags = [];
   Map<String, List<String>> _linkedPlanIds = {};
   bool _saving = false;
+  int _currentVersion = 1;
 
   @override
   void initState() {
@@ -45,8 +46,9 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
         key, 
         (value as List<dynamic>? ?? []).map((id) => id.toString()).toList()
       ));
-      final urls = List<String>.from(widget.existingNote!['attachments'] ?? []);
-      _attachments = urls.map((url) => File(url)).toList();
+      final attachments = widget.existingNote!['attachments'] as List<dynamic>? ?? [];
+      _attachments = attachments.map((att) => Map<String, dynamic>.from(att)).toList();
+      _currentVersion = widget.existingNote!['version'] ?? 1;
     }
   }
 
@@ -74,11 +76,20 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
         'tags': _tags,
         'linked_plan_ids': _linkedPlanIds,
         'reminder_at': _reminderDate?.toIso8601String(),
-        'attachments': _attachments.map((f) => f.path).toList(),
+        'attachments': _attachments,
+        'updated_at': DateTime.now().toIso8601String(),
+        'updated_by': user.id,
       };
 
       if (widget.existingNote != null) {
+        // Save current version before updating
+        await _saveVersionSnapshot();
+        
+        // Increment version
+        data['version'] = _currentVersion + 1;
+        
         await supabase.from('coach_notes').update(data).eq('id', widget.existingNote!['id']);
+        _currentVersion++;
       } else {
         await supabase.from('coach_notes').insert(data);
       }
@@ -100,6 +111,48 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
     }
   }
 
+  Future<void> _saveVersionSnapshot() async {
+    if (widget.existingNote == null) return;
+    
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) return;
+
+      await supabase.from('coach_note_versions').insert({
+        'note_id': widget.existingNote!['id'],
+        'version_index': _currentVersion,
+        'content': _bodyController.text.trim(),
+        'metadata': {
+          'title': _titleController.text.trim(),
+          'tags': _tags,
+          'linked_plan_ids': _linkedPlanIds,
+          'attachments_summary': _getAttachmentsSummary(),
+        },
+        'created_by': user.id,
+      });
+    } catch (e) {
+      // Log error but don't fail the save operation
+      print('Failed to save version snapshot: $e');
+    }
+  }
+
+  String _getAttachmentsSummary() {
+    if (_attachments.isEmpty) return 'No attachments';
+    return '${_attachments.length} attachment${_attachments.length == 1 ? '' : 's'}';
+  }
+
+  void _openVersionHistory() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NoteVersionViewer(
+          noteId: widget.existingNote!['id'],
+          noteTitle: widget.existingNote!['title'] ?? 'Untitled Note',
+        ),
+      ),
+    );
+  }
+
   void _pickReminder() {
     showModalBottomSheet(
       context: context,
@@ -115,24 +168,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
     );
   }
 
-  void _pickFiles() {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) {
-        return NoteFilePicker(
-          attachments: _attachments,
-          onAdd: (file) {
-            setState(() => _attachments.add(file));
-            Navigator.pop(context);
-          },
-          onRemove: (file) {
-            setState(() => _attachments.remove(file));
-          },
-          existingFiles: _attachments.map((f) => f.path).toList(),
-        );
-      },
-    );
-  }
+
 
   void _addTag() {
     final tag = _tagController.text.trim();
@@ -157,6 +193,15 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
       appBar: AppBar(
         title: Text(widget.existingNote == null ? "New Note" : "Edit Note"),
         actions: [
+          if (widget.existingNote != null && _currentVersion > 1)
+            TextButton.icon(
+              onPressed: () => _openVersionHistory(),
+              icon: const Icon(Icons.history, size: 16),
+              label: Text('v$_currentVersion'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue[700],
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: _saving ? null : _saveNote,
@@ -233,24 +278,63 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
             const SizedBox(height: 12),
             
             // Smart panel
-            SmartPanel(noteController: _bodyController),
+            SmartPanel(
+              noteController: _bodyController,
+              clientId: widget.clientId,
+            ),
             const SizedBox(height: 12),
             
             // Action buttons
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 ElevatedButton.icon(
                   onPressed: _pickReminder,
                   icon: const Icon(Icons.alarm),
                   label: const Text("Set Reminder"),
                 ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: _pickFiles,
-                  icon: const Icon(Icons.attach_file),
-                  label: const Text("Attachments"),
+                VoiceRecorder(
+                  onTranscription: (transcribedText) {
+                    // Append to current cursor position in body
+                    final currentText = _bodyController.text;
+                    final selection = _bodyController.selection;
+                    final newText = currentText.replaceRange(
+                      selection.start,
+                      selection.end,
+                      transcribedText,
+                    );
+                    _bodyController.text = newText;
+                    // Move cursor to end of inserted text
+                    _bodyController.selection = TextSelection.collapsed(
+                      offset: selection.start + transcribedText.length,
+                    );
+                  },
+                  noteId: widget.existingNote?['id'],
+                  clientId: widget.clientId,
                 ),
               ],
+            ),
+            
+            // Attachments section
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: AttachToNoteButton(
+                onFilesAttached: (attachments) {
+                  setState(() {
+                    _attachments = attachments;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('File attached to note')),
+                  );
+                },
+                existingAttachments: _attachments,
+                onError: (error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $error')),
+                  );
+                },
+              ),
             ),
             
             // Reminder display

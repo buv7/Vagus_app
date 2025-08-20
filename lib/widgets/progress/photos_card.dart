@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../services/progress/progress_service.dart';
+import '../../screens/progress/ProgressGallery.dart';
 
 class PhotosCard extends StatefulWidget {
   final String userId;
@@ -248,6 +249,15 @@ class _PhotosCardState extends State<PhotosCard> {
     );
   }
 
+  void _openGallery() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProgressGallery(userId: widget.userId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -257,31 +267,46 @@ class _PhotosCardState extends State<PhotosCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(Icons.photo_library, color: Colors.green),
                 const SizedBox(width: 8),
-                const Text(
-                  'Progress Photos',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                const Expanded(
+                  child: Text(
+                    'Progress Photos',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                const Spacer(),
-                ElevatedButton.icon(
-                  onPressed: _isUploading ? null : _uploadPhoto,
-                  icon: _isUploading
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.upload),
-                  label: Text(_isUploading ? 'Uploading...' : 'Upload Photo'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                  ),
+                const SizedBox(width: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () => _openGallery(),
+                      icon: const Icon(Icons.grid_view),
+                      label: const Text('Gallery'),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: _isUploading ? null : _uploadPhoto,
+                      icon: _isUploading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.upload),
+                      label: Text(_isUploading ? 'Uploading...' : 'Upload Photo'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

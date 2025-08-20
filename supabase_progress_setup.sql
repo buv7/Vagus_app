@@ -1,6 +1,9 @@
 -- VAGUS Progress System Database Setup
 -- Run this script in your Supabase SQL Editor
 
+-- Ensure pgcrypto is available for gen_random_uuid()
+create extension if not exists pgcrypto;
+
 -- 1. Client Metrics Table
 create table if not exists public.client_metrics (
   id uuid primary key default gen_random_uuid(),
@@ -23,22 +26,22 @@ alter table public.client_metrics enable row level security;
 -- Client can SELECT/INSERT/UPDATE own rows
 do $$
 begin
-  if not exists (select 1 from pg_policies where polname = 'metrics_client_select') then
+  if not exists (select 1 from pg_policies where policyname = 'metrics_client_select') then
     create policy metrics_client_select on public.client_metrics
       for select to authenticated using (user_id = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'metrics_client_insert') then
+  if not exists (select 1 from pg_policies where policyname = 'metrics_client_insert') then
     create policy metrics_client_insert on public.client_metrics
       for insert to authenticated with check (user_id = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'metrics_client_update') then
+  if not exists (select 1 from pg_policies where policyname = 'metrics_client_update') then
     create policy metrics_client_update on public.client_metrics
       for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'metrics_client_delete') then
+  if not exists (select 1 from pg_policies where policyname = 'metrics_client_delete') then
     create policy metrics_client_delete on public.client_metrics
       for delete to authenticated using (user_id = auth.uid());
   end if;
@@ -47,7 +50,7 @@ end $$;
 -- Coach can SELECT metrics of linked clients
 do $$
 begin
-  if not exists (select 1 from pg_policies where polname = 'metrics_coach_select_linked') then
+  if not exists (select 1 from pg_policies where policyname = 'metrics_coach_select_linked') then
     create policy metrics_coach_select_linked on public.client_metrics
       for select to authenticated
       using (
@@ -78,17 +81,17 @@ alter table public.progress_photos enable row level security;
 -- Owner can select/insert/delete own photos
 do $$
 begin
-  if not exists (select 1 from pg_policies where polname = 'pp_client_select') then
+  if not exists (select 1 from pg_policies where policyname = 'pp_client_select') then
     create policy pp_client_select on public.progress_photos
       for select to authenticated using (user_id = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'pp_client_insert') then
+  if not exists (select 1 from pg_policies where policyname = 'pp_client_insert') then
     create policy pp_client_insert on public.progress_photos
       for insert to authenticated with check (user_id = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'pp_client_delete') then
+  if not exists (select 1 from pg_policies where policyname = 'pp_client_delete') then
     create policy pp_client_delete on public.progress_photos
       for delete to authenticated using (user_id = auth.uid());
   end if;
@@ -97,7 +100,7 @@ end $$;
 -- Coach can SELECT photos of linked clients (read-only)
 do $$
 begin
-  if not exists (select 1 from pg_policies where polname = 'pp_coach_select_linked') then
+  if not exists (select 1 from pg_policies where policyname = 'pp_coach_select_linked') then
     create policy pp_coach_select_linked on public.progress_photos
       for select to authenticated
       using (
@@ -130,17 +133,17 @@ alter table public.checkins enable row level security;
 -- Client can select own check-ins, insert new, and update ONLY their 'message' field
 do $$
 begin
-  if not exists (select 1 from pg_policies where polname = 'ci_client_select') then
+  if not exists (select 1 from pg_policies where policyname = 'ci_client_select') then
     create policy ci_client_select on public.checkins
       for select to authenticated using (client_id = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'ci_client_insert') then
+  if not exists (select 1 from pg_policies where policyname = 'ci_client_insert') then
     create policy ci_client_insert on public.checkins
       for insert to authenticated with check (client_id = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'ci_client_update_message') then
+  if not exists (select 1 from pg_policies where policyname = 'ci_client_update_message') then
     create policy ci_client_update_message on public.checkins
       for update to authenticated
       using (client_id = auth.uid())
@@ -151,7 +154,7 @@ end $$;
 -- Coach can select check-ins of linked clients, and update ONLY 'coach_reply' and 'status'
 do $$
 begin
-  if not exists (select 1 from pg_policies where polname = 'ci_coach_select_linked') then
+  if not exists (select 1 from pg_policies where policyname = 'ci_coach_select_linked') then
     create policy ci_coach_select_linked on public.checkins
       for select to authenticated
       using (
@@ -162,7 +165,7 @@ begin
       );
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'ci_coach_update_reply_status') then
+  if not exists (select 1 from pg_policies where policyname = 'ci_coach_update_reply_status') then
     create policy ci_coach_update_reply_status on public.checkins
       for update to authenticated
       using (
@@ -182,14 +185,146 @@ begin
   end if;
 end $$;
 
--- 4. Storage policies for vagus-media bucket (only add if missing)
+-- 4. Coach Notes Version History and Attachments Tables
+-- Add missing columns to existing coach_notes table if they don't exist
+do $$
+begin
+  -- Add updated_at column if it doesn't exist
+  if not exists (select 1 from information_schema.columns 
+                where table_name = 'coach_notes' and column_name = 'updated_at') then
+    alter table public.coach_notes add column updated_at timestamptz default now();
+  end if;
+
+  -- Add updated_by column if it doesn't exist
+  if not exists (select 1 from information_schema.columns 
+                where table_name = 'coach_notes' and column_name = 'updated_by') then
+    alter table public.coach_notes add column updated_by uuid references auth.users(id);
+  end if;
+
+  -- Add is_deleted column if it doesn't exist
+  if not exists (select 1 from information_schema.columns 
+                where table_name = 'coach_notes' and column_name = 'is_deleted') then
+    alter table public.coach_notes add column is_deleted boolean default false;
+  end if;
+
+  -- Add version column if it doesn't exist
+  if not exists (select 1 from information_schema.columns 
+                where table_name = 'coach_notes' and column_name = 'version') then
+    alter table public.coach_notes add column version int default 1;
+  end if;
+end $$;
+
+-- Create coach_note_versions table for version history
+create table if not exists public.coach_note_versions (
+  id uuid primary key default gen_random_uuid(),
+  note_id uuid not null references public.coach_notes(id) on delete cascade,
+  version_index int not null,
+  content text not null,
+  metadata jsonb default '{}',
+  created_at timestamptz not null default now(),
+  created_by uuid not null references auth.users(id)
+);
+
+create index if not exists coach_note_versions_note_id_idx on public.coach_note_versions(note_id, version_index desc);
+create index if not exists coach_note_versions_created_by_idx on public.coach_note_versions(created_by);
+
+alter table public.coach_note_versions enable row level security;
+
+-- Create coach_note_attachments table for file attachments
+create table if not exists public.coach_note_attachments (
+  id uuid primary key default gen_random_uuid(),
+  note_id uuid not null references public.coach_notes(id) on delete cascade,
+  storage_path text not null,
+  mime_type text not null,
+  file_name text not null,
+  size_bytes bigint not null,
+  created_at timestamptz not null default now(),
+  created_by uuid not null references auth.users(id)
+);
+
+create index if not exists coach_note_attachments_note_id_idx on public.coach_note_attachments(note_id);
+create index if not exists coach_note_attachments_created_by_idx on public.coach_note_attachments(created_by);
+
+alter table public.coach_note_attachments enable row level security;
+
+-- RLS policies for coach_note_versions
+do $$
+begin
+  -- Coach can select versions of their own notes
+  if not exists (select 1 from pg_policies where policyname = 'cnv_coach_select') then
+    create policy cnv_coach_select on public.coach_note_versions
+      for select to authenticated
+      using (
+        exists (
+          select 1 from public.coach_notes n
+          where n.id = coach_note_versions.note_id and n.coach_id = auth.uid()
+        )
+      );
+  end if;
+
+  -- Coach can insert versions for their own notes
+  if not exists (select 1 from pg_policies where policyname = 'cnv_coach_insert') then
+    create policy cnv_coach_insert on public.coach_note_versions
+      for insert to authenticated
+      with check (
+        created_by = auth.uid()
+        and exists (
+          select 1 from public.coach_notes n
+          where n.id = coach_note_versions.note_id and n.coach_id = auth.uid()
+        )
+      );
+  end if;
+end $$;
+
+-- RLS policies for coach_note_attachments
+do $$
+begin
+  -- Coach can select attachments of their own notes
+  if not exists (select 1 from pg_policies where policyname = 'cna_coach_select') then
+    create policy cna_coach_select on public.coach_note_attachments
+      for select to authenticated
+      using (
+        exists (
+          select 1 from public.coach_notes n
+          where n.id = coach_note_attachments.note_id and n.coach_id = auth.uid()
+        )
+      );
+  end if;
+
+  -- Coach can insert attachments for their own notes
+  if not exists (select 1 from pg_policies where policyname = 'cna_coach_insert') then
+    create policy cna_coach_insert on public.coach_note_attachments
+      for insert to authenticated
+      with check (
+        created_by = auth.uid()
+        and exists (
+          select 1 from public.coach_notes n
+          where n.id = coach_note_attachments.note_id and n.coach_id = auth.uid()
+        )
+      );
+  end if;
+
+  -- Coach can delete attachments of their own notes
+  if not exists (select 1 from pg_policies where policyname = 'cna_coach_delete') then
+    create policy cna_coach_delete on public.coach_note_attachments
+      for delete to authenticated
+      using (
+        exists (
+          select 1 from public.coach_notes n
+          where n.id = coach_note_attachments.note_id and n.coach_id = auth.uid()
+        )
+      );
+  end if;
+end $$;
+
+-- 5. Storage policies for vagus-media bucket (only add if missing)
 -- Ensure bucket exists: 'vagus-media'
 -- In storage.objects, enable RLS and add policies:
 
 -- Read: owner or linked coach
 do $$
 begin
-  if not exists (select 1 from pg_policies where polname = 'storage_read_vagus_media') then
+  if not exists (select 1 from pg_policies where policyname = 'storage_read_vagus_media') then
     create policy storage_read_vagus_media
       on storage.objects for select to authenticated
       using (
@@ -205,13 +340,13 @@ begin
       );
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'storage_insert_vagus_media') then
+  if not exists (select 1 from pg_policies where policyname = 'storage_insert_vagus_media') then
     create policy storage_insert_vagus_media
       on storage.objects for insert to authenticated
       with check (bucket_id = 'vagus-media' and owner = auth.uid());
   end if;
 
-  if not exists (select 1 from pg_policies where polname = 'storage_delete_vagus_media') then
+  if not exists (select 1 from pg_policies where policyname = 'storage_delete_vagus_media') then
     create policy storage_delete_vagus_media
       on storage.objects for delete to authenticated
       using (bucket_id = 'vagus-media' and owner = auth.uid());

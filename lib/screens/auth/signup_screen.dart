@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
+import 'verify_email_pending_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -35,7 +36,22 @@ class _SignupScreenState extends State<SignupScreen> {
           'created_at': DateTime.now().toIso8601String(),
         });
 
-        _showMessage("Account created successfully.");
+        // Check if email is already verified
+        if (user.emailConfirmedAt != null) {
+          _showMessage("Account created successfully.");
+          // User is already verified, let auth gate handle routing
+        } else {
+          // Navigate to email verification screen
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => VerifyEmailPendingScreen(
+                  email: _emailController.text.trim(),
+                ),
+              ),
+            );
+          }
+        }
       }
     } catch (e) {
       _showMessage("Error: ${e.toString()}");

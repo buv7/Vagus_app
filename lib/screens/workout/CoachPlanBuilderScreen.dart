@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../widgets/files/attach_to_workout_button.dart';
+import '../../widgets/files/file_previewer.dart';
 
 class CoachPlanBuilderScreen extends StatefulWidget {
   const CoachPlanBuilderScreen({super.key});
@@ -796,33 +798,16 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
     return 'file';
   }
 
-  Future<void> uploadAttachment(int weekIndex, int dayIndex) async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any);
-    if (result != null && result.files.single.path != null) {
-      final file = File(result.files.single.path!);
-      final fileExt = file.path.split('.').last;
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileExt';
-      final filePath = 'coach_plans/$fileName';
-
-      try {
-        await supabase.storage.from('vagus-media').upload(filePath, file);
-        final url = supabase.storage.from('vagus-media').getPublicUrl(filePath);
-
-        setState(() {
-          weeks[weekIndex]['days'][dayIndex]['attachments'].add({
-            'url': url,
-            'type': _getFileType(fileExt),
-            'name': file.path.split('/').last,
-            'pinned': false
-          });
-        });
-      } catch (e) {
-        setState(() {
-          message = '❌ Upload failed: $e';
-        });
-      }
-    }
+  String _getFileCategory(String fileType) {
+    final typeLower = fileType.toLowerCase();
+    if (typeLower.startsWith('image')) return 'images';
+    if (typeLower.startsWith('video')) return 'videos';
+    if (typeLower.startsWith('audio')) return 'audio';
+    if (typeLower.contains('pdf')) return 'pdf';
+    return 'documents';
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1506,32 +1491,30 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
                                     const SizedBox(height: 10),
 
                                     /// Attachments
-                                    ElevatedButton.icon(
-                                      onPressed: () => uploadAttachment(weekIndex, dayIndex),
-                                      icon: const Icon(Icons.upload_file),
-                                      label: const Text('Upload File'),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    ...List<Map<String, dynamic>>.from(day['attachments']).asMap().entries.map((entry) {
-                                      final file = entry.value;
-                                      return ListTile(
-                                        title: Text(file['name'] ?? ''),
-                                        subtitle: Text(file['type']),
-                                        leading: Icon(
-                                          file['type'].toString().startsWith('image')
-                                              ? Icons.image
-                                              : file['type'].toString().startsWith('video')
-                                              ? Icons.videocam
-                                              : file['type'].toString().startsWith('audio')
-                                              ? Icons.audiotrack
-                                              : Icons.insert_drive_file,
-                                        ),
-                                        trailing: IconButton(
-                                          icon: const Icon(Icons.delete),
-                                          onPressed: () => setState(() => day['attachments'].remove(file)),
-                                        ),
-                                      );
-                                    }),
+                                                                         AttachToWorkoutButton(
+                                       onFilesAttached: (attachments) {
+                                         setState(() {
+                                           // Convert the new format to the existing format
+                                           for (final uploaded in attachments) {
+                                             day['attachments'].add({
+                                               'url': uploaded['file_url'] ?? '',
+                                               'type': uploaded['file_type'] ?? 'unknown',
+                                               'name': uploaded['file_name'] ?? 'Unknown file',
+                                               'pinned': false
+                                             });
+                                           }
+                                         });
+                                         ScaffoldMessenger.of(context).showSnackBar(
+                                           const SnackBar(content: Text('Attachment added to workout')),
+                                         );
+                                       },
+                                       existingAttachments: List<Map<String, dynamic>>.from(day['attachments']).map((att) => {
+                                         'file_url': att['url'] ?? '',
+                                         'file_type': att['type'] ?? 'unknown',
+                                         'file_name': att['name'] ?? 'Unknown file',
+                                         'category': _getFileCategory(att['type'] ?? 'unknown'),
+                                       }).toList(),
+                                     ),
 
                                     const SizedBox(height: 10),
                                     TextField(

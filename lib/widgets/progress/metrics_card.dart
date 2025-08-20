@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 import '../../services/progress/progress_service.dart';
+import '../../screens/progress/ProgressEntryForm.dart';
 
 class MetricsCard extends StatefulWidget {
   final String userId;
@@ -27,6 +29,10 @@ class _MetricsCardState extends State<MetricsCard> {
   final _waistController = TextEditingController();
   final _notesController = TextEditingController();
   bool _isAddingMetric = false;
+  
+  // Chart overlay toggles
+  bool _showSMA7 = false;
+  bool _showSMA30 = false;
 
   @override
   void dispose() {
@@ -37,77 +43,14 @@ class _MetricsCardState extends State<MetricsCard> {
     super.dispose();
   }
 
-  void _showAddMetricDialog() {
-    _weightController.clear();
-    _bodyFatController.clear();
-    _waistController.clear();
-    _notesController.clear();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Progress Metric'),
-        content: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: _weightController,
-                  decoration: const InputDecoration(
-                    labelText: 'Weight (kg)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _bodyFatController,
-                  decoration: const InputDecoration(
-                    labelText: 'Body Fat (%)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _waistController,
-                  decoration: const InputDecoration(
-                    labelText: 'Waist (cm)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _notesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Notes (optional)',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                ),
-              ],
-            ),
-          ),
+  void _showAddEntryForm() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProgressEntryForm(
+          userId: widget.userId,
+          onSaved: widget.onRefresh,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: _isAddingMetric ? null : _addMetric,
-            child: _isAddingMetric
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('Add'),
-          ),
-        ],
       ),
     );
   }
@@ -145,6 +88,98 @@ class _MetricsCardState extends State<MetricsCard> {
     }
   }
 
+  // Calculate SMA (Simple Moving Average)
+  List<FlSpot> _calculateSMA(List<FlSpot> data, int period) {
+    if (data.length < period) return [];
+    
+    List<FlSpot> sma = [];
+    for (int i = period - 1; i < data.length; i++) {
+      double sum = 0;
+      for (int j = i - period + 1; j <= i; j++) {
+        sum += data[j].y;
+      }
+      sma.add(FlSpot(data[i].x, sum / period));
+    }
+    return sma;
+  }
+
+  // Calculate daily deltas
+  Map<String, double> _calculateDeltas(List<Map<String, dynamic>> metrics) {
+    if (metrics.length < 2) return {};
+    
+    final sortedMetrics = List<Map<String, dynamic>>.from(metrics)
+      ..sort((a, b) => DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])));
+    
+    final latest = sortedMetrics.last;
+    final previous = sortedMetrics[sortedMetrics.length - 2];
+    
+    Map<String, double> deltas = {};
+    
+    if (latest['weight_kg'] != null && previous['weight_kg'] != null) {
+      deltas['weight'] = ((latest['weight_kg'] as num) - (previous['weight_kg'] as num)).toDouble();
+    }
+    if (latest['body_fat_percent'] != null && previous['body_fat_percent'] != null) {
+      deltas['body_fat'] = ((latest['body_fat_percent'] as num) - (previous['body_fat_percent'] as num)).toDouble();
+    }
+    if (latest['waist_cm'] != null && previous['waist_cm'] != null) {
+      deltas['waist'] = ((latest['waist_cm'] as num) - (previous['waist_cm'] as num)).toDouble();
+    }
+    
+    return deltas;
+  }
+
+  // Check for fast loss/gain flags
+  Widget? _buildWeightFlag(List<Map<String, dynamic>> metrics) {
+    if (metrics.length < 7) return null;
+    
+    final sortedMetrics = List<Map<String, dynamic>>.from(metrics)
+      ..sort((a, b) => DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])));
+    
+    final latest = sortedMetrics.last;
+    final weekAgo = sortedMetrics[sortedMetrics.length - 7];
+    
+    if (latest['weight_kg'] != null && weekAgo['weight_kg'] != null) {
+      final currentWeight = latest['weight_kg'] as num;
+      final weekAgoWeight = weekAgo['weight_kg'] as num;
+      final percentChange = ((currentWeight - weekAgoWeight) / weekAgoWeight) * 100;
+      
+      if (percentChange < -1.5) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.orange[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            'fast loss',
+            style: TextStyle(
+              color: Colors.orange[800],
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      } else if (percentChange > 1.5) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.blue[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            'refeed?',
+            style: TextStyle(
+              color: Colors.blue[800],
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      }
+    }
+    return null;
+  }
+
   Widget _buildWeightChart() {
     if (widget.metrics.length < 2) {
       return Container(
@@ -157,14 +192,29 @@ class _MetricsCardState extends State<MetricsCard> {
       );
     }
 
-    final weightData = widget.metrics
-        .where((m) => m['weight_kg'] != null)
-        .map((m) => FlSpot(
-              DateTime.parse(m['date']).millisecondsSinceEpoch.toDouble(),
-              (m['weight_kg'] as num).toDouble(),
-            ))
-        .toList()
-      ..sort((a, b) => a.x.compareTo(b.x));
+    final weightData = <FlSpot>[
+      ...widget.metrics
+          .where((m) => m['weight_kg'] != null)
+          .map((m) => FlSpot(
+                DateTime.parse(m['date']).millisecondsSinceEpoch.toDouble(),
+                (m['weight_kg'] as num).toDouble(),
+              ))
+    ]..sort((a, b) => a.x.compareTo(b.x));
+
+    if (weightData.length < 2) {
+      return Container(
+        height: 200,
+        alignment: Alignment.center,
+        child: const Text(
+          'Add at least 2 weight entries to see the chart',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    // Calculate SMAs
+    final sma7Data = _showSMA7 ? _calculateSMA(weightData, 7) : <FlSpot>[];
+    final sma30Data = _showSMA30 ? _calculateSMA(weightData, 30) : <FlSpot>[];
 
     if (weightData.length < 2) {
       return Container(
@@ -220,7 +270,68 @@ class _MetricsCardState extends State<MetricsCard> {
               barWidth: 3,
               dotData: FlDotData(show: true),
             ),
+            if (_showSMA7 && sma7Data.isNotEmpty)
+              LineChartBarData(
+                spots: sma7Data,
+                isCurved: true,
+                color: Colors.orange,
+                barWidth: 2,
+                dotData: FlDotData(show: false),
+              ),
+            if (_showSMA30 && sma30Data.isNotEmpty)
+              LineChartBarData(
+                spots: sma30Data,
+                isCurved: true,
+                color: Colors.green,
+                barWidth: 2,
+                dotData: FlDotData(show: false),
+              ),
           ],
+          lineTouchData: LineTouchData(
+            touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
+              if (event is! FlTapUpEvent || touchResponse == null) return;
+              
+              final spot = touchResponse.lineBarSpots?.firstOrNull;
+              if (spot != null) {
+                final date = DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
+                final weight = spot.y;
+                
+                // Find corresponding SMA values
+                final sma7Value = sma7Data.firstWhereOrNull((s) => s.x == spot.x)?.y;
+                final sma30Value = sma30Data.firstWhereOrNull((s) => s.x == spot.x)?.y;
+                
+                // Find delta
+                final deltas = _calculateDeltas(widget.metrics);
+                final weightDelta = deltas['weight'];
+                
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(DateFormat('MMM dd, yyyy').format(date)),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Weight: ${weight.toStringAsFixed(1)} kg'),
+                        if (weightDelta != null)
+                          Text('Δ: ${weightDelta >= 0 ? '+' : ''}${weightDelta.toStringAsFixed(1)} kg'),
+                        if (sma7Value != null)
+                          Text('SMA7: ${sma7Value.toStringAsFixed(1)} kg'),
+                        if (sma30Value != null)
+                          Text('SMA30: ${sma30Value.toStringAsFixed(1)} kg'),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+          ),
         ),
       ),
     );
@@ -363,9 +474,9 @@ class _MetricsCardState extends State<MetricsCard> {
                 ),
                 const Spacer(),
                 ElevatedButton.icon(
-                  onPressed: _showAddMetricDialog,
+                  onPressed: () => _showAddEntryForm(),
                   icon: const Icon(Icons.add),
-                  label: const Text('Add Metric'),
+                  label: const Text('Add Entry'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
@@ -374,6 +485,38 @@ class _MetricsCardState extends State<MetricsCard> {
               ],
             ),
             const SizedBox(height: 16),
+            
+            // Chart overlay toggles
+            if (widget.metrics.length >= 2) ...[
+              Row(
+                children: [
+                  FilterChip(
+                    label: const Text('SMA7'),
+                    selected: _showSMA7,
+                    onSelected: (selected) {
+                      setState(() => _showSMA7 = selected);
+                    },
+                    selectedColor: Colors.orange[100],
+                    checkmarkColor: Colors.orange[800],
+                  ),
+                  const SizedBox(width: 8),
+                  FilterChip(
+                    label: const Text('SMA30'),
+                    selected: _showSMA30,
+                    onSelected: (selected) {
+                      setState(() => _showSMA30 = selected);
+                    },
+                    selectedColor: Colors.green[100],
+                    checkmarkColor: Colors.green[800],
+                  ),
+                  const Spacer(),
+                  if (_buildWeightFlag(widget.metrics) != null)
+                    _buildWeightFlag(widget.metrics)!,
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+            
             _buildWeightChart(),
             const SizedBox(height: 16),
             const Text(

@@ -232,6 +232,23 @@ flutter test integration_test/
 2. Deploy functions: `supabase functions deploy`
 3. Update environment variables
 
+## Supabase Auto Deploy
+
+- DB migrations live in `supabase/migrations/` (timestamped *.sql).  
+- On push to `develop`: CI applies to DEV project.  
+- On push to `main`: CI applies to PROD project (requires manual approval in GitHub Environments).
+
+### GitHub Secrets (Settings → Secrets and variables → Actions)
+**Dev**
+- SUPABASE_PROJECT_REF_DEV = abcdefghijk (from Supabase settings)
+- SUPABASE_ACCESS_TOKEN_DEV = <personal access token>
+
+**Prod**
+- SUPABASE_PROJECT_REF = lmnopqrstuv
+- SUPABASE_ACCESS_TOKEN = <personal access token>
+
+> Optional (Edge Functions): add any function secrets in Supabase Dashboard directly, or manage with `supabase secrets set` manually.
+
 ## 📚 Documentation
 
 - [OneSignal Setup Guide](docs/onesignal_setup.md)

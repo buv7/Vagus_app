@@ -10,14 +10,18 @@ class ProgressService {
 
   // MARK: - Metrics Methods
 
-  /// Fetch metrics for a user
+  /// Fetch metrics for a user (last 180 days)
   Future<List<Map<String, dynamic>>> fetchMetrics(String userId) async {
     try {
+      final cutoffDate = DateTime.now().subtract(const Duration(days: 180));
+      
       final response = await _supabase
           .from('client_metrics')
           .select()
           .eq('user_id', userId)
-          .order('date', ascending: false);
+          .gte('date', cutoffDate.toIso8601String().split('T')[0])
+          .order('date', ascending: false)
+          .limit(180);
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
@@ -88,14 +92,15 @@ class ProgressService {
 
   // MARK: - Progress Photos Methods
 
-  /// Fetch progress photos for a user
-  Future<List<Map<String, dynamic>>> fetchProgressPhotos(String userId) async {
+  /// Fetch progress photos for a user (paginated)
+  Future<List<Map<String, dynamic>>> fetchProgressPhotos(String userId, {int limit = 60}) async {
     try {
       final response = await _supabase
           .from('progress_photos')
           .select()
           .eq('user_id', userId)
-          .order('taken_at', ascending: false);
+          .order('taken_at', ascending: false)
+          .limit(limit);
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
@@ -319,6 +324,154 @@ class ProgressService {
     } catch (e) {
       // Silently return null if nutrition data can't be fetched
       return null;
+    }
+  }
+
+  // MARK: - Calendar Check-ins Methods
+
+  /// Get check-ins for a specific month
+  Future<List<Map<String, dynamic>>> getCheckinsForMonth({
+    required DateTime monthStart,
+    required DateTime monthEnd,
+  }) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      final response = await _supabase
+          .from('checkins')
+          .select()
+          .eq('client_id', user.id)
+          .gte('checkin_date', monthStart.toIso8601String().split('T')[0])
+          .lte('checkin_date', monthEnd.toIso8601String().split('T')[0])
+          .order('checkin_date', ascending: false);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to fetch check-ins: $e');
+    }
+  }
+
+  /// Add a new check-in
+  Future<void> addCheckIn({
+    required DateTime checkinDate,
+    required String message,
+  }) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      // Try to get the user's assigned coach
+      String? coachId;
+      try {
+        final coachResponse = await _supabase
+            .from('coach_clients')
+            .select('coach_id')
+            .eq('client_id', user.id)
+            .single();
+        coachId = coachResponse['coach_id'];
+      } catch (e) {
+        // No coach assigned, that's okay - we'll insert without coach_id
+      }
+
+      await _supabase.from('checkins').insert({
+        'client_id': user.id,
+        'coach_id': coachId,
+        'checkin_date': checkinDate.toIso8601String().split('T')[0],
+        'message': message,
+        'status': 'open',
+      });
+    } catch (e) {
+      throw Exception('Failed to add check-in: $e');
+    }
+  }
+
+  /// Get activity days for compliance tracking
+  Future<List<DateTime>> getActivityDays({
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      Set<DateTime> activityDates = {};
+
+      // Get metrics dates
+      final metricsResponse = await _supabase
+          .from('client_metrics')
+          .select('date')
+          .eq('user_id', user.id)
+          .gte('date', start.toIso8601String().split('T')[0])
+          .lte('date', end.toIso8601String().split('T')[0]);
+      
+      for (final metric in metricsResponse) {
+        activityDates.add(DateTime.parse(metric['date']));
+      }
+
+      // Get photo dates
+      final photosResponse = await _supabase
+          .from('progress_photos')
+          .select('taken_at')
+          .eq('user_id', user.id)
+          .gte('taken_at', start.toIso8601String())
+          .lte('taken_at', end.add(const Duration(days: 1)).toIso8601String());
+      
+      for (final photo in photosResponse) {
+        final date = DateTime.parse(photo['taken_at']);
+        activityDates.add(DateTime(date.year, date.month, date.day));
+      }
+
+      // Get checkin dates
+      final checkinsResponse = await _supabase
+          .from('checkins')
+          .select('checkin_date')
+          .eq('client_id', user.id)
+          .gte('checkin_date', start.toIso8601String().split('T')[0])
+          .lte('checkin_date', end.toIso8601String().split('T')[0]);
+      
+      for (final checkin in checkinsResponse) {
+        activityDates.add(DateTime.parse(checkin['checkin_date']));
+      }
+
+      return activityDates.toList()..sort();
+    } catch (e) {
+      throw Exception('Failed to fetch activity days: $e');
+    }
+  }
+
+  /// Calculate average coach reply time
+  Future<Duration?> averageCoachReplyTime({
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      final response = await _supabase
+          .from('checkins')
+          .select('created_at, updated_at, coach_reply')
+          .eq('client_id', user.id)
+          .gte('checkin_date', start.toIso8601String().split('T')[0])
+          .lte('checkin_date', end.toIso8601String().split('T')[0])
+          .not('coach_reply', 'is', null);
+
+      if (response.isEmpty) return null;
+
+      final durations = <Duration>[];
+      for (final checkin in response) {
+        final createdAt = DateTime.parse(checkin['created_at']);
+        final updatedAt = DateTime.parse(checkin['updated_at']);
+        durations.add(updatedAt.difference(createdAt));
+      }
+
+      if (durations.isEmpty) return null;
+
+      final totalSeconds = durations.map((d) => d.inSeconds).reduce((a, b) => a + b);
+      return Duration(seconds: totalSeconds ~/ durations.length);
+    } catch (e) {
+      throw Exception('Failed to calculate reply time: $e');
     }
   }
 }
