@@ -3,8 +3,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:math';
 import 'coach_note_screen.dart';
 import '../../services/ai/embedding_helper.dart';
+import '../../services/billing/plan_access_manager.dart';
 
-class SmartPanel extends StatelessWidget {
+class SmartPanel extends StatefulWidget {
   final TextEditingController noteController;
   final String? clientId;
 
@@ -14,39 +15,54 @@ class SmartPanel extends StatelessWidget {
     this.clientId,
   });
 
+  @override
+  State<SmartPanel> createState() => _SmartPanelState();
+}
+
+class _SmartPanelState extends State<SmartPanel> {
+
   // Module-level toggle for vector-based duplicate detection
   static const bool useVectorDupDetect = true; // default true
 
   void _runAction(BuildContext context, String type) async {
-    final currentText = noteController.text.trim();
+    // AI gating check
+    final remaining = await PlanAccessManager.instance.remainingAICalls();
+    if (!mounted || !context.mounted) return;
+    if (remaining <= 0) {
+      PlanAccessManager.instance.guardOrPaywall(context, feature: 'ai.notes');
+      return;
+    }
+
+    final currentText = widget.noteController.text.trim();
     if (currentText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Note is empty.")),
+        const SnackBar(content: Text('Note is empty.')),
       );
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Running AI: $type... (simulated)")),
+      SnackBar(content: Text('Running AI: $type... (simulated)')),
     );
 
     await Future.delayed(const Duration(seconds: 2));
+    if (!mounted || !context.mounted) return;
 
     switch (type) {
       case 'Improve':
-        noteController.text = "🧠 [Improved] $currentText";
+        widget.noteController.text = '🧠 [Improved] $currentText';
         break;
       case 'Summarize':
-        noteController.text += "\n\n• Summary: [Simulated bullet summary]";
+        widget.noteController.text += '\n\n• Summary: [Simulated bullet summary]';
         break;
       case 'Tags':
-        noteController.text += "\n\n🏷 Tags: mindset, recovery";
+        widget.noteController.text += '\n\n🏷 Tags: mindset, recovery';
         break;
       case 'Rewrite Tone':
-        noteController.text = "[Friendly Tone]: $currentText";
+        widget.noteController.text = '[Friendly Tone]: $currentText';
         break;
       case 'Follow-Up':
-        noteController.text += "\n\n📌 Follow-up: Discuss client mindset tomorrow";
+        widget.noteController.text += '\n\n📌 Follow-up: Discuss client mindset tomorrow';
         break;
       case 'Duplicate':
         await _detectDuplicate(context, currentText);
@@ -73,7 +89,7 @@ class SmartPanel extends StatelessWidget {
                 'title': 'Temp for embedding search',
                 'body': currentText,
                 'coach_id': user.id,
-                if (clientId != null) 'client_id': clientId,
+                if (widget.clientId != null) 'client_id': widget.clientId,
               })
               .select('id')
               .single();
@@ -100,20 +116,19 @@ class SmartPanel extends StatelessWidget {
                   .eq('id', similar['note_id'])
                   .single();
 
-              if (noteResult != null) {
-                _showDuplicateResult(
-                  context, 
-                  noteResult, 
-                  similarity, 
-                  'Vector similarity: ${(similarity * 100).toStringAsFixed(1)}%'
-                );
-                return;
-              }
-            }
+              if (!mounted || !context.mounted) return;
+              _showDuplicateResult(
+                context, 
+                noteResult, 
+                similarity, 
+                'Vector similarity: ${(similarity * 100).toStringAsFixed(1)}%'
+              );
+              return;
+                        }
           }
         } catch (e) {
           // Fall back to Jaccard similarity if vector search fails
-          print('Vector duplicate detection failed, falling back to Jaccard: $e');
+          debugPrint('Vector duplicate detection failed, falling back to Jaccard: $e');
         }
       }
 
@@ -125,8 +140,8 @@ class SmartPanel extends StatelessWidget {
           .eq('coach_id', user.id);
       
       // Only filter by client_id if it's provided
-      if (clientId != null) {
-        request = request.eq('client_id', clientId!);
+      if (widget.clientId != null) {
+        request = request.eq('client_id', widget.clientId!);
       }
       
       final response = await request
@@ -152,23 +167,22 @@ class SmartPanel extends StatelessWidget {
         }
       }
 
+      if (!mounted || !context.mounted) return;
       if (bestMatch != null) {
         _showDuplicateResult(context, bestMatch, bestScore, bestReason!);
       } else {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("✅ No similar notes found"),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ No similar notes found'),
+            backgroundColor: Colors.green,
+          ),
+        );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("❌ Error checking for duplicates: $e"),
+            content: Text('❌ Error checking for duplicates: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -207,11 +221,11 @@ class SmartPanel extends StatelessWidget {
     
     if (commonTokens.length > 5) {
       final sampleTokens = commonTokens.take(3).join(', ');
-      return "High overlap in keywords: $sampleTokens...";
+      return 'High overlap in keywords: $sampleTokens...';
     } else if (text1.length > 50 && text2.length > 50) {
-      return "Similar content structure and length";
+      return 'Similar content structure and length';
     } else {
-      return "High text similarity score";
+      return 'High text similarity score';
     }
   }
 
@@ -281,27 +295,27 @@ class SmartPanel extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: () => _runAction(context, 'Improve'),
-          child: const Text("✨ Improve"),
+          child: const Text('✨ Improve'),
         ),
         ElevatedButton(
           onPressed: () => _runAction(context, 'Summarize'),
-          child: const Text("📄 Summarize"),
+          child: const Text('📄 Summarize'),
         ),
         ElevatedButton(
           onPressed: () => _runAction(context, 'Tags'),
-          child: const Text("🏷 Smart Tags"),
+          child: const Text('🏷 Smart Tags'),
         ),
         ElevatedButton(
           onPressed: () => _runAction(context, 'Rewrite Tone'),
-          child: const Text("🎭 Rewrite Tone"),
+          child: const Text('🎭 Rewrite Tone'),
         ),
         ElevatedButton(
           onPressed: () => _runAction(context, 'Follow-Up'),
-          child: const Text("📌 Follow-Up Suggestion"),
+          child: const Text('📌 Follow-Up Suggestion'),
         ),
         ElevatedButton(
           onPressed: () => _runAction(context, 'Duplicate'),
-          child: const Text("🔍 Check Duplicates"),
+          child: const Text('🔍 Check Duplicates'),
         ),
       ],
     );

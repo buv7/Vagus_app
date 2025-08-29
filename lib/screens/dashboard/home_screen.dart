@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'edit_profile_screen.dart';
-import '../AccountSwitchScreen.dart';
+import '../account_switch_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -60,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Welcome to VAGUS"),
+        title: const Text('Welcome to VAGUS'),
         actions: [
           // append-only: quick access to account switcher
           IconButton(
@@ -74,20 +75,21 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: "Edit Profile",
-            onPressed: () async {
-              final updated = await Navigator.of(context).push(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Edit Profile',
+            onPressed: () {
+              Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-              );
-              if (updated == true) {
-                _loadProfile(); // reload on update
-              }
+              ).then((updated) {
+                if (updated == true) {
+                  unawaited(_loadProfile()); // reload on update
+                }
+              });
             },
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: "Sign Out",
+            tooltip: 'Sign Out',
             onPressed: _signOut,
           ),
         ],
@@ -95,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _profile == null
-          ? const Center(child: Text("No profile found"))
+          ? const Center(child: Text('No profile found'))
           : Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(

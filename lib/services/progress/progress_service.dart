@@ -5,7 +5,7 @@ import 'dart:io';
 
 class ProgressService {
   final SupabaseClient _supabase = Supabase.instance.client;
-  final ImagePicker _picker = ImagePicker();
+
   final Uuid _uuid = const Uuid();
 
   // MARK: - Metrics Methods
@@ -36,6 +36,15 @@ class ProgressService {
     double? weightKg,
     double? bodyFatPercent,
     double? waistCm,
+    double? chestCm,
+    double? rightArmCm,
+    double? leftArmCm,
+    double? rightThighCm,
+    double? leftThighCm,
+    double? rightCalfCm,
+    double? leftCalfCm,
+    double? shouldersCm,
+    double? hipsCm,
     String? notes,
     int? sodiumMg,
     int? potassiumMg,
@@ -47,6 +56,15 @@ class ProgressService {
         'weight_kg': weightKg,
         'body_fat_percent': bodyFatPercent,
         'waist_cm': waistCm,
+        'chest_cm': chestCm,
+        'right_arm_cm': rightArmCm,
+        'left_arm_cm': leftArmCm,
+        'right_thigh_cm': rightThighCm,
+        'left_thigh_cm': leftThighCm,
+        'right_calf_cm': rightCalfCm,
+        'left_calf_cm': leftCalfCm,
+        'shoulders_cm': shouldersCm,
+        'hips_cm': hipsCm,
         'notes': notes,
         'sodium_mg': sodiumMg,
         'potassium_mg': potassiumMg,
@@ -62,6 +80,15 @@ class ProgressService {
     double? weightKg,
     double? bodyFatPercent,
     double? waistCm,
+    double? chestCm,
+    double? rightArmCm,
+    double? leftArmCm,
+    double? rightThighCm,
+    double? leftThighCm,
+    double? rightCalfCm,
+    double? leftCalfCm,
+    double? shouldersCm,
+    double? hipsCm,
     String? notes,
     int? sodiumMg,
     int? potassiumMg,
@@ -71,6 +98,15 @@ class ProgressService {
         'weight_kg': weightKg,
         'body_fat_percent': bodyFatPercent,
         'waist_cm': waistCm,
+        'chest_cm': chestCm,
+        'right_arm_cm': rightArmCm,
+        'left_arm_cm': leftArmCm,
+        'right_thigh_cm': rightThighCm,
+        'left_thigh_cm': leftThighCm,
+        'right_calf_cm': rightCalfCm,
+        'left_calf_cm': leftCalfCm,
+        'shoulders_cm': shouldersCm,
+        'hips_cm': hipsCm,
         'notes': notes,
         'sodium_mg': sodiumMg,
         'potassium_mg': potassiumMg,
@@ -136,7 +172,7 @@ class ProgressService {
         'tags': tags ?? [],
       }).select().single();
 
-      return response as Map<String, dynamic>;
+      return response;
     } catch (e) {
       throw Exception('Failed to upload progress photo: $e');
     }
@@ -303,7 +339,7 @@ class ProgressService {
 
       if (response.isEmpty) return null;
 
-      final plan = response.first as Map<String, dynamic>;
+      final plan = response.first;
       final meals = plan['meals'] as List<dynamic>? ?? [];
       
       int totalSodium = 0;
@@ -395,7 +431,7 @@ class ProgressService {
       final user = _supabase.auth.currentUser;
       if (user == null) throw Exception('User not authenticated');
 
-      Set<DateTime> activityDates = {};
+      final Set<DateTime> activityDates = {};
 
       // Get metrics dates
       final metricsResponse = await _supabase

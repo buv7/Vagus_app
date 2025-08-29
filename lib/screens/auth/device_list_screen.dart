@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
 import '../../services/session/session_service.dart';
 
 class DeviceListScreen extends StatefulWidget {
@@ -59,7 +59,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         );
         
         // Refresh the list
-        _loadDevices();
+        unawaited(_loadDevices());
       }
     } catch (e) {
       if (mounted) {

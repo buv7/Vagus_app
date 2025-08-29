@@ -69,7 +69,7 @@ class _VerifyEmailPendingScreenState extends State<VerifyEmailPendingScreen> {
         }
       }
     } catch (e) {
-      print('Error checking verification status: $e');
+      debugPrint('Error checking verification status: $e');
     }
   }
 
@@ -287,7 +287,7 @@ class _VerifyEmailPendingScreenState extends State<VerifyEmailPendingScreen> {
             // Polling Status
             if (_pollingAttempts > 0)
               Text(
-                'Checking verification status... (${_pollingAttempts}/${_maxPollingAttempts})',
+                'Checking verification status... ($_pollingAttempts/$_maxPollingAttempts)',
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,

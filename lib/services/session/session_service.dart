@@ -55,7 +55,7 @@ class SessionService {
         deviceData['model'] = 'Unknown Device';
       }
     } catch (e) {
-      print('Failed to get device info: $e');
+      debugPrint('Failed to get device info: $e');
       deviceData['platform'] = Platform.operatingSystem;
       deviceData['model'] = 'Unknown Device';
       deviceData['app_version'] = 'Unknown';
@@ -94,10 +94,10 @@ class SessionService {
           }, onConflict: 'user_id,device_id');
 
       if (kDebugMode) {
-        print('✅ Device upserted: ${deviceInfo['model']}');
+        debugPrint('✅ Device upserted: ${deviceInfo['model']}');
       }
     } catch (e) {
-      print('Failed to upsert current device: $e');
+      debugPrint('Failed to upsert current device: $e');
     }
   }
 
@@ -118,10 +118,10 @@ class SessionService {
           .eq('device_id', deviceId);
 
       if (kDebugMode) {
-        print('💓 Heartbeat updated');
+        debugPrint('💓 Heartbeat updated');
       }
     } catch (e) {
-      print('Failed to update heartbeat: $e');
+      debugPrint('Failed to update heartbeat: $e');
     }
   }
 
@@ -139,7 +139,7 @@ class SessionService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Failed to list devices: $e');
+      debugPrint('Failed to list devices: $e');
       return [];
     }
   }
@@ -157,10 +157,10 @@ class SessionService {
           .eq('device_id', deviceId);
 
       if (kDebugMode) {
-        print('${revoke ? '🚫' : '✅'} Device revocation ${revoke ? 'set' : 'cleared'} for $deviceId');
+        debugPrint('${revoke ? '🚫' : '✅'} Device revocation ${revoke ? 'set' : 'cleared'} for $deviceId');
       }
     } catch (e) {
-      print('Failed to mark device revocation: $e');
+      debugPrint('Failed to mark device revocation: $e');
     }
   }
 
@@ -181,7 +181,7 @@ class SessionService {
 
       if (response['revoke'] == true) {
         if (kDebugMode) {
-          print('🚫 Device revoked, signing out');
+          debugPrint('🚫 Device revoked, signing out');
         }
         
         // Clear device ID and sign out
@@ -191,7 +191,7 @@ class SessionService {
     } catch (e) {
       // If device not found, it's probably a new device - ignore
       if (!e.toString().contains('No rows found')) {
-        print('Failed to check revocation: $e');
+        debugPrint('Failed to check revocation: $e');
       }
     }
   }
@@ -206,7 +206,7 @@ class SessionService {
     try {
       await _secureStorage.delete(key: _deviceIdKey);
     } catch (e) {
-      print('Failed to clear session data: $e');
+      debugPrint('Failed to clear session data: $e');
     }
   }
 }

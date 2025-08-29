@@ -14,7 +14,11 @@ class ModelRegistry {
     'workout.deload': 'gpt-4o-mini',
     'workout.weakpoint': 'gpt-4o-mini',
     'calendar.tagger': 'gpt-4o-mini',
+    'calendar.time': 'gpt-4o-mini',
     'messaging.reply': 'gpt-4o-mini',
+    'messaging.translate': 'gpt-4o-mini',
+    'messaging.summarize': 'gpt-4o-mini',
+    'chat.default': 'gpt-4o-mini',
     'embedding.default': 'text-embedding-3-large',
   };
 
@@ -27,14 +31,18 @@ class ModelRegistry {
     'WORKOUT_DELOAD_MODEL': 'workout.deload',
     'WORKOUT_WEAKPOINT_MODEL': 'workout.weakpoint',
     'CALENDAR_TAGGER_MODEL': 'calendar.tagger',
+    'CALENDAR_TIME_MODEL': 'calendar.time',
     'MESSAGING_REPLY_MODEL': 'messaging.reply',
+    'MESSAGING_TRANSLATE_MODEL': 'messaging.translate',
+    'MESSAGING_SUMMARIZE_MODEL': 'messaging.summarize',
+    'CHAT_DEFAULT_MODEL': 'chat.default',
     'EMBEDDING_DEFAULT_MODEL': 'embedding.default',
   };
 
   String modelFor(String task) {
     // Check for dart-define override first
     for (final entry in _overrides.entries) {
-      final overrideValue = const String.fromEnvironment(entry.key, defaultValue: '');
+      final overrideValue = String.fromEnvironment(entry.key, defaultValue: '');
       if (overrideValue.isNotEmpty && entry.value == task) {
         return overrideValue;
       }

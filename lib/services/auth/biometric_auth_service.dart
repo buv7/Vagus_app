@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -18,7 +19,7 @@ class BiometricAuthService {
       
       return canCheckBiometrics && isDeviceSupported;
     } on PlatformException catch (e) {
-      print('Biometric availability check failed: $e');
+      debugPrint('Biometric availability check failed: $e');
       return false;
     }
   }
@@ -28,7 +29,7 @@ class BiometricAuthService {
     try {
       return await _localAuth.getAvailableBiometrics();
     } on PlatformException catch (e) {
-      print('Failed to get available biometrics: $e');
+      debugPrint('Failed to get available biometrics: $e');
       return [];
     }
   }
@@ -39,7 +40,7 @@ class BiometricAuthService {
       final String? enabled = await _secureStorage.read(key: _bioEnabledKey);
       return enabled == 'true';
     } catch (e) {
-      print('Failed to read biometric enabled status: $e');
+      debugPrint('Failed to read biometric enabled status: $e');
       return false;
     }
   }
@@ -59,7 +60,7 @@ class BiometricAuthService {
         );
       }
     } catch (e) {
-      print('Failed to set biometric enabled status: $e');
+      debugPrint('Failed to set biometric enabled status: $e');
       rethrow;
     }
   }
@@ -69,7 +70,7 @@ class BiometricAuthService {
     try {
       return await _secureStorage.read(key: _bioUserEmailKey);
     } catch (e) {
-      print('Failed to read stored user email: $e');
+      debugPrint('Failed to read stored user email: $e');
       return null;
     }
   }
@@ -79,7 +80,7 @@ class BiometricAuthService {
     try {
       final bool isAvailable = await isBiometricAvailable();
       if (!isAvailable) {
-        print('Biometric authentication not available');
+        debugPrint('Biometric authentication not available');
         return false;
       }
 
@@ -93,7 +94,7 @@ class BiometricAuthService {
 
       return didAuthenticate;
     } on PlatformException catch (e) {
-      print('Biometric authentication failed: $e');
+      debugPrint('Biometric authentication failed: $e');
       return false;
     }
   }
@@ -104,7 +105,7 @@ class BiometricAuthService {
       await _secureStorage.delete(key: _bioEnabledKey);
       await _secureStorage.delete(key: _bioUserEmailKey);
     } catch (e) {
-      print('Failed to clear biometric data: $e');
+      debugPrint('Failed to clear biometric data: $e');
     }
   }
 

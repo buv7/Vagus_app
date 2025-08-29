@@ -43,7 +43,7 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
       // Show processing indicator
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Processing audio...")),
+          const SnackBar(content: Text('Processing audio...')),
         );
       }
 
@@ -74,7 +74,7 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("✅ Transcribed: ${transcribedText.length} characters"),
+            content: Text('✅ Transcribed: ${transcribedText.length} characters'),
             backgroundColor: Colors.green,
           ),
         );
@@ -86,7 +86,7 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("❌ Transcription failed: $e"),
+            content: Text('❌ Transcription failed: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -131,7 +131,7 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : const Icon(Icons.mic),
-      label: Text(_isProcessing ? "Processing..." : "Record Voice"),
+      label: Text(_isProcessing ? 'Processing...' : 'Record Voice'),
       onPressed: _isProcessing ? null : () => _recordAndTranscribe(context),
     );
   }

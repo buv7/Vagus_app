@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:vagus_app/screens/notes/coach_note_screen.dart';
@@ -57,7 +58,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
 
   Future<void> _deleteNote(String id) async {
     await supabase.from('coach_notes').delete().eq('id', id);
-    _fetchNotes();
+    unawaited(_fetchNotes());
   }
 
   void _openNote(Map<String, dynamic>? note) async {
@@ -69,7 +70,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
     );
 
     if (result == true) {
-      _fetchNotes();
+      unawaited(_fetchNotes());
     }
   }
 
@@ -77,7 +78,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Your Notes"),
+        title: const Text('Your Notes'),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
@@ -88,7 +89,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _filteredNotes.isEmpty
-          ? const Center(child: Text("No notes found."))
+          ? const Center(child: Text('No notes found.'))
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: _filteredNotes.length,

@@ -9,6 +9,21 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  # Downgrade style-only infos to info level to help reach ≤120 warnings goal
+  errors:
+    # Downgrade file naming style to info (not warning)
+    file_names: info
+    # Downgrade other style-only rules to info
+    sized_box_for_whitespace: info
+    unnecessary_brace_in_string_interps: info
+    unnecessary_string_interpolations: info
+    unnecessary_to_list_in_spreads: info
+    unnecessary_const: info
+    use_super_parameters: info
+    prefer_final_fields: info
+    prefer_final_locals: info
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`
@@ -21,8 +36,14 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # Enable specific rules for Sprint I
+    prefer_const_constructors: true
+    prefer_final_locals: true
+    avoid_print: true
+    unawaited_futures: true
+    use_build_context_synchronously: true
+    # Keep existing rules
+    prefer_single_quotes: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

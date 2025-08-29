@@ -101,7 +101,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
         return;
       }
 
-      List<File> filesToUpload = [];
+      final List<File> filesToUpload = [];
 
       switch (result) {
         case 'camera':
@@ -228,7 +228,6 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
   Widget _buildFileThumbnail(Map<String, dynamic> file) {
     final category = file['category'];
     final fileUrl = file['file_url'];
-    final fileName = file['file_name'];
 
     if (category == 'images' && fileUrl != null) {
       return ClipRRect(
@@ -273,7 +272,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
@@ -314,7 +313,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
           // Upload progress overlay
           if (_uploading)
             Container(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               child: Center(
                 child: Card(
                   child: Padding(
@@ -425,7 +424,7 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(

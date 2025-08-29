@@ -15,6 +15,11 @@ class MessageBubble extends StatelessWidget {
   final VoidCallback? onForward;
   final VoidCallback? onStar;
   final bool isStarred;
+  final VoidCallback? onPin;
+  final VoidCallback? onUnpin;
+  final bool isPinned;
+  final DateTime? lastReadAt;
+  final VoidCallback? onOpenThread;
 
   const MessageBubble({
     super.key,
@@ -30,6 +35,11 @@ class MessageBubble extends StatelessWidget {
     this.onForward,
     this.onStar,
     this.isStarred = false,
+    this.onPin,
+    this.onUnpin,
+    this.isPinned = false,
+    this.lastReadAt,
+    this.onOpenThread,
   });
 
   @override
@@ -84,6 +94,35 @@ class MessageBubble extends StatelessWidget {
                             color: Colors.grey[600],
                             fontStyle: FontStyle.italic,
                           ),
+                        ),
+                      ),
+                    ],
+                    
+                    // Thread indicator (if message has replies)
+                    if (message.parentMessageId != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.blue[200]!),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.reply, size: 16, color: Colors.blue),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'View thread →',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue[700],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -161,6 +200,19 @@ class MessageBubble extends StatelessWidget {
                         ],
                       ],
                     ),
+                    
+                    // Read receipt for 1:1 chats
+                    if (isOwnMessage && lastReadAt != null && lastReadAt!.isAfter(message.createdAt)) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Seen • ${DateFormat('HH:mm').format(lastReadAt!)}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -211,16 +263,16 @@ class MessageBubble extends StatelessWidget {
             color: Colors.black,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Stack(
+          child: const Stack(
             alignment: Alignment.center,
             children: [
-              const Icon(Icons.play_circle_outline, size: 48, color: Colors.white),
+              Icon(Icons.play_circle_outline, size: 48, color: Colors.white),
               Positioned(
                 bottom: 8,
                 left: 8,
                 child: Text(
                   'Video',
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
             ],
@@ -380,6 +432,21 @@ class MessageBubble extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 onReply?.call();
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                color: isPinned ? Colors.blue : null,
+              ),
+              title: Text(isPinned ? 'Unpin' : 'Pin'),
+              onTap: () {
+                Navigator.pop(context);
+                if (isPinned) {
+                  onUnpin?.call();
+                } else {
+                  onPin?.call();
+                }
               },
             ),
             ListTile(

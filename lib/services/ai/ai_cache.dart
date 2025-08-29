@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:collection';
-import 'dart:crypto';
+import 'package:crypto/crypto.dart';
 
 class AICache {
   static final AICache _instance = AICache._internal();
@@ -65,7 +65,7 @@ class AICache {
     // Create hash of the normalized input
     final hash = sha256.convert(utf8.encode(normalizedInput)).toString();
     
-    return '${task}|${model}|$hash';
+    return '$task|$model|$hash';
   }
 
   void clear() {

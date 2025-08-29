@@ -57,7 +57,7 @@ class _NoteVersionViewerState extends State<NoteVersionViewer> {
           .eq('id', widget.noteId)
           .single();
 
-      final currentNote = noteResponse as Map<String, dynamic>;
+      final currentNote = noteResponse;
       final currentVersion = currentNote['version'] ?? 1;
 
       // Create a new version with the current content before reverting

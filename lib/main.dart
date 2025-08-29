@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/auth/auth_gate.dart';
-import 'screens/workout/ClientWorkoutDashboardScreen.dart'; // ✅ import workout screen
+import 'screens/workout/client_workout_dashboard_screen.dart'; // ✅ import workout screen
 // NEW: Import OneSignal service
 import 'services/notifications/onesignal_service.dart';
+import 'services/notifications/notification_helper.dart';
+import 'services/settings/settings_controller.dart';
+import 'services/motion_service.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,21 +21,49 @@ void main() async {
   // NEW: Initialize OneSignal notifications
   await OneSignalService.instance.init();
 
-  runApp(const VagusMainApp());
+  // Initialize local notifications for calendar reminders
+  await NotificationHelper.instance.init();
+
+  // Initialize settings controller
+  final settings = SettingsController();
+  await settings.load();
+
+  runApp(VagusMainApp(settings: settings));
 }
 
 class VagusMainApp extends StatelessWidget {
-  const VagusMainApp({super.key});
+  final SettingsController settings;
+
+  const VagusMainApp({super.key, required this.settings});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'VAGUS',
-      theme: ThemeData(primarySwatch: Colors.deepPurple),
-      home: const AuthGate(),
-      routes: {
-        // ✅ Add this route for client workout plan viewer
-        '/client-workout': (context) => const ClientWorkoutDashboardScreen(),
+    return AnimatedBuilder(
+      animation: settings,
+      builder: (_, __) {
+        return MaterialApp(
+          title: 'VAGUS',
+          navigatorKey: navigatorKey,
+          theme: AppTheme.light(),
+          darkTheme: AppTheme.dark(),
+          themeMode: settings.themeMode,
+          locale: settings.locale,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('ar'),
+            Locale('ku'),
+          ],
+          home: const AuthGate(),
+          routes: {
+            // ✅ Add this route for client workout plan viewer
+            '/client-workout': (context) => const ClientWorkoutDashboardScreen(),
+          },
+        );
       },
     );
   }

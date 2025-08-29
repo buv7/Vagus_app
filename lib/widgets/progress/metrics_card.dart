@@ -3,7 +3,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import '../../services/progress/progress_service.dart';
-import '../../screens/progress/ProgressEntryForm.dart';
+import '../../screens/progress/progress_entry_form.dart';
+import '../../theme/design_tokens.dart';
+import '../../components/common/section_header_bar.dart';
+import '../../services/share/share_card_service.dart';
+import '../../screens/share/share_picker.dart';
+
 
 class MetricsCard extends StatefulWidget {
   final String userId;
@@ -23,12 +28,12 @@ class MetricsCard extends StatefulWidget {
 
 class _MetricsCardState extends State<MetricsCard> {
   final ProgressService _progressService = ProgressService();
-  final _formKey = GlobalKey<FormState>();
+
   final _weightController = TextEditingController();
   final _bodyFatController = TextEditingController();
   final _waistController = TextEditingController();
   final _notesController = TextEditingController();
-  bool _isAddingMetric = false;
+
   
   // Chart overlay toggles
   bool _showSMA7 = false;
@@ -55,44 +60,13 @@ class _MetricsCardState extends State<MetricsCard> {
     );
   }
 
-  Future<void> _addMetric() async {
-    if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isAddingMetric = true);
-
-    try {
-      await _progressService.addMetric(
-        userId: widget.userId,
-        date: DateTime.now(),
-        weightKg: double.tryParse(_weightController.text),
-        bodyFatPercent: double.tryParse(_bodyFatController.text),
-        waistCm: double.tryParse(_waistController.text),
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
-      );
-
-      if (mounted) {
-        Navigator.pop(context);
-        widget.onRefresh();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✅ Metric added successfully')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('❌ Failed to add metric: $e')),
-        );
-      }
-    } finally {
-      setState(() => _isAddingMetric = false);
-    }
-  }
 
   // Calculate SMA (Simple Moving Average)
   List<FlSpot> _calculateSMA(List<FlSpot> data, int period) {
     if (data.length < period) return [];
     
-    List<FlSpot> sma = [];
+    final List<FlSpot> sma = [];
     for (int i = period - 1; i < data.length; i++) {
       double sum = 0;
       for (int j = i - period + 1; j <= i; j++) {
@@ -113,7 +87,7 @@ class _MetricsCardState extends State<MetricsCard> {
     final latest = sortedMetrics.last;
     final previous = sortedMetrics[sortedMetrics.length - 2];
     
-    Map<String, double> deltas = {};
+    final Map<String, double> deltas = {};
     
     if (latest['weight_kg'] != null && previous['weight_kg'] != null) {
       deltas['weight'] = ((latest['weight_kg'] as num) - (previous['weight_kg'] as num)).toDouble();
@@ -145,33 +119,31 @@ class _MetricsCardState extends State<MetricsCard> {
       
       if (percentChange < -1.5) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space8, vertical: DesignTokens.space4),
           decoration: BoxDecoration(
-            color: Colors.orange[100],
-            borderRadius: BorderRadius.circular(12),
+            color: DesignTokens.warnBg,
+            borderRadius: BorderRadius.circular(DesignTokens.radius12),
           ),
           child: Text(
             'fast loss',
-            style: TextStyle(
-              color: Colors.orange[800],
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
+            style: DesignTokens.labelSmall.copyWith(
+              color: DesignTokens.warn,
+              fontWeight: FontWeight.w600,
             ),
           ),
         );
       } else if (percentChange > 1.5) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space8, vertical: DesignTokens.space4),
           decoration: BoxDecoration(
-            color: Colors.blue[100],
-            borderRadius: BorderRadius.circular(12),
+            color: DesignTokens.infoBg,
+            borderRadius: BorderRadius.circular(DesignTokens.radius12),
           ),
           child: Text(
             'refeed?',
-            style: TextStyle(
-              color: Colors.blue[800],
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
+            style: DesignTokens.labelSmall.copyWith(
+              color: DesignTokens.info,
+              fontWeight: FontWeight.w600,
             ),
           ),
         );
@@ -185,9 +157,11 @@ class _MetricsCardState extends State<MetricsCard> {
       return Container(
         height: 200,
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           'Add at least 2 weight entries to see the chart',
-          style: TextStyle(color: Colors.grey),
+          style: DesignTokens.bodyMedium.copyWith(
+            color: DesignTokens.ink500,
+          ),
         ),
       );
     }
@@ -205,9 +179,11 @@ class _MetricsCardState extends State<MetricsCard> {
       return Container(
         height: 200,
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           'Add at least 2 weight entries to see the chart',
-          style: TextStyle(color: Colors.grey),
+          style: DesignTokens.bodyMedium.copyWith(
+            color: DesignTokens.ink500,
+          ),
         ),
       );
     }
@@ -220,9 +196,11 @@ class _MetricsCardState extends State<MetricsCard> {
       return Container(
         height: 200,
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           'Add at least 2 weight entries to see the chart',
-          style: TextStyle(color: Colors.grey),
+          style: DesignTokens.bodyMedium.copyWith(
+            color: DesignTokens.ink500,
+          ),
         ),
       );
     }
@@ -231,7 +209,7 @@ class _MetricsCardState extends State<MetricsCard> {
       height: 200,
       child: LineChart(
         LineChartData(
-          gridData: FlGridData(show: true),
+          gridData: const FlGridData(show: true),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
@@ -240,7 +218,9 @@ class _MetricsCardState extends State<MetricsCard> {
                 getTitlesWidget: (value, meta) {
                   return Text(
                     value.toStringAsFixed(1),
-                    style: const TextStyle(fontSize: 10),
+                    style: DesignTokens.labelSmall.copyWith(
+                      color: DesignTokens.ink500,
+                    ),
                   );
                 },
               ),
@@ -253,38 +233,40 @@ class _MetricsCardState extends State<MetricsCard> {
                   final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
                   return Text(
                     DateFormat('MM/dd').format(date),
-                    style: const TextStyle(fontSize: 10),
+                    style: DesignTokens.labelSmall.copyWith(
+                      color: DesignTokens.ink500,
+                    ),
                   );
                 },
               ),
             ),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           borderData: FlBorderData(show: true),
           lineBarsData: [
             LineChartBarData(
               spots: weightData,
               isCurved: true,
-              color: Colors.blue,
+              color: DesignTokens.blue600,
               barWidth: 3,
-              dotData: FlDotData(show: true),
+              dotData: const FlDotData(show: true),
             ),
             if (_showSMA7 && sma7Data.isNotEmpty)
               LineChartBarData(
                 spots: sma7Data,
                 isCurved: true,
-                color: Colors.orange,
+                color: DesignTokens.warn,
                 barWidth: 2,
-                dotData: FlDotData(show: false),
+                dotData: const FlDotData(show: false),
               ),
             if (_showSMA30 && sma30Data.isNotEmpty)
               LineChartBarData(
                 spots: sma30Data,
                 isCurved: true,
-                color: Colors.green,
+                color: DesignTokens.success,
                 barWidth: 2,
-                dotData: FlDotData(show: false),
+                dotData: const FlDotData(show: false),
               ),
           ],
           lineTouchData: LineTouchData(
@@ -307,18 +289,50 @@ class _MetricsCardState extends State<MetricsCard> {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text(DateFormat('MMM dd, yyyy').format(date)),
+                    title: Text(
+                      DateFormat('MMM dd, yyyy').format(date),
+                      style: DesignTokens.titleMedium,
+                    ),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Weight: ${weight.toStringAsFixed(1)} kg'),
-                        if (weightDelta != null)
-                          Text('Δ: ${weightDelta >= 0 ? '+' : ''}${weightDelta.toStringAsFixed(1)} kg'),
-                        if (sma7Value != null)
-                          Text('SMA7: ${sma7Value.toStringAsFixed(1)} kg'),
-                        if (sma30Value != null)
-                          Text('SMA30: ${sma30Value.toStringAsFixed(1)} kg'),
+                        // Value (bigger, heavier)
+                        Text(
+                          'Weight: ${weight.toStringAsFixed(1)} kg',
+                          style: DesignTokens.displaySmall.copyWith(
+                            color: DesignTokens.blue600,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (weightDelta != null) ...[
+                          const SizedBox(height: DesignTokens.space8),
+                          Text(
+                            'Δ: ${weightDelta >= 0 ? '+' : ''}${weightDelta.toStringAsFixed(1)} kg',
+                            style: DesignTokens.bodyMedium.copyWith(
+                              color: weightDelta >= 0 ? DesignTokens.success : DesignTokens.danger,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                        if (sma7Value != null) ...[
+                          const SizedBox(height: DesignTokens.space8),
+                          Text(
+                            'SMA7: ${sma7Value.toStringAsFixed(1)} kg',
+                            style: DesignTokens.bodyMedium.copyWith(
+                              color: DesignTokens.warn,
+                            ),
+                          ),
+                        ],
+                        if (sma30Value != null) ...[
+                          const SizedBox(height: DesignTokens.space8),
+                          Text(
+                            'SMA30: ${sma30Value.toStringAsFixed(1)} kg',
+                            style: DesignTokens.bodyMedium.copyWith(
+                              color: DesignTokens.success,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                     actions: [
@@ -339,13 +353,15 @@ class _MetricsCardState extends State<MetricsCard> {
 
   Widget _buildMetricsList() {
     if (widget.metrics.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(DesignTokens.space32),
           child: Text(
             'No metrics recorded yet.\nTap "Add Metric" to get started!',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey),
+            style: DesignTokens.bodyMedium.copyWith(
+              color: DesignTokens.ink500,
+            ),
           ),
         ),
       );
@@ -361,41 +377,112 @@ class _MetricsCardState extends State<MetricsCard> {
         final hasNutritionData = metric['sodium_mg'] != null || metric['potassium_mg'] != null;
 
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 4),
+          margin: const EdgeInsets.symmetric(vertical: DesignTokens.space4),
           child: ListTile(
             title: Text(
               DateFormat('MMM dd, yyyy').format(date),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: DesignTokens.titleSmall.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (metric['weight_kg'] != null)
-                  Text('Weight: ${metric['weight_kg']} kg'),
-                if (metric['body_fat_percent'] != null)
-                  Text('Body Fat: ${metric['body_fat_percent']}%'),
-                if (metric['waist_cm'] != null)
-                  Text('Waist: ${metric['waist_cm']} cm'),
-                if (metric['notes'] != null && metric['notes'].toString().isNotEmpty)
-                  Text('Notes: ${metric['notes']}'),
+                if (metric['weight_kg'] != null) ...[
+                  Row(
+                    children: [
+                      // Label (smaller, softer)
+                      Text(
+                        'Weight: ',
+                        style: DesignTokens.labelMedium.copyWith(
+                          color: DesignTokens.ink500.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      // Value (bigger, heavier)
+                      Text(
+                        '${metric['weight_kg']} kg',
+                        style: DesignTokens.titleSmall.copyWith(
+                          color: DesignTokens.blue600,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (metric['body_fat_percent'] != null) ...[
+                  const SizedBox(height: DesignTokens.space4),
+                  Row(
+                    children: [
+                      Text(
+                        'Body Fat: ',
+                        style: DesignTokens.labelMedium.copyWith(
+                          color: DesignTokens.ink500.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      Text(
+                        '${metric['body_fat_percent']}%',
+                        style: DesignTokens.titleSmall.copyWith(
+                          color: DesignTokens.purple500,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (metric['waist_cm'] != null) ...[
+                  const SizedBox(height: DesignTokens.space4),
+                  Row(
+                    children: [
+                      Text(
+                        'Waist: ',
+                        style: DesignTokens.labelMedium.copyWith(
+                          color: DesignTokens.ink500.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      Text(
+                        '${metric['waist_cm']} cm',
+                        style: DesignTokens.titleSmall.copyWith(
+                          color: DesignTokens.success,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (metric['notes'] != null && metric['notes'].toString().isNotEmpty) ...[
+                  const SizedBox(height: DesignTokens.space4),
+                  Text(
+                    'Notes: ${metric['notes']}',
+                    style: DesignTokens.bodySmall.copyWith(
+                      color: DesignTokens.ink500,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
                 if (hasNutritionData) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DesignTokens.space4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DesignTokens.space8,
+                      vertical: DesignTokens.space4,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(4),
+                      color: DesignTokens.successBg,
+                      borderRadius: BorderRadius.circular(DesignTokens.radius4),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.restaurant_menu, size: 12),
-                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.restaurant_menu,
+                          size: 12,
+                          color: DesignTokens.success,
+                        ),
+                        const SizedBox(width: DesignTokens.space4),
                         Text(
                           'Minerals: ${metric['sodium_mg'] ?? 0}mg Na, ${metric['potassium_mg'] ?? 0}mg K',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.green.shade700,
+                          style: DesignTokens.labelSmall.copyWith(
+                            color: DesignTokens.success,
                           ),
                         ),
                       ],
@@ -405,7 +492,10 @@ class _MetricsCardState extends State<MetricsCard> {
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(
+                Icons.delete,
+                color: DesignTokens.danger,
+              ),
               onPressed: () => _deleteMetric(metric['id']),
             ),
           ),
@@ -418,8 +508,14 @@ class _MetricsCardState extends State<MetricsCard> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Metric'),
-        content: const Text('Are you sure you want to delete this metric entry?'),
+        title: const Text(
+          'Delete Metric',
+          style: DesignTokens.titleMedium,
+        ),
+        content: const Text(
+          'Are you sure you want to delete this metric entry?',
+          style: DesignTokens.bodyMedium,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -427,7 +523,9 @@ class _MetricsCardState extends State<MetricsCard> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignTokens.danger,
+            ),
             child: const Text('Delete'),
           ),
         ],
@@ -453,38 +551,62 @@ class _MetricsCardState extends State<MetricsCard> {
     }
   }
 
+  void _showShareOptions() {
+    final deltas = _calculateDeltas(widget.metrics);
+    final latest = widget.metrics.isNotEmpty ? widget.metrics.last : null;
+    
+    if (latest == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No progress data to share'),
+          backgroundColor: DesignTokens.warn,
+        ),
+      );
+      return;
+    }
+
+    final shareData = ShareDataModel(
+      title: 'Progress Update',
+      subtitle: 'Tracking my fitness journey',
+      metrics: {
+        if (latest['weight_kg'] != null) 'Weight': '${latest['weight_kg']} kg',
+        if (latest['body_fat_percent'] != null) 'Body Fat': '${latest['body_fat_percent']}%',
+        if (latest['waist_cm'] != null) 'Waist': '${latest['waist_cm']} cm',
+        if (deltas['weight'] != null) 'Weight Change': '${deltas['weight']!.toStringAsFixed(1)} kg',
+        if (deltas['body_fat'] != null) 'Body Fat Change': '${deltas['body_fat']!.toStringAsFixed(1)}%',
+      },
+      date: DateTime.parse(latest['date']),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SharePicker(data: shareData),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.trending_up, color: Colors.blue),
-                const SizedBox(width: 8),
-                const Text(
-                  'Progress Metrics',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                ElevatedButton.icon(
-                  onPressed: () => _showAddEntryForm(),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Entry'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ],
+    return GestureDetector(
+      onLongPress: _showShareOptions,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(DesignTokens.space16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+            SectionHeaderBar(
+              title: 'Progress Metrics',
+              leadingIcon: const Icon(
+                Icons.trending_up,
+                color: DesignTokens.blue600,
+              ),
+              actionLabel: 'Add Entry',
+              onAction: () => _showAddEntryForm(),
+              actionIcon: Icons.add,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: DesignTokens.space16),
             
             // Chart overlay toggles
             if (widget.metrics.length >= 2) ...[
@@ -496,39 +618,39 @@ class _MetricsCardState extends State<MetricsCard> {
                     onSelected: (selected) {
                       setState(() => _showSMA7 = selected);
                     },
-                    selectedColor: Colors.orange[100],
-                    checkmarkColor: Colors.orange[800],
+                    selectedColor: DesignTokens.warnBg,
+                    checkmarkColor: DesignTokens.warn,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: DesignTokens.space8),
                   FilterChip(
                     label: const Text('SMA30'),
                     selected: _showSMA30,
                     onSelected: (selected) {
                       setState(() => _showSMA30 = selected);
                     },
-                    selectedColor: Colors.green[100],
-                    checkmarkColor: Colors.green[800],
+                    selectedColor: DesignTokens.successBg,
+                    checkmarkColor: DesignTokens.success,
                   ),
                   const Spacer(),
                   if (_buildWeightFlag(widget.metrics) != null)
                     _buildWeightFlag(widget.metrics)!,
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
             ],
             
             _buildWeightChart(),
-            const SizedBox(height: 16),
-            const Text(
+            const SizedBox(height: DesignTokens.space16),
+            Text(
               'Recent Entries',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+              style: DesignTokens.titleSmall.copyWith(
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: DesignTokens.space8),
             _buildMetricsList(),
-          ],
+            ],
+          ),
         ),
       ),
     );

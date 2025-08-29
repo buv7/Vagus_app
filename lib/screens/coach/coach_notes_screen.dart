@@ -17,7 +17,7 @@ class _CoachNotesScreenState extends State<CoachNotesScreen> {
   bool _loading = true;
   List<Map<String, dynamic>> _notes = [];
   String _searchQuery = '';
-  List<String> _selectedTags = [];
+  final List<String> _selectedTags = [];
 
   @override
   void initState() {

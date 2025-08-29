@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../../components/common/section_header_bar.dart';
 import '../../services/progress/progress_service.dart';
+import 'package:intl/intl.dart';
 
 class CheckinsCard extends StatefulWidget {
   final String userId;
@@ -216,11 +217,11 @@ class _CheckinsCardState extends State<CheckinsCard> {
                       const SizedBox(height: 16),
                       const Divider(),
                       const SizedBox(height: 8),
-                      Row(
+                      const Row(
                         children: [
-                          const Icon(Icons.reply, size: 16, color: Colors.green),
-                          const SizedBox(width: 4),
-                          const Text(
+                          Icon(Icons.reply, size: 16, color: Colors.green),
+                          SizedBox(width: 4),
+                          Text(
                             'Coach Reply:',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -294,30 +295,14 @@ class _CheckinsCardState extends State<CheckinsCard> {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.chat_bubble_outline, color: Colors.purple),
-                const SizedBox(width: 8),
-                const Text(
-                  'Weekly Check-ins',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                ElevatedButton.icon(
-                  onPressed: _showCreateCheckinDialog,
-                  icon: const Icon(Icons.add),
-                  label: const Text('New Check-in'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ],
+            SectionHeaderBar(
+              title: 'Weekly Check-ins',
+              leadingIcon: const Icon(Icons.chat_bubble_outline, color: Colors.purple),
+              actionLabel: 'New Check-in',
+              onAction: _showCreateCheckinDialog,
+              actionIcon: Icons.add,
             ),
             const SizedBox(height: 16),
             _buildCheckinsList(),

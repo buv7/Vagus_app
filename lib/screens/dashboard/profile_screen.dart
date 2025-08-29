@@ -18,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final userId = supabase.auth.currentUser?.id;
 
     if (userId == null) {
-      _showMessage("User not signed in");
+      _showMessage('User not signed in');
       return;
     }
 
@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _loading = false;
       });
     } catch (e) {
-      _showMessage("Error loading profile: $e");
+      _showMessage('Error loading profile: $e');
       setState(() => _loading = false);
     }
   }
@@ -59,12 +59,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (_profile == null) {
       return const Scaffold(
-        body: Center(child: Text("No profile found.")),
+        body: Center(child: Text('No profile found.')),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Your Profile")),
+      appBar: AppBar(title: const Text('Your Profile')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(

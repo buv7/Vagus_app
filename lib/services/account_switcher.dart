@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -57,7 +56,7 @@ class AccountSwitcher {
   FlutterSecureStorage? _storage; // initialized on demand (not on web)
   Future<FlutterSecureStorage?> _getStorage() async {
     if (kIsWeb) return null; // not supported on web – fallback to SharedPreferences
-    _storage ??= FlutterSecureStorage();
+    _storage ??= const FlutterSecureStorage();
     return _storage;
   }
   final _accountsKey = 'secure:saved_accounts';

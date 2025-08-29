@@ -1,11 +1,16 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import '../../widgets/ai/ai_usage_meter.dart';
 import '../../widgets/ai/ai_usage_test_widget.dart';
 import 'upload_photos_screen.dart';
 import 'coach_file_feedback_screen.dart';
+import '../../theme/design_tokens.dart';
+
 
 /// File Manager Screen for VAGUS app
 /// Allows users to upload, view, and manage files
@@ -339,21 +344,20 @@ class _FileManagerScreenState extends State<FileManagerScreen> {
           Icon(
             Icons.folder_open,
             size: 64,
-            color: Colors.grey.shade400,
+            color: DesignTokens.ink500.withValues(alpha: 0.5),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DesignTokens.space16),
           Text(
             'No files found',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey.shade600,
+            style: DesignTokens.titleMedium.copyWith(
+              color: DesignTokens.ink700,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DesignTokens.space8),
           Text(
             'Upload your first file to get started',
-            style: TextStyle(
-              color: Colors.grey.shade500,
+            style: DesignTokens.bodyMedium.copyWith(
+              color: DesignTokens.ink500,
             ),
           ),
         ],
@@ -363,35 +367,86 @@ class _FileManagerScreenState extends State<FileManagerScreen> {
 
   Widget _buildFilesList() {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space16),
       itemCount: _filteredFiles.length,
       itemBuilder: (context, index) {
         final file = _filteredFiles[index];
+        final category = file['category'] ?? 'other';
+        final categoryColor = _getCategoryColor(category);
+        final categoryBgColor = _getCategoryBgColor(category);
+        
         return Card(
-          margin: const EdgeInsets.only(bottom: 8),
+          margin: const EdgeInsets.only(bottom: DesignTokens.space8),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+            side: const BorderSide(
+              color: DesignTokens.ink100,
+              width: 1,
+            ),
+          ),
           child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.grey.shade100,
+            contentPadding: const EdgeInsets.all(DesignTokens.space12),
+            leading: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: categoryBgColor,
+                borderRadius: BorderRadius.circular(DesignTokens.radius8),
+              ),
               child: Icon(
-                _getFileIcon(file['category']),
-                color: Colors.grey.shade600,
+                _getFileIcon(category),
+                color: categoryColor,
+                size: 24,
               ),
             ),
             title: Text(
               file['file_name'],
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+              style: DesignTokens.titleSmall.copyWith(
+                fontWeight: FontWeight.w600,
+                color: DesignTokens.ink900,
+              ),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _formatFileSize(file['file_size'] ?? 0),
-                  style: TextStyle(fontSize: 12),
+                const SizedBox(height: DesignTokens.space4),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: DesignTokens.space6,
+                        vertical: DesignTokens.space2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: categoryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DesignTokens.radius4),
+                      ),
+                      child: Text(
+                        category.toUpperCase(),
+                        style: DesignTokens.labelSmall.copyWith(
+                          color: categoryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: DesignTokens.space8),
+                    Text(
+                      _formatFileSize(file['file_size'] ?? 0),
+                      style: DesignTokens.labelSmall.copyWith(
+                        color: DesignTokens.ink500,
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: DesignTokens.space4),
                 Text(
-                  '${file['category']} • ${_formatDate(DateTime.parse(file['created_at']))}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  _formatDate(DateTime.parse(file['created_at'])),
+                  style: DesignTokens.labelSmall.copyWith(
+                    color: DesignTokens.ink500.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),
@@ -408,16 +463,6 @@ class _FileManagerScreenState extends State<FileManagerScreen> {
                   ),
                 ),
                 const PopupMenuItem(
-                  value: 'share',
-                  child: Row(
-                    children: [
-                      Icon(Icons.share),
-                      SizedBox(width: 8),
-                      Text('Share'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
                   value: 'delete',
                   child: Row(
                     children: [
@@ -429,51 +474,50 @@ class _FileManagerScreenState extends State<FileManagerScreen> {
                 ),
               ],
               onSelected: (value) {
-                switch (value) {
-                  case 'download':
-                    // TODO: Implement download functionality
-                    break;
-                  case 'share':
-                    // TODO: Implement share functionality
-                    break;
-                  case 'delete':
-                    _showDeleteConfirmation(file);
-                    break;
+                if (value == 'download') {
+                  _downloadFile(file);
+                } else if (value == 'delete') {
+                  _deleteFile(file['id']);
                 }
               },
             ),
-            onTap: () {
-              // TODO: Implement file preview/opening
-            },
           ),
         );
       },
     );
   }
 
-  void _showDeleteConfirmation(Map<String, dynamic> file) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete File'),
-        content: Text('Are you sure you want to delete "${file['file_name']}"? This action cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _deleteFile(file['id']);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'images':
+        return DesignTokens.success;
+      case 'videos':
+        return DesignTokens.info;
+      case 'documents':
+        return DesignTokens.warn;
+      case 'audio':
+        return DesignTokens.purple500;
+      default:
+        return DesignTokens.ink500;
+    }
   }
+
+  Color _getCategoryBgColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'images':
+        return DesignTokens.successBg;
+      case 'videos':
+        return DesignTokens.infoBg;
+      case 'documents':
+        return DesignTokens.warnBg;
+      case 'audio':
+        return DesignTokens.purple50;
+      default:
+        return DesignTokens.ink50;
+    }
+  }
+
+
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
@@ -488,5 +532,168 @@ class _FileManagerScreenState extends State<FileManagerScreen> {
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
+  }
+
+
+
+
+  Future<void> _downloadFile(Map<String, dynamic> file) async {
+    try {
+      final fileName = file['name'] as String;
+      final fileUrl = file['url'] as String?;
+      
+      if (fileUrl == null || fileUrl.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('File URL not available'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      // Show download progress dialog
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => DownloadProgressDialog(
+          fileName: fileName,
+          onDownload: () => unawaited(_performDownload(fileUrl, fileName)),
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Download failed: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _performDownload(String fileUrl, String fileName) async {
+    try {
+      // Get the application documents directory
+      final directory = await getApplicationDocumentsDirectory();
+      final downloadPath = '${directory.path}/$fileName';
+      
+      // Download the file
+      final response = await http.get(Uri.parse(fileUrl));
+      
+      if (response.statusCode == 200) {
+        // Save the file
+        final file = File(downloadPath);
+        await file.writeAsBytes(response.bodyBytes);
+        
+        if (mounted) {
+          Navigator.of(context).pop(); // Close progress dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ Downloaded to: $downloadPath'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 4),
+              action: SnackBarAction(
+                label: 'Open',
+                textColor: Colors.white,
+                onPressed: () {
+                  // TODO: Open file with appropriate app
+                  debugPrint('Would open file: $downloadPath');
+                },
+              ),
+            ),
+          );
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop(); // Close progress dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Download failed: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
+  }
+
+
+
+
+}
+
+/// Dialog showing download progress
+class DownloadProgressDialog extends StatefulWidget {
+  final String fileName;
+  final VoidCallback onDownload;
+
+  const DownloadProgressDialog({
+    super.key,
+    required this.fileName,
+    required this.onDownload,
+  });
+
+  @override
+  State<DownloadProgressDialog> createState() => _DownloadProgressDialogState();
+}
+
+class _DownloadProgressDialogState extends State<DownloadProgressDialog> {
+  final bool _downloading = false;
+  final double _progress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start download automatically
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onDownload();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Downloading File'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            widget.fileName,
+            style: DesignTokens.labelMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          if (_downloading) ...[
+            LinearProgressIndicator(
+              value: _progress,
+              backgroundColor: DesignTokens.ink100,
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                DesignTokens.blue600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Downloading... ${(_progress * 100).toInt()}%',
+              style: DesignTokens.labelSmall,
+            ),
+          ] else ...[
+            const CircularProgressIndicator(),
+            const SizedBox(height: 8),
+            const Text('Preparing download...'),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _downloading ? null : () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
   }
 }

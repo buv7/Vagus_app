@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 
@@ -31,12 +30,12 @@ class NotificationTestHelper {
           .eq('user_id', user.id)
           .single();
 
-      if (response == null || response['onesignal_id'] == null) {
+      if (response['onesignal_id'] == null) {
         debugPrint('❌ No OneSignal ID found for user (OneSignal disabled)');
         return false;
       }
 
-      final oneSignalId = response['onesignal_id'] as String;
+
 
       // Send notification via Supabase Edge Function
       final result = await supabase.functions.invoke(

@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart';
 
@@ -9,6 +10,7 @@ class Message {
   final String text;
   final List<Map<String, dynamic>> attachments;
   final String? replyTo;
+  final String? parentMessageId;
   final Map<String, String> reactions;
   final DateTime createdAt;
   final DateTime? editedAt;
@@ -22,6 +24,7 @@ class Message {
     required this.text,
     required this.attachments,
     this.replyTo,
+    this.parentMessageId,
     required this.reactions,
     required this.createdAt,
     this.editedAt,
@@ -37,6 +40,7 @@ class Message {
       text: map['text'] ?? '',
       attachments: List<Map<String, dynamic>>.from(map['attachments'] ?? []),
       replyTo: map['reply_to'],
+      parentMessageId: map['parent_message_id'],
       reactions: Map<String, String>.from(map['reactions'] ?? {}),
       createdAt: DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now(),
       editedAt: map['edited_at'] != null ? DateTime.tryParse(map['edited_at']) : null,
@@ -53,6 +57,7 @@ class Message {
       'text': text,
       'attachments': attachments,
       'reply_to': replyTo,
+      'parent_message_id': parentMessageId,
       'reactions': reactions,
       'created_at': createdAt.toIso8601String(),
       'edited_at': editedAt?.toIso8601String(),
@@ -68,6 +73,7 @@ class Message {
     String? text,
     List<Map<String, dynamic>>? attachments,
     String? replyTo,
+    String? parentMessageId,
     Map<String, String>? reactions,
     DateTime? createdAt,
     DateTime? editedAt,
@@ -81,6 +87,7 @@ class Message {
       text: text ?? this.text,
       attachments: attachments ?? this.attachments,
       replyTo: replyTo ?? this.replyTo,
+      parentMessageId: parentMessageId ?? this.parentMessageId,
       reactions: reactions ?? this.reactions,
       createdAt: createdAt ?? this.createdAt,
       editedAt: editedAt ?? this.editedAt,
@@ -280,7 +287,7 @@ class MessagesService {
       }
     } catch (e) {
       // Ignore typing indicator errors to avoid blocking chat
-      print('Typing indicator error: $e');
+      debugPrint('Typing indicator error: $e');
     }
   }
 
@@ -531,7 +538,7 @@ class MessagesService {
 
       // Create forwarded message
       final forwardedText = additionalText != null && additionalText.isNotEmpty
-          ? '${additionalText}\n\n--- Forwarded message ---\n${originalMessage['text']}'
+          ? '$additionalText\n\n--- Forwarded message ---\n${originalMessage['text']}'
           : '--- Forwarded message ---\n${originalMessage['text']}';
 
       await _supabase.from('messages').insert({
@@ -654,7 +661,7 @@ class MessagesService {
     String? attachmentType, // 'image', 'video', 'audio', 'document'
   }) async {
     try {
-      var queryBuilder = _supabase
+      final queryBuilder = _supabase
           .from('messages')
           .select('*')
           .eq('thread_id', threadId)
@@ -708,7 +715,7 @@ class MessagesService {
       }, onConflict: 'thread_id,user_id');
     } catch (e) {
       // Ignore draft save errors to avoid blocking chat
-      print('Draft save error: $e');
+      debugPrint('Draft save error: $e');
     }
   }
 
@@ -744,7 +751,236 @@ class MessagesService {
           .eq('user_id', user.id);
     } catch (e) {
       // Ignore draft clear errors
-      print('Draft clear error: $e');
+      debugPrint('Draft clear error: $e');
+    }
+  }
+
+  // ===== MESSAGING POLISH FEATURES =====
+
+  // Read receipts
+  Future<void> markConversationRead({required String threadId, required DateTime upTo}) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    try {
+      // Get unread messages up to the specified time
+      final unreadMessages = await _supabase
+          .from('messages')
+          .select('id')
+          .eq('thread_id', threadId)
+          .neq('sender_id', user.id)
+          .lte('created_at', upTo.toIso8601String())
+          .isFilter('deleted_at', null);
+
+      // Mark each message as read
+      for (final message in unreadMessages) {
+        await _supabase.from('message_reads').upsert({
+          'message_id': message['id'],
+          'reader_id': user.id,
+          'read_at': DateTime.now().toIso8601String(),
+        }, onConflict: 'message_id,reader_id');
+      }
+    } catch (e) {
+      throw Exception('Failed to mark conversation as read: $e');
+    }
+  }
+
+  Future<void> markMessageRead(String messageId) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    try {
+      await _supabase.from('message_reads').upsert({
+        'message_id': messageId,
+        'reader_id': user.id,
+        'read_at': DateTime.now().toIso8601String(),
+      }, onConflict: 'message_id,reader_id');
+    } catch (e) {
+      throw Exception('Failed to mark message as read: $e');
+    }
+  }
+
+  Stream<List<Map<String, dynamic>>> onReadReceipts(String threadId) {
+    return _supabase
+        .from('message_reads')
+        .stream(primaryKey: ['id'])
+        .eq('thread_id', threadId)
+        .map((event) => List<Map<String, dynamic>>.from(event));
+  }
+
+  Future<DateTime?> lastReadAtByOther(String threadId, String otherUserId) async {
+    try {
+      final response = await _supabase
+          .from('message_reads')
+          .select('read_at')
+          .eq('reader_id', otherUserId)
+          .order('read_at', ascending: false)
+          .limit(1)
+          .maybeSingle();
+
+      return response != null ? DateTime.tryParse(response['read_at']) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Pins
+  Future<void> pinMessage(String messageId) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    try {
+      await _supabase.from('message_pins').upsert({
+        'message_id': messageId,
+        'user_id': user.id,
+        'pinned_at': DateTime.now().toIso8601String(),
+      }, onConflict: 'message_id,user_id');
+    } catch (e) {
+      throw Exception('Failed to pin message: $e');
+    }
+  }
+
+  Future<void> unpinMessage(String messageId) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    try {
+      await _supabase
+          .from('message_pins')
+          .delete()
+          .eq('message_id', messageId)
+          .eq('user_id', user.id);
+    } catch (e) {
+      throw Exception('Failed to unpin message: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchPinned(String threadId) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return [];
+
+    try {
+      final response = await _supabase
+          .from('message_pins')
+          .select('*, message:messages(*)')
+          .eq('user_id', user.id)
+          .eq('message.thread_id', threadId)
+          .order('pinned_at', ascending: false);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // Threads
+  Future<String> sendReply({
+    required String threadId,
+    required String parentMessageId,
+    required String content,
+    List<Map<String, dynamic>>? attachments,
+  }) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    try {
+      final response = await _supabase.from('messages').insert({
+        'thread_id': threadId,
+        'sender_id': user.id,
+        'text': content,
+        'attachments': attachments ?? [],
+        'parent_message_id': parentMessageId,
+        'reactions': {},
+        'created_at': DateTime.now().toIso8601String(),
+      }).select('id').single();
+
+      // Update thread's last_message_at
+      await _supabase
+          .from('message_threads')
+          .update({'last_message_at': DateTime.now().toIso8601String()})
+          .eq('id', threadId);
+
+      return response['id'] as String;
+    } catch (e) {
+      throw Exception('Failed to send reply: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchThread(String parentMessageId) async {
+    try {
+      final response = await _supabase
+          .from('messages')
+          .select('*')
+          .eq('parent_message_id', parentMessageId)
+          .order('created_at');
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Stream<List<Map<String, dynamic>>> onThreadUpdates(String parentMessageId) {
+    return _supabase
+        .from('messages')
+        .stream(primaryKey: ['id'])
+        .eq('parent_message_id', parentMessageId)
+        .order('created_at')
+        .map((event) => List<Map<String, dynamic>>.from(event));
+  }
+
+  // Search
+  Future<List<Map<String, dynamic>>> searchLocal(String threadId, String query) async {
+    try {
+      final messages = await _supabase
+          .from('messages')
+          .select('*')
+          .eq('thread_id', threadId)
+          .isFilter('deleted_at', null)
+          .order('created_at', ascending: false)
+          .limit(100);
+
+      final filteredMessages = messages.where((message) {
+        final text = message['text']?.toString().toLowerCase() ?? '';
+        final senderName = message['sender_name']?.toString().toLowerCase() ?? '';
+        final attachments = message['attachments'] as List<dynamic>? ?? [];
+        
+        // Check text content
+        if (text.contains(query.toLowerCase())) return true;
+        
+        // Check sender name
+        if (senderName.contains(query.toLowerCase())) return true;
+        
+        // Check attachment filenames
+        for (final attachment in attachments) {
+          final fileName = attachment['name']?.toString().toLowerCase() ?? '';
+          if (fileName.contains(query.toLowerCase())) return true;
+        }
+        
+        return false;
+      }).toList();
+
+      return List<Map<String, dynamic>>.from(filteredMessages);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> searchServer(String threadId, String query) async {
+    try {
+      final response = await _supabase
+          .from('messages')
+          .select('*')
+          .eq('thread_id', threadId)
+          .isFilter('deleted_at', null)
+          .ilike('text', '%$query%')
+          .order('created_at', ascending: false)
+          .limit(100);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      // Fallback to local search if server search fails
+      return await searchLocal(threadId, query);
     }
   }
 }

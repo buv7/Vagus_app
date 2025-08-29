@@ -66,7 +66,7 @@ class NoteFilePicker extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("📎 Attachments", style: TextStyle(fontWeight: FontWeight.bold)),
+        const Text('📎 Attachments', style: TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Wrap(
           spacing: 12,

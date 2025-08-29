@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:csv/csv.dart';
@@ -6,7 +7,10 @@ import 'package:path_provider/path_provider.dart';
 
 import 'audit_log_screen.dart';
 import 'admin_analytics_screen.dart';
-import 'admin_approval_panel.dart';
+import 'ai_config_panel.dart';
+import 'user_manager_panel.dart';
+import 'coach_approval_panel.dart';
+import 'global_settings_panel.dart';
 import '../auth/login_screen.dart';
 
 class AdminScreen extends StatefulWidget {
@@ -78,7 +82,7 @@ class _AdminScreenState extends State<AdminScreen> {
       'changed_by': currentUser.id,
     });
 
-    _fetchUsers();
+    unawaited(_fetchUsers());
   }
 
   Future<void> _toggleDisabled(String userId, bool isDisabled) async {
@@ -87,7 +91,7 @@ class _AdminScreenState extends State<AdminScreen> {
         .update({'is_disabled': isDisabled})
         .eq('id', userId);
 
-    _fetchUsers();
+    unawaited(_fetchUsers());
   }
 
   Future<void> _exportToCSV() async {
@@ -125,7 +129,7 @@ class _AdminScreenState extends State<AdminScreen> {
   void _goToCoachApprovals() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const AdminApprovalPanel()),
+      MaterialPageRoute(builder: (_) => const CoachApprovalPanel()),
     );
   }
 
@@ -136,9 +140,31 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
+  void _goToUserManager() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const UserManagerPanel()),
+    );
+  }
+
+  void _goToAIConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AIConfigPanel()),
+    );
+  }
+
+  void _goToGlobalSettings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const GlobalSettingsPanel()),
+    );
+  }
+
   Future<void> _logout() async {
     await supabase.auth.signOut();
     if (!mounted) return;
+    // ignore: unawaited_futures
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -172,8 +198,13 @@ class _AdminScreenState extends State<AdminScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("🛠️ Admin: User Roles"),
+        title: const Text('🛠️ Admin: User Roles'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.people),
+            tooltip: 'User Manager',
+            onPressed: _goToUserManager,
+          ),
           IconButton(
             icon: const Icon(Icons.verified_user),
             tooltip: 'Coach Approvals',
@@ -190,6 +221,16 @@ class _AdminScreenState extends State<AdminScreen> {
             onPressed: _goToAuditLogs,
           ),
           IconButton(
+            icon: const Icon(Icons.psychology),
+            tooltip: 'AI Configuration',
+            onPressed: _goToAIConfig,
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Global Settings',
+            onPressed: _goToGlobalSettings,
+          ),
+          IconButton(
             icon: const Icon(Icons.download),
             tooltip: 'Export Users',
             onPressed: _loading ? null : _exportToCSV,
@@ -197,7 +238,7 @@ class _AdminScreenState extends State<AdminScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
-            onPressed: _logout,
+            onPressed: () => unawaited(_logout()),
           ),
         ],
       ),
@@ -210,7 +251,7 @@ class _AdminScreenState extends State<AdminScreen> {
             child: TextField(
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.search),
-                hintText: "Search by name or email",
+                hintText: 'Search by name or email',
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
@@ -223,7 +264,7 @@ class _AdminScreenState extends State<AdminScreen> {
           const SizedBox(height: 8),
           Expanded(
             child: _filteredUsers.isEmpty
-                ? const Center(child: Text("No users found."))
+                ? const Center(child: Text('No users found.'))
                 : ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: _filteredUsers.length,

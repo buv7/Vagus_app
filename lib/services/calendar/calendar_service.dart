@@ -1,6 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
-import 'package:postgrest/postgrest.dart';
 
 class CalendarEvent {
   final String id;
@@ -15,6 +14,7 @@ class CalendarEvent {
   final String? recurrenceRule;
   final String status;
   final List<Map<String, dynamic>> attachments;
+  final Map<String, dynamic>? metadata;
   final String createdBy;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -32,6 +32,7 @@ class CalendarEvent {
     this.recurrenceRule,
     required this.status,
     required this.attachments,
+    this.metadata,
     required this.createdBy,
     required this.createdAt,
     required this.updatedAt,
@@ -51,6 +52,7 @@ class CalendarEvent {
       recurrenceRule: map['recurrence_rule'],
       status: map['status'],
       attachments: List<Map<String, dynamic>>.from(map['attachments'] ?? []),
+      metadata: map['metadata'] != null ? Map<String, dynamic>.from(map['metadata']) : null,
       createdBy: map['created_by'],
       createdAt: DateTime.parse(map['created_at']),
       updatedAt: DateTime.parse(map['updated_at']),
@@ -71,6 +73,7 @@ class CalendarEvent {
       'recurrence_rule': recurrenceRule,
       'status': status,
       'attachments': attachments,
+      'metadata': metadata,
       'created_by': createdBy,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -88,6 +91,7 @@ class CalendarEventDraft {
   final DateTime endAt;
   final String? timezone;
   final String? recurrenceRule;
+  final Map<String, dynamic>? metadata;
 
   CalendarEventDraft({
     this.coachId,
@@ -99,6 +103,7 @@ class CalendarEventDraft {
     required this.endAt,
     this.timezone,
     this.recurrenceRule,
+    this.metadata,
   });
 }
 
@@ -110,6 +115,7 @@ class CalendarEventInstance {
   final String? description;
   final String? location;
   final String status;
+  final CalendarEvent originalEvent;
 
   CalendarEventInstance({
     required this.eventId,
@@ -119,6 +125,7 @@ class CalendarEventInstance {
     this.description,
     this.location,
     required this.status,
+    required this.originalEvent,
   });
 }
 
@@ -357,23 +364,48 @@ class CalendarService {
     }
   }
 
-  List<CalendarEventInstance> expandRecurrence(
+  Future<List<CalendarEventInstance>> expandRecurrence(
     CalendarEvent base,
     DateTime start,
     DateTime end,
-  ) {
+  ) async {
+    return await _expandRecurrenceWithOverrides(base, start, end);
+  }
+
+  /// Expand recurrence with overrides applied
+  Future<List<CalendarEventInstance>> _expandRecurrenceWithOverrides(
+    CalendarEvent base,
+    DateTime start,
+    DateTime end,
+  ) async {
+    // Load overrides once per base event
+    final overrides = await listOverrides(base.id);
+    
     if (base.recurrenceRule == null || base.recurrenceRule!.isEmpty) {
       // Single event
       if (base.startAt.isAfter(start) && base.startAt.isBefore(end)) {
+        final baseEventMap = base.toMap();
+        final mergedEvent = applyOverridesToOccurrence(
+          baseEvent: baseEventMap,
+          occurDate: base.startAt,
+          overrides: overrides,
+        );
+        
+        // Skip if cancelled
+        if (mergedEvent['cancelled'] == true) {
+          return [];
+        }
+        
         return [
           CalendarEventInstance(
             eventId: base.id,
-            startAt: base.startAt,
-            endAt: base.endAt,
-            title: base.title,
-            description: base.description,
-            location: base.location,
-            status: base.status,
+            startAt: DateTime.parse(mergedEvent['start_at']),
+            endAt: DateTime.parse(mergedEvent['end_at']),
+            title: mergedEvent['title'],
+            description: mergedEvent['description'],
+            location: mergedEvent['location'],
+            status: mergedEvent['status'],
+            originalEvent: base,
           ),
         ];
       }
@@ -386,21 +418,53 @@ class CalendarService {
     if (rule == null) return [];
 
     DateTime currentStart = base.startAt;
-    DateTime currentEnd = base.endAt;
-    final duration = base.endAt.difference(base.startAt);
     int count = 0;
     const maxInstances = 300;
 
     while (currentStart.isBefore(end) && count < maxInstances) {
       if (currentStart.isAfter(start)) {
+        final baseEventMap = base.toMap();
+        final mergedEvent = applyOverridesToOccurrence(
+          baseEvent: baseEventMap,
+          occurDate: currentStart,
+          overrides: overrides,
+        );
+        
+        // Skip if cancelled
+        if (mergedEvent['cancelled'] == true) {
+          // Continue to next occurrence
+          count++;
+          switch (rule['freq']) {
+            case 'DAILY':
+              currentStart = currentStart.add(const Duration(days: 1));
+              break;
+            case 'WEEKLY':
+              currentStart = currentStart.add(const Duration(days: 7));
+              break;
+            case 'MONTHLY':
+              currentStart = DateTime(
+                currentStart.year,
+                currentStart.month + 1,
+                currentStart.day,
+                currentStart.hour,
+                currentStart.minute,
+              );
+              break;
+            default:
+              return instances;
+          }
+          continue;
+        }
+        
         instances.add(CalendarEventInstance(
           eventId: base.id,
-          startAt: currentStart,
-          endAt: currentEnd,
-          title: base.title,
-          description: base.description,
-          location: base.location,
-          status: base.status,
+          startAt: DateTime.parse(mergedEvent['start_at']),
+          endAt: DateTime.parse(mergedEvent['end_at']),
+          title: mergedEvent['title'],
+          description: mergedEvent['description'],
+          location: mergedEvent['location'],
+          status: mergedEvent['status'],
+          originalEvent: base,
         ));
       }
 
@@ -425,7 +489,6 @@ class CalendarService {
           return instances;
       }
 
-      currentEnd = currentStart.add(duration);
       count++;
 
       // Check UNTIL condition
@@ -460,6 +523,261 @@ class CalendarService {
     } catch (e) {
       return null;
     }
+  }
+
+  // === Calendar Polish v1.1 Extensions ===
+
+  /// Set attendee status for an event
+  Future<void> setAttendeeStatus(String eventId, String status) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      await _supabase.from('calendar_attendees').upsert({
+        'event_id': eventId,
+        'user_id': user.id,
+        'status': status,
+        'responded_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      throw Exception('Failed to set attendee status: $e');
+    }
+  }
+
+  /// List attendees for an event
+  Future<List<Map<String, dynamic>>> listAttendees(String eventId) async {
+    try {
+      final response = await _supabase
+          .from('calendar_attendees')
+          .select('*, profiles!user_id(email, first_name, last_name)')
+          .eq('event_id', eventId);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to list attendees: $e');
+    }
+  }
+
+  /// Upsert booking policy for a coach
+  Future<void> upsertBookingPolicy(Map<String, dynamic> policyJson) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      final policy = Map<String, dynamic>.from(policyJson);
+      policy['coach_id'] = user.id;
+      policy['updated_at'] = DateTime.now().toIso8601String();
+
+      await _supabase.from('booking_policies').upsert(policy);
+    } catch (e) {
+      throw Exception('Failed to upsert booking policy: $e');
+    }
+  }
+
+  /// Get booking policy for a coach
+  Future<Map<String, dynamic>?> getBookingPolicy(String coachId) async {
+    try {
+      final response = await _supabase
+          .from('booking_policies')
+          .select()
+          .eq('coach_id', coachId)
+          .maybeSingle();
+
+      return response;
+    } catch (e) {
+      throw Exception('Failed to get booking policy: $e');
+    }
+  }
+
+  /// Upsert event override (for recurring events)
+  Future<void> upsertOverride({
+    required String eventId,
+    required DateTime occurDate,
+    required Map<String, dynamic> overrideJson,
+    String scope = 'single',
+  }) async {
+    try {
+      final override = Map<String, dynamic>.from(overrideJson);
+      
+              await _supabase.from('calendar_event_overrides').upsert({
+        'event_id': eventId,
+        'occur_date': occurDate.toIso8601String().split('T')[0], // Date only
+        'override': override,
+        'scope': scope,
+      });
+    } catch (e) {
+      throw Exception('Failed to upsert override: $e');
+    }
+  }
+
+  /// List overrides for an event
+  Future<List<Map<String, dynamic>>> listOverrides(String eventId) async {
+    try {
+      final response = await _supabase
+          .from('calendar_event_overrides')
+          .select()
+          .eq('event_id', eventId)
+          .order('occur_date');
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to list overrides: $e');
+    }
+  }
+
+  /// Set custom reminders for an event (minute offsets)
+  Future<void> setReminders(String eventId, List<int> offsetsMin) async {
+    try {
+      await _supabase.from('calendar_events').update({
+        'reminders': offsetsMin,
+      }).eq('id', eventId);
+    } catch (e) {
+      throw Exception('Failed to set reminders: $e');
+    }
+  }
+
+  /// Add attendee to event
+  Future<void> addAttendee(String eventId, String userId, {String role = 'participant'}) async {
+    try {
+      await _supabase.from('calendar_attendees').upsert({
+        'event_id': eventId,
+        'user_id': userId,
+        'role': role,
+        'status': 'invited',
+      });
+    } catch (e) {
+      throw Exception('Failed to add attendee: $e');
+    }
+  }
+
+  /// Remove attendee from event
+  Future<void> removeAttendee(String eventId, String userId) async {
+    try {
+      await _supabase
+          .from('calendar_attendees')
+          .delete()
+          .eq('event_id', eventId)
+          .eq('user_id', userId);
+    } catch (e) {
+      throw Exception('Failed to remove attendee: $e');
+    }
+  }
+
+  // === Calendar v1.2: Recurrence Scopes & Overrides ===
+
+  /// Delete series (non-destructive: create a 'following' override with cancelled=true)
+  Future<void> deleteSeries({required String eventId}) async {
+    try {
+      final tomorrow = DateTime.now().add(const Duration(days: 1));
+      await upsertOverride(
+        eventId: eventId,
+        occurDate: tomorrow,
+        overrideJson: {'cancelled': true},
+        scope: 'following',
+      );
+    } catch (e) {
+      throw Exception('Failed to delete series: $e');
+    }
+  }
+
+  /// Merge an event occurrence with applicable overrides
+  Map<String, dynamic> applyOverridesToOccurrence({
+    required Map<String, dynamic> baseEvent,
+    required DateTime occurDate,
+    required List<Map<String, dynamic>> overrides,
+  }) {
+    final result = Map<String, dynamic>.from(baseEvent);
+    
+    // Apply 'following' overrides first (if occurDate >= override date)
+    for (final override in overrides) {
+      if (override['scope'] == 'following') {
+        final overrideDate = DateTime.parse(override['occur_date']);
+        if (occurDate.isAfter(overrideDate) || occurDate.isAtSameMomentAs(overrideDate)) {
+          result.addAll(Map<String, dynamic>.from(override['override']));
+        }
+      }
+    }
+    
+    // Apply 'single' override last (if exact date match)
+    for (final override in overrides) {
+      if (override['scope'] == 'single') {
+        final overrideDate = DateTime.parse(override['occur_date']);
+        if (occurDate.year == overrideDate.year &&
+            occurDate.month == overrideDate.month &&
+            occurDate.day == overrideDate.day) {
+          result.addAll(Map<String, dynamic>.from(override['override']));
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  /// Scoped edit helpers
+  Future<void> editOccurrenceSingle({
+    required String eventId,
+    required DateTime occurDate,
+    required Map<String, dynamic> changes,
+  }) async {
+    await upsertOverride(
+      eventId: eventId,
+      occurDate: occurDate,
+      overrideJson: changes,
+      scope: 'single',
+    );
+  }
+
+  Future<void> editOccurrenceFollowing({
+    required String eventId,
+    required DateTime occurDate,
+    required Map<String, dynamic> changes,
+  }) async {
+    await upsertOverride(
+      eventId: eventId,
+      occurDate: occurDate,
+      overrideJson: changes,
+      scope: 'following',
+    );
+  }
+
+  Future<void> editSeries({
+    required String eventId,
+    required Map<String, dynamic> changes,
+  }) async {
+    try {
+      await _supabase.from('calendar_events').update(changes).eq('id', eventId);
+    } catch (e) {
+      throw Exception('Failed to edit series: $e');
+    }
+  }
+
+  /// Scoped delete helpers
+  Future<void> deleteOccurrenceSingle({
+    required String eventId,
+    required DateTime occurDate,
+  }) async {
+    await upsertOverride(
+      eventId: eventId,
+      occurDate: occurDate,
+      overrideJson: {'cancelled': true},
+      scope: 'single',
+    );
+  }
+
+  Future<void> deleteOccurrenceFollowing({
+    required String eventId,
+    required DateTime occurDate,
+  }) async {
+    await upsertOverride(
+      eventId: eventId,
+      occurDate: occurDate,
+      overrideJson: {'cancelled': true},
+      scope: 'following',
+    );
+  }
+
+  Future<void> deleteSeriesSoft({required String eventId}) async {
+    await deleteSeries(eventId: eventId);
   }
 }
 

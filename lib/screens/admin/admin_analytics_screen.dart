@@ -38,7 +38,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("📊 Analytics")),
+      appBar: AppBar(title: const Text('📊 Analytics')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -47,7 +47,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
           child: Column(
             children: [
               Text(
-                "Total Users: $total",
+                'Total Users: $total',
                 style: const TextStyle(
                     fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -69,7 +69,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("👥 Users by Role", style: TextStyle(fontSize: 16)),
+        const Text('👥 Users by Role', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 12),
         SizedBox(
           height: 200,
@@ -78,7 +78,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
               alignment: BarChartAlignment.spaceAround,
               maxY: (data.reduce((a, b) => a > b ? a : b) + 2),
               titlesData: FlTitlesData(
-                leftTitles: AxisTitles(
+                leftTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: true, reservedSize: 32)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
@@ -122,7 +122,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("🚦 Active vs Disabled", style: TextStyle(fontSize: 16)),
+        const Text('🚦 Active vs Disabled', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 12),
         SizedBox(
           height: 200,
@@ -134,7 +134,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
                 PieChartSectionData(
                   color: Colors.green,
                   value: active.toDouble(),
-                  title: "Active\n$active",
+                  title: 'Active\n$active',
                   radius: 60,
                   titleStyle: const TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
@@ -142,7 +142,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen> {
                 PieChartSectionData(
                   color: Colors.red,
                   value: disabled.toDouble(),
-                  title: "Disabled\n$disabled",
+                  title: 'Disabled\n$disabled',
                   radius: 60,
                   titleStyle: const TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),

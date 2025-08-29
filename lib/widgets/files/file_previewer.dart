@@ -214,7 +214,7 @@ class _FilePreviewerState extends State<FilePreviewer> {
             if (!_isPlaying)
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
@@ -268,7 +268,7 @@ class _FilePreviewerState extends State<FilePreviewer> {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.audiotrack,
                 color: Colors.orange,
                 size: 32,
@@ -511,7 +511,7 @@ class _FilePreviewerState extends State<FilePreviewer> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(20),
       ),
       child: IconButton(

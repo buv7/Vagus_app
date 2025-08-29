@@ -146,7 +146,7 @@ class CoachNotesService {
     final user = _supabase.auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
 
-    var request = _supabase
+    final request = _supabase
         .from('coach_notes')
         .select()
         .eq('coach_id', user.id)

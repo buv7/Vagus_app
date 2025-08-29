@@ -41,13 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
         _storedUserEmail = storedEmail;
       });
     } catch (e) {
-      print('Failed to check biometric availability: $e');
+      debugPrint('Failed to check biometric availability: $e');
     }
   }
 
   Future<void> _authenticateWithBiometrics() async {
     if (!_biometricAvailable || !_biometricEnabled) {
-      _showMessage("Biometric login is not available or not enabled.");
+      _showMessage('Biometric login is not available or not enabled.');
       return;
     }
 
@@ -64,12 +64,12 @@ class _LoginScreenState extends State<LoginScreen> {
         
         _showPasswordDialog();
       } else if (!authenticated) {
-        _showMessage("Biometric authentication failed. Please use your password.");
+        _showMessage('Biometric authentication failed. Please use your password.');
       } else {
-        _showMessage("No stored credentials found. Please log in manually.");
+        _showMessage('No stored credentials found. Please log in manually.');
       }
     } catch (e) {
-      _showMessage("Biometric authentication error: ${e.toString()}");
+      _showMessage('Biometric authentication error: ${e.toString()}');
     }
   }
 
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Welcome back! Please enter your password to complete login.'),
+              const Text('Welcome back! Please enter your password to complete login.'),
               const SizedBox(height: 16),
               TextField(
                 controller: passwordController,
@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       
       if (response.user == null) {
-        _showMessage("Login failed. Check your password.");
+        _showMessage('Login failed. Check your password.');
         return;
       } else {
         // Capture account after successful sign-in
@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } catch (e) {
-      _showMessage("Error: ${e.toString()}");
+      _showMessage('Error: ${e.toString()}');
     }
     setState(() => _loading = false);
   }
@@ -175,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text.trim(),
       );
       if (response.user == null) {
-        _showMessage("Login failed. Check your credentials.");
+        _showMessage('Login failed. Check your credentials.');
         return;
       }
       
@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } catch (e) {
-      _showMessage("Error: ${e.toString()}");
+      _showMessage('Error: ${e.toString()}');
     }
     setState(() => _loading = false);
   }
@@ -222,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await _checkBiometricAvailability();
       }
     } catch (e) {
-      print('Error showing biometric setup dialog: $e');
+      debugPrint('Error showing biometric setup dialog: $e');
     }
   }
 
@@ -233,26 +233,26 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Sign in to VAGUS",
+              'Sign in to VAGUS',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             const SizedBox(height: 8),
@@ -264,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextButton.icon(
                     onPressed: _authenticateWithBiometrics,
                     icon: const Icon(Icons.fingerprint),
-                    label: const Text("Use biometrics"),
+                    label: const Text('Use biometrics'),
                   )
                 else
                   const SizedBox.shrink(),
@@ -276,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       MaterialPageRoute(builder: (_) => const PasswordResetScreen()),
                     );
                   },
-                  child: const Text("Forgot Password?"),
+                  child: const Text('Forgot Password?'),
                 ),
               ],
             ),
@@ -285,7 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: _loading ? null : _signIn,
               child: _loading
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text("Sign In"),
+                  : const Text('Sign In'),
             ),
             const SizedBox(height: 16),
             TextButton(

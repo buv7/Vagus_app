@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../auth/device_list_screen.dart';
 import '../auth/become_coach_screen.dart';
+import '../billing/billing_settings.dart';
+import '../settings/user_settings_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -43,15 +45,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .eq('id', user.id)
         .single();
 
-    if (response != null) {
-      _nameController.text = response['name'] ?? '';
-      _avatarUrl = response['avatar_url'] ?? '';
-      _bioController.text = response['bio'] ?? '';
-      _locationController.text = response['location'] ?? '';
-      _role = response['role'] ?? 'client';
-      _isAdmin = _role == 'admin';
-    }
-
+    _nameController.text = response['name'] ?? '';
+    _avatarUrl = response['avatar_url'] ?? '';
+    _bioController.text = response['bio'] ?? '';
+    _locationController.text = response['location'] ?? '';
+    _role = response['role'] ?? 'client';
+    _isAdmin = _role == 'admin';
+  
     setState(() => _loading = false);
   }
 
@@ -66,7 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return null;
 
-    final filename = "${userId}_${const Uuid().v4()}.jpg";
+    final filename = '${userId}_${const Uuid().v4()}.jpg';
     final bytes = await file.readAsBytes();
 
     // 🗑 Step 1: delete old file if exists
@@ -81,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
 
     // 💾 Step 2: upload new avatar
-    final response = await supabase.storage
+    await supabase.storage
         .from('avatars')
         .uploadBinary(
       filename,
@@ -123,6 +123,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
 
     await supabase.from('profiles').update(updates).eq('id', user.id);
+    if (!mounted) return;
 
     Navigator.pop(context, true);
   }
@@ -149,7 +150,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Profile")),
+      appBar: AppBar(title: const Text('Edit Profile')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -161,12 +162,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: _avatarPreview(),
             ),
             const SizedBox(height: 12),
-            const Text("Tap image to change avatar"),
+            const Text('Tap image to change avatar'),
             const SizedBox(height: 24),
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: "Your Name",
+                labelText: 'Your Name',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -174,7 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             TextField(
               controller: _bioController,
               decoration: const InputDecoration(
-                labelText: "Bio",
+                labelText: 'Bio',
                 border: OutlineInputBorder(),
               ),
               maxLines: 2,
@@ -183,7 +184,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             TextField(
               controller: _locationController,
               decoration: const InputDecoration(
-                labelText: "Location",
+                labelText: 'Location',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -199,7 +200,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ? (val) => setState(() => _role = val!)
                   : null,
               decoration: const InputDecoration(
-                labelText: "Role",
+                labelText: 'Role',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -207,7 +208,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const Padding(
                 padding: EdgeInsets.only(top: 4),
                 child: Text(
-                  "Only admins can change roles.",
+                  'Only admins can change roles.',
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),
@@ -217,7 +218,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const Divider(),
             const SizedBox(height: 16),
             const Text(
-              "🔐 Security Settings",
+              '🔐 Security Settings',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -225,8 +226,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             // Device Management
             ListTile(
               leading: const Icon(Icons.devices_other),
-              title: const Text("Manage devices"),
-              subtitle: const Text("View and manage your signed-in devices"),
+              title: const Text('Manage devices'),
+              subtitle: const Text('View and manage your signed-in devices'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.push(
@@ -238,12 +239,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               },
             ),
             
+            // Billing & Upgrade
+            ListTile(
+              leading: const Icon(Icons.credit_card),
+              title: const Text('Billing & Upgrade'),
+              subtitle: const Text('Manage your subscription and billing'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BillingSettings(),
+                  ),
+                );
+              },
+            ),
+            
+            // Settings
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              subtitle: const Text('Theme, language, and reminder preferences'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const UserSettingsScreen(),
+                  ),
+                );
+              },
+            ),
+            
             // Coach Application (only for clients)
             if (_role == 'client')
               ListTile(
                 leading: const Icon(Icons.sports_gymnastics),
-                title: const Text("Apply to become a Coach"),
-                subtitle: const Text("Submit your coaching application"),
+                title: const Text('Apply to become a Coach'),
+                subtitle: const Text('Submit your coaching application'),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   Navigator.push(
@@ -259,7 +292,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ElevatedButton.icon(
               onPressed: _saveProfile,
               icon: const Icon(Icons.save),
-              label: const Text("Save Changes"),
+              label: const Text('Save Changes'),
             ),
           ],
         ),

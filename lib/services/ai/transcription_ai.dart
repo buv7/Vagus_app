@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../billing/plan_access_manager.dart';
 
 class TranscriptionAI {
   static const String _configKey = 'TRANSCRIPTION_ENDPOINT';
@@ -16,6 +17,12 @@ class TranscriptionAI {
     String? languageHint,
   }) async {
     try {
+      // AI gating check
+      final remaining = await PlanAccessManager.instance.remainingAICalls();
+      if (remaining <= 0) {
+        throw Exception('AI quota exceeded. Please upgrade your plan or try again later.');
+      }
+
       // Get the transcription endpoint from environment or use default
       final endpoint = await _getTranscriptionEndpoint();
       

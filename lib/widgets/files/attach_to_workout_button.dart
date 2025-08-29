@@ -64,7 +64,7 @@ class _AttachToWorkoutButtonState extends State<AttachToWorkoutButton> {
         ],
 
         // Attach button
-        Container(
+        SizedBox(
           width: widget.width,
           height: widget.height,
           child: InkWell(
@@ -79,7 +79,7 @@ class _AttachToWorkoutButtonState extends State<AttachToWorkoutButton> {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.fitness_center,
                     color: Colors.orange,
                   ),
@@ -90,7 +90,7 @@ class _AttachToWorkoutButtonState extends State<AttachToWorkoutButton> {
                       children: [
                         Text(
                           widget.hint ?? _getDefaultHint(),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.w500,
                           ),
@@ -178,7 +178,7 @@ class _AttachToWorkoutButtonState extends State<AttachToWorkoutButton> {
         children: [
           // File icon
           CircleAvatar(
-            backgroundColor: _getFileColor(category).withOpacity(0.1),
+            backgroundColor: _getFileColor(category).withValues(alpha: 0.1),
             child: Icon(
               _getFileIcon(category),
               color: _getFileColor(category),

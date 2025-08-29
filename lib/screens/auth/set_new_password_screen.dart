@@ -75,7 +75,7 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Set New Password")),
+      appBar: AppBar(title: const Text('Set New Password')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -84,12 +84,12 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "Set your new password",
+                'Set your new password',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               const Text(
-                "Enter your new password below.",
+                'Enter your new password below.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),
@@ -97,7 +97,7 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
-                  labelText: "New Password",
+                  labelText: 'New Password',
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -118,7 +118,7 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
               TextFormField(
                 controller: _confirmPasswordController,
                 decoration: InputDecoration(
-                  labelText: "Confirm New Password",
+                  labelText: 'Confirm New Password',
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -142,7 +142,7 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                   onPressed: _loading ? null : _updatePassword,
                   child: _loading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Update Password"),
+                      : const Text('Update Password'),
                 ),
               ),
             ],

@@ -1,5 +1,6 @@
 import '../../models/nutrition/nutrition_plan.dart';
-import 'dart:convert';
+
+import '../billing/plan_access_manager.dart';
 
 class NutritionAI {
   // Simplified AI service for now - can be enhanced later with real AI integration
@@ -691,6 +692,12 @@ class NutritionAI {
 
   /// Auto-fill food items from text input
   Future<List<FoodItem>> autoFillFromText(String text, {String locale = 'en'}) async {
+    // AI gating check
+    final remaining = await PlanAccessManager.instance.remainingAICalls();
+    if (remaining <= 0) {
+      throw Exception('AI quota exceeded. Please upgrade your plan or try again later.');
+    }
+
     // Check cache first
     final cacheKey = 'nutrition_autofill_${text.hashCode}_$locale';
     final cached = _cache[cacheKey];
@@ -911,7 +918,6 @@ class NutritionAI {
     if (menaFoodData != null) {
       // Calculate the required weight to achieve target macros
       double requiredWeight = 100.0; // Default to 100g
-      String weightDescription = '100g';
 
       // Find the limiting macro (the one that requires the most weight)
       final baseProtein = (menaFoodData['protein'] as num?)?.toDouble() ?? 0.0;
@@ -922,7 +928,6 @@ class NutritionAI {
         final proteinWeight = (targetMacros['protein']! / baseProtein) * 100;
         if (proteinWeight > requiredWeight) {
           requiredWeight = proteinWeight;
-          weightDescription = '${requiredWeight.round()}g';
         }
       }
 
@@ -930,7 +935,6 @@ class NutritionAI {
         final carbsWeight = (targetMacros['carbs']! / baseCarbs) * 100;
         if (carbsWeight > requiredWeight) {
           requiredWeight = carbsWeight;
-          weightDescription = '${requiredWeight.round()}g';
         }
       }
 
@@ -938,7 +942,6 @@ class NutritionAI {
         final fatWeight = (targetMacros['fat']! / baseFat) * 100;
         if (fatWeight > requiredWeight) {
           requiredWeight = fatWeight;
-          weightDescription = '${requiredWeight.round()}g';
         }
       }
 
@@ -976,7 +979,6 @@ class NutritionAI {
 
     // Calculate the required weight to achieve target macros
     double requiredWeight = 100.0; // Default to 100g
-    String weightDescription = '100g';
 
     // Find the limiting macro (the one that requires the most weight)
     final baseProtein = baseNutrition['protein'] ?? 0.0;
@@ -987,7 +989,6 @@ class NutritionAI {
       final proteinWeight = (targetMacros['protein']! / baseProtein) * 100;
       if (proteinWeight > requiredWeight) {
         requiredWeight = proteinWeight;
-        weightDescription = '${requiredWeight.round()}g';
       }
     }
 
@@ -995,7 +996,6 @@ class NutritionAI {
       final carbsWeight = (targetMacros['carbs']! / baseCarbs) * 100;
       if (carbsWeight > requiredWeight) {
         requiredWeight = carbsWeight;
-        weightDescription = '${requiredWeight.round()}g';
       }
     }
 
@@ -1003,7 +1003,6 @@ class NutritionAI {
       final fatWeight = (targetMacros['fat']! / baseFat) * 100;
       if (fatWeight > requiredWeight) {
         requiredWeight = fatWeight;
-        weightDescription = '${requiredWeight.round()}g';
       }
     }
 
@@ -1016,7 +1015,7 @@ class NutritionAI {
 
     // Create the food item with calculated weight and macros
     items.add(FoodItem(
-      name: '$foodName $weightDescription',
+              name: '$foodName (${requiredWeight.round()}g)',
       amount: requiredWeight.round().toDouble(),
       protein: actualProtein,
       carbs: actualCarbs,
@@ -1260,7 +1259,6 @@ class NutritionAI {
     final protein = targets['protein'] ?? 160;
     final carbs = targets['carbs'] ?? 140;
     final fat = targets['fat'] ?? 50;
-    final kcal = targets['kcal'] ?? 1860;
 
     // Smart distribution based on meal count
     final distribution = _getMealDistribution(mealCount);

@@ -36,7 +36,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       );
       
       _showMessage(
-        "Check your email for reset link",
+        'Check your email for reset link',
         isError: false,
       );
       
@@ -47,7 +47,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         }
       });
     } catch (e) {
-      _showMessage("Error: ${e.toString()}");
+      _showMessage('Error: ${e.toString()}');
     }
     setState(() => _loading = false);
   }
@@ -64,7 +64,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Reset Password")),
+      appBar: AppBar(title: const Text('Reset Password')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -73,7 +73,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "Reset your password",
+                'Reset your password',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -86,7 +86,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: "Email",
+                  labelText: 'Email',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -100,7 +100,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   onPressed: _loading ? null : _resetPassword,
                   child: _loading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Send Reset Link"),
+                      : const Text('Send Reset Link'),
                 ),
               ),
               const SizedBox(height: 16),
@@ -108,7 +108,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                 onPressed: _loading ? null : () {
                   Navigator.of(context).pop();
                 },
-                child: const Text("Back to Login"),
+                child: const Text('Back to Login'),
               ),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../screens/billing/upgrade_screen.dart';
 
 /// AI Usage Meter widget that displays AI usage statistics for the current user
 /// Shows usage count, limits, and remaining quota
@@ -269,6 +270,30 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                     ],
                   ),
                 ),
+                // Upgrade button when remaining is low
+                if (remainingRequests <= (monthlyLimit * 0.1) || remainingRequests == 0) ...[
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const UpgradeScreen()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      'Upgrade',
+                      style: TextStyle(
+                        fontSize: widget.isCompact ? 10 : 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.amber.shade700,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
             

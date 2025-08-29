@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 
@@ -30,46 +29,7 @@ class OneSignalService {
     }
   }
 
-  /// Set up notification event handlers
-  void _setupNotificationHandlers() {
-    // OneSignal dependency removed - stub implementation
-    debugPrint('⚠️ OneSignal notification handlers disabled');
-  }
 
-  /// Handle notification tap and route to appropriate screen
-  void _handleNotificationTap(dynamic notification) {
-    // OneSignal dependency removed - stub implementation
-    debugPrint('⚠️ OneSignal notification handling disabled');
-  }
-
-  /// Navigate to a specific route
-  void _navigateToRoute(String route, {String? id}) {
-    // OneSignal dependency removed - stub implementation
-    debugPrint('⚠️ OneSignal navigation disabled');
-  }
-
-  /// Navigate to a specific screen
-  void _navigateToScreen(String screen, {String? id}) {
-    // OneSignal dependency removed - stub implementation
-    debugPrint('⚠️ OneSignal navigation disabled');
-  }
-
-  /// Register current device with Supabase
-  Future<void> _registerDevice() async {
-    // OneSignal dependency removed - stub implementation
-    debugPrint('⚠️ OneSignal device registration disabled');
-  }
-
-  /// Get current platform
-  String _getPlatform() {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'android';
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return 'ios';
-    } else {
-      return 'web';
-    }
-  }
 
   /// Public helper to subscribe to server-driven topics (optional).
   Future<void> subscribeToTopic(String topic) async {

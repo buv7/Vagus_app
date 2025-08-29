@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../services/progress/progress_service.dart';
-import '../../screens/progress/ProgressGallery.dart';
+import '../../screens/progress/progress_gallery.dart';
+import '../../theme/design_tokens.dart';
 
 class PhotosCard extends StatefulWidget {
   final String userId;
@@ -72,7 +73,7 @@ class _PhotosCardState extends State<PhotosCard> {
             )),
             actions: [
               IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
+                icon: const Icon(Icons.delete, color: DesignTokens.danger),
                 onPressed: () => _deletePhoto(photo['id']),
               ),
             ],
@@ -87,11 +88,11 @@ class _PhotosCardState extends State<PhotosCard> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.error, size: 64, color: Colors.grey),
+                        Icon(Icons.error, size: 64, color: DesignTokens.ink500),
                         SizedBox(height: 16),
                         Text(
                           'Failed to load image',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: DesignTokens.ink500),
                         ),
                       ],
                     ),
@@ -210,7 +211,7 @@ class _PhotosCardState extends State<PhotosCard> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
+                      color: Colors.black.withValues(alpha: 0.7),
                     ),
                     child: Text(
                       DateFormat('MM/dd').format(date),

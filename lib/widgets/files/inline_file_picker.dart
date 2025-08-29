@@ -46,7 +46,7 @@ class _InlineFilePickerState extends State<InlineFilePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width,
       height: widget.height,
       child: Column(
@@ -154,7 +154,7 @@ class _InlineFilePickerState extends State<InlineFilePicker> {
         children: [
           // File icon
           CircleAvatar(
-            backgroundColor: _getFileColor(category).withOpacity(0.1),
+            backgroundColor: _getFileColor(category).withValues(alpha: 0.1),
             child: Icon(
               _getFileIcon(category),
               color: _getFileColor(category),

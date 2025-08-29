@@ -24,9 +24,9 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
 
   Future<void> _fetchLogs() async {
     final response = await supabase
-        .from('audit_logs')
-        .select('*, changed_by:profiles!audit_logs_changed_by_fkey(name), target:profiles!audit_logs_target_user_id_fkey(name)')
-        .order('timestamp', ascending: false);
+        .from('admin_audit_log')
+        .select('*, actor:profiles!admin_audit_log_actor_id_fkey(id, email, name)')
+        .order('created_at', ascending: false);
 
     setState(() {
       _logs = response;
@@ -35,14 +35,13 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
   }
 
   Future<void> _exportLogsToCSV() async {
-    final headers = ['Changed By', 'Target User', 'Old Role', 'New Role', 'Time'];
+    final headers = ['Actor', 'Action', 'Target', 'Time'];
     final rows = _logs.map((log) {
       return [
-        log['changed_by']['name'] ?? '',
-        log['target']['name'] ?? '',
-        log['old_role'] ?? '',
-        log['new_role'] ?? '',
-        log['timestamp'] ?? ''
+        log['actor']['name'] ?? log['actor']['email'] ?? '',
+        log['action'] ?? '',
+        log['target'] ?? '',
+        log['created_at'] ?? ''
       ];
     }).toList();
 
@@ -53,7 +52,7 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("✅ Logs exported to ${file.path}")),
+        SnackBar(content: Text('✅ Logs exported to ${file.path}')),
       );
     }
   }
@@ -62,11 +61,11 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("🧾 Admin Audit Logs"),
+        title: const Text('🧾 Admin Audit Logs'),
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
-            tooltip: "Export as CSV",
+            tooltip: 'Export as CSV',
             onPressed: _loading ? null : _exportLogsToCSV,
           )
         ],
@@ -74,21 +73,29 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _logs.isEmpty
-          ? const Center(child: Text("No audit logs found."))
+          ? const Center(child: Text('No audit logs found.'))
           : ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: _logs.length,
         separatorBuilder: (_, __) => const Divider(),
         itemBuilder: (context, index) {
           final log = _logs[index];
+          final actor = log['actor'] as Map<String, dynamic>? ?? {};
+          final actorName = actor['name'] ?? actor['email'] ?? 'Unknown';
+          
           return ListTile(
             leading: const Icon(Icons.history),
             title: Text(
-              "${log['changed_by']['name']} ➡ ${log['target']['name']}",
+              actorName,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(
-              "Role: ${log['old_role']} → ${log['new_role']}\nAt: ${log['timestamp']}",
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Action: ${log['action']}"),
+                if (log['target'] != null) Text("Target: ${log['target']}"),
+                Text("At: ${log['created_at']}"),
+              ],
             ),
           );
         },

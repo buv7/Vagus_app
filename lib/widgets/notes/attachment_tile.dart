@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 
 class AttachmentTile extends StatelessWidget {
   final Map<String, dynamic> attachment;
@@ -18,7 +17,7 @@ class AttachmentTile extends StatelessWidget {
     final path = attachment['path']?.toString() ?? '';
     final mime = attachment['mime']?.toString() ?? '';
     final size = attachment['size']?.toString() ?? '';
-    final url = attachment['url']?.toString();
+
     
     final fileName = path.split('/').last;
     final fileExt = fileName.split('.').last.toLowerCase();
@@ -49,7 +48,7 @@ class AttachmentTile extends StatelessWidget {
 
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: iconColor.withOpacity(0.1),
+        backgroundColor: iconColor.withValues(alpha: 0.1),
         child: Icon(iconData, color: iconColor),
       ),
       title: Text(

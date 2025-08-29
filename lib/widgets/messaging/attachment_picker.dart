@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class AttachmentPicker extends StatelessWidget {
+class AttachmentPicker extends StatefulWidget {
   final Function(File file) onFileSelected;
   final Function(File audioFile) onVoiceRecorded;
 
@@ -12,6 +12,12 @@ class AttachmentPicker extends StatelessWidget {
     required this.onFileSelected,
     required this.onVoiceRecorded,
   });
+
+  @override
+  State<AttachmentPicker> createState() => _AttachmentPickerState();
+}
+
+class _AttachmentPickerState extends State<AttachmentPicker> {
 
   @override
   Widget build(BuildContext context) {
@@ -101,15 +107,15 @@ class AttachmentPicker extends StatelessWidget {
 
       if (pickedFile != null) {
         final file = File(pickedFile.path);
-        onFileSelected(file);
+        widget.onFileSelected(file);
+        if (!mounted || !context.mounted) return;
         Navigator.pop(context);
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick image: $e')),
-        );
-      }
+      if (!mounted || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
     }
   }
 
@@ -123,15 +129,15 @@ class AttachmentPicker extends StatelessWidget {
 
       if (pickedFile != null) {
         final file = File(pickedFile.path);
-        onFileSelected(file);
+        widget.onFileSelected(file);
+        if (!mounted || !context.mounted) return;
         Navigator.pop(context);
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick video: $e')),
-        );
-      }
+      if (!mounted || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick video: $e')),
+      );
     }
   }
 
@@ -149,15 +155,15 @@ class AttachmentPicker extends StatelessWidget {
 
       if (result != null && result.files.isNotEmpty) {
         final file = File(result.files.first.path!);
-        onFileSelected(file);
+        widget.onFileSelected(file);
+        if (!mounted || !context.mounted) return;
         Navigator.pop(context);
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick file: $e')),
-        );
-      }
+      if (!mounted || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick file: $e')),
+      );
     }
   }
 
@@ -172,15 +178,15 @@ class AttachmentPicker extends StatelessWidget {
 
       if (result != null && result.files.isNotEmpty) {
         final file = File(result.files.first.path!);
-        onVoiceRecorded(file);
+        widget.onVoiceRecorded(file);
+        if (!mounted || !context.mounted) return;
         Navigator.pop(context);
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to record voice: $e')),
-        );
-      }
+      if (!mounted || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to record voice: $e')),
+      );
     }
   }
 }

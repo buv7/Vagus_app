@@ -38,7 +38,7 @@ class RateLimiter {
       // Get or create bucket for this task
       final bucket = _buckets.putIfAbsent(
         task,
-        () => _TokenBucket(limit, Duration(minutes: 1)),
+        () => _TokenBucket(limit, const Duration(minutes: 1)),
       );
 
       return bucket.tryConsume(tokens);

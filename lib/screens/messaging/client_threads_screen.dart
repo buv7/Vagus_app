@@ -82,7 +82,7 @@ class _ClientThreadsScreenState extends State<ClientThreadsScreen> {
           .eq('client_id', clientId)
           .single();
       
-      if (response != null && response['coach_id'] != null) {
+      if (response['coach_id'] != null) {
         return response['coach_id'];
       }
 
@@ -93,7 +93,7 @@ class _ClientThreadsScreenState extends State<ClientThreadsScreen> {
           .eq('client_id', clientId)
           .single();
       
-      if (response != null && response['coach_id'] != null) {
+      if (response['coach_id'] != null) {
         return response['coach_id'];
       }
 

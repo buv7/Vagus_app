@@ -4,6 +4,9 @@ import '../../services/messages_service.dart';
 import '../../widgets/messaging/message_bubble.dart';
 import '../../widgets/messaging/attachment_picker.dart';
 import '../../widgets/messaging/voice_recorder.dart';
+import '../../components/messaging/message_search_bar.dart';
+import '../../components/messaging/pin_panel.dart';
+import '../../components/messaging/thread_view.dart';
 import 'dart:io';
 
 class ClientMessengerScreen extends StatefulWidget {
@@ -24,10 +27,11 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
   List<Message> _messages = [];
   List<Map<String, dynamic>> _typingUsers = [];
   String? _replyToMessageId;
-  String? _editingMessageId;
   String _searchQuery = '';
   bool _loading = true;
   bool _sending = false;
+  bool _showSearchBar = false;
+  DateTime? _lastReadAt;
 
   @override
   void initState() {
@@ -75,6 +79,15 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
         });
         _scrollToBottom();
         _markMessagesAsSeen();
+      });
+
+      // Subscribe to read receipts
+      _messagesService.onReadReceipts(_threadId!).listen((receipts) {
+        // Update last read time for the other user
+        if (receipts.isNotEmpty) {
+          final otherUserId = _coachId!;
+          _updateLastReadAt(otherUserId);
+        }
       });
 
       // Subscribe to typing indicators
@@ -153,7 +166,6 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
 
       _messageController.clear();
       _replyToMessageId = null;
-      _editingMessageId = null;
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -219,6 +231,16 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return;
 
+    // Mark conversation as read up to the latest message
+    if (_messages.isNotEmpty) {
+      final latestMessage = _messages.last;
+      _messagesService.markConversationRead(
+        threadId: _threadId!,
+        upTo: latestMessage.createdAt,
+      );
+    }
+
+    // Also mark individual messages as seen (legacy support)
     for (final message in _messages) {
       if (message.senderId != user.id && message.seenAt == null) {
         _messagesService.markSeen(
@@ -226,6 +248,17 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
           messageId: message.id,
         );
       }
+    }
+  }
+
+  Future<void> _updateLastReadAt(String otherUserId) async {
+    try {
+      final lastRead = await _messagesService.lastReadAtByOther(_threadId!, otherUserId);
+      setState(() {
+        _lastReadAt = lastRead;
+      });
+    } catch (e) {
+      // Ignore errors for read receipts
     }
   }
 
@@ -291,31 +324,21 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () => _showSearchDialog(),
+            onPressed: () => setState(() => _showSearchBar = !_showSearchBar),
+          ),
+          IconButton(
+            icon: const Icon(Icons.push_pin),
+            onPressed: _openPinPanel,
           ),
         ],
       ),
       body: Column(
         children: [
           // Search bar (if active)
-          if (_searchQuery.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.grey[100],
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Search: $_searchQuery',
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => setState(() => _searchQuery = ''),
-                  ),
-                ],
-              ),
+          if (_showSearchBar)
+            MessageSearchBar(
+              onQuery: (query) => setState(() => _searchQuery = query),
+              onClear: () => setState(() => _searchQuery = ''),
             ),
 
           // Reply indicator
@@ -359,11 +382,15 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
                         message: message,
                         isOwnMessage: isOwnMessage,
                         currentUserId: user?.id ?? '',
-                        onReply: () => setState(() => _replyToMessageId = message.id),
+                        onReply: () => _openThread(message),
                         onEdit: () => _editMessage(message),
                         onDelete: () => _deleteMessage(message),
                         onReaction: (emoji) => _addReaction(message, emoji),
                         onAttachmentTap: () => _viewAttachment(message),
+                        onPin: () => _pinMessage(message),
+                        onUnpin: () => _unpinMessage(message),
+                        lastReadAt: _lastReadAt,
+                        onOpenThread: () => _openThread(message),
                       );
                     },
                   ),
@@ -376,7 +403,7 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   spreadRadius: 1,
                   blurRadius: 3,
                   offset: const Offset(0, -1),
@@ -424,31 +451,73 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
     );
   }
 
-  void _showSearchDialog() {
+
+
+  Future<void> _pinMessage(Message message) async {
+    try {
+      await _messagesService.pinMessage(message.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Message pinned')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to pin message: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _unpinMessage(Message message) async {
+    try {
+      await _messagesService.unpinMessage(message.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Message unpinned')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to unpin message: $e')),
+        );
+      }
+    }
+  }
+
+  void _openThread(Message message) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ThreadView(
+          conversationId: _threadId!,
+          parentMessage: message.toMap(),
+          onClose: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
+  }
+
+  void _openPinPanel() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Search Messages'),
-        content: TextField(
-          decoration: const InputDecoration(
-            hintText: 'Search in messages and files...',
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) => setState(() => _searchQuery = value),
+      builder: (context) => Dialog(
+        child: PinPanel(
+          conversationId: _threadId!,
+          onOpenMessage: (messageId) {
+            // Scroll to message
+            final messageIndex = _messages.indexWhere((m) => m.id == messageId);
+            if (messageIndex != -1) {
+              _scrollController.animateTo(
+                messageIndex * 100.0, // Approximate height
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+            Navigator.of(context).pop();
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              setState(() => _searchQuery = '');
-              Navigator.pop(context);
-            },
-            child: const Text('Clear'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Done'),
-          ),
-        ],
       ),
     );
   }
@@ -473,7 +542,6 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
   }
 
   void _editMessage(Message message) {
-    _editingMessageId = message.id;
     _messageController.text = message.text;
     _messageController.selection = TextSelection.fromPosition(
       TextPosition(offset: _messageController.text.length),

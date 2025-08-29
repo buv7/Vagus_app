@@ -531,7 +531,7 @@ class _CoachFileFeedbackScreenState extends State<CoachFileFeedbackScreen> {
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: _getFileColor(file['category']).withOpacity(0.1),
+              backgroundColor: _getFileColor(file['category']).withValues(alpha: 0.1),
               child: Icon(
                 _getFileIcon(file['category']),
                 color: _getFileColor(file['category']),
@@ -547,7 +547,7 @@ class _CoachFileFeedbackScreenState extends State<CoachFileFeedbackScreen> {
               children: [
                 Text(
                   _formatFileSize(file['file_size'] ?? 0),
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
                 Text(
                   '${file['category']} • ${_formatDate(DateTime.parse(file['created_at']))}',
@@ -558,7 +558,7 @@ class _CoachFileFeedbackScreenState extends State<CoachFileFeedbackScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -719,7 +719,7 @@ class _CoachFileFeedbackScreenState extends State<CoachFileFeedbackScreen> {
                                 tag,
                                 style: const TextStyle(fontSize: 10),
                               ),
-                              backgroundColor: Colors.blue.withOpacity(0.1),
+                              backgroundColor: Colors.blue.withValues(alpha: 0.1),
                               labelStyle: TextStyle(color: Colors.blue.shade700),
                             );
                           }).toList(),

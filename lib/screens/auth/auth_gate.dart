@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/account_switcher.dart';
 import '../../services/session/session_service.dart';
+import '../../services/settings/settings_service.dart';
 
 import 'login_screen.dart';
-import 'signup_screen.dart';
 import 'set_new_password_screen.dart';
 import 'verify_email_pending_screen.dart';
-import '../dashboard/home_screen.dart'; // Can be reused for client
 import '../admin/admin_screen.dart';
-import '../dashboard/coach_home_screen.dart';
-import '../dashboard/client_home_screen.dart';
+import '../nav/main_nav.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -60,7 +58,7 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
   Future<void> _initializeApp() async {
     final user = supabase.auth.currentUser;
 
-    print('🧪 Supabase user: ${user?.id}');
+          debugPrint('🧪 Supabase user: ${user?.id}');
 
     if (user == null) {
       setState(() {
@@ -84,6 +82,9 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
       await SessionService.instance.upsertCurrentDevice();
       await SessionService.instance.checkRevocation();
       
+      // Load user settings
+      await SettingsService.instance.loadForCurrentUser();
+      
       // Schedule heartbeat
       _scheduleHeartbeat();
 
@@ -105,7 +106,7 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
     }
 
     // append-only: background refresh of active account, non-blocking
-    AccountSwitcher.instance.init().then((_) => AccountSwitcher.instance.refreshActiveIfPossible());
+    unawaited(AccountSwitcher.instance.init().then((_) => AccountSwitcher.instance.refreshActiveIfPossible()));
   }
 
   void _scheduleHeartbeat() {
@@ -155,11 +156,11 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
     }
 
     if (_role == 'coach') {
-      return const CoachHomeScreen();
+      return const MainNav(); // Route coach into MainNav same as client
     }
 
-    // Default to client
-    return const ClientHomeScreen();
+    // Default to client with navigation
+    return const MainNav();
   }
 
   @override

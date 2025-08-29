@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,7 +18,7 @@ class _AdminApprovalPanelState extends State<AdminApprovalPanel> {
   @override
   void initState() {
     super.initState();
-    _loadApplications();
+    unawaited(_loadApplications());
   }
 
   Future<void> _loadApplications() async {
@@ -106,7 +107,7 @@ class _AdminApprovalPanelState extends State<AdminApprovalPanel> {
       );
 
       // Refresh the list
-      _loadApplications();
+      unawaited(_loadApplications());
       
     } catch (e) {
       if (!mounted) return;
@@ -154,7 +155,7 @@ class _AdminApprovalPanelState extends State<AdminApprovalPanel> {
       );
 
       // Refresh the list
-      _loadApplications();
+      unawaited(_loadApplications());
       
     } catch (e) {
       if (!mounted) return;

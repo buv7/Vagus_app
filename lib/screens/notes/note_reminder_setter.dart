@@ -35,13 +35,13 @@ class NoteReminderSetter extends StatelessWidget {
       children: [
         const Icon(Icons.notifications),
         const SizedBox(width: 8),
-        const Text("Reminder:"),
+        const Text('Reminder:'),
         const SizedBox(width: 8),
         Text(formatted, style: const TextStyle(fontWeight: FontWeight.bold)),
         const Spacer(),
         TextButton(
           onPressed: () => _pickDate(context),
-          child: const Text("Set Date"),
+          child: const Text('Set Date'),
         )
       ],
     );

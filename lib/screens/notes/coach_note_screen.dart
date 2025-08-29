@@ -139,7 +139,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
       });
     } catch (e) {
       // Log error but don't fail the save operation
-      print('Failed to save version snapshot: $e');
+      debugPrint('Failed to save version snapshot: $e');
     }
   }
 
@@ -152,7 +152,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
     // Asynchronously update embedding without blocking the UI
     EmbeddingHelper().upsertNoteEmbedding(noteId, content).catchError((e) {
       // Silent failure - don't crash the app
-      print('Failed to update note embedding: $e');
+      debugPrint('Failed to update note embedding: $e');
     });
   }
 
@@ -206,7 +206,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existingNote == null ? "New Note" : "Edit Note"),
+        title: Text(widget.existingNote == null ? 'New Note' : 'Edit Note'),
         actions: [
           if (widget.existingNote != null && _currentVersion > 1)
             TextButton.icon(
@@ -231,9 +231,9 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
             TextField(
               controller: _titleController,
               decoration: const InputDecoration(
-                hintText: "Note title (optional)",
+                hintText: 'Note title (optional)',
                 border: OutlineInputBorder(),
-                labelText: "Title",
+                labelText: 'Title',
               ),
             ),
             const SizedBox(height: 16),
@@ -245,9 +245,9 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
                 maxLines: null,
                 expands: true,
                 decoration: const InputDecoration(
-                  hintText: "Write your note...",
+                  hintText: 'Write your note...',
                   border: OutlineInputBorder(),
-                  labelText: "Note",
+                  labelText: 'Note',
                 ),
               ),
             ),
@@ -257,7 +257,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Tags:", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('Tags:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -265,7 +265,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
                       child: TextField(
                         controller: _tagController,
                         decoration: const InputDecoration(
-                          hintText: "Add a tag...",
+                          hintText: 'Add a tag...',
                           border: OutlineInputBorder(),
                           isDense: true,
                         ),
@@ -274,7 +274,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: _addTag,
-                      child: const Text("Add"),
+                      child: const Text('Add'),
                     ),
                   ],
                 ),
@@ -307,7 +307,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
                 ElevatedButton.icon(
                   onPressed: _pickReminder,
                   icon: const Icon(Icons.alarm),
-                  label: const Text("Set Reminder"),
+                  label: const Text('Set Reminder'),
                 ),
                 VoiceRecorder(
                   onTranscription: (transcribedText) {
@@ -356,7 +356,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
             if (_reminderDate != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text("Reminder set for: ${_reminderDate!.toLocal()}"),
+                child: Text('Reminder set for: ${_reminderDate!.toLocal()}'),
               ),
           ],
         ),

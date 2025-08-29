@@ -80,7 +80,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
         }
       }
     } catch (e) {
-      print('Error checking existing application: $e');
+      debugPrint('Error checking existing application: $e');
     }
   }
 

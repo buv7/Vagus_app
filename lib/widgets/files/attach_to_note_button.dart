@@ -62,7 +62,7 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
         ],
 
         // Attach button
-        Container(
+        SizedBox(
           width: widget.width,
           height: widget.height,
           child: InkWell(
@@ -77,7 +77,7 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.attach_file,
                     color: Colors.blue,
                   ),
@@ -88,7 +88,7 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
                       children: [
                         Text(
                           widget.hint ?? 'Attach files to note',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.w500,
                           ),
@@ -163,7 +163,7 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
         children: [
           // File icon
           CircleAvatar(
-            backgroundColor: _getFileColor(category).withOpacity(0.1),
+            backgroundColor: _getFileColor(category).withValues(alpha: 0.1),
             child: Icon(
               _getFileIcon(category),
               color: _getFileColor(category),

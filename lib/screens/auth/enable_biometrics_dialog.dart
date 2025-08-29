@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../services/auth/biometric_auth_service.dart';
 
 class EnableBiometricsDialog extends StatefulWidget {
@@ -44,6 +43,7 @@ class _EnableBiometricsDialogState extends State<EnableBiometricsDialog> {
     try {
       // First check if biometrics are available
       final bool isAvailable = await _biometricService.isBiometricAvailable();
+      if (!mounted) return;
       if (!isAvailable) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -61,10 +61,12 @@ class _EnableBiometricsDialogState extends State<EnableBiometricsDialog> {
       final bool authenticated = await _biometricService.authenticateWithBiometrics(
         reason: 'Enable biometric login for VAGUS',
       );
+      if (!mounted) return;
 
       if (authenticated) {
         // Save the preference
         await _biometricService.setBiometricEnabled(true, userEmail: widget.userEmail);
+        if (!mounted) return;
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

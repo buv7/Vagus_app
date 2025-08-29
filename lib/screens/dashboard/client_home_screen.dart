@@ -1,21 +1,45 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart';
 import '../auth/login_screen.dart';
 import 'edit_profile_screen.dart';
-import '../coach/CoachSearchScreen.dart';
-import '../nutrition/NutritionPlanViewer.dart';
-import '../messaging/client_threads_screen.dart';
+import '../coach/coach_search_screen.dart';
+
 import '../files/file_manager_screen.dart';
 import '../../services/progress/progress_service.dart';
 import '../../widgets/progress/metrics_card.dart';
 import '../../widgets/progress/photos_card.dart';
 import '../../widgets/progress/checkins_card.dart';
 import '../../widgets/progress/export_card.dart';
-import '../../components/progress/ComplianceStatsCard.dart';
-import '../progress/ClientCheckInCalendar.dart';
-import '../calendar/CalendarScreen.dart';
-import '../calendar/BookingForm.dart';
+import '../../components/progress/compliance_stats_card.dart';
+import '../progress/client_check_in_calendar.dart';
+import '../calendar/calendar_screen.dart';
+import '../calendar/booking_form.dart';
+import '../billing/upgrade_screen.dart';
+import '../../services/billing/plan_access_manager.dart';
+import '../../services/calendar/event_service.dart';
+import '../../services/calendar/ics_service.dart';
+import '../../widgets/ai/ai_usage_meter.dart';
+import '../../widgets/files/file_previewer.dart';
+import '../../components/rank/neon_rank_chip.dart';
+import '../rank/rank_hub_screen.dart';
+import '../supplements/supplement_today_card.dart';
+import '../supplements/supplement_list_screen.dart';
+import '../../components/streak/streak_chip.dart';
+import '../streaks/streak_screen.dart';
+import '../../components/health/health_rings.dart';
+import '../../theme/design_tokens.dart';
+import '../../services/intake/intake_service.dart';
+import '../intake/intake_wizard_screen.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+// Feature flags for personalized flows
+const bool kShowWelcomeFlow = true;
+const bool kShowTrendingPrograms = true;
+const bool kShowQuickStats = true;
 
 // Safe image handling helpers
 bool _isValidHttpUrl(String? url) {
@@ -30,10 +54,13 @@ Widget _imagePlaceholder({double? w, double? h}) {
     height: h,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: Colors.black12,
-      borderRadius: BorderRadius.circular(8),
+      color: DesignTokens.ink100,
+      borderRadius: BorderRadius.circular(DesignTokens.radius8),
     ),
-    child: const Icon(Icons.image_not_supported),
+    child: const Icon(
+      Icons.image_not_supported,
+      color: DesignTokens.ink500,
+    ),
   );
 }
 
@@ -60,6 +87,8 @@ class ClientHomeScreen extends StatefulWidget {
 class _ClientHomeScreenState extends State<ClientHomeScreen> {
   final supabase = Supabase.instance.client;
   final ProgressService _progressService = ProgressService();
+  final EventService _eventService = EventService();
+  final IntakeService _intakeService = IntakeService();
   Map<String, dynamic>? _profile;
   List<Map<String, dynamic>> _coaches = [];
   List<Map<String, dynamic>> _metrics = [];
@@ -68,6 +97,17 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   bool _loading = true;
   String _error = '';
   bool _coachFoundViaFallback = false;
+  
+  // Calendar Polish v1.1: Upcoming session
+  Event? _upcomingSession;
+  
+  // User maturity state
+  bool _isNewUser = true;
+  bool _isRepeatUser = false;
+  bool _isSuperUser = false;
+  
+  // Intake form status
+  String? _intakeStatus;
 
   @override
   void initState() {
@@ -80,7 +120,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     super.didChangeDependencies();
     // Reload coach data when page is re-entered to avoid stale cache
     if (!_loading && _coaches.isEmpty) {
-      _loadCoach();
+      unawaited(_loadCoach());
     }
   }
 
@@ -100,16 +140,48 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       });
 
       // Load coach data with robust fallback
-      await _loadCoach();
+      unawaited(_loadCoach());
 
       // Load progress data
       await _loadProgressData();
+      
+      // Calendar Polish v1.1: Load upcoming session
+      await _loadUpcomingSession();
+      
+      // Check intake form status
+      await _checkIntakeStatus();
+      
+      // Determine user maturity level
+      _determineUserMaturity();
     } catch (e) {
       setState(() {
         _error = 'Failed to load data: $e';
         _loading = false;
       });
     }
+  }
+
+  void _determineUserMaturity() {
+    // Simple logic: check if user has metrics, photos, or check-ins
+    final hasProgressData = _metrics.isNotEmpty || _photos.isNotEmpty || _checkins.isNotEmpty;
+    final hasCoach = _coaches.isNotEmpty;
+    final hasUpcomingSession = _upcomingSession != null;
+    
+    setState(() {
+      if (hasProgressData && hasCoach && hasUpcomingSession) {
+        _isNewUser = false;
+        _isRepeatUser = false;
+        _isSuperUser = true;
+      } else if (hasProgressData || hasCoach) {
+        _isNewUser = false;
+        _isRepeatUser = true;
+        _isSuperUser = false;
+      } else {
+        _isNewUser = true;
+        _isRepeatUser = false;
+        _isSuperUser = false;
+      }
+    });
   }
 
   Future<void> _loadCoach() async {
@@ -278,10 +350,23 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     }
   }
 
-  void _logout() async {
+  Future<void> _checkIntakeStatus() async {
+    try {
+      final userId = supabase.auth.currentUser!.id;
+      final status = await _intakeService.getResponseStatus(userId);
+      setState(() {
+        _intakeStatus = status;
+      });
+    } catch (e) {
+      // Silently ignore intake check errors
+      debugPrint('Intake status check failed: $e');
+    }
+  }
+
+  Future<void> _logout() async {
     await supabase.auth.signOut();
     if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
+    await Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const LoginScreen()),
           (route) => false,
@@ -320,7 +405,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       }
 
       // Reload coach data to refresh the UI
-      await _loadCoach();
+      unawaited(_loadCoach());
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -344,7 +429,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     final String coachId = coach['id'] as String;
     
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: DesignTokens.space8),
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: _isValidHttpUrl(imgUrl)
@@ -352,14 +437,408 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               : null,
           child: !_isValidHttpUrl(imgUrl) ? const Icon(Icons.person) : null,
         ),
-        title: Text(coach['name'] ?? 'No name'),
-        subtitle: Text(coach['email'] ?? ''),
+        title: Text(
+          coach['name'] ?? 'No name',
+          style: DesignTokens.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          coach['email'] ?? '',
+          style: DesignTokens.bodySmall.copyWith(
+            color: DesignTokens.ink500,
+          ),
+        ),
         trailing: _coachFoundViaFallback && _profile?['role'] == 'client'
             ? OutlinedButton(
-                onPressed: () => _connectCoach(coachId),
+                onPressed: () => unawaited(_connectCoach(coachId)),
                 child: const Text('Connect'),
               )
             : null,
+      ),
+    );
+  }
+
+  Widget _buildWelcomeFlow() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Welcome message
+        Text(
+          'Welcome to Vagus!',
+          style: DesignTokens.displaySmall.copyWith(
+            color: DesignTokens.blue600,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: DesignTokens.space8),
+        Text(
+          'Let\'s get you started on your fitness journey',
+          style: DesignTokens.bodyMedium.copyWith(
+            color: DesignTokens.ink500,
+          ),
+        ),
+        const SizedBox(height: DesignTokens.space24),
+        
+        // Set weekly goal card
+        Card(
+          color: DesignTokens.blue50,
+          child: Padding(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.flag_rounded,
+                      color: DesignTokens.blue600,
+                    ),
+                    const SizedBox(width: DesignTokens.space8),
+                    Text(
+                      'Set Your Weekly Goal',
+                      style: DesignTokens.titleMedium.copyWith(
+                        color: DesignTokens.blue600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DesignTokens.space12),
+                Text(
+                  'What would you like to achieve this week?',
+                  style: DesignTokens.bodyMedium.copyWith(
+                    color: DesignTokens.ink700,
+                  ),
+                ),
+                const SizedBox(height: DesignTokens.space16),
+                Wrap(
+                  spacing: DesignTokens.space8,
+                  runSpacing: DesignTokens.space8,
+                  children: [
+                    ActionChip(
+                      label: const Text('Lose Weight'),
+                      onPressed: () {
+                        // TODO: Implement goal setting
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Goal setting coming soon!')),
+                        );
+                      },
+                    ),
+                    ActionChip(
+                      label: const Text('Build Muscle'),
+                      onPressed: () {
+                        // TODO: Implement goal setting
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Goal setting coming soon!')),
+                        );
+                      },
+                    ),
+                    ActionChip(
+                      label: const Text('Improve Fitness'),
+                      onPressed: () {
+                        // TODO: Implement goal setting
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Goal setting coming soon!')),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: DesignTokens.space16),
+        
+        // Trending programs
+        if (kShowTrendingPrograms) ...[
+          Text(
+            'Trending Programs',
+            style: DesignTokens.titleMedium.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: DesignTokens.space12),
+          SizedBox(
+            height: 120,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                _buildTrendingProgramCard('Beginner Strength', '3 weeks', DesignTokens.blue600),
+                _buildTrendingProgramCard('Cardio Blast', '4 weeks', DesignTokens.purple500),
+                _buildTrendingProgramCard('Flexibility Flow', '2 weeks', DesignTokens.success),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildTrendingProgramCard(String title, String duration, Color color) {
+    return Container(
+      width: 160,
+      margin: const EdgeInsets.only(right: DesignTokens.space12),
+      child: Card(
+        color: color.withValues(alpha: 0.1),
+        child: Padding(
+          padding: const EdgeInsets.all(DesignTokens.space12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: DesignTokens.titleSmall.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                duration,
+                style: DesignTokens.labelMedium.copyWith(
+                  color: color.withValues(alpha: 0.8),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRepeatUserFlow() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Today's Plan
+        Text(
+          'Today\'s Plan',
+          style: DesignTokens.titleLarge.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: DesignTokens.space16),
+        
+        Card(
+          color: DesignTokens.successBg,
+          child: Padding(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.fitness_center_rounded,
+                  color: DesignTokens.success,
+                  size: 32,
+                ),
+                const SizedBox(width: DesignTokens.space16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Upper Body Strength',
+                        style: DesignTokens.titleMedium.copyWith(
+                          color: DesignTokens.success,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        '45 minutes • 8 exercises',
+                        style: DesignTokens.bodyMedium.copyWith(
+                          color: DesignTokens.success.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    // TODO: Navigate to workout
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Workout details coming soon!')),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.play_arrow_rounded,
+                    color: DesignTokens.success,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: DesignTokens.space24),
+        
+        // Quick Stats
+        if (kShowQuickStats) ...[
+          Text(
+            'Quick Stats',
+            style: DesignTokens.titleMedium.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: DesignTokens.space16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Duration',
+                  '45 min',
+                  Icons.timer,
+                  DesignTokens.blue600,
+                ),
+              ),
+              const SizedBox(width: DesignTokens.space12),
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Calories',
+                  '320',
+                  Icons.local_fire_department,
+                  DesignTokens.warn,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildQuickStatCard(String label, String value, IconData icon, Color color) {
+    return Card(
+      color: color.withValues(alpha: 0.1),
+      child: Padding(
+        padding: const EdgeInsets.all(DesignTokens.space16),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
+            const SizedBox(height: DesignTokens.space8),
+            // Value (bigger, heavier)
+            Text(
+              value,
+              style: DesignTokens.displaySmall.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: DesignTokens.space4),
+            // Label (smaller, softer)
+            Text(
+              label,
+              style: DesignTokens.labelMedium.copyWith(
+                color: color.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuperUserFlow() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Live stats row
+        Row(
+          children: [
+            Expanded(
+              child: _buildLiveStatCard(
+                'Current Weight',
+                '${_metrics.isNotEmpty ? _metrics.last['weight_kg']?.toStringAsFixed(1) ?? '--' : '--'} kg',
+                Icons.monitor_weight,
+                DesignTokens.blue600,
+              ),
+            ),
+            const SizedBox(width: DesignTokens.space12),
+            Expanded(
+              child: _buildLiveStatCard(
+                'Weekly Goal',
+                'On Track',
+                Icons.trending_up,
+                DesignTokens.success,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: DesignTokens.space16),
+        
+        // Diet suggestions
+        Card(
+          color: DesignTokens.purple50,
+          child: Padding(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.restaurant_menu_rounded,
+                      color: DesignTokens.purple500,
+                    ),
+                    const SizedBox(width: DesignTokens.space8),
+                    Text(
+                      'Today\'s Nutrition',
+                      style: DesignTokens.titleMedium.copyWith(
+                        color: DesignTokens.purple500,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DesignTokens.space12),
+                Text(
+                  'Focus on protein-rich foods to support your workout recovery',
+                  style: DesignTokens.bodyMedium.copyWith(
+                    color: DesignTokens.purple500.withValues(alpha: 0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLiveStatCard(String label, String value, IconData icon, Color color) {
+    return Card(
+      color: color.withValues(alpha: 0.1),
+      child: Padding(
+        padding: const EdgeInsets.all(DesignTokens.space16),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
+            const SizedBox(height: DesignTokens.space8),
+            // Value (bigger, heavier)
+            Text(
+              value,
+              style: DesignTokens.displaySmall.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: DesignTokens.space4),
+            // Label (smaller, softer)
+            Text(
+              label,
+              style: DesignTokens.labelMedium.copyWith(
+                color: color.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -379,7 +858,16 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('📋 Client Dashboard'),
+        title: Text(
+          '📋 Client Dashboard',
+          style: DesignTokens.titleMedium.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: DesignTokens.blue600,
+        foregroundColor: Colors.white,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -387,22 +875,23 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
             onPressed: _goToCoachSearch,
           ),
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: const Icon(Icons.settings),
             tooltip: 'Edit Profile',
             onPressed: _goToEditProfile,
           ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
-            onPressed: _logout,
+            onPressed: () => unawaited(_logout()),
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(DesignTokens.space24),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // Profile section
               if (_isValidHttpUrl(avatarUrl))
                 CircleAvatar(
                   radius: 40,
@@ -411,153 +900,274 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               else
                 const CircleAvatar(
                   radius: 40,
-                  child: Icon(Icons.person, size: 40),
+                  backgroundColor: DesignTokens.blue50,
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                    color: DesignTokens.blue600,
+                  ),
                 ),
-              const SizedBox(height: 16),
-              Text(name, style: Theme.of(context).textTheme.headlineSmall),
-              Text(email),
-              const SizedBox(height: 8),
-              Chip(label: Text(role.toUpperCase())),
-              const SizedBox(height: 24),
-              const Text(
-                'Welcome, Client! Your plans and check-ins will appear here.',
+              const SizedBox(height: DesignTokens.space16),
+              Text(
+                name,
+                style: DesignTokens.titleLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              const SizedBox(height: 32),
+              Text(
+                email,
+                style: DesignTokens.bodyMedium.copyWith(
+                  color: DesignTokens.ink500,
+                ),
+              ),
+              const SizedBox(height: DesignTokens.space8),
+              Chip(
+                label: Text(
+                  role.toUpperCase(),
+                  style: DesignTokens.labelMedium.copyWith(
+                    color: DesignTokens.blue600,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                backgroundColor: DesignTokens.blue50,
+                side: BorderSide(color: DesignTokens.blue600.withValues(alpha: 0.3)),
+              ),
+              const SizedBox(height: DesignTokens.space16),
+              
+              // Intake form gate
+              if (_intakeStatus != 'approved')
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: DesignTokens.space16),
+                  padding: const EdgeInsets.all(DesignTokens.space16),
+                  decoration: BoxDecoration(
+                    color: DesignTokens.warn,
+                    borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                    border: Border.all(color: DesignTokens.ink100),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.warning_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: DesignTokens.space8),
+                          Expanded(
+                            child: Text(
+                              'Intake Form Required',
+                              style: DesignTokens.titleMedium.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: DesignTokens.space8),
+                      Text(
+                        'Please complete your intake form before accessing your dashboard.',
+                        style: DesignTokens.bodyMedium.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: DesignTokens.space12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const IntakeWizardScreen(
+                                  showRequiredBanner: true,
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: DesignTokens.warn,
+                          ),
+                          child: const Text('Complete Intake Form'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              
+              // Neon Rank Chip
+              NeonRankChip(
+                streak: 7, // TODO: Get from actual streak data
+                rank: 'Bronze',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RankHubScreen()),
+                  );
+                },
+                isPro: true, // TODO: Get from actual Pro status
+              ),
+              const SizedBox(height: DesignTokens.space12),
+              
+              // Streak Chip
+              StreakChip(
+                userId: _profile?['id'] ?? '',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const StreakScreen()),
+                  );
+                },
+              ),
+              const SizedBox(height: DesignTokens.space16),
+              
+              // Health Rings
+              HealthRings(
+                userId: _profile?['id'] ?? '',
+              ),
+              const SizedBox(height: DesignTokens.space24),
+              
+              // Personalized content based on user maturity
+              if (_isNewUser) ...[
+                _buildWelcomeFlow(),
+              ] else if (_isRepeatUser) ...[
+                _buildRepeatUserFlow(),
+              ] else if (_isSuperUser) ...[
+                _buildSuperUserFlow(),
+              ],
+              
+              const SizedBox(height: DesignTokens.space24),
+              
+              // AI Usage Meter with Upgrade CTA
+              const AIUsageMeter(),
+              const SizedBox(height: DesignTokens.space16),
+              
+              // Supplements Today Card
+              SupplementTodayCard(
+                userId: _profile?['id'] ?? '',
+                onViewAll: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SupplementListScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: DesignTokens.space16),
+              
+              // Calendar Polish v1.1: Upcoming Session Card
+              if (_upcomingSession != null) ...[
+                _buildUpcomingSessionCard(),
+                const SizedBox(height: DesignTokens.space16),
+              ],
+              
+              // Upgrade to Pro CTA
+              FutureBuilder<int>(
+                future: PlanAccessManager.instance.remainingAICalls(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data! <= 20) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space8),
+                      child: ActionChip(
+                        avatar: const Icon(
+                          Icons.star,
+                          size: 16,
+                          color: Colors.amber,
+                        ),
+                        label: const Text('Upgrade to Pro'),
+                        backgroundColor: Colors.amber.shade50,
+                        side: BorderSide(color: Colors.amber.shade300),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const UpgradeScreen()),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              
+              const SizedBox(height: DesignTokens.space32),
               const Divider(),
-              const Text(
-                "👨‍🏫 Your Coach",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                '👨‍🏫 Your Coach',
+                style: DesignTokens.titleMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: DesignTokens.space8),
               if (_coaches.isEmpty)
-                const Text("No coach connected yet.")
+                Text(
+                  'No coach connected yet.',
+                  style: DesignTokens.bodyMedium.copyWith(
+                    color: DesignTokens.ink500,
+                  ),
+                )
               else
                 Column(children: _coaches.map(_buildCoachCard).toList()),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: DesignTokens.space32),
 
-              // ✅ WORKOUT PLAN BUTTON
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/client-workout');
-                },
-                icon: const Icon(Icons.fitness_center),
-                label: const Text('View Workout Plan'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-              ),
+                             // ✅ FILE MANAGER BUTTON
+               ElevatedButton.icon(
+                 onPressed: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (_) => const FileManagerScreen(),
+                     ),
+                   );
+                 },
+                 icon: const Icon(Icons.folder),
+                 label: const Text('File Manager'),
+                 style: ElevatedButton.styleFrom(
+                   minimumSize: const Size.fromHeight(50),
+                 ),
+               ),
 
-              const SizedBox(height: 16),
+               const SizedBox(height: DesignTokens.space16),
 
-              // ✅ NUTRITION PLAN BUTTON
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const NutritionPlanViewer(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.restaurant_menu),
-                label: const Text('View Nutrition Plan'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-              ),
+               // ✅ BOOK A SESSION BUTTON
+               ElevatedButton.icon(
+                 onPressed: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (_) => const BookingForm(),
+                     ),
+                   );
+                 },
+                 icon: const Icon(Icons.event_available),
+                 label: const Text('Book a Session'),
+                 style: ElevatedButton.styleFrom(
+                   minimumSize: const Size.fromHeight(50),
+                 ),
+               ),
 
-              const SizedBox(height: 16),
-
-              // ✅ MESSAGING BUTTON
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ClientThreadsScreen(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.chat),
-                label: const Text('Messages'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // ✅ FILE MANAGER BUTTON
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const FileManagerScreen(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.folder),
-                label: const Text('File Manager'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // ✅ CALENDAR BUTTON
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const CalendarScreen(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.calendar_today),
-                label: const Text('Calendar'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // ✅ BOOK A SESSION BUTTON
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const BookingForm(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.event_available),
-                label: const Text('Book a Session'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                ),
-              ),
-
-              const SizedBox(height: 32),
+              const SizedBox(height: DesignTokens.space32),
               const Divider(),
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
 
               // Progress System Section
-              const Text(
-                "📊 Progress Tracking",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                '📊 Progress Tracking',
+                style: DesignTokens.titleMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
 
               // Compliance Stats Card (top row)
               const ComplianceStatsCard(),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
 
               // Check-In Calendar Button
               ElevatedButton.icon(
@@ -565,7 +1175,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const ClientCheckInCalendar(),
+                      builder: (context) => const ClientCheckInCalendar(),
                     ),
                   );
                 },
@@ -573,12 +1183,12 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 label: const Text('Check-In Calendar'),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
-                  backgroundColor: Colors.green,
+                  backgroundColor: DesignTokens.success,
                   foregroundColor: Colors.white,
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
 
               // Metrics Card
               MetricsCard(
@@ -587,7 +1197,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 onRefresh: _loadProgressData,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
 
               // Photos Card
               PhotosCard(
@@ -596,7 +1206,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 onRefresh: _loadProgressData,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
 
               // Check-ins Card
               CheckinsCard(
@@ -606,7 +1216,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 onRefresh: _loadProgressData,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignTokens.space16),
 
               // Export Card
               ExportCard(
@@ -619,10 +1229,12 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
 
               if (_error.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(top: 12),
+                  padding: const EdgeInsets.only(top: DesignTokens.space12),
                   child: Text(
                     _error,
-                    style: const TextStyle(color: Colors.red),
+                    style: DesignTokens.bodyMedium.copyWith(
+                      color: DesignTokens.danger,
+                    ),
                   ),
                 ),
             ],
@@ -630,5 +1242,276 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         ),
       ),
     );
+  }
+
+  // === Calendar Polish v1.1 Methods ===
+
+  /// Load upcoming session for the user
+  Future<void> _loadUpcomingSession() async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) return;
+
+      final now = DateTime.now();
+      final nextWeek = now.add(const Duration(days: 7));
+
+      final events = await _eventService.fetchEvents(
+        start: now,
+        end: nextWeek,
+        userId: user.id,
+      );
+
+      // Find the next upcoming event for this user
+      Event? upcoming;
+      DateTime? closestTime;
+
+      for (final event in events) {
+        if (event.clientId == user.id && event.startAt.isAfter(now)) {
+          if (closestTime == null || event.startAt.isBefore(closestTime)) {
+            upcoming = event;
+            closestTime = event.startAt;
+          }
+        }
+      }
+
+      setState(() {
+        _upcomingSession = upcoming;
+      });
+    } catch (e) {
+      debugPrint('Failed to load upcoming session: $e');
+    }
+  }
+
+  /// Build upcoming session card
+  Widget _buildUpcomingSessionCard() {
+    if (_upcomingSession == null) return const SizedBox.shrink();
+
+    final session = _upcomingSession!;
+    final isToday = session.startAt.year == DateTime.now().year &&
+        session.startAt.month == DateTime.now().month &&
+        session.startAt.day == DateTime.now().day;
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DesignTokens.radius12)),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          gradient: LinearGradient(
+            colors: [DesignTokens.blue50, DesignTokens.blue50.withValues(alpha: 0.5)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(DesignTokens.space16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  Icons.upcoming,
+                  color: DesignTokens.blue600,
+                ),
+                const SizedBox(width: DesignTokens.space8),
+                Text(
+                  'Upcoming Session',
+                  style: DesignTokens.titleMedium.copyWith(
+                    color: DesignTokens.blue600,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                if (isToday)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DesignTokens.space8,
+                      vertical: DesignTokens.space4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: DesignTokens.warn,
+                      borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                    ),
+                    child: Text(
+                      'TODAY',
+                      style: DesignTokens.labelSmall.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: DesignTokens.space12),
+            
+            Text(
+              session.title,
+              style: DesignTokens.bodyLarge.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: DesignTokens.space8),
+            
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  size: 16,
+                  color: DesignTokens.ink500,
+                ),
+                const SizedBox(width: DesignTokens.space4),
+                Text(
+                  DateFormat('EEEE, MMM dd').format(session.startAt),
+                  style: DesignTokens.bodyMedium.copyWith(
+                    color: DesignTokens.ink500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DesignTokens.space4),
+            
+            Row(
+              children: [
+                const Icon(
+                  Icons.access_time,
+                  size: 16,
+                  color: DesignTokens.ink500,
+                ),
+                const SizedBox(width: DesignTokens.space4),
+                Text(
+                  '${_formatTime(session.startAt)} - ${_formatTime(session.endAt)}',
+                  style: DesignTokens.bodyMedium.copyWith(
+                    color: DesignTokens.ink500,
+                  ),
+                ),
+              ],
+            ),
+            
+            if (session.location != null && session.location!.isNotEmpty) ...[
+              const SizedBox(height: DesignTokens.space4),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    size: 16,
+                    color: DesignTokens.ink500,
+                  ),
+                  const SizedBox(width: DesignTokens.space4),
+                  Expanded(
+                    child: Text(
+                      session.location!,
+                      style: DesignTokens.bodyMedium.copyWith(
+                        color: DesignTokens.ink500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            
+            const SizedBox(height: DesignTokens.space12),
+            
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => unawaited(_exportSessionIcs(session)),
+                    icon: const Icon(Icons.file_download, size: 16),
+                    label: const Text('Add to Calendar'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: DesignTokens.blue600,
+                      side: BorderSide(color: DesignTokens.blue600.withValues(alpha: 0.3)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: DesignTokens.space8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => unawaited(_openCalendar(session.startAt)),
+                    icon: const Icon(Icons.calendar_view_day, size: 16),
+                    label: const Text('View in Calendar'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: DesignTokens.blue600,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Export session as ICS and open with FilePreviewer
+  Future<void> _exportSessionIcs(Event session) async {
+    try {
+      final eventData = {
+        'id': session.id,
+        'title': session.title,
+        'description': session.notes ?? '',
+        'location': session.location ?? '',
+        'start_at': session.startAt.toIso8601String(),
+        'end_at': session.endAt.toIso8601String(),
+        'recurrence_rule': session.recurrenceRule,
+      };
+
+      final icsContent = IcsService.eventToIcs(eventData);
+      final fileName = 'session_${session.id}.ics';
+      
+      // Save to temporary file and open with FilePreviewer
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/$fileName');
+      await file.writeAsString(icsContent);
+      
+      if (mounted) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FilePreviewer(
+              fileUrl: file.path,
+              fileName: fileName,
+              fileType: 'ics',
+              category: 'calendar',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to export session: $e')),
+        );
+      }
+    }
+  }
+
+  /// Open calendar screen focused on session date
+  Future<void> _openCalendar(DateTime focusDate) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CalendarScreen(),
+      ),
+    );
+  }
+
+  String _formatTime(DateTime dateTime) {
+    try {
+      // Validate the DateTime by checking if it's not null and has valid components
+      if (dateTime.year > 0 && dateTime.month >= 1 && dateTime.month <= 12 && 
+          dateTime.day >= 1 && dateTime.day <= 31 && 
+          dateTime.hour >= 0 && dateTime.hour <= 23 && 
+          dateTime.minute >= 0 && dateTime.minute <= 59) {
+        return TimeOfDay.fromDateTime(dateTime).format(context);
+      } else {
+        return 'Invalid time';
+      }
+    } catch (e) {
+      // Fallback to a simple time format if TimeOfDay conversion fails
+      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    }
   }
 }
