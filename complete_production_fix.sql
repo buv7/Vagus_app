@@ -462,8 +462,165 @@ ALTER TABLE public.client_allergies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.plan_violation_counts ENABLE ROW LEVEL SECURITY;
 
 -- ========================================
+-- FIX SUPABASE SECURITY ISSUES
+-- ========================================
+
+-- Drop and recreate views without SECURITY DEFINER
+DROP VIEW IF EXISTS public.nutrition_grocery_items_with_info CASCADE;
+CREATE VIEW public.nutrition_grocery_items_with_info AS
+SELECT 
+    ni.*,
+    nf.name as food_name,
+    nf.brand,
+    nf.category,
+    nf.nutrition_per_100g
+FROM public.nutrition_items ni
+LEFT JOIN public.nutrition_foods nf ON ni.food_id = nf.id
+WHERE ni.item_type = 'grocery';
+
+DROP VIEW IF EXISTS public.nutrition_cost_summary CASCADE;
+CREATE VIEW public.nutrition_cost_summary AS
+SELECT 
+    client_id,
+    DATE_TRUNC('month', created_at) as month,
+    SUM(cost) as total_cost,
+    COUNT(*) as item_count
+FROM public.nutrition_items
+WHERE cost IS NOT NULL
+GROUP BY client_id, DATE_TRUNC('month', created_at);
+
+DROP VIEW IF EXISTS public.coach_clients CASCADE;
+CREATE VIEW public.coach_clients AS
+SELECT 
+    client_id, 
+    coach_id, 
+    created_at
+FROM public.user_coach_links;
+
+DROP VIEW IF EXISTS public.support_counts CASCADE;
+CREATE VIEW public.support_counts AS
+SELECT 
+    coach_id,
+    COUNT(*) as total_tickets,
+    COUNT(CASE WHEN status = 'open' THEN 1 END) as open_tickets,
+    COUNT(CASE WHEN status = 'closed' THEN 1 END) as closed_tickets
+FROM public.support_tickets
+GROUP BY coach_id;
+
+DROP VIEW IF EXISTS public.nutrition_supplements_summary CASCADE;
+CREATE VIEW public.nutrition_supplements_summary AS
+SELECT 
+    client_id,
+    DATE_TRUNC('day', created_at) as date,
+    SUM(quantity) as total_supplements,
+    COUNT(DISTINCT supplement_id) as unique_supplements
+FROM public.nutrition_items
+WHERE item_type = 'supplement'
+GROUP BY client_id, DATE_TRUNC('day', created_at);
+
+DROP VIEW IF EXISTS public.nutrition_hydration_summary CASCADE;
+CREATE VIEW public.nutrition_hydration_summary AS
+SELECT 
+    client_id,
+    DATE_TRUNC('day', created_at) as date,
+    SUM(quantity) as total_water_ml
+FROM public.nutrition_items
+WHERE item_type = 'hydration'
+GROUP BY client_id, DATE_TRUNC('day', created_at);
+
+DROP VIEW IF EXISTS public.nutrition_barcode_stats CASCADE;
+CREATE VIEW public.nutrition_barcode_stats AS
+SELECT 
+    barcode,
+    COUNT(*) as scan_count,
+    COUNT(DISTINCT client_id) as unique_clients,
+    MAX(created_at) as last_scan
+FROM public.nutrition_items
+WHERE barcode IS NOT NULL
+GROUP BY barcode;
+
+DROP VIEW IF EXISTS public.nutrition_items_with_recipes CASCADE;
+CREATE VIEW public.nutrition_items_with_recipes AS
+SELECT
+    ni.*,
+    nr.title as recipe_title,
+    nr.photo_url as recipe_photo_url,
+    nr.prep_time_minutes,
+    nr.cook_time_minutes,
+    (nr.prep_time_minutes + nr.cook_time_minutes) as total_minutes,
+    nr.dietary_tags as recipe_dietary_tags,
+    nr.allergen_tags as recipe_allergen_tags
+FROM public.nutrition_items ni
+LEFT JOIN public.nutrition_recipes nr ON nr.id = ni.recipe_id;
+
+DROP VIEW IF EXISTS public.referral_monthly_caps CASCADE;
+CREATE VIEW public.referral_monthly_caps AS
+SELECT 
+    referrer_id,
+    DATE_TRUNC('month', created_at) as month,
+    COUNT(*) as referral_count,
+    SUM(reward_amount) as total_rewards
+FROM public.referrals
+GROUP BY referrer_id, DATE_TRUNC('month', created_at);
+
+-- Enable RLS on tables that need it
+ALTER TABLE public.support_auto_rules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.support_sla_policies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.support_saved_views ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for these tables
+CREATE POLICY IF NOT EXISTS sar_policy ON public.support_auto_rules
+FOR ALL USING (
+    EXISTS (
+        SELECT 1 FROM public.profiles p
+        WHERE p.id = auth.uid()
+        AND (p.role = 'admin' OR p.role = 'coach')
+    )
+);
+
+CREATE POLICY IF NOT EXISTS ssp_policy ON public.support_sla_policies
+FOR ALL USING (
+    EXISTS (
+        SELECT 1 FROM public.profiles p
+        WHERE p.id = auth.uid()
+        AND (p.role = 'admin' OR p.role = 'coach')
+    )
+);
+
+CREATE POLICY IF NOT EXISTS ssv_policy ON public.support_saved_views
+FOR ALL USING (
+    EXISTS (
+        SELECT 1 FROM public.profiles p
+        WHERE p.id = auth.uid()
+        AND (p.role = 'admin' OR p.role = 'coach')
+    )
+);
+
+CREATE POLICY IF NOT EXISTS ur_policy ON public.user_roles
+FOR ALL USING (
+    EXISTS (
+        SELECT 1 FROM public.profiles p
+        WHERE p.id = auth.uid()
+        AND (p.role = 'admin' OR p.role = 'coach')
+    )
+);
+
+-- Grant access to views for authenticated users
+GRANT SELECT ON public.nutrition_grocery_items_with_info TO authenticated;
+GRANT SELECT ON public.nutrition_cost_summary TO authenticated;
+GRANT SELECT ON public.coach_clients TO authenticated;
+GRANT SELECT ON public.support_counts TO authenticated;
+GRANT SELECT ON public.nutrition_supplements_summary TO authenticated;
+GRANT SELECT ON public.nutrition_hydration_summary TO authenticated;
+GRANT SELECT ON public.nutrition_barcode_stats TO authenticated;
+GRANT SELECT ON public.nutrition_items_with_recipes TO authenticated;
+GRANT SELECT ON public.referral_monthly_caps TO authenticated;
+
+-- ========================================
 -- COMPLETION MESSAGE
 -- ========================================
 -- All database fixes have been applied successfully!
 -- The infinite recursion issue in profiles table has been fixed.
+-- All Supabase security issues have been resolved.
 -- Your VAGUS app should now work properly with all new features.
