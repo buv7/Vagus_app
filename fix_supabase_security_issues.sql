@@ -12,24 +12,29 @@ DROP VIEW IF EXISTS public.nutrition_grocery_items_with_info CASCADE;
 CREATE VIEW public.nutrition_grocery_items_with_info AS
 SELECT 
     ni.*,
-    nf.name as food_name,
-    nf.brand,
-    nf.category,
-    nf.nutrition_per_100g
+    ni.name as food_name,
+    ni.brand,
+    ni.category,
+    ni.nutrition_per_100g
 FROM public.nutrition_items ni
-LEFT JOIN public.nutrition_foods nf ON ni.food_id = nf.id
 WHERE ni.item_type = 'grocery';
 
 DROP VIEW IF EXISTS public.nutrition_cost_summary CASCADE;
-CREATE VIEW public.nutrition_cost_summary AS
-SELECT 
-    client_id,
-    DATE_TRUNC('month', created_at) as month,
-    SUM(cost) as total_cost,
-    COUNT(*) as item_count
-FROM public.nutrition_items
-WHERE cost IS NOT NULL
-GROUP BY client_id, DATE_TRUNC('month', created_at);
+-- Only create if nutrition_items table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.nutrition_cost_summary AS
+        SELECT 
+            client_id,
+            DATE_TRUNC(''month'', created_at) as month,
+            SUM(cost) as total_cost,
+            COUNT(*) as item_count
+        FROM public.nutrition_items
+        WHERE cost IS NOT NULL
+        GROUP BY client_id, DATE_TRUNC(''month'', created_at)';
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS public.coach_clients CASCADE;
 CREATE VIEW public.coach_clients AS
@@ -40,70 +45,106 @@ SELECT
 FROM public.user_coach_links;
 
 DROP VIEW IF EXISTS public.support_counts CASCADE;
-CREATE VIEW public.support_counts AS
-SELECT 
-    coach_id,
-    COUNT(*) as total_tickets,
-    COUNT(CASE WHEN status = 'open' THEN 1 END) as open_tickets,
-    COUNT(CASE WHEN status = 'closed' THEN 1 END) as closed_tickets
-FROM public.support_tickets
-GROUP BY coach_id;
+-- Only create if support_tickets table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'support_tickets' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.support_counts AS
+        SELECT 
+            coach_id,
+            COUNT(*) as total_tickets,
+            COUNT(CASE WHEN status = ''open'' THEN 1 END) as open_tickets,
+            COUNT(CASE WHEN status = ''closed'' THEN 1 END) as closed_tickets
+        FROM public.support_tickets
+        GROUP BY coach_id';
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS public.nutrition_supplements_summary CASCADE;
-CREATE VIEW public.nutrition_supplements_summary AS
-SELECT 
-    client_id,
-    DATE_TRUNC('day', created_at) as date,
-    SUM(quantity) as total_supplements,
-    COUNT(DISTINCT supplement_id) as unique_supplements
-FROM public.nutrition_items
-WHERE item_type = 'supplement'
-GROUP BY client_id, DATE_TRUNC('day', created_at);
+-- Only create if nutrition_items table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.nutrition_supplements_summary AS
+        SELECT 
+            client_id,
+            DATE_TRUNC(''day'', created_at) as date,
+            SUM(quantity) as total_supplements,
+            COUNT(DISTINCT supplement_id) as unique_supplements
+        FROM public.nutrition_items
+        WHERE item_type = ''supplement''
+        GROUP BY client_id, DATE_TRUNC(''day'', created_at)';
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS public.nutrition_hydration_summary CASCADE;
-CREATE VIEW public.nutrition_hydration_summary AS
-SELECT 
-    client_id,
-    DATE_TRUNC('day', created_at) as date,
-    SUM(quantity) as total_water_ml
-FROM public.nutrition_items
-WHERE item_type = 'hydration'
-GROUP BY client_id, DATE_TRUNC('day', created_at);
+-- Only create if nutrition_items table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.nutrition_hydration_summary AS
+        SELECT 
+            client_id,
+            DATE_TRUNC(''day'', created_at) as date,
+            SUM(quantity) as total_water_ml
+        FROM public.nutrition_items
+        WHERE item_type = ''hydration''
+        GROUP BY client_id, DATE_TRUNC(''day'', created_at)';
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS public.nutrition_barcode_stats CASCADE;
-CREATE VIEW public.nutrition_barcode_stats AS
-SELECT 
-    barcode,
-    COUNT(*) as scan_count,
-    COUNT(DISTINCT client_id) as unique_clients,
-    MAX(created_at) as last_scan
-FROM public.nutrition_items
-WHERE barcode IS NOT NULL
-GROUP BY barcode;
+-- Only create if nutrition_items table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.nutrition_barcode_stats AS
+        SELECT 
+            barcode,
+            COUNT(*) as scan_count,
+            COUNT(DISTINCT client_id) as unique_clients,
+            MAX(created_at) as last_scan
+        FROM public.nutrition_items
+        WHERE barcode IS NOT NULL
+        GROUP BY barcode';
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS public.nutrition_items_with_recipes CASCADE;
-CREATE VIEW public.nutrition_items_with_recipes AS
-SELECT
-    ni.*,
-    nr.title as recipe_title,
-    nr.photo_url as recipe_photo_url,
-    nr.prep_time_minutes,
-    nr.cook_time_minutes,
-    (nr.prep_time_minutes + nr.cook_time_minutes) as total_minutes,
-    nr.dietary_tags as recipe_dietary_tags,
-    nr.allergen_tags as recipe_allergen_tags
-FROM public.nutrition_items ni
-LEFT JOIN public.nutrition_recipes nr ON nr.id = ni.recipe_id;
+-- Only create if nutrition_items table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.nutrition_items_with_recipes AS
+        SELECT
+            ni.*,
+            nr.title as recipe_title,
+            nr.photo_url as recipe_photo_url,
+            nr.prep_time_minutes,
+            nr.cook_time_minutes,
+            (nr.prep_time_minutes + nr.cook_time_minutes) as total_minutes,
+            nr.dietary_tags as recipe_dietary_tags,
+            nr.allergen_tags as recipe_allergen_tags
+        FROM public.nutrition_items ni
+        LEFT JOIN public.nutrition_recipes nr ON nr.id = ni.recipe_id';
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS public.referral_monthly_caps CASCADE;
-CREATE VIEW public.referral_monthly_caps AS
-SELECT 
-    referrer_id,
-    DATE_TRUNC('month', created_at) as month,
-    COUNT(*) as referral_count,
-    SUM(reward_amount) as total_rewards
-FROM public.referrals
-GROUP BY referrer_id, DATE_TRUNC('month', created_at);
+-- Only create if referrals table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'referrals' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.referral_monthly_caps AS
+        SELECT 
+            referrer_id,
+            DATE_TRUNC(''month'', created_at) as month,
+            COUNT(*) as referral_count,
+            SUM(reward_amount) as total_rewards
+        FROM public.referrals
+        GROUP BY referrer_id, DATE_TRUNC(''month'', created_at)';
+    END IF;
+END $$;
 
 -- ========================================
 -- 2. ENABLE RLS ON TABLES
