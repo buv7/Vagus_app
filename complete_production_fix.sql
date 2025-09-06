@@ -467,15 +467,20 @@ ALTER TABLE public.plan_violation_counts ENABLE ROW LEVEL SECURITY;
 
 -- Drop and recreate views without SECURITY DEFINER
 DROP VIEW IF EXISTS public.nutrition_grocery_items_with_info CASCADE;
-CREATE VIEW public.nutrition_grocery_items_with_info AS
-SELECT 
-    ni.*,
-    ni.name as food_name,
-    ni.brand,
-    ni.category,
-    ni.nutrition_per_100g
-FROM public.nutrition_items ni
-WHERE ni.item_type = 'grocery';
+-- Only create if nutrition_items table exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+        EXECUTE 'CREATE VIEW public.nutrition_grocery_items_with_info AS
+        SELECT 
+            ni.*,
+            ni.name as food_name,
+            ni.category,
+            ni.nutrition_per_100g
+        FROM public.nutrition_items ni
+        WHERE ni.item_type = ''grocery''';
+    END IF;
+END $$;
 
 DROP VIEW IF EXISTS public.nutrition_cost_summary CASCADE;
 -- Only create if nutrition_items table exists
