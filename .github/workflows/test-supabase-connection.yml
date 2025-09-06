@@ -1,0 +1,41 @@
+name: Test Supabase Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test_connection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Test Supabase Link
+        run: |
+          echo "Testing Supabase connection..."
+          echo "Project Ref: ${{ secrets.SUPABASE_PROJECT_REF }}"
+          echo "Access Token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}"
+          
+          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
+            echo "❌ SUPABASE_PROJECT_REF secret is missing!"
+            exit 1
+          fi
+          
+          if [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ]; then
+            echo "❌ SUPABASE_ACCESS_TOKEN secret is missing!"
+            exit 1
+          fi
+          
+          echo "✅ Secrets are present, testing link..."
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Test Database Connection
+        run: |
+          echo "Testing database connection..."
+          supabase db push --dry-run
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
