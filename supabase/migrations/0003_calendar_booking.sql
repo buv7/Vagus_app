@@ -80,7 +80,7 @@ begin
         created_by = auth.uid() and
         (client_id is null or client_id = auth.uid() or 
          exists (
-           select 1 from public.coach_client_relationships 
+           select 1 from public.user_coach_links 
            where coach_id = auth.uid() and client_id = calendar_events.client_id
          ))
       );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import '../../widgets/branding/vagus_appbar.dart';
 import '../auth/login_screen.dart';
 import 'edit_profile_screen.dart';
 import '../coach/coach_search_screen.dart';
@@ -31,8 +32,13 @@ import '../../components/streak/streak_chip.dart';
 import '../streaks/streak_screen.dart';
 import '../../components/health/health_rings.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/navigation/vagus_side_menu.dart';
 import '../../services/intake/intake_service.dart';
 import '../intake/intake_wizard_screen.dart';
+import '../nutrition/nutrition_plan_viewer.dart';
+import '../../services/nutrition/hydration_service.dart';
+import '../../components/nutrition/hydration_ring.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
@@ -54,12 +60,12 @@ Widget _imagePlaceholder({double? w, double? h}) {
     height: h,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: DesignTokens.ink100,
+      color: AppTheme.lightGrey,
       borderRadius: BorderRadius.circular(DesignTokens.radius8),
     ),
     child: const Icon(
       Icons.image_not_supported,
-      color: DesignTokens.ink500,
+      color: AppTheme.steelGrey,
     ),
   );
 }
@@ -89,11 +95,16 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   final ProgressService _progressService = ProgressService();
   final EventService _eventService = EventService();
   final IntakeService _intakeService = IntakeService();
+  final HydrationService _hydrationService = HydrationService();
   Map<String, dynamic>? _profile;
   List<Map<String, dynamic>> _coaches = [];
   List<Map<String, dynamic>> _metrics = [];
   List<Map<String, dynamic>> _photos = [];
   List<Map<String, dynamic>> _checkins = [];
+  
+  // Hydration tracking
+  int _todayHydration = 0;
+  int _hydrationTarget = 3000;
   bool _loading = true;
   String _error = '';
   bool _coachFoundViaFallback = false;
@@ -113,6 +124,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   void initState() {
     super.initState();
     _loadData();
+    _loadHydrationData();
   }
 
   @override
@@ -135,9 +147,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           .eq('id', user.id)
           .single();
 
-      setState(() {
-        _profile = profile;
-      });
+      if (mounted) {
+        setState(() {
+          _profile = profile;
+        });
+      }
 
       // Load coach data with robust fallback
       unawaited(_loadCoach());
@@ -154,10 +168,66 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       // Determine user maturity level
       _determineUserMaturity();
     } catch (e) {
-      setState(() {
-        _error = 'Failed to load data: $e';
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _error = 'Failed to load data: $e';
+          _loading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadHydrationData() async {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      final today = DateTime.now();
+      final hydrationLog = await _hydrationService.getDaily(user.id, today);
+      final target = await _hydrationService.getDailyTarget(user.id);
+      
+      if (mounted) {
+        setState(() {
+          _todayHydration = hydrationLog.ml;
+          _hydrationTarget = target;
+        });
+      }
+    } catch (e) {
+      // Silently ignore hydration loading errors
+    }
+  }
+
+  Future<void> _addWater(int ml) async {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      final today = DateTime.now();
+      await _hydrationService.addWater(user.id, today, ml);
+      
+      if (mounted) {
+        setState(() {
+          _todayHydration += ml;
+        });
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added ${ml}ml of water'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add water: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -287,10 +357,12 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               .select()
               .inFilter('id', clientIds);
 
+        if (mounted) {
           setState(() {
             _coaches = List<Map<String, dynamic>>.from(clients);
             _loading = false;
           });
+        }
           return;
         }
       }
@@ -302,10 +374,12 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
             .select()
             .inFilter('id', coachIds);
 
-        setState(() {
-          _coaches = List<Map<String, dynamic>>.from(coaches);
-          _loading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _coaches = List<Map<String, dynamic>>.from(coaches);
+            _loading = false;
+          });
+        }
 
         // If we found coaches via fallback and there's exactly one, offer to create the link
         if (role == 'client' && coachIds.length == 1 && _coachFoundViaFallback) {
@@ -314,19 +388,23 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           }
         }
       } else {
-        setState(() {
-          _coaches = [];
-          _loading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _coaches = [];
+            _loading = false;
+          });
+        }
       }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Error loading coach: $e');
       }
-      setState(() {
-        _coaches = [];
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _coaches = [];
+          _loading = false;
+        });
+      }
     }
   }
 
@@ -339,11 +417,13 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       final photos = await _progressService.fetchProgressPhotos(user.id);
       final checkins = await _progressService.fetchCheckins(user.id);
 
-      setState(() {
-        _metrics = metrics;
-        _photos = photos;
-        _checkins = checkins;
-      });
+      if (mounted) {
+        setState(() {
+          _metrics = metrics;
+          _photos = photos;
+          _checkins = checkins;
+        });
+      }
     } catch (e) {
       // Silently handle progress data loading errors
       debugPrint('Failed to load progress data: $e');
@@ -354,9 +434,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     try {
       final userId = supabase.auth.currentUser!.id;
       final status = await _intakeService.getResponseStatus(userId);
-      setState(() {
-        _intakeStatus = status;
-      });
+      if (mounted) {
+        setState(() {
+          _intakeStatus = status;
+        });
+      }
     } catch (e) {
       // Silently ignore intake check errors
       debugPrint('Intake status check failed: $e');
@@ -467,7 +549,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         Text(
           'Welcome to Vagus!',
           style: DesignTokens.displaySmall.copyWith(
-            color: DesignTokens.blue600,
+            color: AppTheme.primaryBlack,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -475,14 +557,14 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         Text(
           'Let\'s get you started on your fitness journey',
           style: DesignTokens.bodyMedium.copyWith(
-            color: DesignTokens.ink500,
+            color: AppTheme.steelGrey,
           ),
         ),
         const SizedBox(height: DesignTokens.space24),
         
         // Set weekly goal card
         Card(
-          color: DesignTokens.blue50,
+          color: AppTheme.lightGrey,
           child: Padding(
             padding: const EdgeInsets.all(DesignTokens.space16),
             child: Column(
@@ -492,13 +574,13 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                   children: [
                     const Icon(
                       Icons.flag_rounded,
-                      color: DesignTokens.blue600,
+                      color: AppTheme.primaryBlack,
                     ),
                     const SizedBox(width: DesignTokens.space8),
                     Text(
                       'Set Your Weekly Goal',
                       style: DesignTokens.titleMedium.copyWith(
-                        color: DesignTokens.blue600,
+                        color: AppTheme.primaryBlack,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -508,7 +590,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 Text(
                   'What would you like to achieve this week?',
                   style: DesignTokens.bodyMedium.copyWith(
-                    color: DesignTokens.ink700,
+                    color: AppTheme.steelGrey,
                   ),
                 ),
                 const SizedBox(height: DesignTokens.space16),
@@ -565,9 +647,9 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                _buildTrendingProgramCard('Beginner Strength', '3 weeks', DesignTokens.blue600),
-                _buildTrendingProgramCard('Cardio Blast', '4 weeks', DesignTokens.purple500),
-                _buildTrendingProgramCard('Flexibility Flow', '2 weeks', DesignTokens.success),
+                _buildTrendingProgramCard('Beginner Strength', '3 weeks', AppTheme.primaryBlack),
+                _buildTrendingProgramCard('Cardio Blast', '4 weeks', AppTheme.steelGrey),
+                _buildTrendingProgramCard('Flexibility Flow', '2 weeks', AppTheme.primaryBlack),
               ],
             ),
           ),
@@ -622,14 +704,14 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         const SizedBox(height: DesignTokens.space16),
         
         Card(
-          color: DesignTokens.successBg,
+          color: AppTheme.lightGrey,
           child: Padding(
             padding: const EdgeInsets.all(DesignTokens.space16),
             child: Row(
               children: [
                 const Icon(
                   Icons.fitness_center_rounded,
-                  color: DesignTokens.success,
+                  color: AppTheme.primaryBlack,
                   size: 32,
                 ),
                 const SizedBox(width: DesignTokens.space16),
@@ -640,14 +722,14 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                       Text(
                         'Upper Body Strength',
                         style: DesignTokens.titleMedium.copyWith(
-                          color: DesignTokens.success,
+                          color: AppTheme.primaryBlack,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         '45 minutes • 8 exercises',
                         style: DesignTokens.bodyMedium.copyWith(
-                          color: DesignTokens.success.withValues(alpha: 0.8),
+                          color: AppTheme.steelGrey,
                         ),
                       ),
                     ],
@@ -687,7 +769,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                   'Duration',
                   '45 min',
                   Icons.timer,
-                  DesignTokens.blue600,
+                  AppTheme.primaryBlack,
                 ),
               ),
               const SizedBox(width: DesignTokens.space12),
@@ -696,7 +778,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                   'Calories',
                   '320',
                   Icons.local_fire_department,
-                  DesignTokens.warn,
+                  AppTheme.steelGrey,
                 ),
               ),
             ],
@@ -753,7 +835,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 'Current Weight',
                 '${_metrics.isNotEmpty ? _metrics.last['weight_kg']?.toStringAsFixed(1) ?? '--' : '--'} kg',
                 Icons.monitor_weight,
-                DesignTokens.blue600,
+                AppTheme.primaryBlack,
               ),
             ),
             const SizedBox(width: DesignTokens.space12),
@@ -762,7 +844,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 'Weekly Goal',
                 'On Track',
                 Icons.trending_up,
-                DesignTokens.success,
+                AppTheme.primaryBlack,
               ),
             ),
           ],
@@ -771,7 +853,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         
         // Diet suggestions
         Card(
-          color: DesignTokens.purple50,
+          color: AppTheme.lightGrey,
           child: Padding(
             padding: const EdgeInsets.all(DesignTokens.space16),
             child: Column(
@@ -781,13 +863,13 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                   children: [
                     const Icon(
                       Icons.restaurant_menu_rounded,
-                      color: DesignTokens.purple500,
+                      color: AppTheme.steelGrey,
                     ),
                     const SizedBox(width: DesignTokens.space8),
                     Text(
                       'Today\'s Nutrition',
                       style: DesignTokens.titleMedium.copyWith(
-                        color: DesignTokens.purple500,
+                        color: AppTheme.steelGrey,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -797,7 +879,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 Text(
                   'Focus on protein-rich foods to support your workout recovery',
                   style: DesignTokens.bodyMedium.copyWith(
-                    color: DesignTokens.purple500.withValues(alpha: 0.8),
+                    color: AppTheme.steelGrey,
                   ),
                 ),
               ],
@@ -857,7 +939,18 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     final avatarUrl = _profile?['avatar_url'];
 
     return Scaffold(
-      appBar: AppBar(
+      drawerEdgeDragWidth: 24, // left-edge swipe area
+              drawer: VagusSideMenu(
+          isClient: true, // show "Apply to become a coach"
+          onLogout: _logout,
+        ),
+      appBar: VagusAppBar(
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
+        ),
         title: Text(
           '📋 Client Dashboard',
           style: DesignTokens.titleMedium.copyWith(
@@ -865,10 +958,22 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: DesignTokens.blue600,
+        backgroundColor: AppTheme.primaryBlack,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.restaurant_menu),
+            tooltip: 'Nutrition Plans',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NutritionPlanViewer(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: 'Search Coaches',
@@ -900,11 +1005,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               else
                 const CircleAvatar(
                   radius: 40,
-                  backgroundColor: DesignTokens.blue50,
+                  backgroundColor: AppTheme.lightGrey,
                   child: Icon(
                     Icons.person,
                     size: 40,
-                    color: DesignTokens.blue600,
+                    color: AppTheme.primaryBlack,
                   ),
                 ),
               const SizedBox(height: DesignTokens.space16),
@@ -925,12 +1030,12 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 label: Text(
                   role.toUpperCase(),
                   style: DesignTokens.labelMedium.copyWith(
-                    color: DesignTokens.blue600,
+                    color: AppTheme.primaryBlack,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                backgroundColor: DesignTokens.blue50,
-                side: BorderSide(color: DesignTokens.blue600.withValues(alpha: 0.3)),
+                backgroundColor: AppTheme.lightGrey,
+                side: BorderSide(color: AppTheme.primaryBlack.withValues(alpha: 0.3)),
               ),
               const SizedBox(height: DesignTokens.space16),
               
@@ -1029,6 +1134,15 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               HealthRings(
                 userId: _profile?['id'] ?? '',
               ),
+              const SizedBox(height: DesignTokens.space16),
+              
+              // Hydration Ring
+              HydrationRing(
+                ml: _todayHydration,
+                targetMl: _hydrationTarget,
+                onAdd250: () => _addWater(250),
+                onAdd500: () => _addWater(500),
+              ),
               const SizedBox(height: DesignTokens.space24),
               
               // Personalized content based on user maturity
@@ -1114,6 +1228,27 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 Column(children: _coaches.map(_buildCoachCard).toList()),
 
               const SizedBox(height: DesignTokens.space32),
+
+              // ✅ NUTRITION PLANS BUTTON
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NutritionPlanViewer(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.restaurant_menu),
+                label: const Text('Nutrition Plans'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  backgroundColor: Colors.green.shade600,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+
+              const SizedBox(height: DesignTokens.space16),
 
                              // ✅ FILE MANAGER BUTTON
                ElevatedButton.icon(
@@ -1274,9 +1409,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         }
       }
 
-      setState(() {
-        _upcomingSession = upcoming;
-      });
+      if (mounted) {
+        setState(() {
+          _upcomingSession = upcoming;
+        });
+      }
     } catch (e) {
       debugPrint('Failed to load upcoming session: $e');
     }
@@ -1311,13 +1448,13 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               children: [
                 const Icon(
                   Icons.upcoming,
-                  color: DesignTokens.blue600,
+                  color: AppTheme.primaryBlack,
                 ),
                 const SizedBox(width: DesignTokens.space8),
                 Text(
                   'Upcoming Session',
                   style: DesignTokens.titleMedium.copyWith(
-                    color: DesignTokens.blue600,
+                    color: AppTheme.primaryBlack,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1420,8 +1557,8 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                     icon: const Icon(Icons.file_download, size: 16),
                     label: const Text('Add to Calendar'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: DesignTokens.blue600,
-                      side: BorderSide(color: DesignTokens.blue600.withValues(alpha: 0.3)),
+                      foregroundColor: AppTheme.primaryBlack,
+                      side: BorderSide(color: AppTheme.primaryBlack.withValues(alpha: 0.3)),
                     ),
                   ),
                 ),
@@ -1432,7 +1569,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                     icon: const Icon(Icons.calendar_view_day, size: 16),
                     label: const Text('View in Calendar'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: DesignTokens.blue600,
+                      backgroundColor: AppTheme.primaryBlack,
                       foregroundColor: Colors.white,
                     ),
                   ),

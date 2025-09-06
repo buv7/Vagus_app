@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'locale_helper.dart';
+import 'text_normalizer.dart';
 
 class CatalogFoodItem {
   final String id;
@@ -112,10 +114,15 @@ class FoodCatalogService {
   final Map<String, DateTime> _cacheTimestamps = {};
   static const int _cacheSize = 100;
   static const Duration _cacheTTL = Duration(minutes: 10);
+  
+  // Seed management
+  static const String _seedVersionKey = 'mena_seed_version';
+  static const String _currentSeedVersion = '1.0.0';
 
-  // Search food items with dual-source approach
-  Future<List<CatalogFoodItem>> search(String query, {String lang = 'en', int limit = 20}) async {
-    final normalizedQuery = LocaleHelper.normalizeNumber(query.toLowerCase().trim());
+  // Search food items with enhanced normalization and MENA seed support
+  Future<List<CatalogFoodItem>> search(String query, {String lang = 'en', int limit = 20, List<String>? cuisinePrefs}) async {
+    // Normalize query using text normalizer
+    final normalizedQuery = TextNormalizer.normalizeQuery(query);
     final cacheKey = '${normalizedQuery}_$lang';
     
     // Check cache first
@@ -146,22 +153,36 @@ class FoodCatalogService {
       }
     }
 
-    // Sort by relevance (exact matches first, then partial)
+    // Sort by relevance with cuisine preference boost
     results.sort((a, b) {
-      final aName = a.getName(lang).toLowerCase();
-      final bName = b.getName(lang).toLowerCase();
+      final aName = TextNormalizer.normalizeForSearch(a.getName(lang));
+      final bName = TextNormalizer.normalizeForSearch(b.getName(lang));
       
+      // Exact match boost
       final aExact = aName == normalizedQuery;
       final bExact = bName == normalizedQuery;
-      
       if (aExact && !bExact) return -1;
       if (!aExact && bExact) return 1;
       
+      // Starts with boost
       final aStartsWith = aName.startsWith(normalizedQuery);
       final bStartsWith = bName.startsWith(normalizedQuery);
-      
       if (aStartsWith && !bStartsWith) return -1;
       if (!aStartsWith && bStartsWith) return 1;
+      
+      // Cuisine preference boost
+      if (cuisinePrefs != null && cuisinePrefs.isNotEmpty) {
+        final aCuisineMatch = a.tags.any((tag) => cuisinePrefs.contains(tag));
+        final bCuisineMatch = b.tags.any((tag) => cuisinePrefs.contains(tag));
+        if (aCuisineMatch && !bCuisineMatch) return -1;
+        if (!aCuisineMatch && bCuisineMatch) return 1;
+      }
+      
+      // Language match boost
+      final aLangMatch = a.getName(lang) != a.nameEn;
+      final bLangMatch = b.getName(lang) != b.nameEn;
+      if (aLangMatch && !bLangMatch) return -1;
+      if (!aLangMatch && bLangMatch) return 1;
       
       return aName.compareTo(bName);
     });
@@ -241,5 +262,235 @@ class FoodCatalogService {
   void clearCache() {
     _cache.clear();
     _cacheTimestamps.clear();
+  }
+
+  // ========================================
+  // MENA SEED MANAGEMENT
+  // ========================================
+
+  /// Append MENA seed data to the database if not already present
+  Future<void> appendMenaSeedIfNeeded({bool force = false}) async {
+    try {
+      // Check if seed has already been applied
+      if (!force) {
+        final prefs = await SharedPreferences.getInstance();
+        final appliedVersion = prefs.getString(_seedVersionKey);
+        if (appliedVersion == _currentSeedVersion) {
+          return; // Already applied
+        }
+      }
+
+      // Load MENA seed data
+      final seedData = await _loadMenaSeedData();
+      if (seedData.isEmpty) return;
+
+      // Insert seed items into database
+      await _insertSeedItems(seedData);
+
+      // Mark seed as applied
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_seedVersionKey, _currentSeedVersion);
+
+    } catch (e) {
+      // Handle error silently - seed is optional
+      print('Failed to append MENA seed: $e');
+    }
+  }
+
+  /// Load MENA seed data from assets
+  Future<List<Map<String, dynamic>>> _loadMenaSeedData() async {
+    try {
+      final jsonString = await rootBundle.loadString('assets/nutrition/mena_seed.json');
+      final List<dynamic> jsonData = json.decode(jsonString);
+      return jsonData.cast<Map<String, dynamic>>();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Insert seed items into database (non-duplicates only)
+  Future<void> _insertSeedItems(List<Map<String, dynamic>> seedData) async {
+    for (final item in seedData) {
+      try {
+        // Check if item already exists by key
+        final key = item['key'] as String;
+        final existing = await _supabase
+            .from('food_items')
+            .select('id')
+            .eq('key', key)
+            .maybeSingle();
+
+        if (existing != null) continue; // Skip if already exists
+
+        // Prepare item for insertion
+        final names = item['names'] as Map<String, dynamic>;
+        final nutrition = item['per_100g'] ?? item['per_100ml'] ?? {};
+        final tags = List<String>.from(item['tags'] ?? []);
+
+        final insertData = {
+          'key': key,
+          'name_en': names['en'] ?? '',
+          'name_ar': names['ar'],
+          'name_ku': names['ku'],
+          'unit': item['unit'] ?? 'g',
+          'portion_grams': 100.0, // Standard 100g/100ml portion
+          'kcal': (nutrition['kcal'] ?? 0.0).toDouble(),
+          'protein_g': (nutrition['protein_g'] ?? 0.0).toDouble(),
+          'carbs_g': (nutrition['carbs_g'] ?? 0.0).toDouble(),
+          'fat_g': (nutrition['fat_g'] ?? 0.0).toDouble(),
+          'sodium_mg': nutrition['sodium_mg'],
+          'potassium_mg': nutrition['potassium_mg'],
+          'fiber_g': nutrition['fiber_g'],
+          'tags': tags,
+          'source': 'mena_seed',
+          'created_at': DateTime.now().toIso8601String(),
+        };
+
+        await _supabase
+            .from('food_items')
+            .insert(insertData);
+
+      } catch (e) {
+        // Continue with next item if one fails
+        print('Failed to insert seed item ${item['key']}: $e');
+      }
+    }
+  }
+
+  /// Enhanced search with MENA seed support
+  Future<List<CatalogFoodItem>> _searchDatabaseV2(String query, String lang, int limit) async {
+    try {
+      String nameColumn = 'name_en';
+      switch (lang) {
+        case 'ar':
+          nameColumn = 'name_ar';
+          break;
+        case 'ku':
+          nameColumn = 'name_ku';
+          break;
+      }
+
+      // Search with normalized query across all name columns
+      final response = await _supabase
+          .from('food_items')
+          .select()
+          .or('name_en.ilike.%$query%,name_ar.ilike.%$query%,name_ku.ilike.%$query%')
+          .limit(limit)
+          .order(nameColumn);
+
+      return response.map<CatalogFoodItem>((item) => CatalogFoodItem.fromJson(item, source: 'database')).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Enhanced asset search with MENA seed support
+  Future<List<CatalogFoodItem>> _searchAssetV2(String query, String lang, int limit) async {
+    try {
+      // Try MENA seed first
+      final menaResults = await _searchMenaSeed(query, lang, limit);
+      if (menaResults.isNotEmpty) {
+        return menaResults;
+      }
+
+      // Fallback to original asset search
+      final jsonString = await rootBundle.loadString('assets/foods/arabic_kurdish_foods.json');
+      final jsonData = json.decode(jsonString);
+      final items = jsonData['items'] as List;
+
+      final results = <CatalogFoodItem>[];
+      
+      for (final item in items) {
+        final foodItem = CatalogFoodItem.fromJson(item, source: 'asset');
+        final itemName = foodItem.getName(lang).toLowerCase();
+        
+        if (itemName.contains(query) || 
+            foodItem.nameEn.toLowerCase().contains(query) ||
+            (foodItem.nameAr?.toLowerCase().contains(query) ?? false) ||
+            (foodItem.nameKu?.toLowerCase().contains(query) ?? false)) {
+          results.add(foodItem);
+          if (results.length >= limit) break;
+        }
+      }
+      
+      return results;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Search MENA seed data
+  Future<List<CatalogFoodItem>> _searchMenaSeed(String query, String lang, int limit) async {
+    try {
+      final seedData = await _loadMenaSeedData();
+      final results = <CatalogFoodItem>[];
+      
+      for (final item in seedData) {
+        final names = item['names'] as Map<String, dynamic>;
+        final nameEn = names['en'] ?? '';
+        final nameAr = names['ar'] ?? '';
+        final nameKu = names['ku'] ?? '';
+        
+        // Check if any name matches the query
+        final normalizedQuery = TextNormalizer.normalizeForSearch(query);
+        final matches = [
+          TextNormalizer.normalizeForSearch(nameEn),
+          TextNormalizer.normalizeForSearch(nameAr),
+          TextNormalizer.normalizeForSearch(nameKu),
+        ].any((name) => name.contains(normalizedQuery));
+        
+        if (matches) {
+          final nutrition = item['per_100g'] ?? item['per_100ml'] ?? {};
+          final tags = List<String>.from(item['tags'] ?? []);
+          
+          final catalogItem = CatalogFoodItem(
+            id: item['key'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+            nameEn: nameEn,
+            nameAr: nameAr.isNotEmpty ? nameAr : null,
+            nameKu: nameKu.isNotEmpty ? nameKu : null,
+            portionGrams: 100.0,
+            kcal: (nutrition['kcal'] ?? 0.0).toDouble(),
+            proteinG: (nutrition['protein_g'] ?? 0.0).toDouble(),
+            carbsG: (nutrition['carbs_g'] ?? 0.0).toDouble(),
+            fatG: (nutrition['fat_g'] ?? 0.0).toDouble(),
+            sodiumMg: nutrition['sodium_mg'],
+            potassiumMg: nutrition['potassium_mg'],
+            tags: tags,
+            source: 'mena_seed',
+          );
+          
+          results.add(catalogItem);
+          if (results.length >= limit) break;
+        }
+      }
+      
+      return results;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Initialize MENA seed on first app launch
+  Future<void> initializeMenaSeed() async {
+    try {
+      // Check if catalog is empty or feature flag is enabled
+      final prefs = await SharedPreferences.getInstance();
+      final featureEnabled = prefs.getBool('nutrition.regionalFoods') ?? true;
+      
+      if (featureEnabled) {
+        await appendMenaSeedIfNeeded();
+      }
+    } catch (e) {
+      // Handle error silently
+    }
+  }
+
+  /// Seed MENA foods for diagnostics
+  Future<void> seedMenaFoods() async {
+    try {
+      await appendMenaSeedIfNeeded();
+    } catch (e) {
+      print('Error seeding MENA foods: $e');
+    }
   }
 }

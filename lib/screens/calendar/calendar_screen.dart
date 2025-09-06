@@ -6,6 +6,7 @@ import '../../services/motion_service.dart';
 import '../../theme/design_tokens.dart';
 import '../../services/supplements/supplement_service.dart';
 import '../../models/supplements/supplement_models.dart';
+import '../../widgets/branding/vagus_appbar.dart';
 import 'event_editor.dart';
 import 'dart:async';
 
@@ -1029,7 +1030,7 @@ class _CalendarScreenState extends State<CalendarScreen> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: const Text('Calendar'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

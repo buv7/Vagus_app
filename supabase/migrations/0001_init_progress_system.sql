@@ -4,6 +4,113 @@
 -- Ensure pgcrypto is available for gen_random_uuid()
 create extension if not exists pgcrypto;
 
+-- Profiles Table (required for role-based access)
+create table if not exists public.profiles (
+  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name text,
+  email text,
+  role text DEFAULT 'client' CHECK (role IN ('admin', 'coach', 'client')),
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Index for profiles
+CREATE INDEX IF NOT EXISTS idx_profiles_role ON public.profiles(role);
+
+-- Enable RLS on profiles
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for profiles
+DO $$
+BEGIN
+  -- Users can read their own profile
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_select_own') THEN
+    CREATE POLICY profiles_select_own ON public.profiles
+      FOR SELECT TO authenticated
+      USING (id = auth.uid());
+  END IF;
+
+  -- Users can update their own profile
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_update_own') THEN
+    CREATE POLICY profiles_update_own ON public.profiles
+      FOR UPDATE TO authenticated
+      USING (id = auth.uid())
+      WITH CHECK (id = auth.uid());
+  END IF;
+
+  -- Users can insert their own profile
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_insert_own') THEN
+    CREATE POLICY profiles_insert_own ON public.profiles
+      FOR INSERT TO authenticated
+      WITH CHECK (id = auth.uid());
+  END IF;
+
+  -- Coaches can read profiles of their clients (will be updated later when user_coach_links exists)
+  -- This policy will be added in a later migration
+
+  -- Admins can read all profiles
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'profiles_select_admin') THEN
+    CREATE POLICY profiles_select_admin ON public.profiles
+      FOR SELECT TO authenticated
+      USING (
+        EXISTS (
+          SELECT 1 FROM public.profiles p
+          WHERE p.id = auth.uid() AND p.role = 'admin'
+        )
+      );
+  END IF;
+END $$;
+
+-- User Coach Links Table (required for RLS policies)
+create table if not exists public.user_coach_links (
+  client_id uuid not null references auth.users(id) on delete cascade,
+  coach_id uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (client_id, coach_id)
+);
+
+-- Index for coach lookups
+create index if not exists idx_user_coach_links_coach_id on public.user_coach_links (coach_id);
+
+-- Index for client lookups  
+create index if not exists idx_user_coach_links_client_id on public.user_coach_links (client_id);
+
+-- Enable RLS on user_coach_links
+alter table public.user_coach_links enable row level security;
+
+-- RLS policies for user_coach_links
+do $$
+begin
+  -- Users can read their own coach links
+  if not exists (select 1 from pg_policies where policyname = 'user_coach_links_select') then
+    create policy user_coach_links_select on public.user_coach_links
+      for select using (
+        auth.uid() = client_id or 
+        auth.uid() = coach_id or
+        auth.role() = 'service_role'
+      );
+  end if;
+
+  -- Coaches can create links with clients
+  if not exists (select 1 from pg_policies where policyname = 'user_coach_links_insert') then
+    create policy user_coach_links_insert on public.user_coach_links
+      for insert to authenticated
+      with check (auth.uid() = coach_id or auth.role() = 'service_role');
+  end if;
+
+  -- Coaches can update their own links
+  if not exists (select 1 from pg_policies where policyname = 'user_coach_links_update') then
+    create policy user_coach_links_update on public.user_coach_links
+      for update using (auth.uid() = coach_id or auth.role() = 'service_role');
+  end if;
+
+  -- Coaches can delete their own links
+  if not exists (select 1 from pg_policies where policyname = 'user_coach_links_delete') then
+    create policy user_coach_links_delete on public.user_coach_links
+      for delete using (auth.uid() = coach_id or auth.role() = 'service_role');
+  end if;
+end $$;
+
 -- 1. Client Metrics Table
 create table if not exists public.client_metrics (
   id uuid primary key default gen_random_uuid(),
@@ -55,7 +162,7 @@ begin
       for select to authenticated
       using (
         exists (
-          select 1 from public.coach_clients l
+          select 1 from public.user_coach_links l
           where l.coach_id = auth.uid() and l.client_id = client_metrics.user_id
         )
       );
@@ -105,7 +212,7 @@ begin
       for select to authenticated
       using (
         exists (
-          select 1 from public.coach_clients l
+          select 1 from public.user_coach_links l
           where l.coach_id = auth.uid() and l.client_id = progress_photos.user_id
         )
       );
@@ -159,7 +266,7 @@ begin
       for select to authenticated
       using (
         exists (
-          select 1 from public.coach_clients l
+          select 1 from public.user_coach_links l
           where l.coach_id = auth.uid() and l.client_id = checkins.client_id
         )
       );
@@ -171,14 +278,14 @@ begin
       using (
         coach_id = auth.uid()
         and exists (
-          select 1 from public.coach_clients l
+          select 1 from public.user_coach_links l
           where l.coach_id = auth.uid() and l.client_id = checkins.client_id
         )
       )
       with check (
         coach_id = auth.uid()
         and exists (
-          select 1 from public.coach_clients l
+          select 1 from public.user_coach_links l
           where l.coach_id = auth.uid() and l.client_id = checkins.client_id
         )
       );

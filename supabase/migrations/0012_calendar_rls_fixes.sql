@@ -9,7 +9,7 @@ create policy events_insert_policy on public.events
     created_by = auth.uid() and
     (coach_id is null or coach_id = auth.uid() or 
      exists (
-       select 1 from public.coach_clients cc 
+       select 1 from public.user_coach_links cc 
        where cc.coach_id = events.coach_id and cc.client_id = auth.uid()
      ))
   );

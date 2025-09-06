@@ -16,6 +16,8 @@ import '../../services/health/health_service.dart';
 import '../../services/music/music_service.dart';
 import '../../models/music/music_models.dart';
 import '../../widgets/music/music_play_button.dart';
+import '../../widgets/branding/vagus_appbar.dart';
+import '../../widgets/workout/exercise_detail_sheet.dart';
 
 // Safe image handling helpers
 bool _isValidHttpUrl(String? url) {
@@ -411,7 +413,7 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: const Text('📋 Workout Viewer'),
         actions: [
           // Cardio quick-log button
@@ -916,6 +918,63 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen> {
     );
   }
 
+  void _showExerciseDetailSheet({
+    required Map<String, dynamic> exercise,
+    required int dayIndex,
+  }) {
+    final groupExercises = _getGroupExercises(exercise, dayIndex);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return ExerciseDetailSheet(
+          exercises: groupExercises,
+          initialIndex: groupExercises.indexWhere((e) => identical(e, exercise)),
+          roleContext: _role,
+          onMarkDone: (ex) {
+            // OPTIONAL: hook into your existing completion toggle if available.
+            // Example: _toggleExerciseDone(dayIndex, ex);
+            // Leave as is if not supported.
+          },
+          onAddNote: (ex, note) {
+            // OPTIONAL: hook to your existing note mechanism per exercise.
+            // Example: _saveExerciseNote(dayIndex, ex, note);
+          },
+          onAttachMedia: (ex) {
+            // OPTIONAL: open your attachment flow here if you have one.
+            // Example: _openAttachmentPickerForExercise(dayIndex, ex);
+          },
+        );
+      },
+    );
+  }
+
+  List<Map<String, dynamic>> _getGroupExercises(Map<String, dynamic> exercise, int dayIndex) {
+    try {
+      final weeks = List<Map<String, dynamic>>.from((_plan?['weeks'] as List<dynamic>?) ?? []);
+      if (weeks.isEmpty || _currentWeek >= weeks.length) return [exercise];
+      
+      final week = weeks[_currentWeek];
+      final days = List<Map<String, dynamic>>.from((week['days'] as List<dynamic>?) ?? []);
+      if (dayIndex >= days.length) return [exercise];
+      
+      final day = days[dayIndex];
+      final List<dynamic> all = (day['exercises'] as List?) ?? const [];
+      final groupId = exercise['groupId'];
+
+      if (groupId == null) {
+        // Not grouped: return just this exercise
+        return [exercise];
+      }
+      final sameGroup = all.whereType<Map<String, dynamic>>().where((e) => e['groupId'] == groupId).toList();
+      return sameGroup.isNotEmpty ? sameGroup : [exercise];
+    } catch (_) {
+      return [exercise];
+    }
+  }
+
   Widget _buildWeekView() {
     final weeks = List<Map<String, dynamic>>.from((_plan!['weeks'] as List<dynamic>?) ?? []);
     if (weeks.isEmpty) {
@@ -1003,6 +1062,10 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
+                      onTap: () => _showExerciseDetailSheet(
+                        exercise: e,
+                        dayIndex: i,
+                      ),
                       title: Row(
                         children: [
                           Expanded(child: Text(e['name'] ?? 'Unnamed Exercise')),
@@ -1310,7 +1373,7 @@ class _ExcelPlanEditorScreenState extends State<_ExcelPlanEditorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: const Text('Edit Full Plan'),
         actions: [
           TextButton.icon(

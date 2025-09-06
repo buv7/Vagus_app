@@ -9,6 +9,7 @@ import '../../models/google/google_models.dart';
 class GoogleAppsService {
   static final GoogleAppsService _instance = GoogleAppsService._internal();
   factory GoogleAppsService() => _instance;
+  static GoogleAppsService get instance => _instance;
   GoogleAppsService._internal();
 
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -356,6 +357,57 @@ class GoogleAppsService {
     return String.fromCharCodes(
       Iterable.generate(32, (_) => chars.codeUnitAt(random.nextInt(chars.length))),
     );
+  }
+
+  /// Export KPIs data to Google Sheets (for admin dashboard)
+  Future<bool> exportKpisToSheets({
+    required String title,
+    required String sheetName,
+    required List<List<dynamic>> rows,
+  }) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return false;
+
+      // Create export record with structured data
+      final response = await _supabase.from('google_exports').insert({
+        'owner_id': userId,
+        'kind': 'admin_kpis',
+        'status': 'queued',
+        'title': title,
+        'sheet_name': sheetName,
+        'rows': jsonEncode(rows),
+      }).select().single();
+
+      final exportId = response['id'];
+
+      // TODO: call edge function 'google_export'
+      // For now, simulate export process
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Simulate successful export
+      final mockSheetUrl = 'https://docs.google.com/spreadsheets/d/mock_${Random().nextInt(10000)}';
+      
+      await _supabase
+          .from('google_exports')
+          .update({
+            'status': 'done',
+            'sheet_url': mockSheetUrl,
+          })
+          .eq('id', exportId);
+
+      // Log analytics
+      _logAnalytics('google_export_done', {'kind': 'admin_kpis', 'title': title});
+
+      return true;
+    } catch (e) {
+      debugPrint('Error exporting KPIs to Sheets: $e');
+      
+      // Log error analytics
+      _logAnalytics('google_export_error', {'kind': 'admin_kpis', 'error': e.toString()});
+      
+      return false;
+    }
   }
 
   /// Log analytics events

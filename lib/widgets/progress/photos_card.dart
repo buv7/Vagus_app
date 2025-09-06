@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../services/progress/progress_service.dart';
 import '../../screens/progress/progress_gallery.dart';
 import '../../theme/design_tokens.dart';
+import '../anim/blocking_overlay.dart';
 
 class PhotosCard extends StatefulWidget {
   final String userId;
@@ -39,10 +40,14 @@ class _PhotosCardState extends State<PhotosCard> {
     setState(() => _isUploading = true);
 
     try {
-      await _progressService.uploadProgressPhoto(
-        userId: widget.userId,
-        imageFile: image,
-        shotType: 'progress',
+      await runWithBlockingLoader(
+        context,
+        _progressService.uploadProgressPhoto(
+          userId: widget.userId,
+          imageFile: image,
+          shotType: 'progress',
+        ),
+        showSuccess: true,
       );
 
       widget.onRefresh();

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'coach_note_screen.dart';
 import '../../services/ai/embedding_helper.dart';
 import '../../services/billing/plan_access_manager.dart';
+import '../../widgets/anim/blocking_overlay.dart';
 
 class SmartPanel extends StatefulWidget {
   final TextEditingController noteController;
@@ -45,7 +46,11 @@ class _SmartPanelState extends State<SmartPanel> {
       SnackBar(content: Text('Running AI: $type... (simulated)')),
     );
 
-    await Future.delayed(const Duration(seconds: 2));
+    await runWithBlockingLoader(
+      context,
+      Future.delayed(const Duration(seconds: 2)),
+      showSuccess: true,
+    );
     if (!mounted || !context.mounted) return;
 
     switch (type) {

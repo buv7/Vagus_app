@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,6 +9,8 @@ import '../../services/nutrition/locale_helper.dart';
 import 'meal_editor.dart';
 import '../../widgets/nutrition/daily_summary_card.dart';
 import '../../widgets/ai/ai_usage_meter.dart';
+import '../../widgets/anim/blocking_overlay.dart';
+import '../supplements/supplement_editor_sheet.dart';
 
 class NutritionPlanBuilder extends StatefulWidget {
   final String? clientId;
@@ -216,7 +219,17 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder> {
         debugPrint('Generating full day with targets: $targets, mealCount: $mealCount');
       }
 
-      final generatedMeals = await _nutritionAI.generateFullDay(targets, mealCount);
+      final generatedMeals = await runWithBlockingLoader(
+        context,
+        _nutritionAI.generateFullDay(
+          calories: targets['calories'] ?? 0.0,
+          protein: targets['protein'] ?? 0.0,
+          carbs: targets['carbs'] ?? 0.0,
+          fat: targets['fat'] ?? 0.0,
+          locale: Localizations.localeOf(context).languageCode,
+        ),
+        showSuccess: true,
+      );
       
       if (kDebugMode) {
         debugPrint('Generated ${generatedMeals.length} meals');
@@ -545,6 +558,30 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder> {
     );
   }
 
+  String? _resolveCurrentClientId() {
+    // If the screen already has a selected client, return its userId.
+    // Otherwise, if this is a coach multi-client context, return the first available client
+    try {
+      return _selectedClientId ?? _clients.firstOrNull?['id']?.toString();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _refreshNutritionData() async {
+    try {
+      // Refresh the current plan data if editing an existing plan
+      if (widget.planToEdit != null) {
+        // Reload the plan data - this is a simple refresh since we don't have a _loadPlan method
+        setState(() {
+          // Trigger a rebuild to show any updated data
+        });
+      }
+    } catch (_) {
+      // no-op
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isRTL = LocaleHelper.isRTL(Localizations.localeOf(context).languageCode);
@@ -557,6 +594,37 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder> {
               ? LocaleHelper.t('edit_nutrition_plan', Localizations.localeOf(context).languageCode)
               : LocaleHelper.t('create_nutrition_plan', Localizations.localeOf(context).languageCode)),
         actions: [
+          IconButton(
+            tooltip: 'Add supplement',
+            icon: const Icon(Icons.local_pharmacy_outlined),
+            onPressed: () async {
+              final clientId = _resolveCurrentClientId();
+              if (clientId == null) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No clients available')),
+                );
+                return;
+              }
+              if (!context.mounted) return;
+              await showModalBottomSheet(
+                context: context,
+                useRootNavigator: true,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => SupplementEditorSheet(
+                  clientId: clientId,
+                  onSaved: (supplement) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Supplement created')),
+                    );
+                    unawaited(_refreshNutritionData());
+                  },
+                ),
+              );
+            },
+          ),
           if (widget.planToEdit != null) ...[
             IconButton(
               icon: const Icon(Icons.picture_as_pdf),

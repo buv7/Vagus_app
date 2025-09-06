@@ -1,12 +1,18 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/messages_service.dart';
+import '../../services/messaging/ai_draft_reply_service.dart';
 import '../../widgets/messaging/message_bubble.dart';
+import '../../widgets/messaging/SmartReplyPanel.dart';
 import '../../widgets/messaging/attachment_picker.dart';
 import '../../widgets/messaging/voice_recorder.dart';
 import '../../components/messaging/message_search_bar.dart';
 import '../../components/messaging/pin_panel.dart';
 import '../../components/messaging/thread_view.dart';
+import '../../widgets/anim/typing_dots.dart';
+import '../../widgets/branding/vagus_appbar.dart';
+import '../../utils/message_helpers.dart';
 import 'dart:io';
 
 class ClientMessengerScreen extends StatefulWidget {
@@ -18,6 +24,7 @@ class ClientMessengerScreen extends StatefulWidget {
 
 class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
   final MessagesService _messagesService = MessagesService();
+  final AIDraftReplyService _aiDraftService = AIDraftReplyService();
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   
@@ -32,6 +39,13 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
   bool _sending = false;
   bool _showSearchBar = false;
   DateTime? _lastReadAt;
+  
+  // AI features
+  static const bool kEnableSmartReplies = true;
+  List<String> _smartReplies = [];
+  bool _loadingSmartReplies = false;
+  bool _showSmartReplies = false;
+  Timer? _smartRepliesTimer;
 
   @override
   void initState() {
@@ -43,6 +57,7 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _smartRepliesTimer?.cancel();
     super.dispose();
   }
 
@@ -79,6 +94,11 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
         });
         _scrollToBottom();
         _markMessagesAsSeen();
+        
+        // Load smart replies for new incoming messages
+        if (kEnableSmartReplies) {
+          _loadSmartReplies();
+        }
       });
 
       // Subscribe to read receipts
@@ -225,6 +245,92 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
     }
   }
 
+  // Smart Reply Methods
+  bool _shouldShowSmartReplies() {
+    if (!kEnableSmartReplies || _threadId == null) return false;
+    if (_messages.isEmpty) return false;
+    
+    // Show smart replies if the last message is from the coach
+    final lastMessage = _messages.last;
+    final user = Supabase.instance.client.auth.currentUser;
+    final isLastMessageFromCoach = user?.id != lastMessage.senderId;
+    
+    return isLastMessageFromCoach && _showSmartReplies;
+  }
+
+  Future<void> _loadSmartReplies() async {
+    if (_threadId == null || _messages.isEmpty) return;
+    
+    final lastMessage = _messages.last;
+    final user = Supabase.instance.client.auth.currentUser;
+    final isLastMessageFromCoach = user?.id != lastMessage.senderId;
+    
+    if (!isLastMessageFromCoach) return;
+    
+    setState(() {
+      _loadingSmartReplies = true;
+      _showSmartReplies = true;
+    });
+    
+    try {
+      final drafts = await _aiDraftService.getDraftReplies(
+        conversationId: _threadId!,
+        lastMessage: msgText(lastMessage),
+        role: 'client',
+      );
+      
+      if (mounted) {
+        setState(() {
+          _smartReplies = drafts;
+          _loadingSmartReplies = false;
+        });
+        
+        // Auto-hide after 15 seconds
+        _smartRepliesTimer?.cancel();
+        _smartRepliesTimer = Timer(const Duration(seconds: 15), () {
+          if (mounted) {
+            setState(() {
+              _showSmartReplies = false;
+            });
+          }
+        });
+      }
+    } catch (e) {
+      print('Error loading smart replies: $e');
+      if (mounted) {
+        setState(() {
+          _loadingSmartReplies = false;
+          _showSmartReplies = false;
+        });
+      }
+    }
+  }
+
+  void _useSmartReply(String reply) {
+    _messageController.text = reply;
+    _messageController.selection = TextSelection.fromPosition(
+      TextPosition(offset: reply.length),
+    );
+    setState(() {
+      _showSmartReplies = false;
+    });
+  }
+
+  void _sendSmartReply(String reply) {
+    _messageController.text = reply;
+    _sendMessage();
+    setState(() {
+      _showSmartReplies = false;
+    });
+  }
+
+  void _dismissSmartReplies() {
+    setState(() {
+      _showSmartReplies = false;
+    });
+    _smartRepliesTimer?.cancel();
+  }
+
   void _markMessagesAsSeen() {
     if (_threadId == null) return;
     
@@ -273,7 +379,7 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
     
     return _messages.where((message) {
       final searchLower = _searchQuery.toLowerCase();
-      return message.text.toLowerCase().contains(searchLower) ||
+      return msgText(message).toLowerCase().contains(searchLower) ||
           message.attachments.any((attachment) =>
               attachment['name']?.toString().toLowerCase().contains(searchLower) ?? false);
     }).toList();
@@ -289,7 +395,7 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
 
     if (_coachId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Messages')),
+        appBar: VagusAppBar(title: const Text('Messages')),
         body: const Center(
           child: Text('No coach connected. Please connect with a coach first.'),
         ),
@@ -300,7 +406,7 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
     final coachAvatar = _coachProfile?['avatar_url'];
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: Row(
           children: [
             CircleAvatar(
@@ -313,10 +419,7 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
               children: [
                 Text(coachName),
                 if (_typingUsers.isNotEmpty)
-                  const Text(
-                    'typing...',
-                    style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                  ),
+                  const TypingDots(size: 20),
               ],
             ),
           ],
@@ -395,6 +498,15 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
                     },
                   ),
           ),
+
+          // Smart Replies Panel
+          if (kEnableSmartReplies && _shouldShowSmartReplies())
+            SmartReplyPanel(
+              drafts: _smartReplies,
+              onDraftTap: _useSmartReply,
+              onDraftLongPress: _sendSmartReply,
+              onDismiss: _dismissSmartReplies,
+            ),
 
           // Message composer
           Container(
@@ -542,7 +654,7 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
   }
 
   void _editMessage(Message message) {
-    _messageController.text = message.text;
+    _messageController.text = msgText(message);
     _messageController.selection = TextSelection.fromPosition(
       TextPosition(offset: _messageController.text.length),
     );

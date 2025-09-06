@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../widgets/branding/vagus_appbar.dart';
 import 'edit_profile_screen.dart';
 import '../account_switch_screen.dart';
 
@@ -60,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: const Text('Welcome to VAGUS'),
         actions: [
           // append-only: quick access to account switcher

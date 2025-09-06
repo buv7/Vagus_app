@@ -56,14 +56,14 @@ class PlanAccessManager {
       // Get user's entitlements
       final entitlements = await supabase
           .from('entitlements_v')
-          .select('plan_type')
+          .select('plan_code')
           .eq('user_id', currentUser.id)
           .maybeSingle();
       
       if (entitlements == null) return false;
       
-      final planType = entitlements['plan_type'] as String?;
-      return planType == 'pro' || planType == 'premium';
+      final planCode = entitlements['plan_code'] as String?;
+      return planCode == 'pro' || planCode == 'premium';
     } catch (e) {
       debugPrint('❌ Error checking Pro status: $e');
       return false;

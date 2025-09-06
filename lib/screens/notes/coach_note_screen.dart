@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../widgets/branding/vagus_appbar.dart';
 import 'note_reminder_setter.dart';
 import 'smart_panel.dart';
 import 'note_version_viewer.dart';
@@ -205,7 +206,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: Text(widget.existingNote == null ? 'New Note' : 'Edit Note'),
         actions: [
           if (widget.existingNote != null && _currentVersion > 1)

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/settings/settings_controller.dart';
+import '../../services/settings/reduce_motion.dart';
 import '../../components/settings/theme_toggle.dart';
 import '../../components/settings/language_selector.dart';
 import '../../components/settings/reminder_defaults.dart';
+import '../../widgets/branding/vagus_appbar.dart';
+import '../../widgets/settings/WorkoutPopoutPrefsSection.dart';
 import 'music_settings_screen.dart';
 import 'google_integrations_screen.dart';
 import 'earn_rewards_screen.dart';
@@ -33,7 +37,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: const Text('Settings'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -137,6 +141,46 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+
+            // Reduce Motion Card
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.accessibility,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Accessibility',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    SwitchListTile(
+                      title: const Text('Reduce Motion'),
+                      subtitle: const Text('Use simpler effects to save battery or reduce motion'),
+                      value: context.watch<ReduceMotion>().enabled,
+                      onChanged: (v) => context.read<ReduceMotion>().setEnabled(v),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Workout Popout Defaults Card
+            const WorkoutPopoutPrefsSection(),
             const SizedBox(height: 16),
 
             // Music Settings Card

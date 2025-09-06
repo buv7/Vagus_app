@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/nutrition/nutrition_plan.dart';
 import '../../services/ai/nutrition_ai.dart';
+import '../../widgets/anim/blocking_overlay.dart';
 
 class MacroTableRow extends StatefulWidget {
   final FoodItem item;
@@ -127,9 +128,16 @@ class _MacroTableRowState extends State<MacroTableRow> {
       if (targetFat != null) targets['fat'] = targetFat;
 
       // Generate food item with target macros
-      final generatedItems = await _nutritionAI.generateFoodWithTargetMacros(
-        _nameController.text.trim(),
-        targets,
+      final generatedItems = await runWithBlockingLoader(
+        context,
+        _nutritionAI.generateFoodWithTargetMacros(
+          calories: targets['calories'] ?? 0.0,
+          protein: targets['protein'] ?? 0.0,
+          carbs: targets['carbs'] ?? 0.0,
+          fat: targets['fat'] ?? 0.0,
+          locale: Localizations.localeOf(context).languageCode,
+        ),
+        showSuccess: true,
       );
 
       if (generatedItems.isNotEmpty) {

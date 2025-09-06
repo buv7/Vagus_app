@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signup_screen.dart';
@@ -5,6 +6,9 @@ import 'password_reset_screen.dart';
 import 'enable_biometrics_dialog.dart';
 import '../../services/account_switcher.dart';
 import '../../services/auth/biometric_auth_service.dart';
+import '../../widgets/anim/vagus_loader.dart';
+import '../../widgets/anim/vagus_success.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -76,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _showPasswordDialog() {
     final passwordController = TextEditingController();
     
+    // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -126,13 +131,25 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_storedUserEmail == null) return;
     
     setState(() => _loading = true);
+    
+    // Show loading dialog
+    // ignore: unawaited_futures
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: VagusLoader(size: 72)),
+    );
+    
     try {
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: _storedUserEmail!,
         password: password,
       );
       
+      if (!mounted) return;
+      
       if (response.user == null) {
+        Navigator.pop(context); // Remove loader
         _showMessage('Login failed. Check your password.');
         return;
       } else {
@@ -160,21 +177,56 @@ class _LoginScreenState extends State<LoginScreen> {
             await _showBiometricSetupDialog(user.email ?? '');
           }
         }
+        
+        // Show success animation
+        if (mounted) {
+          Navigator.pop(context); // Remove loader
+          // ignore: unawaited_futures
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const Center(child: VagusSuccess(size: 84)),
+          );
+          
+          // Wait for success animation, then navigate
+          await Future.delayed(const Duration(milliseconds: 700));
+          if (!mounted) return;
+          Navigator.pop(context); // Remove success dialog
+          
+          // Navigate to home (the app will handle routing via AuthGate)
+          // No need to navigate manually as Supabase auth state change will trigger navigation
+        }
       }
     } catch (e) {
-      _showMessage('Error: ${e.toString()}');
+      if (mounted) {
+        Navigator.pop(context); // Remove loader
+        _showMessage('Error: ${e.toString()}');
+      }
     }
     setState(() => _loading = false);
   }
 
   Future<void> _signIn() async {
     setState(() => _loading = true);
+    
+    // Show loading dialog
+    // ignore: unawaited_futures
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: VagusLoader(size: 72)),
+    );
+    
     try {
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      
+      if (!mounted) return;
+      
       if (response.user == null) {
+        Navigator.pop(context); // Remove loader
         _showMessage('Login failed. Check your credentials.');
         return;
       }
@@ -203,8 +255,30 @@ class _LoginScreenState extends State<LoginScreen> {
           await _showBiometricSetupDialog(user.email ?? '');
         }
       }
+      
+      // Show success animation
+      if (mounted) {
+        Navigator.pop(context); // Remove loader
+        // ignore: unawaited_futures
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const Center(child: VagusSuccess(size: 84)),
+        );
+        
+        // Wait for success animation, then navigate
+        await Future.delayed(const Duration(milliseconds: 700));
+        if (!mounted) return;
+        Navigator.pop(context); // Remove success dialog
+        
+        // Navigate to home (the app will handle routing via AuthGate)
+        // No need to navigate manually as Supabase auth state change will trigger navigation
+      }
     } catch (e) {
-      _showMessage('Error: ${e.toString()}');
+      if (mounted) {
+        Navigator.pop(context); // Remove loader
+        _showMessage('Error: ${e.toString()}');
+      }
     }
     setState(() => _loading = false);
   }

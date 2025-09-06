@@ -4,6 +4,62 @@
 -- Enable pg_trgm for search if not already
 create extension if not exists pg_trgm;
 
+-- Messages table (create if it doesn't exist)
+create table if not exists public.messages (
+  id uuid primary key default gen_random_uuid(),
+  sender_id uuid not null references auth.users(id) on delete cascade,
+  recipient_id uuid references auth.users(id) on delete cascade,
+  content text not null,
+  message_type text default 'text' check (message_type in ('text', 'image', 'file', 'system')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz default now(),
+  is_read boolean default false,
+  is_pinned boolean default false,
+  parent_message_id uuid references public.messages(id) on delete cascade
+);
+
+-- Indexes for messages
+create index if not exists idx_messages_sender_id on public.messages(sender_id);
+create index if not exists idx_messages_recipient_id on public.messages(recipient_id);
+create index if not exists idx_messages_created_at on public.messages(created_at desc);
+create index if not exists messages_parent_idx on public.messages(parent_message_id);
+
+-- Enable RLS on messages
+alter table public.messages enable row level security;
+
+-- RLS policies for messages
+do $$
+begin
+  -- Users can read messages they sent or received
+  if not exists (select 1 from pg_policies where policyname = 'messages_select_own') then
+    create policy messages_select_own on public.messages
+      for select to authenticated
+      using (sender_id = auth.uid() or recipient_id = auth.uid());
+  end if;
+
+  -- Users can insert messages
+  if not exists (select 1 from pg_policies where policyname = 'messages_insert_own') then
+    create policy messages_insert_own on public.messages
+      for insert to authenticated
+      with check (sender_id = auth.uid());
+  end if;
+
+  -- Users can update their own messages
+  if not exists (select 1 from pg_policies where policyname = 'messages_update_own') then
+    create policy messages_update_own on public.messages
+      for update to authenticated
+      using (sender_id = auth.uid())
+      with check (sender_id = auth.uid());
+  end if;
+
+  -- Users can delete their own messages
+  if not exists (select 1 from pg_policies where policyname = 'messages_delete_own') then
+    create policy messages_delete_own on public.messages
+      for delete to authenticated
+      using (sender_id = auth.uid());
+  end if;
+end $$;
+
 -- Threading: Add parent_message_id for proper threading (if not exists)
 do $$
 begin

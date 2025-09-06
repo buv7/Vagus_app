@@ -13,11 +13,26 @@ import '../calendar/availability_publisher.dart';
 import '../messaging/coach_threads_screen.dart';
 import '../messaging/coach_messenger_screen.dart';
 import '../coach/intake/coach_forms_screen.dart';
+import '../../services/coach/calendar_quick_book_service.dart';
+import '../supplements/supplement_editor_sheet.dart';
+import '../../widgets/supplements/supplement_templates.dart';
 import 'edit_profile_screen.dart';
+import '../coach/ClientWeeklyReviewScreen.dart';
 import '../../components/rank/neon_rank_chip.dart';
 import '../rank/rank_hub_screen.dart';
 import '../../services/calendar/event_service.dart';
+import '../../services/coach/coach_inbox_service.dart';
+import '../../services/coach/coach_analytics_service.dart';
+import '../../services/coach/coach_quick_actions_service.dart';
+import '../../services/messaging/saved_replies_service.dart';
+import '../../widgets/coach/CoachInboxCard.dart';
+import '../../widgets/coach/CoachInboxActionsBar.dart';
+import '../../widgets/coach/QuickBookSheet.dart';
+import '../../widgets/coach/analytics/AnalyticsHeader.dart';
+import '../../utils/natural_time_parser.dart';
 import '../../theme/design_tokens.dart';
+import '../../widgets/branding/vagus_appbar.dart';
+import '../../widgets/navigation/vagus_side_menu.dart';
 
 // Feature flags
 const bool kCoachShowRecentCheckins = true;
@@ -68,11 +83,21 @@ class CoachHomeScreen extends StatefulWidget {
 class _CoachHomeScreenState extends State<CoachHomeScreen> {
   final supabase = Supabase.instance.client;
   final EventService _eventService = EventService();
+  final CoachInboxService _inboxService = CoachInboxService();
+  final CoachAnalyticsService _analyticsService = CoachAnalyticsService();
+  final CoachQuickActionsService _qa = CoachQuickActionsService();
+  final SavedRepliesService _saved = SavedRepliesService();
   Map<String, dynamic>? _profile;
   List<Map<String, dynamic>> _clients = [];
   List<Map<String, dynamic>> _requests = [];
   List<Map<String, dynamic>> _recentCheckins = [];
   List<Event> _upcomingSessions = [];
+  List<ClientFlag> _inboxFlags = [];
+  CoachAnalyticsSummary? _analytics;
+  int _analyticsDays = 7;
+  bool _analyticsBusy = false;
+  bool _inboxBulk = false;
+  final Set<String> _selectedInboxClients = {};
   bool _loading = true;
   final String _error = '';
 
@@ -142,6 +167,12 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
 
       // Load upcoming sessions
       await _loadUpcomingSessions();
+
+      // Load inbox flags
+      await _loadInboxFlags(user.id);
+
+      // Load analytics
+      await _loadAnalytics(user.id);
     } catch (e) {
       debugPrint('❌ Failed to load clients: $e');
       setState(() {
@@ -156,35 +187,26 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
   }
 
   Future<void> _loadRecentCheckins(List<String> clientIds) async {
-    // Try different table names in order (first that works wins)
-    final tableNames = ['progress_checkins', 'checkins', 'client_checkins'];
-    
-    for (final tableName in tableNames) {
-      try {
-        final checkinsData = await supabase
-            .from(tableName)
-            .select('*, profiles:user_id (id, name, avatar_url)')
-            .inFilter('user_id', clientIds)
-            .order('created_at', ascending: false)
-            .limit(5);
-        
-        setState(() {
-          _recentCheckins = List<Map<String, dynamic>>.from(checkinsData);
-        });
-        
-        debugPrint('✅ Successfully loaded check-ins from $tableName');
-        return; // Exit on success
-      } catch (e) {
-        debugPrint('❌ Failed to load from $tableName: $e');
-        continue; // Try next table
-      }
+    // Use the correct table name from migrations
+    try {
+      final checkinsData = await supabase
+          .from('checkins')
+          .select('*, profiles:client_id (id, name, avatar_url)')
+          .inFilter('client_id', clientIds)
+          .order('created_at', ascending: false)
+          .limit(5);
+      
+      setState(() {
+        _recentCheckins = List<Map<String, dynamic>>.from(checkinsData);
+      });
+      
+      debugPrint('✅ Successfully loaded check-ins from checkins table');
+    } catch (e) {
+      debugPrint('❌ Failed to load check-ins: $e');
+      setState(() {
+        _recentCheckins = [];
+      });
     }
-    
-    // If all tables fail, set empty state
-    debugPrint('❌ All check-in tables failed, showing empty state');
-    setState(() {
-      _recentCheckins = [];
-    });
   }
 
   Future<void> _loadUpcomingSessions() async {
@@ -209,6 +231,279 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
       setState(() {
         _upcomingSessions = [];
       });
+    }
+  }
+
+  Future<void> _loadInboxFlags(String coachId) async {
+    try {
+      final flags = await _inboxService.getFlagsForCoach(coachId);
+      setState(() {
+        _inboxFlags = flags;
+      });
+    } catch (e) {
+      debugPrint('❌ Failed to load inbox flags: $e');
+      setState(() {
+        _inboxFlags = [];
+      });
+    }
+  }
+
+  Future<void> _loadAnalytics(String coachId) async {
+    setState(() => _analyticsBusy = true);
+    try {
+      final analytics = await _analyticsService.getSummary(
+        days: _analyticsDays,
+      );
+      if (mounted) {
+        setState(() {
+          _analytics = analytics;
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ Failed to load analytics: $e');
+      if (mounted) {
+        setState(() {
+          _analytics = null;
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _analyticsBusy = false;
+        });
+      }
+    }
+  }
+
+
+  // Quick Actions Methods
+  void _toggleInboxBulk() {
+    setState(() {
+      _inboxBulk = !_inboxBulk;
+      if (!_inboxBulk) _selectedInboxClients.clear();
+    });
+  }
+
+  void _onInboxSelect(String clientId, bool selected) {
+    setState(() {
+      if (selected) {
+        _selectedInboxClients.add(clientId);
+      } else {
+        _selectedInboxClients.remove(clientId);
+      }
+    });
+  }
+
+  Future<void> _actInboxNudge([String? reason]) async {
+    final ids = _inboxBulk ? _selectedInboxClients.toList() : _inboxFlags.map((f) => f.clientId).toList();
+    if (ids.isEmpty) return;
+    
+    try {
+      if (_inboxBulk) {
+        final results = await _qa.bulkSendNudge(
+          clientIds: ids,
+          reason: reason ?? 'missed_session',
+        );
+        
+        final successCount = results.values.where((r) => r.ok).length;
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Nudge sent to $successCount/${ids.length} clients')),
+          );
+        }
+      } else {
+        final result = await _qa.sendNudgeMessage(
+          clientId: ids.first,
+          reason: reason ?? 'missed_session',
+        );
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.message)),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send nudge: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _actInboxQuickCall() async {
+    final ids = _inboxBulk ? _selectedInboxClients.toList() : _inboxFlags.map((f) => f.clientId).toList();
+    if (ids.isEmpty) return;
+    
+    if (_inboxBulk) {
+      // For bulk mode, use the old method for now
+      try {
+        final results = await _qa.bulkProposeQuickCall(clientIds: ids);
+        final successCount = results.values.where((r) => r.ok).length;
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Quick call proposed to $successCount/${ids.length} clients')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to propose call: $e')),
+          );
+        }
+      }
+    } else {
+      // For single mode, open the QuickBookSheet
+      _openQuickBookSheet(ids.first);
+    }
+  }
+
+  void _actInboxReviewed() {
+    final ids = _inboxBulk ? _selectedInboxClients.toList() : _inboxFlags.map((f) => f.clientId).toList();
+    for (final id in ids) {
+      _qa.markReviewed(id);
+    }
+    _selectedInboxClients.clear();
+    setState(() {
+      // Filter out reviewed clients from the inbox
+      _inboxFlags = _inboxFlags.where((f) => !_qa.isReviewed(f.clientId)).toList();
+    });
+  }
+
+  Future<void> _openSavedReplies() async {
+    try {
+      final replies = await _saved.list();
+      
+      if (!mounted) return;
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Saved Replies'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: replies.length,
+              itemBuilder: (context, index) {
+                final reply = replies[index];
+                return ListTile(
+                  title: Text(reply.title),
+                  subtitle: Text(
+                    reply.content,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // For now, just show a message - in a real implementation,
+                    // this would open the message compose with the reply content
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Reply: ${reply.title}')),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load saved replies: $e')),
+        );
+      }
+    }
+  }
+
+  void _openQuickBookSheet(String clientId, {String? mode, QuickBookSlot? prefillSlot}) {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => QuickBookSheet(
+        coachId: user.id,
+        clientId: clientId,
+        conversationId: null, // No conversation context from inbox
+        mode: mode,
+        prefillSlot: prefillSlot,
+        onProposed: (slot) {
+          // Optional: analytics/log
+          print('Quick book proposed: ${slot.start}');
+        },
+        onBooked: (slot) {
+          // Optional: refresh calendar
+          print('Quick book confirmed: ${slot.start}');
+        },
+      ),
+    );
+  }
+
+  void _parseLastReply(String clientId) {
+    // This is a simplified implementation - in a real app, you would
+    // fetch the last message from the conversation with this client
+    // For now, we'll show a dialog asking for the message text
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Parse Last Reply'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Enter the client\'s last message to parse for time:'),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: const InputDecoration(
+                hintText: 'e.g., "tmrw 6pm" or "الخميس 7"',
+                border: OutlineInputBorder(),
+              ),
+              onSubmitted: (text) {
+                Navigator.pop(context);
+                _handleParseLastReply(clientId, text);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              // This would get the actual last message in a real implementation
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Feature requires conversation access')),
+              );
+            },
+            child: const Text('Parse'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleParseLastReply(String clientId, String message) {
+    final parsed = NaturalTimeParser.parse(message, anchor: DateTime.now());
+    if (parsed != null) {
+      final slot = QuickBookSlot(parsed.start, parsed.duration);
+      _openQuickBookSheet(clientId, prefillSlot: slot);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No time found in message')),
+      );
     }
   }
 
@@ -315,6 +610,18 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
     );
   }
 
+  void _goToWeeklyReview(Map<String, dynamic> client) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ClientWeeklyReviewScreen(
+          clientId: client['id'] ?? '',
+          clientName: client['name'] ?? 'Client',
+        ),
+      ),
+    );
+  }
+
   void _goToMessages() {
     Navigator.push(
       context,
@@ -324,7 +631,106 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
     );
   }
 
+  Future<void> _openSupplementQuickAdd(BuildContext context) async {
+    // 1) Resolve client
+    final currentContext = context;
+    final client = await _pickClientIfNeeded(currentContext);
+    if (client == null) return;
 
+    if (!currentContext.mounted) return;
+    final created = await showModalBottomSheet<bool>(
+      context: currentContext,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final insets = MediaQuery.of(ctx).viewInsets.bottom;
+        return Padding(
+          padding: EdgeInsets.only(bottom: insets),
+          child: SupplementEditorSheet(
+            clientId: client['id'],
+            onSaved: (supplement) => Navigator.of(ctx).pop(true),
+          ),
+        );
+      },
+    );
+
+    if (created == true && currentContext.mounted) {
+      ScaffoldMessenger.of(currentContext).showSnackBar(
+        const SnackBar(content: Text('Supplement created')),
+      );
+      // If you maintain quick stats on dashboard, refresh them (fire-and-forget):
+      unawaited(_refreshDashboardSummaries());
+    }
+  }
+
+  Future<Map<String, dynamic>?> _pickClientIfNeeded(BuildContext context) async {
+    // If you already have a selected client context on the dashboard, return it here.
+    // For now, we'll always show the client picker since this is a general dashboard action.
+    
+    return showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Select client'),
+        content: SizedBox(
+          width: 400,
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: Future.value(_clients), // Use existing loaded clients
+            builder: (c, snap) {
+              if (!snap.hasData || snap.data!.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: Text('No clients available'),
+                  ),
+                );
+              }
+              final clients = snap.data!;
+              return ListView.separated(
+                shrinkWrap: true,
+                itemCount: clients.length,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (_, i) {
+                  final item = clients[i];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: _isValidHttpUrl(item['avatar_url'])
+                          ? NetworkImage(item['avatar_url']!.trim())
+                          : null,
+                      child: !_isValidHttpUrl(item['avatar_url']) 
+                          ? const Icon(Icons.person) 
+                          : null,
+                    ),
+                    title: Text(item['name'] ?? 'No name'),
+                    subtitle: Text(item['email'] ?? ''),
+                    onTap: () => Navigator.of(ctx).pop(item),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(), 
+            child: const Text('Cancel')
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _refreshDashboardSummaries() async {
+    // Refresh any dashboard counters or summaries that might be affected
+    // This is a fire-and-forget operation to keep the UI responsive
+    try {
+      // Could refresh supplement counts, client stats, etc.
+      // For now, just reload the main data
+      unawaited(_loadData());
+    } catch (e) {
+      // Silently ignore errors in background refresh
+      debugPrint('Background refresh failed: $e');
+    }
+  }
 
   Widget _buildClientCard(Map<String, dynamic> client) {
     final String? imgUrl = client['avatar_url'];
@@ -342,6 +748,11 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IconButton(
+              icon: const Icon(Icons.assessment_outlined),
+              tooltip: 'Weekly Review',
+              onPressed: () => _goToWeeklyReview(client),
+            ),
             IconButton(
               icon: const Icon(Icons.chat),
               tooltip: 'Message Client',
@@ -387,6 +798,58 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
                               icon: const Icon(Icons.close, color: DesignTokens.danger),
               tooltip: 'Reject',
               onPressed: () => _rejectRequest(request['id']),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInboxSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Actions Bar
+            CoachInboxActionsBar(
+              bulkMode: _inboxBulk,
+              selectedCount: _selectedInboxClients.length,
+              onToggleBulk: _toggleInboxBulk,
+              onNudge: () => _actInboxNudge(),
+              onQuickCall: _actInboxQuickCall,
+              onMarkReviewed: _actInboxReviewed,
+              onSavedReplies: _openSavedReplies,
+            ),
+            const SizedBox(height: 12),
+            
+            // Inbox Cards
+            SizedBox(
+              height: 140,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _inboxFlags.length,
+                itemBuilder: (context, index) {
+                  final flag = _inboxFlags[index];
+                  return CoachInboxCard(
+                    flag: flag,
+                    onTap: () => _goToWeeklyReview({
+                      'id': flag.clientId,
+                      'name': flag.clientName,
+                    }),
+                    selectable: _inboxBulk,
+                    selected: _selectedInboxClients.contains(flag.clientId),
+                    onSelected: (selected) => _onInboxSelect(flag.clientId, selected),
+                    onNudge: () => _actInboxNudge(),
+                    onQuickCall: () => _openQuickBookSheet(flag.clientId),
+                    onReschedule: () => _openQuickBookSheet(flag.clientId, mode: 'reschedule'),
+                    onParseLastReply: () => _parseLastReply(flag.clientId),
+                    onMarkReviewed: () => _actInboxReviewed(),
+                    onSavedReplies: _openSavedReplies,
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -787,6 +1250,56 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
                     );
                   },
                 ),
+                ActionChip(
+                  avatar: const Icon(Icons.local_pharmacy, size: 18),
+                  label: const Text('Add Supplement'),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _openSupplementQuickAdd(context);
+                  },
+                ),
+                ActionChip(
+                  avatar: const Icon(Icons.auto_awesome, size: 18),
+                  label: const Text('Templates'),
+                  onPressed: () async {
+                    HapticFeedback.lightImpact();
+                    final currentContext = context;
+                    final client = await _pickClientIfNeeded(currentContext);
+                    if (client == null) return;
+                    if (!currentContext.mounted) return;
+
+                    await showModalBottomSheet(
+                      context: currentContext,
+                      useRootNavigator: true,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => _TemplatesSheet(
+                        onTemplateTap: (tpl) async {
+                          if (!currentContext.mounted) return;
+                          Navigator.of(currentContext).pop(); // close sheet before opening editor
+
+                          if (!currentContext.mounted) return;
+                          await showModalBottomSheet(
+                            context: currentContext,
+                            useRootNavigator: true,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (_) => SupplementEditorSheet(
+                              clientId: client['id'],
+                              onSaved: (supplement) {
+                                if (!currentContext.mounted) return;
+                                ScaffoldMessenger.of(currentContext).showSnackBar(
+                                  const SnackBar(content: Text('Supplement created')),
+                                );
+                                unawaited(_refreshDashboardSummaries());
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ],
@@ -847,12 +1360,59 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
     final avatarUrl = _profile?['avatar_url'];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('🏋️ Coach Dashboard'),
+      drawerEdgeDragWidth: 24,
+              drawer: VagusSideMenu(
+          isClient: false, // hides "Apply to become a coach"
+          onLogout: _logout,
+        ),
+      appBar: VagusAppBar(
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        elevation: 0,
         actions: [
+          // Inbox notification badge
+          if (_inboxFlags.isNotEmpty)
+            Stack(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.inbox_outlined),
+                  tooltip: 'Client Alerts',
+                  onPressed: () {
+                    // Scroll to inbox section or show full inbox
+                    // For now, just scroll to the top
+                  },
+                ),
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '${_inboxFlags.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Edit Profile',
@@ -925,7 +1485,36 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
               
               const SizedBox(height: 32),
               
-              // 2. Clients Overview
+              // 2. Analytics Header
+              if (_analytics != null) ...[
+                AnalyticsHeader(
+                  data: _analytics!,
+                  days: _analyticsDays,
+                  onRangeChange: (int days) {
+                    setState(() => _analyticsDays = days);
+                    _loadAnalytics(supabase.auth.currentUser!.id);
+                  },
+                ),
+                const SizedBox(height: 16),
+              ] else if (_analyticsBusy) ...[
+                const SizedBox(height: 12),
+                Center(
+                  child: SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+              
+              // 3. Coach Inbox (if any flags)
+              if (_inboxFlags.isNotEmpty) ...[
+                _buildInboxSection(),
+                const SizedBox(height: 16),
+              ],
+              
+              // 3. Clients Overview
               _buildClientsOverviewCard(),
               const SizedBox(height: 16),
               
@@ -955,6 +1544,44 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TemplatesSheet extends StatelessWidget {
+  final void Function(SupplementTemplate) onTemplateTap;
+  const _TemplatesSheet({required this.onTemplateTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(DesignTokens.radius12);
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignTokens.ink50.withValues(alpha: 230),
+        borderRadius: radius,
+      ),
+      padding: const EdgeInsets.all(DesignTokens.space16),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Pick a template',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: DesignTokens.space12),
+            ...kSupplementTemplates.map((tpl) => Card(
+              shape: RoundedRectangleBorder(borderRadius: radius),
+              child: ListTile(
+                leading: const Icon(Icons.local_pharmacy_outlined),
+                title: Text(tpl.name),
+                subtitle: Text(tpl.notes, maxLines: 2, overflow: TextOverflow.ellipsis),
+                onTap: () => onTemplateTap(tpl),
+              ),
+            )),
+            const SizedBox(height: DesignTokens.space8),
+          ],
         ),
       ),
     );

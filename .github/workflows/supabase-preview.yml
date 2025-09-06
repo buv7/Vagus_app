@@ -1,0 +1,75 @@
+name: Supabase PR Preview
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/supabase-preview.yml'
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Link preview project
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PREVIEW_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Generate preview URL
+        id: preview-url
+        run: |
+          PREVIEW_URL="https://${{ secrets.SUPABASE_PREVIEW_PROJECT_REF }}.supabase.co"
+          echo "url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+          echo "Preview URL: $PREVIEW_URL"
+
+      - name: Push DB migrations (preview)
+        run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy Edge Functions (preview)
+        if: ${{ success() }}
+        run: |
+          if [ -d supabase/functions ]; then
+            for d in supabase/functions/* ; do
+              [ -d "$d" ] && echo "Deploying function: $(basename "$d")" && supabase functions deploy "$(basename "$d")"
+            done
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Comment PR with preview info
+        if: ${{ success() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Supabase Preview Deployed
+            
+            **Preview URL:** ${process.env.PREVIEW_URL}
+            **Branch:** ${context.payload.pull_request.head.ref}
+            **Commit:** ${context.payload.pull_request.head.sha}
+            
+            Your Supabase changes have been deployed to the preview environment.
+            
+            ### What was deployed:
+            - Database migrations
+            - Edge Functions
+            
+            ### Testing:
+            Update your app's Supabase URL to test the preview environment.
+            
+            ---
+            *This preview will be automatically cleaned up when the PR is closed.*`
+            })
+        env:
+          PREVIEW_URL: ${{ steps.preview-url.outputs.url }}

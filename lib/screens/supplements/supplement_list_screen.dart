@@ -522,7 +522,7 @@ class _SupplementListScreenState extends State<SupplementListScreen> {
                 color: Color(int.parse(supplement.color.replaceAll('#', '0xFF'))),
                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.medication,
                 color: Colors.white,
                 size: 24,
@@ -561,9 +561,9 @@ class _SupplementListScreenState extends State<SupplementListScreen> {
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                                      color: supplement.isActive 
-                      ? DesignTokens.success 
-                      : DesignTokens.ink500,
+                    color: supplement.isActive 
+                        ? DesignTokens.success 
+                        : DesignTokens.ink500,
                     shape: BoxShape.circle,
                   ),
                 ),

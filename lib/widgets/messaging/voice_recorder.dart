@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import '../anim/mic_ripple.dart';
 
 class VoiceRecorder extends StatefulWidget {
   final Function(File audioFile) onVoiceRecorded;
@@ -52,18 +53,21 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
       onTap: _startRecording,
       child: Column(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.red[100],
-              borderRadius: BorderRadius.circular(30),
+          if (_isRecording)
+            const MicRipple(size: 84)
+          else
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.red[100],
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Icon(Icons.mic, color: Colors.red[700], size: 28),
             ),
-            child: Icon(Icons.mic, color: Colors.red[700], size: 28),
-          ),
           const SizedBox(height: 8),
-          const Text(
-            'Record',
+          Text(
+            _isRecording ? 'Recording...' : 'Record',
             style: TextStyle(fontSize: 12),
           ),
         ],

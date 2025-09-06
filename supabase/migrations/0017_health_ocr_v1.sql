@@ -137,7 +137,7 @@ CREATE POLICY "Users can manage own health merges" ON health_merges
 CREATE POLICY "Coaches can read client health rollups" ON health_sources
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM coach_clients
+            SELECT 1 FROM user_coach_links
             WHERE coach_id = auth.uid() AND client_id = health_sources.user_id
         )
     );
@@ -145,7 +145,7 @@ CREATE POLICY "Coaches can read client health rollups" ON health_sources
 CREATE POLICY "Coaches can read client health samples" ON health_samples
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM coach_clients
+            SELECT 1 FROM user_coach_links
             WHERE coach_id = auth.uid() AND client_id = health_samples.user_id
         )
     );
@@ -153,7 +153,7 @@ CREATE POLICY "Coaches can read client health samples" ON health_samples
 CREATE POLICY "Coaches can read client health workouts" ON health_workouts
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM coach_clients
+            SELECT 1 FROM user_coach_links
             WHERE coach_id = auth.uid() AND client_id = health_workouts.user_id
         )
     );
@@ -161,7 +161,7 @@ CREATE POLICY "Coaches can read client health workouts" ON health_workouts
 CREATE POLICY "Coaches can read client sleep segments" ON sleep_segments
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM coach_clients
+            SELECT 1 FROM user_coach_links
             WHERE coach_id = auth.uid() AND client_id = sleep_segments.user_id
         )
     );

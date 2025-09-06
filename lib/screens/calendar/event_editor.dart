@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/calendar/event_service.dart';
+import '../../widgets/anim/blocking_overlay.dart';
 
 import '../../services/motion_service.dart';
 
@@ -288,7 +289,11 @@ class _EventEditorState extends State<EventEditor> {
         updatedAt: DateTime.now(),
       );
 
-      final savedEvent = await _eventService.createOrUpdate(event);
+      final savedEvent = await runWithBlockingLoader(
+        context,
+        _eventService.createOrUpdate(event),
+        showSuccess: true,
+      );
 
       // Handle reminders based on event state
       try {

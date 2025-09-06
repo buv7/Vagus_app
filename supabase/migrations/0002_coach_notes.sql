@@ -1,6 +1,67 @@
 -- VAGUS Progress System - Coach Notes Migration
 -- Section 4: coach_notes column guards, coach_note_versions, coach_note_attachments, indexes, RLS + policies, and storage policies
 
+-- 4. Coach Notes Table (create if it doesn't exist)
+create table if not exists public.coach_notes (
+  id uuid primary key default gen_random_uuid(),
+  coach_id uuid not null references auth.users(id) on delete cascade,
+  client_id uuid not null references auth.users(id) on delete cascade,
+  note_text text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz default now(),
+  updated_by uuid references auth.users(id),
+  is_deleted boolean default false,
+  version int default 1
+);
+
+-- Indexes for coach_notes
+create index if not exists idx_coach_notes_coach_id on public.coach_notes(coach_id);
+create index if not exists idx_coach_notes_client_id on public.coach_notes(client_id);
+create index if not exists idx_coach_notes_created_at on public.coach_notes(created_at desc);
+
+-- Enable RLS on coach_notes
+alter table public.coach_notes enable row level security;
+
+-- RLS policies for coach_notes
+do $$
+begin
+  -- Coaches can read their own notes
+  if not exists (select 1 from pg_policies where policyname = 'coach_notes_select_coach') then
+    create policy coach_notes_select_coach on public.coach_notes
+      for select to authenticated
+      using (coach_id = auth.uid());
+  end if;
+
+  -- Clients can read notes about them
+  if not exists (select 1 from pg_policies where policyname = 'coach_notes_select_client') then
+    create policy coach_notes_select_client on public.coach_notes
+      for select to authenticated
+      using (client_id = auth.uid());
+  end if;
+
+  -- Coaches can insert their own notes
+  if not exists (select 1 from pg_policies where policyname = 'coach_notes_insert_coach') then
+    create policy coach_notes_insert_coach on public.coach_notes
+      for insert to authenticated
+      with check (coach_id = auth.uid());
+  end if;
+
+  -- Coaches can update their own notes
+  if not exists (select 1 from pg_policies where policyname = 'coach_notes_update_coach') then
+    create policy coach_notes_update_coach on public.coach_notes
+      for update to authenticated
+      using (coach_id = auth.uid())
+      with check (coach_id = auth.uid());
+  end if;
+
+  -- Coaches can delete their own notes
+  if not exists (select 1 from pg_policies where policyname = 'coach_notes_delete_coach') then
+    create policy coach_notes_delete_coach on public.coach_notes
+      for delete to authenticated
+      using (coach_id = auth.uid());
+  end if;
+end $$;
+
 -- 4. Coach Notes Version History and Attachments Tables
 -- Add missing columns to existing coach_notes table if they don't exist
 do $$
@@ -148,7 +209,7 @@ begin
         and (
           owner = auth.uid()
           or exists (
-            select 1 from public.coach_clients l
+            select 1 from public.user_coach_links l
             where l.coach_id = auth.uid()
               and l.client_id = owner
           )

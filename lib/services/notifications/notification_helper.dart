@@ -217,6 +217,89 @@ class NotificationHelper {
     }
   }
 
+  /// Send notification to all admins when someone requests support
+  Future<bool> notifyAdminsOfSupportRequest({
+    required String clientName,
+    required String clientEmail,
+    required String clientId,
+    String? threadId,
+  }) async {
+    try {
+      final response = await supabase.functions.invoke(
+        'send-notification',
+        body: {
+          'type': 'role',
+          'role': 'admin',
+          'title': '🆘 New Support Request',
+          'message': '$clientName ($clientEmail) needs help',
+          'route': '/admin/support',
+          'screen': 'AdminSupportInboxScreen',
+          'id': threadId,
+          'additionalData': {
+            'clientId': clientId,
+            'clientName': clientName,
+            'clientEmail': clientEmail,
+            'type': 'support_request',
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        },
+      );
+
+      if (response.status == 200) {
+        debugPrint('✅ Admin notification sent successfully for support request from $clientName');
+        return true;
+      } else {
+        debugPrint('❌ Failed to send admin notification: ${response.data}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Error sending admin notification: $e');
+      return false;
+    }
+  }
+
+  /// Send notification to a specific admin when they are assigned a support chat
+  Future<bool> notifyAdminOfAssignedChat({
+    required String adminId,
+    required String clientName,
+    required String clientEmail,
+    required String clientId,
+    String? threadId,
+  }) async {
+    try {
+      final response = await supabase.functions.invoke(
+        'send-notification',
+        body: {
+          'type': 'user',
+          'userId': adminId,
+          'title': '💬 Support Chat Assigned',
+          'message': 'Chat with $clientName ($clientEmail)',
+          'route': '/admin/support/chat',
+          'screen': 'AdminSupportChatScreen',
+          'id': threadId,
+          'additionalData': {
+            'clientId': clientId,
+            'clientName': clientName,
+            'clientEmail': clientEmail,
+            'type': 'assigned_chat',
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        },
+      );
+
+      if (response.status == 200) {
+        debugPrint('✅ Admin $adminId notified of assigned chat with $clientName');
+        return true;
+      } else {
+        debugPrint('❌ Failed to notify admin of assigned chat: ${response.data}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Error notifying admin of assigned chat: $e');
+      return false;
+    }
+  }
+
   /// Send notification to topic/segment
   Future<bool> sendToTopic({
     required String topic,

@@ -13,6 +13,7 @@ import '../../components/workout/volume_summary_card.dart';
 // import '../../services/music/music_service.dart';
 import '../../models/music/music_models.dart';
 import '../../widgets/music/music_attachment_widget.dart';
+import '../../widgets/branding/vagus_appbar.dart';
 
 class CoachPlanBuilderScreen extends StatefulWidget {
   const CoachPlanBuilderScreen({super.key});
@@ -879,7 +880,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: const Text('Coach Plan Builder'),
         actions: [
           if (weeks.isNotEmpty) // Only show AI actions if there's a plan

@@ -1,13 +1,24 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/messages_service.dart';
 import '../../services/ai/messaging_ai.dart';
+import '../../services/messaging/ai_draft_reply_service.dart';
 import '../../widgets/messaging/message_bubble.dart';
+import '../../widgets/messaging/SmartReplyPanel.dart';
+import '../../widgets/coach/QuickBookSheet.dart';
+import '../../services/coach/quickbook_autoconfirm_service.dart';
+import '../../services/coach/quickbook_reschedule_service.dart';
+import '../../services/coach/calendar_quick_book_service.dart';
+import '../../utils/natural_time_parser.dart';
+import '../../utils/message_helpers.dart';
 import '../../widgets/messaging/attachment_picker.dart';
 import '../../widgets/messaging/voice_recorder.dart';
 import '../../components/messaging/message_search_bar.dart';
 import '../../components/messaging/pin_panel.dart';
 import '../../components/messaging/thread_view.dart';
+import '../../widgets/anim/typing_dots.dart';
+import '../../widgets/branding/vagus_appbar.dart';
 import 'dart:io';
 
 class CoachMessengerScreen extends StatefulWidget {
@@ -23,7 +34,11 @@ class CoachMessengerScreen extends StatefulWidget {
 }
 
 class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
+  // Supabase client (file-local convenience)
+  final SupabaseClient _supabase = Supabase.instance.client;
+  
   final MessagesService _messagesService = MessagesService();
+  final AIDraftReplyService _aiDraftService = AIDraftReplyService();
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   
@@ -41,6 +56,12 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
   static const bool kEnableSmartReplies = true;
   List<String> _smartReplies = [];
   bool _loadingSmartReplies = false;
+  bool _showSmartReplies = false;
+  Timer? _smartRepliesTimer;
+  
+  // Reschedule features
+  final QuickBookRescheduleService _rescheduleService = QuickBookRescheduleService.instance;
+  List<QuickBookSlot>? _lastRescheduleOptions;
 
   @override
   void initState() {
@@ -52,6 +73,7 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _smartRepliesTimer?.cancel();
     super.dispose();
   }
 
@@ -73,6 +95,17 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
         });
         _scrollToBottom();
         _markMessagesAsSeen();
+        
+        // Load smart replies for new incoming messages
+        if (kEnableSmartReplies) {
+          _loadSmartReplies();
+        }
+        
+        // Check for auto-confirmation on new messages
+        if (messages.isNotEmpty) {
+          final latestMessage = messages.last;
+          _handleIncomingMessage(latestMessage.toMap());
+        }
       });
 
       // Subscribe to read receipts
@@ -176,6 +209,259 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
     }
   }
 
+  // Smart Reply Methods
+  bool _shouldShowSmartReplies() {
+    if (!kEnableSmartReplies || _threadId == null) return false;
+    if (_messages.isEmpty) return false;
+    
+    // Show smart replies if the last message is from the client
+    final lastMessage = _messages.last;
+    final user = Supabase.instance.client.auth.currentUser;
+    final isLastMessageFromClient = user?.id != lastMessage.senderId;
+    
+    return isLastMessageFromClient && _showSmartReplies;
+  }
+
+  Future<void> _loadSmartReplies() async {
+    if (_threadId == null || _messages.isEmpty) return;
+    
+    final lastMessage = _messages.last;
+    final user = Supabase.instance.client.auth.currentUser;
+    final isLastMessageFromClient = user?.id != lastMessage.senderId;
+    
+    if (!isLastMessageFromClient) return;
+    
+    setState(() {
+      _loadingSmartReplies = true;
+      _showSmartReplies = true;
+    });
+    
+    try {
+      final drafts = await _aiDraftService.getDraftReplies(
+        conversationId: _threadId!,
+        lastMessage: msgText(lastMessage),
+        role: 'coach',
+      );
+      
+      if (mounted) {
+        setState(() {
+          _smartReplies = drafts;
+          _loadingSmartReplies = false;
+        });
+        
+        // Auto-hide after 15 seconds
+        _smartRepliesTimer?.cancel();
+        _smartRepliesTimer = Timer(const Duration(seconds: 15), () {
+          if (mounted) {
+            setState(() {
+              _showSmartReplies = false;
+            });
+          }
+        });
+      }
+    } catch (e) {
+      print('Error loading smart replies: $e');
+      if (mounted) {
+        setState(() {
+          _loadingSmartReplies = false;
+          _showSmartReplies = false;
+        });
+      }
+    }
+  }
+
+  void _useSmartReply(String reply) {
+    _messageController.text = reply;
+    _messageController.selection = TextSelection.fromPosition(
+      TextPosition(offset: reply.length),
+    );
+    setState(() {
+      _showSmartReplies = false;
+    });
+  }
+
+  void _sendSmartReply(String reply) {
+    _messageController.text = reply;
+    _sendMessage();
+    setState(() {
+      _showSmartReplies = false;
+    });
+  }
+
+  void _dismissSmartReplies() {
+    setState(() {
+      _showSmartReplies = false;
+    });
+    _smartRepliesTimer?.cancel();
+  }
+
+
+  Future<void> _handleIncomingMessage(Map<String, dynamic> message) async {
+    // Check if this is a client message that might be a confirmation
+    final senderId = message['sender_id'] as String?;
+    final text = message['text'] as String?;
+    
+    if (senderId != null && text != null && senderId == widget.client['id']) {
+      // This is a message from the client - check for auto-confirmation
+      try {
+        final user = Supabase.instance.client.auth.currentUser;
+        if (user != null && _threadId != null) {
+          final result = await QuickBookAutoConfirmService.instance.confirmIfEligible(
+            conversationId: _threadId!,
+            clientId: widget.client['id'],
+            coachId: user.id,
+            replyText: text,
+          );
+          
+          if (result.ok) {
+            // Auto-confirmation succeeded - refresh messages to show confirmation
+            if (mounted) {
+              setState(() {
+                // Trigger UI update to show confirmation
+              });
+            }
+          }
+        }
+      } catch (e) {
+        print('CoachMessenger: Error handling auto-confirmation - $e');
+        // Don't show error to user - auto-confirmation is background feature
+      }
+      
+      // Handle reschedule requests
+      await _handleIncomingMessageForScheduling(text);
+    }
+  }
+
+  Future<void> _handleIncomingMessageForScheduling(String text) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null || _threadId == null) return;
+
+      // 1) Detect "option 1/2" selection
+      final option = _rescheduleService.parseOptionSelection(text);
+      if (option != null && _lastRescheduleOptions != null && _lastRescheduleOptions!.length >= option) {
+        final chosen = _rescheduleService.getSelectedOption(_lastRescheduleOptions!, option);
+        if (chosen != null) {
+          // Track the chosen option as a new proposal
+          QuickBookAutoConfirmService.instance.trackProposal(
+            ProposedSlot(
+              conversationId: _threadId!,
+              clientId: widget.client['id'],
+              coachId: user.id,
+              start: chosen.start,
+              duration: chosen.duration,
+              sentAt: DateTime.now(),
+            ),
+          );
+          
+          // Auto-confirm the chosen option
+          await QuickBookAutoConfirmService.instance.confirmIfEligible(
+            conversationId: _threadId!,
+            clientId: widget.client['id'],
+            coachId: user.id,
+            replyText: 'yes', // Force affirmative
+          );
+          
+          if (mounted) {
+            setState(() {
+              _lastRescheduleOptions = null; // Clear options after selection
+            });
+          }
+        }
+        return;
+      }
+
+      // 2) Detect reschedule intent
+      if (_rescheduleService.isRescheduleIntent(text)) {
+        final result = await _rescheduleService.suggestAlternatives(
+          coachId: user.id,
+          clientId: widget.client['id'],
+          duration: const Duration(minutes: 15),
+        );
+        
+        if (result.ok && result.options.isNotEmpty) {
+          _lastRescheduleOptions = result.options;
+          
+          await _rescheduleService.sendRescheduleMessage(
+            clientId: widget.client['id'],
+            coachId: user.id,
+            conversationId: _threadId!,
+            options: result.options,
+          );
+          
+          if (mounted) {
+            setState(() {});
+          }
+        }
+        return;
+      }
+
+      // 3) Natural-language time parsing
+      final parsed = NaturalTimeParser.parse(text, anchor: DateTime.now());
+      if (parsed != null) {
+        // Compose a quick proposal using CalendarQuickBookService
+        final slot = QuickBookSlot(parsed.start, parsed.duration);
+        
+        // Get timezone information
+        final coachTz = await CalendarQuickBookService().coachTimeZone(user.id);
+        final clientTz = await CalendarQuickBookService().clientTimeZone(widget.client['id']);
+        final tzNote = NaturalTimeParser.getTimezoneNote(clientTz, coachTz);
+        
+        // Send proposal message
+        await CalendarQuickBookService().sendProposalMessage(
+          clientId: widget.client['id'],
+          slot: slot,
+          includeCalendarLink: false,
+        );
+        
+        // Track proposal for Auto-Confirm "yes"
+        QuickBookAutoConfirmService.instance.trackProposal(
+          ProposedSlot(
+            conversationId: _threadId!,
+            clientId: widget.client['id'],
+            coachId: user.id,
+            start: slot.start,
+            duration: slot.duration,
+            sentAt: DateTime.now(),
+          ),
+        );
+        
+        if (mounted) {
+          setState(() {}); // Optional UI refresh
+        }
+        return;
+      }
+    } catch (e) {
+      print('CoachMessenger: Error handling scheduling - $e');
+      // Don't show error to user - scheduling is background feature
+    }
+  }
+
+  void _openQuickBookSheet() {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => QuickBookSheet(
+        coachId: user.id,
+        clientId: widget.client['id'],
+        conversationId: _threadId,
+        mode: null, // Regular quick book mode
+        onProposed: (slot) {
+          // Optional: analytics/log
+          print('Quick book proposed: ${slot.start}');
+        },
+        onBooked: (slot) {
+          // Optional: refresh calendar
+          print('Quick book confirmed: ${slot.start}');
+        },
+      ),
+    );
+  }
+
   void _markMessagesAsSeen() {
     if (_threadId == null) return;
     
@@ -224,7 +510,7 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
     
     return _messages.where((message) {
       final searchLower = _searchQuery.toLowerCase();
-      return message.text.toLowerCase().contains(searchLower) ||
+      return msgText(message).toLowerCase().contains(searchLower) ||
           message.attachments.any((attachment) =>
               attachment['name']?.toString().toLowerCase().contains(searchLower) ?? false);
     }).toList();
@@ -242,7 +528,7 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
     final clientAvatar = widget.client['avatar_url'];
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: VagusAppBar(
         title: Row(
           children: [
             CircleAvatar(
@@ -255,10 +541,7 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
               children: [
                 Text(clientName),
                 if (_typingUsers.isNotEmpty)
-                  const Text(
-                    'typing...',
-                    style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                  ),
+                  const TypingDots(size: 20),
               ],
             ),
           ],
@@ -338,50 +621,13 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
                   ),
           ),
 
-          // Smart Replies (if enabled and there are recent incoming messages)
+          // Smart Replies Panel
           if (kEnableSmartReplies && _shouldShowSmartReplies())
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (_loadingSmartReplies)
-                    const Row(
-                      children: [
-                        SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        SizedBox(width: 8),
-                        Text('Generating suggestions...', style: TextStyle(fontSize: 12)),
-                      ],
-                    )
-                  else if (_smartReplies.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Quick replies:',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        const SizedBox(height: 4),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: _smartReplies.map((reply) => 
-                            ActionChip(
-                              label: Text(reply),
-                              onPressed: () => _useSmartReply(reply),
-                              backgroundColor: Colors.blue.shade50,
-                              labelStyle: const TextStyle(fontSize: 12),
-                            ),
-                          ).toList(),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
+            SmartReplyPanel(
+              drafts: _smartReplies,
+              onDraftTap: _useSmartReply,
+              onDraftLongPress: _sendSmartReply,
+              onDismiss: _dismissSmartReplies,
             ),
 
           // Message composer
@@ -407,6 +653,11 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
                 IconButton(
                   icon: const Icon(Icons.mic),
                   onPressed: () => _showVoiceRecorder(),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.phone_in_talk_outlined),
+                  tooltip: 'Quick book',
+                  onPressed: () => _openQuickBookSheet(),
                 ),
                 Expanded(
                   child: TextField(
@@ -530,7 +781,7 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
   }
 
   void _editMessage(Message message) {
-    _messageController.text = message.text;
+    _messageController.text = msgText(message);
     _messageController.selection = TextSelection.fromPosition(
       TextPosition(offset: _messageController.text.length),
     );
@@ -629,63 +880,6 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 
-  // Smart Replies Logic
-  bool _shouldShowSmartReplies() {
-    if (_messageController.text.isNotEmpty) return false; // Don't show if user is typing
-    
-    // Check if there's a recent incoming message (last 5 minutes)
-    final now = DateTime.now();
-    final recentMessages = _messages.where((msg) {
-      final user = Supabase.instance.client.auth.currentUser;
-      final isIncoming = user?.id != msg.senderId;
-      final isRecent = now.difference(msg.createdAt).inMinutes < 5;
-      return isIncoming && isRecent;
-    }).toList();
-    
-    return recentMessages.isNotEmpty;
-  }
-
-  Future<void> _loadSmartReplies() async {
-    if (!kEnableSmartReplies || _loadingSmartReplies) return;
-    
-    final recentMessage = _messages.lastWhere(
-      (msg) {
-        final user = Supabase.instance.client.auth.currentUser;
-        return user?.id != msg.senderId;
-      },
-      orElse: () => _messages.first,
-    );
-    
-    if (recentMessage.text.isEmpty) return;
-    
-    setState(() => _loadingSmartReplies = true);
-    
-    try {
-      // Get thread context (last 10 messages)
-      final contextMessages = _messages.take(10).map((m) => m.text).join('\n');
-      
-      final replies = await MessagingAI.smartReplies(
-        lastMessage: recentMessage.text,
-        threadContext: contextMessages,
-      );
-      
-      setState(() {
-        _smartReplies = replies;
-        _loadingSmartReplies = false;
-      });
-    } catch (e) {
-      setState(() => _loadingSmartReplies = false);
-      // Silent failure - smart replies are optional
-    }
-  }
-
-  void _useSmartReply(String reply) {
-    _messageController.text = reply;
-    _messageController.selection = TextSelection.fromPosition(
-      TextPosition(offset: _messageController.text.length),
-    );
-    setState(() => _smartReplies = []); // Clear suggestions after use
-  }
 
   @override
   void didUpdateWidget(CoachMessengerScreen oldWidget) {

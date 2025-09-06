@@ -1,5 +1,6 @@
 -- Regional Foods Catalog (idempotent)
 create extension if not exists pgcrypto;
+create extension if not exists pg_trgm;
 
 create table if not exists public.food_items (
   id uuid primary key default gen_random_uuid(),

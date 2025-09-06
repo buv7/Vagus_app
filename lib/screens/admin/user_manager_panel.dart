@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../services/admin/admin_service.dart';
 import '../../components/common/confirmation_dialog_two_step.dart';
 import '../../services/billing/billing_service.dart';
+import '../../widgets/admin/user_inspector_sheet.dart';
 
 class UserManagerPanel extends StatefulWidget {
   const UserManagerPanel({super.key});
@@ -93,7 +94,7 @@ class _UserManagerPanelState extends State<UserManagerPanel> {
       final email = (user['email'] ?? '').toString().toLowerCase();
       final name = (user['name'] ?? '').toString().toLowerCase();
       final role = (user['role'] ?? '').toString().toLowerCase();
-      final isDisabled = user['is_disabled'] == true || user['is_enabled'] == false;
+      final isDisabled = user['is_disabled'] == true;
       
       // Search filter
       final matchesSearch = query.isEmpty || 
@@ -218,7 +219,7 @@ class _UserManagerPanelState extends State<UserManagerPanel> {
   }
 
   Widget _buildUserCard(Map<String, dynamic> user) {
-    final isDisabled = user['is_disabled'] == true || user['is_enabled'] == false;
+    final isDisabled = user['is_disabled'] == true;
     final role = user['role'] ?? 'unknown';
     final email = user['email'] ?? 'No email';
     final createdAt = DateTime.tryParse(user['created_at'] ?? '') ?? DateTime.now();
@@ -226,6 +227,7 @@ class _UserManagerPanelState extends State<UserManagerPanel> {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ListTile(
+        onTap: () => _openUserInspector(user),
         leading: CircleAvatar(
           backgroundColor: isDisabled ? Colors.red : Colors.blue,
           child: Icon(
@@ -498,6 +500,18 @@ class _UserManagerPanelState extends State<UserManagerPanel> {
         );
       }
     }
+  }
+
+  void _openUserInspector(Map<String, dynamic> user) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => UserInspectorSheet(
+        userId: user['id'] ?? '',
+        email: user['email'] ?? 'No email',
+      ),
+    );
   }
 
   @override

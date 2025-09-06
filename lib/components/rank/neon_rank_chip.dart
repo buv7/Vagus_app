@@ -83,17 +83,17 @@ class _NeonRankChipState extends State<NeonRankChip>
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppTheme.primaryBlue.withValues(alpha: 0.3),
+                color: AppTheme.primaryBlack.withValues(alpha: 0.3),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.neonCyan.withValues(alpha: 0.2 * glowIntensity),
+                  color: AppTheme.steelGrey.withValues(alpha: 0.2 * glowIntensity),
                   blurRadius: 8,
                   spreadRadius: 2,
                 ),
                 BoxShadow(
-                  color: AppTheme.neonMagenta.withValues(alpha: 0.15 * glowIntensity),
+                  color: AppTheme.primaryBlack.withValues(alpha: 0.15 * glowIntensity),
                   blurRadius: 12,
                   spreadRadius: 1,
                 ),
@@ -106,7 +106,7 @@ class _NeonRankChipState extends State<NeonRankChip>
                 const Icon(
                   Icons.local_fire_department_rounded,
                   size: 20,
-                  color: AppTheme.primaryBlue,
+                  color: AppTheme.primaryBlack,
                 ),
                 const SizedBox(width: 8),
                 
@@ -115,7 +115,7 @@ class _NeonRankChipState extends State<NeonRankChip>
                   '${widget.streak}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryBlue,
+                    color: AppTheme.primaryBlack,
                   ),
                 ),
                 
@@ -125,10 +125,10 @@ class _NeonRankChipState extends State<NeonRankChip>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.secondaryPurple.withValues(alpha: 0.2),
+                    color: AppTheme.steelGrey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppTheme.secondaryPurple.withValues(alpha: 0.5),
+                      color: AppTheme.steelGrey.withValues(alpha: 0.5),
                       width: 1,
                     ),
                   ),
@@ -136,7 +136,7 @@ class _NeonRankChipState extends State<NeonRankChip>
                     widget.rank,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.secondaryPurple,
+                      color: AppTheme.steelGrey,
                       fontSize: 12,
                     ),
                   ),

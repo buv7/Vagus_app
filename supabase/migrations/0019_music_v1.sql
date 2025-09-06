@@ -1,6 +1,57 @@
 -- Music Integration v1 Schema
 -- Sprint F: Deep links for Spotify/SoundCloud integration
 
+-- Workout plans table (create if it doesn't exist)
+create table if not exists public.workout_plans (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  description text,
+  created_by uuid not null references auth.users(id) on delete cascade,
+  client_id uuid references auth.users(id) on delete cascade,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Indexes for workout_plans
+create index if not exists idx_workout_plans_created_by on public.workout_plans(created_by);
+create index if not exists idx_workout_plans_client_id on public.workout_plans(client_id);
+
+-- Enable RLS on workout_plans
+alter table public.workout_plans enable row level security;
+
+-- RLS policies for workout_plans
+do $$
+begin
+  -- Users can read their own workout plans
+  if not exists (select 1 from pg_policies where policyname = 'workout_plans_select_own') then
+    create policy workout_plans_select_own on public.workout_plans
+      for select to authenticated
+      using (created_by = auth.uid() or client_id = auth.uid());
+  end if;
+
+  -- Users can insert their own workout plans
+  if not exists (select 1 from pg_policies where policyname = 'workout_plans_insert_own') then
+    create policy workout_plans_insert_own on public.workout_plans
+      for insert to authenticated
+      with check (created_by = auth.uid());
+  end if;
+
+  -- Users can update their own workout plans
+  if not exists (select 1 from pg_policies where policyname = 'workout_plans_update_own') then
+    create policy workout_plans_update_own on public.workout_plans
+      for update to authenticated
+      using (created_by = auth.uid())
+      with check (created_by = auth.uid());
+  end if;
+
+  -- Users can delete their own workout plans
+  if not exists (select 1 from pg_policies where policyname = 'workout_plans_delete_own') then
+    create policy workout_plans_delete_own on public.workout_plans
+      for delete to authenticated
+      using (created_by = auth.uid());
+  end if;
+end $$;
+
 -- Music links table
 create table if not exists public.music_links (
   id uuid primary key default gen_random_uuid(),
@@ -77,7 +128,7 @@ create policy workout_music_refs_select_policy on public.workout_music_refs
     exists (
       select 1 from public.workout_plans wp 
       where wp.id = workout_music_refs.plan_id 
-      and (wp.coach_id = auth.uid() or wp.client_id = auth.uid())
+      and (wp.created_by = auth.uid() or wp.client_id = auth.uid())
     )
   );
 
@@ -86,7 +137,7 @@ create policy workout_music_refs_insert_policy on public.workout_music_refs
     exists (
       select 1 from public.workout_plans wp 
       where wp.id = workout_music_refs.plan_id 
-      and wp.coach_id = auth.uid()
+      and wp.created_by = auth.uid()
     )
   );
 
@@ -95,7 +146,7 @@ create policy workout_music_refs_update_policy on public.workout_music_refs
     exists (
       select 1 from public.workout_plans wp 
       where wp.id = workout_music_refs.plan_id 
-      and wp.coach_id = auth.uid()
+      and wp.created_by = auth.uid()
     )
   );
 
@@ -104,7 +155,7 @@ create policy workout_music_refs_delete_policy on public.workout_music_refs
     exists (
       select 1 from public.workout_plans wp 
       where wp.id = workout_music_refs.plan_id 
-      and wp.coach_id = auth.uid()
+      and wp.created_by = auth.uid()
     )
   );
 
@@ -114,7 +165,7 @@ create policy event_music_refs_select_policy on public.event_music_refs
     exists (
       select 1 from public.events e
       where e.id = event_music_refs.event_id
-      and (e.coach_id = auth.uid() or e.client_id = auth.uid())
+      and (e.created_by = auth.uid() or e.client_id = auth.uid())
     )
   );
 
@@ -123,7 +174,7 @@ create policy event_music_refs_insert_policy on public.event_music_refs
     exists (
       select 1 from public.events e
       where e.id = event_music_refs.event_id
-      and e.coach_id = auth.uid()
+      and e.created_by = auth.uid()
     )
   );
 
@@ -132,7 +183,7 @@ create policy event_music_refs_update_policy on public.event_music_refs
     exists (
       select 1 from public.events e
       where e.id = event_music_refs.event_id
-      and e.coach_id = auth.uid()
+      and e.created_by = auth.uid()
     )
   );
 
@@ -141,7 +192,7 @@ create policy event_music_refs_delete_policy on public.event_music_refs
     exists (
       select 1 from public.events e
       where e.id = event_music_refs.event_id
-      and e.coach_id = auth.uid()
+      and e.created_by = auth.uid()
     )
   );
 

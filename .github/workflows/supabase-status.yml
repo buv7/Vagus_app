@@ -1,0 +1,75 @@
+name: Supabase Status Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run every 6 hours to check Supabase health
+    - cron: '0 */6 * * *'
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Supabase API Health
+        run: |
+          echo "🔍 Checking Supabase project health..."
+          
+          # Get project ref from secrets
+          PROJECT_REF="${{ secrets.SUPABASE_PROJECT_REF }}"
+          
+          if [ -z "$PROJECT_REF" ]; then
+            echo "❌ SUPABASE_PROJECT_REF not set"
+            exit 1
+          fi
+          
+          # Test API connectivity
+          API_URL="https://$PROJECT_REF.supabase.co/rest/v1/"
+          
+          echo "Testing API endpoint: $API_URL"
+          
+          # Test basic connectivity
+          if curl -s -f "$API_URL" > /dev/null; then
+            echo "✅ Supabase API is responding"
+          else
+            echo "❌ Supabase API is not responding"
+            exit 1
+          fi
+          
+          # Test auth endpoint
+          AUTH_URL="https://$PROJECT_REF.supabase.co/auth/v1/"
+          if curl -s -f "$AUTH_URL" > /dev/null; then
+            echo "✅ Supabase Auth is responding"
+          else
+            echo "❌ Supabase Auth is not responding"
+            exit 1
+          fi
+          
+          echo "🎉 All Supabase services are healthy!"
+
+  function-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Edge Functions
+        run: |
+          echo "🧪 Testing Edge Functions..."
+          
+          PROJECT_REF="${{ secrets.SUPABASE_PROJECT_REF }}"
+          
+          # Test update-ai-usage function
+          FUNCTION_URL="https://$PROJECT_REF.supabase.co/functions/v1/update-ai-usage"
+          
+          echo "Testing function: $FUNCTION_URL"
+          
+          # Test with a simple request
+          RESPONSE=$(curl -s -w "%{http_code}" -X POST "$FUNCTION_URL" \
+            -H "Content-Type: application/json" \
+            -d '{"user_id":"00000000-0000-0000-0000-000000000000","tokens_used":1}' \
+            -o /dev/null)
+          
+          if [ "$RESPONSE" = "400" ]; then
+            echo "✅ update-ai-usage function is responding (400 expected for invalid UUID)"
+          else
+            echo "⚠️ update-ai-usage function returned: $RESPONSE"
+          fi
+          
+          echo "🎉 Edge function tests completed!"

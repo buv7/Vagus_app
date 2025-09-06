@@ -1,0 +1,111 @@
+[
+  {
+    "key": "shish_taouk",
+    "names": {"en": "Shish Taouk", "ar": "شيش طاووق", "ku": "شیش تاووق"},
+    "unit": "g",
+    "per_100g": {
+      "kcal": 165, "protein_g": 24, "carbs_g": 1, "fat_g": 7,
+      "sodium_mg": 520, "potassium_mg": 330,
+      "micros": {"vitB6_mg": 0.6}
+    },
+    "tags": ["protein","grill","halal","iraqi","mena"]
+  },
+  {
+    "key": "samak_masgouf",
+    "names": {"en": "Samak Masgouf", "ar": "سمك مسكوف", "ku": "سمك مسگوف"},
+    "unit": "g",
+    "per_100g": {"kcal": 180, "protein_g": 22, "carbs_g": 0, "fat_g": 10, "sodium_mg": 90, "potassium_mg": 380},
+    "tags": ["protein","fish","iraqi","mena","halal"]
+  },
+  {
+    "key": "tamees_bread",
+    "names": {"en": "Tamees Bread", "ar": "تميس", "ku": "تەمێس"},
+    "unit": "g",
+    "per_100g": {"kcal": 270, "protein_g": 9, "carbs_g": 52, "fat_g": 3, "sodium_mg": 430, "potassium_mg": 110},
+    "tags": ["carb","bread","mena"]
+  },
+  {
+    "key": "biryani_rice",
+    "names": {"en": "Biryani Rice", "ar": "برياني", "ku": "بریانى"},
+    "unit": "g",
+    "per_100g": {"kcal": 160, "protein_g": 3.5, "carbs_g": 31, "fat_g": 2, "sodium_mg": 260, "potassium_mg": 55},
+    "tags": ["carb","rice","iraqi","mena"]
+  },
+  {
+    "key": "tabbouleh",
+    "names": {"en": "Tabbouleh", "ar": "تبولة", "ku": "تبولە"},
+    "unit": "g",
+    "per_100g": {"kcal": 120, "protein_g": 3, "carbs_g": 12, "fat_g": 7, "sodium_mg": 150, "potassium_mg": 260},
+    "tags": ["salad","vegetable","mena","halal","vegetarian"]
+  },
+  {
+    "key": "fattoush",
+    "names": {"en": "Fattoush", "ar": "فتوش", "ku": "فەتوش"},
+    "unit": "g",
+    "per_100g": {"kcal": 140, "protein_g": 3, "carbs_g": 15, "fat_g": 7, "sodium_mg": 260, "potassium_mg": 240},
+    "tags": ["salad","vegetable","mena","halal","vegetarian"]
+  },
+  {
+    "key": "laban_ayran",
+    "names": {"en": "Laban Ayran", "ar": "لبن عيران", "ku": "عیڕان"},
+    "unit": "ml",
+    "per_100ml": {"kcal": 40, "protein_g": 2.7, "carbs_g": 2.5, "fat_g": 2, "sodium_mg": 160, "potassium_mg": 150},
+    "tags": ["dairy","drink","mena","halal"]
+  },
+  {
+    "key": "dates_zahidi",
+    "names": {"en": "Dates (Zahidi)", "ar": "تمر زهدي", "ku": "خۆرما زەەدی"},
+    "unit": "g",
+    "per_100g": {"kcal": 282, "protein_g": 2.5, "carbs_g": 75, "fat_g": 0.4, "sodium_mg": 2, "potassium_mg": 656, "fiber_g": 8},
+    "tags": ["fruit","mena","halal","vegetarian","vegan"]
+  },
+  {
+    "key": "kebab_kofta",
+    "names": {"en": "Kebab Kofta", "ar": "كباب كفتة", "ku": "کەباب کەفتە"},
+    "unit": "g",
+    "per_100g": {"kcal": 195, "protein_g": 18, "carbs_g": 2, "fat_g": 12, "sodium_mg": 480, "potassium_mg": 280},
+    "tags": ["protein","grill","iraqi","mena","halal"]
+  },
+  {
+    "key": "fasolia_with_meat",
+    "names": {"en": "Fasolia with Meat", "ar": "فاصوليا باللحم", "ku": "فاسۆلیا بە گۆشت"},
+    "unit": "g",
+    "per_100g": {"kcal": 125, "protein_g": 8, "carbs_g": 12, "fat_g": 4, "sodium_mg": 320, "potassium_mg": 420},
+    "tags": ["protein","vegetable","iraqi","mena","halal"]
+  },
+  {
+    "key": "samoon_bread",
+    "names": {"en": "Samoon Bread", "ar": "صمون", "ku": "سەمون"},
+    "unit": "g",
+    "per_100g": {"kcal": 285, "protein_g": 8.5, "carbs_g": 55, "fat_g": 3.5, "sodium_mg": 450, "potassium_mg": 120},
+    "tags": ["carb","bread","iraqi","mena"]
+  },
+  {
+    "key": "bulgur_pilaf",
+    "names": {"en": "Bulgur Pilaf", "ar": "برغل", "ku": "بەرگڵ"},
+    "unit": "g",
+    "per_100g": {"kcal": 155, "protein_g": 4, "carbs_g": 32, "fat_g": 1, "sodium_mg": 180, "potassium_mg": 200},
+    "tags": ["carb","grain","iraqi","mena","halal","vegetarian"]
+  },
+  {
+    "key": "dolma_vegetable",
+    "names": {"en": "Dolma (Vegetable)", "ar": "دولمة", "ku": "دۆڵمە"},
+    "unit": "g",
+    "per_100g": {"kcal": 95, "protein_g": 3, "carbs_g": 8, "fat_g": 5, "sodium_mg": 200, "potassium_mg": 180},
+    "tags": ["vegetable","iraqi","mena","halal","vegetarian"]
+  },
+  {
+    "key": "jibneh_arabieh",
+    "names": {"en": "Jibneh Arabieh", "ar": "جبنة عربية", "ku": "پەنیر عەرەبی"},
+    "unit": "g",
+    "per_100g": {"kcal": 320, "protein_g": 20, "carbs_g": 2, "fat_g": 25, "sodium_mg": 680, "potassium_mg": 80},
+    "tags": ["dairy","cheese","mena","halal"]
+  },
+  {
+    "key": "pistachios",
+    "names": {"en": "Pistachios", "ar": "فستق", "ku": "پستەق"},
+    "unit": "g",
+    "per_100g": {"kcal": 560, "protein_g": 20, "carbs_g": 27, "fat_g": 45, "sodium_mg": 1, "potassium_mg": 1025, "fiber_g": 10},
+    "tags": ["nuts","mena","halal","vegetarian","vegan"]
+  }
+]

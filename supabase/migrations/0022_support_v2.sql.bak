@@ -1,0 +1,37 @@
+-- Admin Support v2: Auto-triage rules, SLA policies, saved views
+-- Auto triage rules
+create table if not exists support_auto_rules (
+  id uuid primary key default gen_random_uuid(),
+  enabled boolean not null default true,
+  name text not null,
+  match_channel text null,          -- 'email' | 'inapp' | null
+  match_priority text null,         -- 'urgent'|'high'|'normal'|'low'|null
+  match_title_ilike text null,      -- e.g. '%refund%'
+  match_body_ilike text null,       -- e.g. '%crash%'
+  then_set_priority text null,
+  then_add_tags text[] null,
+  then_assign_to uuid null,
+  created_at timestamptz default now()
+);
+
+-- SLA policies (by priority)
+create table if not exists support_sla_policies (
+  priority text primary key,                 -- urgent/high/normal/low
+  first_response_mins int not null,
+  resolution_mins int not null,
+  updated_at timestamptz default now()
+);
+insert into support_sla_policies (priority, first_response_mins, resolution_mins)
+  values ('urgent', 15, 240), ('high', 60, 720), ('normal', 240, 2880), ('low', 1440, 4320)
+on conflict (priority) do nothing;
+
+-- Saved views / filters per admin
+create table if not exists support_saved_views (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null,
+  name text not null,
+  filters jsonb not null,        -- {status:[], priority:[], q:'', tags:[]...}
+  is_default boolean not null default false,
+  created_at timestamptz default now()
+);
+create index if not exists idx_support_saved_views_owner on support_saved_views(owner_id);

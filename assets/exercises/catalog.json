@@ -1,0 +1,154 @@
+{
+  "exercises": [
+    {
+      "name": "bench press",
+      "primaryMuscles": ["chest"],
+      "secondaryMuscles": ["triceps", "anterior deltoids"],
+      "media": [
+        "https://example.com/bench_press.mp4",
+        "https://example.com/bench_press.gif",
+        "https://example.com/bench_press.jpg"
+      ]
+    },
+    {
+      "name": "squat",
+      "primaryMuscles": ["quadriceps", "glutes"],
+      "secondaryMuscles": ["hamstrings", "calves", "core"],
+      "media": [
+        "https://example.com/squat.mp4",
+        "https://example.com/squat.gif",
+        "https://example.com/squat.jpg"
+      ]
+    },
+    {
+      "name": "deadlift",
+      "primaryMuscles": ["hamstrings", "glutes", "erector spinae"],
+      "secondaryMuscles": ["trapezius", "rhomboids", "core", "forearms"],
+      "media": [
+        "https://example.com/deadlift.mp4",
+        "https://example.com/deadlift.gif",
+        "https://example.com/deadlift.jpg"
+      ]
+    },
+    {
+      "name": "overhead press",
+      "primaryMuscles": ["anterior deltoids"],
+      "secondaryMuscles": ["triceps", "upper chest", "core"],
+      "media": [
+        "https://example.com/ohp.mp4",
+        "https://example.com/ohp.gif",
+        "https://example.com/ohp.jpg"
+      ]
+    },
+    {
+      "name": "barbell row",
+      "primaryMuscles": ["latissimus dorsi", "rhomboids", "middle trapezius"],
+      "secondaryMuscles": ["posterior deltoids", "biceps", "core"],
+      "media": [
+        "https://example.com/barbell_row.mp4",
+        "https://example.com/barbell_row.gif",
+        "https://example.com/barbell_row.jpg"
+      ]
+    },
+    {
+      "name": "lat pulldown",
+      "primaryMuscles": ["latissimus dorsi"],
+      "secondaryMuscles": ["rhomboids", "middle trapezius", "biceps"],
+      "media": [
+        "https://example.com/lat_pulldown.mp4",
+        "https://example.com/lat_pulldown.gif",
+        "https://example.com/lat_pulldown.jpg"
+      ]
+    },
+    {
+      "name": "pull up",
+      "primaryMuscles": ["latissimus dorsi"],
+      "secondaryMuscles": ["rhomboids", "middle trapezius", "biceps", "core"],
+      "media": [
+        "https://example.com/pull_up.mp4",
+        "https://example.com/pull_up.gif",
+        "https://example.com/pull_up.jpg"
+      ]
+    },
+    {
+      "name": "dumbbell press",
+      "primaryMuscles": ["chest"],
+      "secondaryMuscles": ["anterior deltoids", "triceps"],
+      "media": [
+        "https://example.com/db_press.mp4",
+        "https://example.com/db_press.gif",
+        "https://example.com/db_press.jpg"
+      ]
+    },
+    {
+      "name": "incline press",
+      "primaryMuscles": ["upper chest"],
+      "secondaryMuscles": ["anterior deltoids", "triceps"],
+      "media": [
+        "https://example.com/incline_press.mp4",
+        "https://example.com/incline_press.gif",
+        "https://example.com/incline_press.jpg"
+      ]
+    },
+    {
+      "name": "dip",
+      "primaryMuscles": ["chest", "triceps"],
+      "secondaryMuscles": ["anterior deltoids", "core"],
+      "media": [
+        "https://example.com/dip.mp4",
+        "https://example.com/dip.gif",
+        "https://example.com/dip.jpg"
+      ]
+    },
+    {
+      "name": "bicep curl",
+      "primaryMuscles": ["biceps"],
+      "secondaryMuscles": ["forearms"],
+      "media": [
+        "https://example.com/bicep_curl.mp4",
+        "https://example.com/bicep_curl.gif",
+        "https://example.com/bicep_curl.jpg"
+      ]
+    },
+    {
+      "name": "tricep extension",
+      "primaryMuscles": ["triceps"],
+      "secondaryMuscles": ["forearms"],
+      "media": [
+        "https://example.com/tricep_extension.mp4",
+        "https://example.com/tricep_extension.gif",
+        "https://example.com/tricep_extension.jpg"
+      ]
+    },
+    {
+      "name": "lateral raise",
+      "primaryMuscles": ["lateral deltoids"],
+      "secondaryMuscles": ["anterior deltoids", "serratus anterior"],
+      "media": [
+        "https://example.com/lateral_raise.mp4",
+        "https://example.com/lateral_raise.gif",
+        "https://example.com/lateral_raise.jpg"
+      ]
+    },
+    {
+      "name": "leg press",
+      "primaryMuscles": ["quadriceps", "glutes"],
+      "secondaryMuscles": ["hamstrings", "calves"],
+      "media": [
+        "https://example.com/leg_press.mp4",
+        "https://example.com/leg_press.gif",
+        "https://example.com/leg_press.jpg"
+      ]
+    },
+    {
+      "name": "leg curl",
+      "primaryMuscles": ["hamstrings"],
+      "secondaryMuscles": ["calves"],
+      "media": [
+        "https://example.com/leg_curl.mp4",
+        "https://example.com/leg_curl.gif",
+        "https://example.com/leg_curl.jpg"
+      ]
+    }
+  ]
+}

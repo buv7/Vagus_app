@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../anim/blocking_overlay.dart';
 
 /// Inline File Picker Widget
 /// Reusable widget with file icon + filename preview
@@ -356,7 +357,11 @@ class _InlineFilePickerState extends State<InlineFilePicker> {
       // Upload to Supabase Storage
       final filePath = 'user_files/${user.id}/${DateTime.now().millisecondsSinceEpoch}_$fileName';
       
-      await Supabase.instance.client.storage.from('vagus-media').upload(filePath, file);
+      await runWithBlockingLoader(
+        context,
+        Supabase.instance.client.storage.from('vagus-media').upload(filePath, file),
+        showSuccess: true,
+      );
       final publicUrl = Supabase.instance.client.storage.from('vagus-media').getPublicUrl(filePath);
 
       // Create file data

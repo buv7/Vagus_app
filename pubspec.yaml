@@ -39,14 +39,34 @@ dependencies:
   crypto: ^3.0.3
   flutter_local_notifications: ^18.0.0
   timezone: ^0.9.2
+  lottie: ^2.7.0
+  rive: ^0.13.13
+  provider: ^6.0.5
+  share_plus: ^10.0.2
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.2
 
 flutter:
   uses-material-design: true
   
   assets:
     - assets/foods/
+    - assets/branding/vagus_logo_white.png
+    - assets/branding/vagus_logo_black.png
+    - assets/anim/loading_spinner.json
+    - assets/anim/success_check.json
+    - assets/anim/empty_box.json
+    - assets/anim/typing_dots.json
+    - assets/anim/mic_ripple.riv
+
+flutter_native_splash:
+  color: "#000000"
+  image: assets/branding/vagus_logo_white.png
+  android_12:
+    color: "#000000"
+    image: assets/branding/vagus_logo_white.png

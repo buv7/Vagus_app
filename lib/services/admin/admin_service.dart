@@ -168,20 +168,22 @@ class AdminService {
     String? status = 'pending',
   }) async {
     try {
-      final request = supabase
+      // Build the query step by step to avoid type issues
+      var query = supabase
           .from('coach_applications')
           .select('''
             *,
-            user:profiles!coach_applications_user_id_fkey(id, email, name)
-          ''')
-          .order('created_at', ascending: false);
+            user:profiles(id, email, name)
+          ''');
 
       if (status != null) {
-        // Note: Status filtering would need to be implemented differently
-        // For now, we'll return all applications and filter client-side
+        query = query.eq('status', status);
       }
 
-      final response = await request;
+      final response = await query
+          .not('user', 'is', null)
+          .order('created_at', ascending: false);
+
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       debugPrint('❌ Error listing coach requests: $e');

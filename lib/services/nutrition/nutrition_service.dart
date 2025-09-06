@@ -1,12 +1,16 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/nutrition_plan.dart';
+import '../../models/nutrition/recipe.dart';
+import '../../models/nutrition/food_item.dart' as fi;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:intl/intl.dart';
+import 'recipe_service.dart';
 
 class NutritionService {
   final SupabaseClient _supabase = Supabase.instance.client;
+  final RecipeService _recipeService = RecipeService();
 
   /// Fetch all nutrition plans for a specific client
   Future<List<NutritionPlan>> fetchPlansForClient(String clientId) async {
@@ -446,5 +450,135 @@ class NutritionService {
         ],
       ),
     );
+  }
+
+  // ========================================
+  // RECIPE INTEGRATION METHODS
+  // ========================================
+
+  /// Create a FoodItem from a recipe with specified servings
+  Future<FoodItem> createFoodItemFromRecipe(String recipeId, double servings) async {
+    try {
+      final recipe = await _recipeService.fetchRecipe(recipeId);
+      if (recipe == null) {
+        throw Exception('Recipe not found');
+      }
+
+      // Calculate nutrition per serving
+      final nutritionPerServing = _calculateNutritionPerServing(recipe);
+      
+      // Scale by servings
+      final scaledNutrition = _scaleNutrition(nutritionPerServing, servings);
+
+      return FoodItem(
+        name: recipe.title,
+        amount: (recipe.servingSize ?? 1.0) * servings,
+        protein: scaledNutrition['protein']!,
+        carbs: scaledNutrition['carbs']!,
+        fat: scaledNutrition['fat']!,
+        kcal: scaledNutrition['kcal']!,
+        sodium: scaledNutrition['sodium']!,
+        potassium: scaledNutrition['potassium']!,
+        recipeId: recipeId,
+        servings: servings,
+      );
+    } catch (e) {
+      throw Exception('Failed to create food item from recipe: $e');
+    }
+  }
+
+  /// Calculate nutrition per serving for a recipe
+  Map<String, double> _calculateNutritionPerServing(Recipe recipe) {
+    final servingSize = recipe.servingSize ?? 1.0;
+    return {
+      'protein': recipe.protein / servingSize,
+      'carbs': recipe.carbs / servingSize,
+      'fat': recipe.fat / servingSize,
+      'kcal': recipe.calories / servingSize,
+      'sodium': recipe.sodiumMg / servingSize,
+      'potassium': recipe.potassiumMg / servingSize,
+    };
+  }
+
+  /// Scale nutrition values by servings
+  Map<String, double> _scaleNutrition(Map<String, double> nutritionPerServing, double servings) {
+    return {
+      'protein': nutritionPerServing['protein']! * servings,
+      'carbs': nutritionPerServing['carbs']! * servings,
+      'fat': nutritionPerServing['fat']! * servings,
+      'kcal': nutritionPerServing['kcal']! * servings,
+      'sodium': nutritionPerServing['sodium']! * servings,
+      'potassium': nutritionPerServing['potassium']! * servings,
+    };
+  }
+
+  /// Update a FoodItem's servings and recalculate nutrition
+  Future<FoodItem> updateRecipeServings(FoodItem item, double newServings) async {
+    if (item.recipeId == null) {
+      throw Exception('Cannot update servings for non-recipe item');
+    }
+
+    try {
+      final recipe = await _recipeService.fetchRecipe(item.recipeId!);
+      if (recipe == null) {
+        throw Exception('Recipe not found');
+      }
+
+      // Calculate nutrition per serving
+      final nutritionPerServing = _calculateNutritionPerServing(recipe);
+      
+      // Scale by new servings
+      final scaledNutrition = _scaleNutrition(nutritionPerServing, newServings);
+
+      return item.copyWith(
+        servings: newServings,
+        amount: (recipe.servingSize ?? 1.0) * newServings,
+        protein: scaledNutrition['protein']!,
+        carbs: scaledNutrition['carbs']!,
+        fat: scaledNutrition['fat']!,
+        kcal: scaledNutrition['kcal']!,
+        sodium: scaledNutrition['sodium']!,
+        potassium: scaledNutrition['potassium']!,
+      );
+    } catch (e) {
+      throw Exception('Failed to update recipe servings: $e');
+    }
+  }
+
+  /// Get recipe details for a FoodItem
+  Future<Recipe?> getRecipeForFoodItem(FoodItem item) async {
+    if (item.recipeId == null) return null;
+    
+    try {
+      return await _recipeService.fetchRecipe(item.recipeId!);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Check if a FoodItem is a recipe-based item
+  bool isRecipeItem(FoodItem item) {
+    return item.recipeId != null;
+  }
+
+  /// Get recipe photo URL for a FoodItem
+  Future<String?> getRecipePhotoUrl(FoodItem item) async {
+    if (item.recipeId == null) return null;
+    
+    try {
+      final recipe = await _recipeService.fetchRecipe(item.recipeId!);
+      if (recipe?.photoUrl == null || (recipe!.photoUrl?.isEmpty ?? true)) return null;
+      
+      return await _recipeService.getRecipePhotoUrl(recipe.photoUrl ?? '');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Compatibility alias for existing code
+  Future<void> addItemToMeal({required String mealId, required fi.FoodItem item}) async {
+    // Implementation would depend on your meal structure
+    // For now, just a placeholder
+    print('Adding item ${item.name} to meal $mealId');
   }
 }

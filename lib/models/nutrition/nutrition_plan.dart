@@ -216,6 +216,14 @@ class FoodItem {
   final double kcal;
   final double sodium;
   final double potassium;
+  // Recipe integration fields
+  final String? recipeId;
+  final double servings;
+  // Cost fields
+  final double? costPerUnit;
+  final String? currency;
+  // AI estimation flag
+  final bool estimated;
 
   FoodItem({
     required this.name,
@@ -226,6 +234,11 @@ class FoodItem {
     required this.kcal,
     required this.sodium,
     required this.potassium,
+    this.recipeId,
+    this.servings = 1.0,
+    this.costPerUnit,
+    this.currency,
+    this.estimated = false,
   });
 
   factory FoodItem.fromMap(Map<String, dynamic> map) {
@@ -238,6 +251,11 @@ class FoodItem {
       kcal: (map['kcal'] as num?)?.toDouble() ?? 0.0,
       sodium: (map['sodium'] as num?)?.toDouble() ?? 0.0,
       potassium: (map['potassium'] as num?)?.toDouble() ?? 0.0,
+      recipeId: map['recipe_id']?.toString(),
+      servings: (map['servings'] as num?)?.toDouble() ?? 1.0,
+      costPerUnit: (map['cost_per_unit'] as num?)?.toDouble(),
+      currency: map['currency']?.toString(),
+      estimated: map['estimated'] as bool? ?? false,
     );
   }
 
@@ -251,6 +269,11 @@ class FoodItem {
       'kcal': kcal,
       'sodium': sodium,
       'potassium': potassium,
+      if (recipeId != null) 'recipe_id': recipeId,
+      'servings': servings,
+      if (costPerUnit != null) 'cost_per_unit': costPerUnit,
+      if (currency != null) 'currency': currency,
+      'estimated': estimated,
     };
   }
 
@@ -263,6 +286,11 @@ class FoodItem {
     double? kcal,
     double? sodium,
     double? potassium,
+    String? recipeId,
+    double? servings,
+    double? costPerUnit,
+    String? currency,
+    bool? estimated,
   }) {
     return FoodItem(
       name: name ?? this.name,
@@ -273,6 +301,11 @@ class FoodItem {
       kcal: kcal ?? this.kcal,
       sodium: sodium ?? this.sodium,
       potassium: potassium ?? this.potassium,
+      recipeId: recipeId ?? this.recipeId,
+      servings: servings ?? this.servings,
+      costPerUnit: costPerUnit ?? this.costPerUnit,
+      currency: currency ?? this.currency,
+      estimated: estimated ?? this.estimated,
     );
   }
 }

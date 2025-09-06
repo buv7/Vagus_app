@@ -217,7 +217,7 @@ class EventService {
       if (role == 'coach') {
         // Coaches see their own events and events they're hosting
         response = await _supabase
-            .from('events')
+            .from('calendar_events')
             .select()
             .or('created_by.eq.$userId,coach_id.eq.$userId')
             .gte('start_at', DateTime.now().toIso8601String())
@@ -226,7 +226,7 @@ class EventService {
       } else {
         // Clients see their own events and events they're attending
         response = await _supabase
-            .from('events')
+            .from('calendar_events')
             .select()
             .or('created_by.eq.$userId,client_id.eq.$userId')
             .gte('start_at', DateTime.now().toIso8601String())
@@ -252,7 +252,7 @@ class EventService {
       if (user == null) return [];
 
       final response = await _supabase
-          .from('events')
+          .from('calendar_events')
           .select()
           .or('created_by.eq.$user,coach_id.eq.$user,client_id.eq.$user')
           .gte('start_at', start.toIso8601String())
@@ -282,7 +282,7 @@ class EventService {
         eventData['created_at'] = DateTime.now().toIso8601String();
         
         final response = await _supabase
-            .from('events')
+            .from('calendar_events')
             .insert(eventData)
             .select()
             .single();
@@ -291,9 +291,8 @@ class EventService {
       } else {
         // Update existing event
         final response = await _supabase
-            .from('events')
+            .from('calendar_events')
             .update(eventData)
-            .eq('id', event.id)
             .select()
             .single();
         
@@ -309,7 +308,7 @@ class EventService {
   Future<void> deleteEvent(String id) async {
     try {
       await _supabase
-          .from('events')
+          .from('calendar_events')
           .delete()
           .eq('id', id);
     } catch (e) {
@@ -326,7 +325,7 @@ class EventService {
   }) async {
     try {
       final response = await _supabase
-          .from('events')
+          .from('calendar_events')
           .select()
           .or('created_by.eq.$userId,coach_id.eq.$userId,client_id.eq.$userId')
           .neq('status', 'cancelled')
@@ -446,7 +445,7 @@ class EventService {
   Future<List<Event>> getBookingSlots(String coachId) async {
     try {
       final response = await _supabase
-          .from('events')
+          .from('calendar_events')
           .select()
           .eq('coach_id', coachId)
           .eq('is_booking_slot', true)
@@ -464,7 +463,7 @@ class EventService {
   Future<Event?> getById(String id) async {
     try {
       final response = await _supabase
-          .from('events')
+          .from('calendar_events')
           .select()
           .eq('id', id)
           .single();
@@ -603,7 +602,7 @@ class EventService {
   Future<int?> getCapacity(String eventId) async {
     try {
       final response = await _supabase
-          .from('events')
+          .from('calendar_events')
           .select('capacity')
           .eq('id', eventId)
           .single();

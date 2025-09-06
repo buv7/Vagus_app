@@ -56,5 +56,11 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera used for food photos & barcode scanning.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To attach meal photos and export PDFs.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>To export PDFs and save nutrition plans.</string>
 </dict>
 </plist>
