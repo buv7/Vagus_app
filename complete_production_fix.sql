@@ -570,7 +570,7 @@ ALTER TABLE public.support_saved_views ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies for these tables
-CREATE POLICY IF NOT EXISTS sar_policy ON public.support_auto_rules
+CREATE POLICY sar_policy ON public.support_auto_rules
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p
@@ -579,7 +579,7 @@ FOR ALL USING (
     )
 );
 
-CREATE POLICY IF NOT EXISTS ssp_policy ON public.support_sla_policies
+CREATE POLICY ssp_policy ON public.support_sla_policies
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p
@@ -588,7 +588,7 @@ FOR ALL USING (
     )
 );
 
-CREATE POLICY IF NOT EXISTS ssv_policy ON public.support_saved_views
+CREATE POLICY ssv_policy ON public.support_saved_views
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p
@@ -597,7 +597,7 @@ FOR ALL USING (
     )
 );
 
-CREATE POLICY IF NOT EXISTS ur_policy ON public.user_roles
+CREATE POLICY ur_policy ON public.user_roles
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p

@@ -113,7 +113,7 @@ GROUP BY referrer_id, DATE_TRUNC('month', created_at);
 ALTER TABLE public.support_auto_rules ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policy for support_auto_rules
-CREATE POLICY IF NOT EXISTS sar_policy ON public.support_auto_rules
+CREATE POLICY sar_policy ON public.support_auto_rules
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p
@@ -126,7 +126,7 @@ FOR ALL USING (
 ALTER TABLE public.support_sla_policies ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policy for support_sla_policies
-CREATE POLICY IF NOT EXISTS ssp_policy ON public.support_sla_policies
+CREATE POLICY ssp_policy ON public.support_sla_policies
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p
@@ -139,7 +139,7 @@ FOR ALL USING (
 ALTER TABLE public.support_saved_views ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policy for support_saved_views
-CREATE POLICY IF NOT EXISTS ssv_policy ON public.support_saved_views
+CREATE POLICY ssv_policy ON public.support_saved_views
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p
@@ -152,7 +152,7 @@ FOR ALL USING (
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policy for user_roles
-CREATE POLICY IF NOT EXISTS ur_policy ON public.user_roles
+CREATE POLICY ur_policy ON public.user_roles
 FOR ALL USING (
     EXISTS (
         SELECT 1 FROM public.profiles p
