@@ -88,36 +88,34 @@ class _CoachThreadsScreenState extends State<CoachThreadsScreen> {
   Future<List<Map<String, dynamic>>> _getCoachClients(String coachId) async {
     try {
       // Try coach_clients table first
-      var response = await Supabase.instance.client
+      var links = await Supabase.instance.client
           .from('coach_clients')
-          .select('''
-            client_id,
-            profiles!coach_clients_client_id_fkey (
-              id,
-              name,
-              email,
-              avatar_url
-            )
-          ''')
+          .select('client_id')
           .eq('coach_id', coachId);
       
-      if (response.isNotEmpty) {
-        return response.map((row) => {
-          'client_id': row['client_id'],
-          'profile': row['profiles'],
+      if (links.isNotEmpty) {
+        final clientIds = links.map((row) => row['client_id'] as String).toList();
+        
+        final profiles = await Supabase.instance.client
+            .from('profiles')
+            .select('id, name, email')
+            .inFilter('id', clientIds);
+        
+        return profiles.map((profile) => {
+          'client_id': profile['id'],
+          'profile': profile,
         }).toList();
       }
 
       // Try coach_client_links table
-      response = await Supabase.instance.client
+      var response = await Supabase.instance.client
           .from('coach_client_links')
           .select('''
             client_id,
             profiles!coach_client_links_client_id_fkey (
               id,
               name,
-              email,
-              avatar_url
+              email
             )
           ''')
           .eq('coach_id', coachId);

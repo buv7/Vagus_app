@@ -79,26 +79,59 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
 
     try {
       // Session management for authenticated users
+      debugPrint('🔧 AuthGate: Starting session management...');
       await SessionService.instance.upsertCurrentDevice();
+      debugPrint('🔧 AuthGate: Device upserted successfully');
+      
       await SessionService.instance.checkRevocation();
+      debugPrint('🔧 AuthGate: Revocation check completed');
       
       // Load user settings
+      debugPrint('🔧 AuthGate: Loading user settings...');
       await SettingsService.instance.loadForCurrentUser();
+      debugPrint('🔧 AuthGate: User settings loaded');
       
       // Schedule heartbeat
       _scheduleHeartbeat();
 
+      debugPrint('🔧 AuthGate: Fetching user profile...');
       final profile = await supabase
           .from('profiles')
           .select('role')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
+
+      String role = 'client'; // Default role for new users
+      
+      if (profile == null) {
+        debugPrint('⚠️ AuthGate: No profile found for user, creating default profile...');
+        // Create a default profile for the user
+        try {
+          await supabase.from('profiles').insert({
+            'id': user.id,
+            'email': user.email,
+            'name': 'New User',
+            'role': 'client', // New users default to client
+            'created_at': DateTime.now().toIso8601String(),
+          });
+          debugPrint('✅ AuthGate: Default profile created successfully');
+        } catch (e) {
+          debugPrint('❌ AuthGate: Failed to create profile: $e');
+          // Continue with default role - don't let this block login
+        }
+      } else {
+        // Use the existing role from the database, don't default to client
+        role = profile['role'] ?? 'client';
+        debugPrint('🔧 AuthGate: Profile fetched successfully, role: $role');
+      }
 
       setState(() {
-        _role = profile['role'];
+        _role = role;
         _loading = false;
       });
     } catch (e) {
+      debugPrint('❌ AuthGate: Error during initialization: $e');
+      debugPrint('❌ AuthGate: Stack trace: ${StackTrace.current}');
       setState(() {
         _role = 'unauthenticated';
         _loading = false;

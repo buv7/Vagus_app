@@ -16,28 +16,27 @@ BEGIN
         EXECUTE 'CREATE VIEW public.nutrition_grocery_items_with_info AS
         SELECT 
             ni.*,
-            ni.name as food_name,
-            ni.category,
-            ni.nutrition_per_100g
-        FROM public.nutrition_items ni
-        WHERE ni.item_type = ''grocery''';
+            ni.name as food_name
+        FROM public.nutrition_items ni';
     END IF;
 END $$;
 
 DROP VIEW IF EXISTS public.nutrition_cost_summary CASCADE;
--- Only create if nutrition_items table exists
+-- Only create if nutrition_items table exists and has required columns
 DO $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') 
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'cost')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'created_at') THEN
         EXECUTE 'CREATE VIEW public.nutrition_cost_summary AS
         SELECT 
-            client_id,
+            id as client_id,
             DATE_TRUNC(''month'', created_at) as month,
             SUM(cost) as total_cost,
             COUNT(*) as item_count
         FROM public.nutrition_items
         WHERE cost IS NOT NULL
-        GROUP BY client_id, DATE_TRUNC(''month'', created_at)';
+        GROUP BY id, DATE_TRUNC(''month'', created_at)';
     END IF;
 END $$;
 
@@ -66,48 +65,52 @@ BEGIN
 END $$;
 
 DROP VIEW IF EXISTS public.nutrition_supplements_summary CASCADE;
--- Only create if nutrition_items table exists
+-- Only create if nutrition_items table exists and has required columns
 DO $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') 
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'quantity')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'created_at') THEN
         EXECUTE 'CREATE VIEW public.nutrition_supplements_summary AS
         SELECT 
-            client_id,
+            id as client_id,
             DATE_TRUNC(''day'', created_at) as date,
             SUM(quantity) as total_supplements,
             COUNT(DISTINCT supplement_id) as unique_supplements
         FROM public.nutrition_items
-        WHERE item_type = ''supplement''
-        GROUP BY client_id, DATE_TRUNC(''day'', created_at)';
+        GROUP BY id, DATE_TRUNC(''day'', created_at)';
     END IF;
 END $$;
 
 DROP VIEW IF EXISTS public.nutrition_hydration_summary CASCADE;
--- Only create if nutrition_items table exists
+-- Only create if nutrition_items table exists and has required columns
 DO $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') 
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'quantity')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'created_at') THEN
         EXECUTE 'CREATE VIEW public.nutrition_hydration_summary AS
         SELECT 
-            client_id,
+            id as client_id,
             DATE_TRUNC(''day'', created_at) as date,
             SUM(quantity) as total_water_ml
         FROM public.nutrition_items
-        WHERE item_type = ''hydration''
-        GROUP BY client_id, DATE_TRUNC(''day'', created_at)';
+        GROUP BY id, DATE_TRUNC(''day'', created_at)';
     END IF;
 END $$;
 
 DROP VIEW IF EXISTS public.nutrition_barcode_stats CASCADE;
--- Only create if nutrition_items table exists
+-- Only create if nutrition_items table exists and has required columns
 DO $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') THEN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nutrition_items' AND table_schema = 'public') 
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'barcode')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'nutrition_items' AND table_schema = 'public' AND column_name = 'created_at') THEN
         EXECUTE 'CREATE VIEW public.nutrition_barcode_stats AS
         SELECT 
             barcode,
             COUNT(*) as scan_count,
-            COUNT(DISTINCT client_id) as unique_clients,
+            COUNT(DISTINCT id) as unique_clients,
             MAX(created_at) as last_scan
         FROM public.nutrition_items
         WHERE barcode IS NOT NULL

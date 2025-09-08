@@ -36,27 +36,35 @@ class GroceryService {
         throw Exception('Nutrition plan not found');
       }
 
-      // Create grocery list
-      final response = await _supabase.rpc('generate_grocery_list_for_week', params: {
-        'plan_uuid': planId,
-        'week_number': weekIndex,
-        'owner_uuid': ownerId,
-        'coach_uuid': coachId,
-      });
+      // Create grocery list directly with proper name
+      final groceryListName = '${plan.name} - Week $weekIndex';
+      
+      final listResponse = await _supabase
+          .from('nutrition_grocery_lists')
+          .insert({
+            'plan_id': planId,
+            'name': groceryListName,
+            'created_by': ownerId,
+            'week_index': weekIndex,
+            'owner': ownerId,
+            'coach_id': coachId,
+          })
+          .select()
+          .single();
 
-      final groceryListId = response.toString();
+      final groceryListId = listResponse['id'].toString();
       
       // Generate items from plan meals
       await _generateItemsFromPlan(groceryListId, plan, weekIndex);
 
       // Fetch and return the created list
-      final listResponse = await _supabase
+      final finalListResponse = await _supabase
           .from('nutrition_grocery_lists')
           .select()
           .eq('id', groceryListId)
           .single();
 
-      return GroceryList.fromMap(listResponse);
+      return GroceryList.fromMap(finalListResponse);
     } catch (e) {
       throw Exception('Failed to generate grocery list: $e');
     }
@@ -81,7 +89,14 @@ class GroceryService {
 
     // Insert all items into database
     if (itemMap.isNotEmpty) {
-      final itemsData = itemMap.values.map((item) => item.toMap()).toList();
+      final itemsData = itemMap.values.map((item) {
+        final itemMap = item.toMap();
+        // Fix column name mapping for database schema
+        itemMap['grocery_list_id'] = itemMap.remove('list_id');
+        itemMap['is_purchased'] = itemMap.remove('checked');
+        return itemMap;
+      }).toList();
+      
       await _supabase
           .from('nutrition_grocery_items')
           .insert(itemsData);
@@ -309,12 +324,18 @@ class GroceryService {
       final response = await _supabase
           .from('nutrition_grocery_items')
           .select()
-          .eq('list_id', listId)
+          .eq('grocery_list_id', listId)
           .order('aisle')
           .order('name');
 
       return (response as List<dynamic>)
-          .map((item) => GroceryItem.fromMap(item as Map<String, dynamic>))
+          .map((item) {
+            final itemMap = item as Map<String, dynamic>;
+            // Fix column name mapping for model
+            itemMap['list_id'] = itemMap.remove('grocery_list_id');
+            itemMap['checked'] = itemMap.remove('is_purchased');
+            return GroceryItem.fromMap(itemMap);
+          })
           .toList();
     } catch (e) {
       throw Exception('Failed to fetch grocery items: $e');
@@ -326,7 +347,7 @@ class GroceryService {
     try {
       await _supabase
           .from('nutrition_grocery_items')
-          .update({'is_checked': value})
+          .update({'is_purchased': value})
           .eq('id', itemId);
     } catch (e) {
       throw Exception('Failed to toggle item checked status: $e');

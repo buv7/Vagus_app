@@ -9,6 +9,11 @@ class AppTheme {
   static const Color steelGrey = Color(0xFF555555);
   static const Color lightGrey = Color(0xFFE0E0E0);
   static const Color charcoalGrey = Color(0xFF1C1C1C);
+  
+  // Modern design colors
+  static const Color mintAqua = Color(0xFF00D4AA);
+  static const Color softYellow = Color(0xFFFFD700);
+  static const Color cardBackground = Color(0xFF1A1A1A);
 
   /// Light theme with VAGUS monochrome palette
   static ThemeData light() {
@@ -116,24 +121,24 @@ class AppTheme {
     );
   }
 
-  /// Dark theme with VAGUS monochrome palette
+  /// Dark theme with VAGUS modern design palette
   static ThemeData dark() {
     return ThemeData.dark().copyWith(
       colorScheme: const ColorScheme.dark(
-        primary: Color(0xFFFFFFFF),    // White
-        secondary: Color(0xFF555555),  // Steel Grey
-        surface: Color(0xFF000000),    // Black
-        onPrimary: Color(0xFF000000),
-        onSecondary: Color(0xFFFFFFFF),
-        onSurface: Color(0xFFFFFFFF),
-        outline: Color(0xFF555555),
-        surfaceContainerHighest: Color(0xFF1C1C1C),
-        onSurfaceVariant: Color(0xFFE0E0E0),
+        primary: mintAqua,              // Teal accent
+        secondary: softYellow,          // Yellow accent
+        surface: primaryBlack,          // Black
+        onPrimary: primaryBlack,        // Black text on teal
+        onSecondary: primaryBlack,      // Black text on yellow
+        onSurface: neutralWhite,        // White text
+        outline: Color(0xFF555555),     // Steel Grey
+        surfaceContainerHighest: cardBackground, // Dark grey cards
+        onSurfaceVariant: Color(0xFFE0E0E0),     // Light grey text
       ),
-      scaffoldBackgroundColor: Color(0xFF000000), // Black
+      scaffoldBackgroundColor: primaryBlack, // Black background
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF1C1C1C), // Charcoal Grey
-        foregroundColor: Color(0xFFFFFFFF),
+        backgroundColor: cardBackground, // Dark grey header
+        foregroundColor: neutralWhite,
         elevation: 0,
         shadowColor: Colors.transparent,
       ),
@@ -143,14 +148,14 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(DesignTokens.radius16),
         ),
-        color: const Color(0xFF1C1C1C), // Charcoal Grey
+        color: cardBackground, // Dark grey cards
         surfaceTintColor: Colors.transparent,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: Color(0xFF555555).withValues(alpha: 0.2),
-        selectedColor: Color(0xFFFFFFFF),
-        labelStyle: const TextStyle(color: Color(0xFFFFFFFF)),
-        secondaryLabelStyle: const TextStyle(color: Color(0xFF000000)),
+        selectedColor: mintAqua,
+        labelStyle: const TextStyle(color: neutralWhite),
+        secondaryLabelStyle: const TextStyle(color: primaryBlack),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
         ),
@@ -158,8 +163,8 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFFFFFFFF),
-          foregroundColor: Color(0xFF000000),
+          backgroundColor: mintAqua,
+          foregroundColor: primaryBlack,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
@@ -173,8 +178,8 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: Color(0xFFFFFFFF),
-          side: const BorderSide(color: Color(0xFFFFFFFF)),
+          foregroundColor: neutralWhite,
+          side: const BorderSide(color: Color(0xFF555555)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
           ),
@@ -186,7 +191,7 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: Color(0xFFFFFFFF),
+          foregroundColor: mintAqua,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
           ),
@@ -207,17 +212,17 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: Color(0xFFFFFFFF), width: 2),
+          borderSide: const BorderSide(color: mintAqua, width: 2),
         ),
         filled: true,
-        fillColor: const Color(0xFF1C1C1C), // Charcoal Grey
+        fillColor: cardBackground, // Dark grey input background
         contentPadding: const EdgeInsets.all(DesignTokens.space16),
       ),
       dividerColor: const Color(0xFF555555),
-      textTheme: _buildTextTheme(const Color(0xFFFFFFFF)).copyWith(
-        bodyLarge: const TextStyle(color: Color(0xFFFFFFFF)),
+      textTheme: _buildTextTheme(neutralWhite).copyWith(
+        bodyLarge: const TextStyle(color: neutralWhite),
         bodyMedium: const TextStyle(color: Color(0xFFE0E0E0)),
-        titleLarge: const TextStyle(color: Color(0xFFFFFFFF), fontWeight: FontWeight.bold),
+        titleLarge: const TextStyle(color: neutralWhite, fontWeight: FontWeight.bold),
       ),
     );
   }

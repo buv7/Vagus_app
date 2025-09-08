@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../branding/vagus_logo.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 import '../../services/navigation/app_navigator.dart';
 import '../../screens/nutrition/nutrition_plan_viewer.dart';
 import '../../screens/learn/learn_client_screen.dart';
 import '../../screens/learn/learn_coach_screen.dart';
 
-class VagusSideMenu extends StatelessWidget {
+class VagusSideMenu extends StatefulWidget {
   final bool isClient;
   final String? portalSubtitle;
   final VoidCallback? onEditProfile;
@@ -36,9 +37,23 @@ class VagusSideMenu extends StatelessWidget {
   });
 
   @override
+  State<VagusSideMenu> createState() => _VagusSideMenuState();
+}
+
+class _VagusSideMenuState extends State<VagusSideMenu> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Try provided override, else auto-detect from role
-    String resolvedSubtitle = portalSubtitle ?? 'Client Portal';
+    String resolvedSubtitle = widget.portalSubtitle ?? 'Client Portal';
     try {
       // Get user role from Supabase profiles table
       final supabase = Supabase.instance.client;
@@ -47,7 +62,7 @@ class VagusSideMenu extends StatelessWidget {
         // Try to get role from current profile data if available
         // This will work if the parent screen has already loaded the profile
         // For now, we'll use the isClient parameter as a fallback
-        if (!isClient) {
+        if (!widget.isClient) {
           resolvedSubtitle = 'Coach Portal';
         } else {
           resolvedSubtitle = 'Client Portal';
@@ -55,7 +70,7 @@ class VagusSideMenu extends StatelessWidget {
       }
     } catch (_) {
       // Fallback to isClient parameter if role detection fails
-      if (!isClient) {
+      if (!widget.isClient) {
         resolvedSubtitle = 'Coach Portal';
       } else {
         resolvedSubtitle = 'Client Portal';
@@ -63,113 +78,117 @@ class VagusSideMenu extends StatelessWidget {
     }
 
     return Drawer(
+      backgroundColor: AppTheme.primaryBlack,
       child: Column(
         children: [
-          // Header (FULL-WIDTH BLACK)
-          Container(
-            width: double.infinity,
-            color: Colors.black,
-            padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'VAGUS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        resolvedSubtitle, // Auto-detected or overridden
-                        style: const TextStyle(
-                          color: Color(0xFFE0E0E0),
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12), // reduce gap so text and logo are near
-                const VagusLogo(size: 36, white: true), // slightly bigger logo
-              ],
-            ),
-          ),
+          // Header with VAGUS branding
+          _buildHeader(resolvedSubtitle),
+
+          // Search Bar
+          _buildSearchBar(),
 
           // Menu items
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                // Navigation Section
+                _buildSectionHeader('Navigation'),
+                _buildMenuItem(
+                  icon: Icons.home,
+                  title: 'Dashboard',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.fitness_center,
+                  title: 'Workouts',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.calendar_month,
+                  title: 'Calendar',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.restaurant,
+                  title: 'Nutrition',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.chat,
+                  title: 'Messages',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.videocam,
+                  title: 'Calls',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.trending_up,
+                  title: 'Progress',
+                  onTap: () => Navigator.pop(context),
+                ),
+
+                const SizedBox(height: DesignTokens.space16),
+
+                // Quick Access Section
+                _buildSectionHeader('Quick Access'),
                 _buildMenuItem(
                   icon: Icons.person,
                   title: 'Edit Profile',
-                  onTap: onEditProfile ?? () => AppNavigator.editProfile(context),
+                  onTap: widget.onEditProfile ?? () => AppNavigator.editProfile(context),
                 ),
                 _buildMenuItem(
                   icon: Icons.settings,
                   title: 'Settings',
-                  onTap: onSettings ?? () => AppNavigator.settings(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.star,
-                  title: 'Upgrade to Pro',
-                  onTap: onBillingUpgrade ?? () => AppNavigator.billingUpgrade(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.health_and_safety,
-                  title: 'Health connections',
-                  onTap: onManageDevices ?? () => AppNavigator.manageDevices(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.psychology,
-                  title: 'AI Usage',
-                  onTap: onAIUsage ?? () => AppNavigator.aiUsage(context),
+                  onTap: widget.onSettings ?? () => AppNavigator.settings(context),
                 ),
                 _buildMenuItem(
                   icon: Icons.download,
                   title: 'Export Progress',
-                  onTap: onExportProgress ?? () => AppNavigator.exportProgress(context),
+                  onTap: widget.onExportProgress ?? () => AppNavigator.exportProgress(context),
+                ),
+
+                const SizedBox(height: DesignTokens.space16),
+
+                // Account Management Section
+                _buildSectionHeader('Account'),
+                _buildMenuItem(
+                  icon: Icons.star,
+                  title: 'Upgrade to Pro',
+                  onTap: widget.onBillingUpgrade ?? () => AppNavigator.billingUpgrade(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.health_and_safety,
+                  title: 'Health Connections',
+                  onTap: widget.onManageDevices ?? () => AppNavigator.manageDevices(context),
+                ),
+                _buildMenuItem(
+                  icon: Icons.psychology,
+                  title: 'AI Usage',
+                  onTap: widget.onAIUsage ?? () => AppNavigator.aiUsage(context),
                 ),
                 // Only show "Apply to become a coach" for clients
-                if (isClient && onApplyCoach != null)
+                if (widget.isClient && widget.onApplyCoach != null)
                   _buildMenuItem(
                     icon: Icons.school,
                     title: 'Apply to become a Coach',
-                    onTap: onApplyCoach ?? () => AppNavigator.applyCoach(context),
+                    onTap: widget.onApplyCoach ?? () => AppNavigator.applyCoach(context),
                   ),
-                // Nutrition Plans - only for clients
-                if (isClient)
-                  _buildMenuItem(
-                    icon: Icons.restaurant_menu,
-                    title: 'Nutrition Plans',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NutritionPlanViewer(),
-                        ),
-                      );
-                    },
-                  ),
-                // Learn/Master VAGUS - role-specific
+
+                const SizedBox(height: DesignTokens.space16),
+
+                // Learn Section
+                _buildSectionHeader('Learn'),
                 _buildMenuItem(
                   icon: Icons.school,
-                  title: isClient ? 'Master VAGUS (Client)' : 'Master VAGUS (Coach)',
+                  title: widget.isClient ? 'Master VAGUS (Client)' : 'Master VAGUS (Coach)',
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => isClient 
+                        builder: (context) => widget.isClient 
                             ? const LearnClientScreen()
                             : const LearnCoachScreen(),
                       ),
@@ -179,39 +198,141 @@ class VagusSideMenu extends StatelessWidget {
                 _buildMenuItem(
                   icon: Icons.help,
                   title: 'Support',
-                  onTap: onSupport ?? () => AppNavigator.support(context),
+                  onTap: widget.onSupport ?? () => AppNavigator.support(context),
                 ),
               ],
             ),
           ),
 
           // Footer with logout
-          if (onLogout != null)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: AppTheme.lightGrey,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: onLogout,
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Logout'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.primaryBlack,
-                    side: const BorderSide(color: AppTheme.primaryBlack),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-              ),
-            ),
+          if (widget.onLogout != null)
+            _buildFooter(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(String subtitle) {
+    return Container(
+      width: double.infinity,
+      color: AppTheme.primaryBlack,
+      padding: const EdgeInsets.fromLTRB(DesignTokens.space16, 28, DesignTokens.space16, 24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'VAGUS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Color(0xFFE0E0E0),
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          const VagusLogo(size: 36, white: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.space16),
+      child: TextField(
+        controller: _searchController,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          hintText: 'Search...',
+          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Colors.white.withOpacity(0.7),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+              color: AppTheme.mintAqua,
+              width: 2,
+            ),
+          ),
+          filled: true,
+          fillColor: AppTheme.cardBackground,
+        ),
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(DesignTokens.space16, DesignTokens.space16, DesignTokens.space16, DesignTokens.space8),
+      child: Text(
+        title,
+        style: DesignTokens.bodySmall.copyWith(
+          color: Colors.white70,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.space16),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Colors.white.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        child: OutlinedButton.icon(
+          onPressed: widget.onLogout,
+          icon: const Icon(Icons.logout, color: Colors.white70),
+          label: const Text('Logout', style: TextStyle(color: Colors.white70)),
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: Colors.white.withOpacity(0.3)),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+        ),
       ),
     );
   }
@@ -224,18 +345,22 @@ class VagusSideMenu extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: AppTheme.primaryBlack,
+        color: Colors.white70,
         size: 24,
       ),
       title: Text(
         title,
         style: const TextStyle(
-          color: AppTheme.primaryBlack,
+          color: Colors.white,
           fontWeight: FontWeight.w500,
         ),
       ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+      hoverColor: Colors.white.withOpacity(0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
     );
   }
 }

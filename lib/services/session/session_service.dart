@@ -177,7 +177,15 @@ class SessionService {
           .select('revoke')
           .eq('user_id', user.id)
           .eq('device_id', deviceId)
-          .single();
+          .maybeSingle();
+
+      // If no device record found, it's a new device - that's fine
+      if (response == null) {
+        if (kDebugMode) {
+          debugPrint('🔧 Device not found in revocation check - new device, continuing');
+        }
+        return;
+      }
 
       if (response['revoke'] == true) {
         if (kDebugMode) {
@@ -189,10 +197,8 @@ class SessionService {
         await _supabase.auth.signOut();
       }
     } catch (e) {
-      // If device not found, it's probably a new device - ignore
-      if (!e.toString().contains('No rows found')) {
-        debugPrint('Failed to check revocation: $e');
-      }
+      debugPrint('Failed to check revocation: $e');
+      // Don't rethrow - this shouldn't block login
     }
   }
 

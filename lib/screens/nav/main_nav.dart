@@ -2,17 +2,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../dashboard/client_home_screen.dart';
+import '../dashboard/modern_client_dashboard.dart';
 import '../dashboard/coach_home_screen.dart';
-import '../workout/workout_plan_viewer_screen.dart';
+import '../workouts/modern_workout_plan_viewer.dart';
 import '../workout/coach_plan_builder_screen.dart';
-import '../calendar/calendar_screen.dart';
-import '../nutrition/nutrition_plan_viewer.dart';
+import '../calendar/modern_calendar_viewer.dart';
+import '../nutrition/modern_nutrition_plan_viewer.dart';
 import '../nutrition/nutrition_plan_builder.dart';
-import '../messaging/client_messenger_screen.dart';
+import '../messaging/modern_messenger_screen.dart';
 import '../messaging/coach_threads_screen.dart';
+import '../calling/modern_live_calls_screen.dart';
+import '../progress/modern_progress_tracker.dart';
 import '../../components/common/quick_add_sheet.dart';
+import '../../widgets/fab/simple_glassmorphism_fab.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/app_theme.dart';
 import '../../widgets/messaging/messaging_wrapper.dart';
 
 class MainNav extends StatefulWidget {
@@ -101,25 +105,25 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
         icon: Icons.home_rounded,
         activeIcon: Icons.home_rounded,
         label: 'Home',
-        screen: isCoach ? const CoachHomeScreen() : const ClientHomeScreen(),
+        screen: isCoach ? const CoachHomeScreen() : const ModernClientDashboard(),
       ),
       NavTab(
         icon: Icons.fitness_center_outlined,
         activeIcon: Icons.fitness_center_rounded,
         label: 'Workouts',
-        screen: isCoach ? const CoachPlanBuilderScreen() : const WorkoutPlanViewerScreen(),
+        screen: isCoach ? const CoachPlanBuilderScreen() : const ModernWorkoutPlanViewer(),
       ),
       const NavTab(
         icon: Icons.calendar_month_outlined,
         activeIcon: Icons.calendar_month_rounded,
         label: 'Calendar',
-        screen: CalendarScreen(), // Shared for both roles
+        screen: ModernCalendarViewer(), // Shared for both roles
       ),
       NavTab(
         icon: Icons.restaurant_outlined,
         activeIcon: Icons.restaurant_rounded,
         label: 'Nutrition',
-        screen: isCoach ? const NutritionPlanBuilder() : const NutritionPlanViewer(),
+        screen: isCoach ? const NutritionPlanBuilder() : const ModernNutritionPlanViewer(),
       ),
       NavTab(
         icon: Icons.chat_outlined,
@@ -134,7 +138,7 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
           : MessagingWrapper(
               onShowBottomNav: showBottomNavigation,
               onHideBottomNav: hideBottomNavigation,
-              child: const ClientMessengerScreen(),
+              child: const ModernMessengerScreen(),
             ),
         onEnter: () {
           // Hide bottom navigation when entering messages
@@ -216,30 +220,14 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final isRTL = Directionality.of(context) == TextDirection.rtl;
-    
-    // Mirror tab order for RTL languages
-    final tabs = isRTL ? _buildTabs().reversed.toList() : _buildTabs();
-    final currentIndex = isRTL ? (tabs.length - 1 - _currentIndex) : _currentIndex;
+    final tabs = _buildTabs();
 
     return Scaffold(
       body: TabBarView(
         controller: _tabController,
         children: tabs.map((tab) => tab.screen).toList(),
       ),
-      floatingActionButton: _currentIndex == 0 ? FloatingActionButton(
-        onPressed: () async {
-          await showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => QuickAddSheet(isCoach: _userRole == 'coach'),
-          );
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        elevation: 0,
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: _currentIndex == 0 ? SimpleGlassmorphismFAB(isCoach: _userRole == 'coach') : null,
       bottomNavigationBar: _showBottomNav ? AnimatedBuilder(
         animation: _bottomNavSlideAnimation,
         builder: (context, child) {
@@ -248,14 +236,13 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
             child: SafeArea(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, -2),
+                  color: AppTheme.primaryBlack,
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.white.withOpacity(0.1),
+                      width: 1,
                     ),
-                  ],
+                  ),
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -265,7 +252,7 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
                     children: tabs.asMap().entries.map((entry) {
                       final index = entry.key;
                       final tab = entry.value;
-                      final isActive = index == currentIndex;
+                      final isActive = index == _currentIndex;
                       
                       return Expanded(
                         child: _buildTabItem(
@@ -292,7 +279,8 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
     required bool isActive,
     required bool isRTL,
   }) {
-    final actualIndex = isRTL ? (4 - index) : index;
+    final tabs = _buildTabs();
+    final actualIndex = isRTL ? (tabs.length - 1 - index) : index;
     
     return GestureDetector(
       onTapDown: (_) => _tabAnimationController.forward(),
@@ -315,15 +303,15 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
                     padding: const EdgeInsets.all(DesignTokens.space8),
                     decoration: BoxDecoration(
                       color: isActive 
-                          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                          ? AppTheme.mintAqua.withValues(alpha: 0.1)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(DesignTokens.radius12),
                     ),
                     child: Icon(
                       isActive ? tab.activeIcon : tab.icon,
                       color: isActive 
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          ? AppTheme.mintAqua
+                          : Colors.white.withValues(alpha: 0.6),
                       size: 24,
                     ),
                   ),
@@ -333,9 +321,11 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
                   // Label with active state
                   AnimatedDefaultTextStyle(
                     duration: DesignTokens.durationFast,
-                    style: isActive 
-                        ? DesignTokens.navActiveLabel
-                        : DesignTokens.navInactiveLabel,
+                    style: TextStyle(
+                      color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.6),
+                      fontSize: 12,
+                      fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                    ),
                     child: Text(tab.label),
                   ),
                   
@@ -347,7 +337,7 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
                     width: isActive ? 20 : 0,
                     decoration: BoxDecoration(
                       color: isActive 
-                          ? Theme.of(context).colorScheme.primary
+                          ? AppTheme.mintAqua
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                     ),

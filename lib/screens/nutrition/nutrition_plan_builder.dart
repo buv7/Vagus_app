@@ -73,17 +73,24 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder> {
       if (user == null) return;
 
       // Load clients linked to the current coach
-      final response = await supabase
+      final links = await supabase
           .from('coach_clients')
-          .select('client_id, profiles:client_id (id, name, email)')
+          .select('client_id')
           .eq('coach_id', user.id);
 
-      final clients = (response as List<dynamic>)
-          .map((row) => row['profiles'] as Map<String, dynamic>)
-          .toList();
+      List<Map<String, dynamic>> clients = [];
+      if (links.isNotEmpty) {
+        final clientIds = links.map((row) => row['client_id'] as String).toList();
+        
+        final response = await supabase
+            .from('profiles')
+            .select('id, name, email')
+            .inFilter('id', clientIds);
+
+        clients = List<Map<String, dynamic>>.from(response);
+      }
 
       if (kDebugMode) {
-        debugPrint('NutritionPlanBuilder: Raw response: $response');
         debugPrint('NutritionPlanBuilder: Processed clients: $clients');
         debugPrint('NutritionPlanBuilder: User ID: ${user.id}');
       }

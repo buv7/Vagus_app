@@ -131,27 +131,62 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
       // Load connected clients
       final links = await supabase
           .from('coach_clients')
-          .select('client_id, profiles:client_id (id, name, email, avatar_url)')
+          .select('client_id')
           .eq('coach_id', user.id);
 
-      final clientIds = links.map((row) => row['client_id'] as String).toList();
+      List<String> clientIds = [];
+      if (links.isNotEmpty) {
+        clientIds = links.map((row) => row['client_id'] as String).toList();
+        
+        final clients = await supabase
+            .from('profiles')
+            .select('id, name, email')
+            .inFilter('id', clientIds);
 
-      setState(() {
-        _clients = List<Map<String, dynamic>>.from(
-            links.map((row) => row['profiles']));
-      });
+        setState(() {
+          _clients = List<Map<String, dynamic>>.from(clients);
+        });
+      } else {
+        setState(() {
+          _clients = [];
+        });
+      }
 
       // Load pending requests
       try {
-        final requests = await supabase
+        final requestLinks = await supabase
             .from('coach_requests')
-            .select('*, client:client_id (id, name, email, avatar_url)')
+            .select('id, client_id, status, created_at, message')
             .eq('coach_id', user.id)
             .eq('status', 'pending')
             .not('client_id', 'in', clientIds);
 
+        List<Map<String, dynamic>> requests = [];
+        if (requestLinks.isNotEmpty) {
+          final requestClientIds = requestLinks.map((row) => row['client_id'] as String).toList();
+          
+          final requestClients = await supabase
+              .from('profiles')
+              .select('id, name, email')
+              .inFilter('id', requestClientIds);
+
+          // Combine request data with client data
+          for (final request in requestLinks) {
+            final clientId = request['client_id'] as String;
+            final client = requestClients.firstWhere(
+              (c) => c['id'] == clientId,
+              orElse: () => {'id': clientId, 'name': 'Unknown', 'email': ''},
+            );
+            
+            requests.add({
+              ...request,
+              'client': client,
+            });
+          }
+        }
+
         setState(() {
-          _requests = List<Map<String, dynamic>>.from(requests);
+          _requests = requests;
         });
       } catch (e) {
         debugPrint('❌ Failed to load pending requests: $e');
@@ -189,12 +224,36 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
   Future<void> _loadRecentCheckins(List<String> clientIds) async {
     // Use the correct table name from migrations
     try {
-      final checkinsData = await supabase
+      final checkinsLinks = await supabase
           .from('checkins')
-          .select('*, profiles:client_id (id, name, avatar_url)')
+          .select('id, client_id, created_at, notes, mood, energy_level')
           .inFilter('client_id', clientIds)
           .order('created_at', ascending: false)
           .limit(5);
+
+      List<Map<String, dynamic>> checkinsData = [];
+      if (checkinsLinks.isNotEmpty) {
+        final checkinClientIds = checkinsLinks.map((row) => row['client_id'] as String).toList();
+        
+        final checkinClients = await supabase
+            .from('profiles')
+            .select('id, name')
+            .inFilter('id', checkinClientIds);
+
+        // Combine checkin data with client data
+        for (final checkin in checkinsLinks) {
+          final clientId = checkin['client_id'] as String;
+          final client = checkinClients.firstWhere(
+            (c) => c['id'] == clientId,
+            orElse: () => {'id': clientId, 'name': 'Unknown'},
+          );
+          
+          checkinsData.add({
+            ...checkin,
+            'profiles': client,
+          });
+        }
+      }
       
       setState(() {
         _recentCheckins = List<Map<String, dynamic>>.from(checkinsData);

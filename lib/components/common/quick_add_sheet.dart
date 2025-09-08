@@ -6,6 +6,7 @@ import '../../screens/files/upload_photos_screen.dart';
 import '../../screens/calendar/event_editor.dart';
 import '../../screens/nutrition/meal_editor.dart';
 import '../../screens/nutrition/nutrition_plan_builder.dart';
+import '../../screens/calling/calling_demo_screen.dart';
 import '../../models/nutrition/nutrition_plan.dart';
 
 class QuickAddSheet extends StatelessWidget {
@@ -89,6 +90,11 @@ class QuickAddSheet extends StatelessWidget {
                     icon: Icons.restaurant_rounded,
                     label: 'Meal',
                     onTap: () => _handleMealTap(context),
+                  ),
+                  _QuickAddItem(
+                    icon: Icons.videocam_rounded,
+                    label: 'Call',
+                    onTap: () => _handleCallTap(context),
                   ),
                 ],
               ),
@@ -200,6 +206,16 @@ class QuickAddSheet extends StatelessWidget {
         )),
       );
     }
+  }
+
+  void _handleCallTap(BuildContext context) {
+    HapticFeedback.lightImpact();
+    Navigator.pop(context);
+    // Navigate to calling demo screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CallingDemoScreen()),
+    );
   }
 }
 

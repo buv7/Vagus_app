@@ -1,0 +1,28 @@
+{
+  "name": "vagus-mcp-supabase",
+  "version": "1.0.0",
+  "description": "MCP Supabase integration for VAGUS app",
+  "main": "mcp-supabase-server.js",
+  "scripts": {
+    "mcp:supabase": "node mcp-supabase-server.js",
+    "install:mcp": "npm install -g @modelcontextprotocol/server-supabase",
+    "test:connection": "node -e \"console.log('Testing MCP connection...'); process.exit(0);\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server-supabase": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.9"
+  },
+  "keywords": [
+    "mcp",
+    "supabase",
+    "cursor",
+    "database",
+    "vagus"
+  ],
+  "author": "VAGUS Team",
+  "license": "MIT"
+}

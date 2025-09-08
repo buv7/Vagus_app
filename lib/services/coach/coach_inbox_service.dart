@@ -57,7 +57,6 @@ class CoachInboxService {
       for (final client in clients) {
         final clientId = client['id'] as String;
         final clientName = client['name'] as String? ?? 'Unknown Client';
-        final avatarUrl = client['avatar_url'] as String?;
 
         final issues = await _checkClientIssues(clientId);
         if (issues.isNotEmpty) {
@@ -66,7 +65,6 @@ class CoachInboxService {
             clientName: clientName,
             issues: issues,
             lastUpdate: DateTime.now(),
-            avatarUrl: avatarUrl,
           ));
         }
       }
@@ -88,18 +86,21 @@ class CoachInboxService {
   /// Gets coach's clients from the database
   Future<List<Map<String, dynamic>>> _getCoachClients(String coachId) async {
     try {
-      final response = await _sb
+      final links = await _sb
           .from('coach_clients')
-          .select('client_id, clients!inner(id, name, avatar_url)')
+          .select('client_id')
           .eq('coach_id', coachId);
 
-      return (response as List<dynamic>)
-          .map((row) => {
-                'id': row['clients']['id'],
-                'name': row['clients']['name'],
-                'avatar_url': row['clients']['avatar_url'],
-              })
-          .toList();
+      if (links.isEmpty) return [];
+
+      final clientIds = links.map((row) => row['client_id'] as String).toList();
+      
+      final clients = await _sb
+          .from('profiles')
+          .select('id, name')
+          .inFilter('id', clientIds);
+
+      return List<Map<String, dynamic>>.from(clients);
     } catch (e) {
       print('CoachInboxService: Error getting coach clients - $e');
       return [];

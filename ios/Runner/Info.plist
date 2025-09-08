@@ -62,5 +62,9 @@
 	<string>To attach meal photos and export PDFs.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>To export PDFs and save nutrition plans.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone access required for live audio and video calls.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access required for live video calls and food photos.</string>
 </dict>
 </plist>
