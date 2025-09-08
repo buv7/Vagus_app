@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../models/growth/referrals_models.dart';
 import '../../services/growth/referrals_service.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/app_theme.dart';
 
 class EarnRewardsScreen extends StatefulWidget {
   const EarnRewardsScreen({super.key});
@@ -82,24 +83,38 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.primaryBlack,
       appBar: AppBar(
-        title: const Text('Earn Rewards'),
-        backgroundColor: DesignTokens.blue500,
+        backgroundColor: AppTheme.primaryBlack,
         foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Earn Rewards',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.mintAqua,
+              ),
+            )
           : RefreshIndicator(
+              color: AppTheme.mintAqua,
               onRefresh: _loadData,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildCodeSection(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     _buildHowRewardsWorkSection(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     _buildHistorySection(),
                   ],
                 ),
@@ -109,188 +124,222 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
   }
 
   Widget _buildCodeSection() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.card_giftcard,
+                color: AppTheme.mintAqua,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'Your Code & Link',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1C1E),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 1,
+              ),
+            ),
+            child: Row(
               children: [
-                const Icon(
-                  Icons.card_giftcard,
-                  color: DesignTokens.blue500,
-                  size: 24,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Referral Code',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _myCode ?? 'Loading...',
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.mintAqua,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  'Your Code & Link',
-                  style: DesignTokens.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                IconButton(
+                  onPressed: _copyLink,
+                  icon: Icon(Icons.copy, size: 18, color: AppTheme.mintAqua),
+                  tooltip: 'Copy link',
+                ),
+                IconButton(
+                  onPressed: _shareLink,
+                  icon: Icon(Icons.share, size: 18, color: AppTheme.mintAqua),
+                  tooltip: 'Share link',
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: DesignTokens.blue50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: DesignTokens.blue200),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Referral Code',
-                          style: DesignTokens.bodySmall.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: DesignTokens.ink600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _myCode ?? 'Loading...',
-                          style: DesignTokens.bodyMedium.copyWith(
-                            fontFamily: 'monospace',
-                            fontWeight: FontWeight.bold,
-                            color: DesignTokens.blue700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: _copyLink,
-                    icon: const Icon(Icons.copy, size: 20),
-                    tooltip: 'Copy link',
-                  ),
-                  IconButton(
-                    onPressed: _shareLink,
-                    icon: const Icon(Icons.share, size: 20),
-                    tooltip: 'Share link',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _copyLink,
-                    icon: const Icon(Icons.copy, size: 18),
-                    label: const Text('Copy Link'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: DesignTokens.blue500,
-                      foregroundColor: Colors.white,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _copyLink,
+                  icon: const Icon(Icons.copy, size: 16),
+                  label: const Text('Copy Link'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.mintAqua,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _shareLink,
-                    icon: const Icon(Icons.share, size: 18),
-                    label: const Text('Share'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: DesignTokens.success,
-                      foregroundColor: Colors.white,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _shareLink,
+                  icon: const Icon(Icons.share, size: 16),
+                  label: const Text('Share'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildHowRewardsWorkSection() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.help_outline,
-                  color: DesignTokens.blue500,
-                  size: 24,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.help_outline,
+                color: AppTheme.mintAqua,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'How Rewards Work',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                const SizedBox(width: 8),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildRewardItem(
+            icon: Icons.star,
+            title: '7 Pro Days',
+            description: 'Both you and your friend get 7 days of Pro features',
+            color: AppTheme.mintAqua,
+          ),
+          const SizedBox(height: 12),
+          _buildRewardItem(
+            icon: Icons.trending_up,
+            title: '50 VP Points',
+            description: 'You earn 50 VP points for each successful referral',
+            color: Colors.green,
+          ),
+          const SizedBox(height: 12),
+          _buildRewardItem(
+            icon: Icons.shield,
+            title: 'Shield Milestones',
+            description: 'Earn Shield at 3, 8, 13, 18... successful referrals',
+            color: Colors.orange,
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1C1E),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  'How Rewards Work',
-                  style: DesignTokens.titleMedium.copyWith(
+                  'Important Notes:',
+                  style: TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '• Monthly cap: 5 rewarded referrals\n'
+                  '• Rewards only granted on first milestone\n'
+                  '• Pro days don\'t stack with checkout coupons\n'
+                  '• VP still granted even with coupon usage',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            _buildRewardItem(
-              icon: Icons.star,
-              title: '7 Pro Days',
-              description: 'Both you and your friend get 7 days of Pro features',
-              color: DesignTokens.blue500,
-            ),
-            const SizedBox(height: 12),
-            _buildRewardItem(
-              icon: Icons.trending_up,
-              title: '50 VP Points',
-              description: 'You earn 50 VP points for each successful referral',
-              color: DesignTokens.success,
-            ),
-            const SizedBox(height: 12),
-            _buildRewardItem(
-              icon: Icons.shield,
-              title: 'Shield Milestones',
-              description: 'Earn Shield at 3, 8, 13, 18... successful referrals',
-              color: DesignTokens.warn,
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: DesignTokens.ink50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: DesignTokens.ink200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Important Notes:',
-                    style: DesignTokens.bodySmall.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: DesignTokens.ink700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '• Monthly cap: 5 rewarded referrals\n'
-                    '• Rewards only granted on first milestone\n'
-                    '• Pro days don\'t stack with checkout coupons\n'
-                    '• VP still granted even with coupon usage',
-                    style: DesignTokens.bodySmall.copyWith(
-                      color: DesignTokens.ink600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -324,15 +373,18 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
             children: [
               Text(
                 title,
-                style: DesignTokens.bodyMedium.copyWith(
+                style: const TextStyle(
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: DesignTokens.bodySmall.copyWith(
-                  color: DesignTokens.ink600,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -343,92 +395,106 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
   }
 
   Widget _buildHistorySection() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.history,
-                  color: DesignTokens.blue500,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Referral History',
-                  style: DesignTokens.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                if (_monthlyCap != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: _monthlyCap!.isAtCap 
-                          ? DesignTokens.warn.withValues(alpha: 0.1)
-                          : DesignTokens.success.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _monthlyCap!.isAtCap 
-                            ? DesignTokens.warn.withValues(alpha: 0.3)
-                            : DesignTokens.success.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Text(
-                      '${_monthlyCap!.referralCount}/5 this month',
-                      style: DesignTokens.bodySmall.copyWith(
-                        color: _monthlyCap!.isAtCap ? DesignTokens.warn : DesignTokens.success,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_referrals.isEmpty)
-              Center(
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.people_outline,
-                      size: 48,
-                      color: DesignTokens.ink400,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'No referrals yet',
-                      style: DesignTokens.bodyMedium.copyWith(
-                        color: DesignTokens.ink500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Share your link to start earning rewards!',
-                      style: DesignTokens.bodySmall.copyWith(
-                        color: DesignTokens.ink400,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _referrals.length,
-                separatorBuilder: (context, index) => const Divider(height: 1),
-                itemBuilder: (context, index) {
-                  final referral = _referrals[index];
-                  return _buildReferralHistoryItem(referral);
-                },
-              ),
-          ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.history,
+                color: AppTheme.mintAqua,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'Referral History',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const Spacer(),
+              if (_monthlyCap != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _monthlyCap!.isAtCap 
+                        ? Colors.orange.withValues(alpha: 0.1)
+                        : Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _monthlyCap!.isAtCap 
+                          ? Colors.orange.withValues(alpha: 0.3)
+                          : Colors.green.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Text(
+                    '${_monthlyCap!.referralCount}/5 this month',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _monthlyCap!.isAtCap ? Colors.orange : Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (_referrals.isEmpty)
+            Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.people_outline,
+                    size: 48,
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'No referrals yet',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Share your link to start earning rewards!',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _referrals.length,
+              separatorBuilder: (context, index) => Divider(
+                height: 1,
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+              itemBuilder: (context, index) {
+                final referral = _referrals[index];
+                return _buildReferralHistoryItem(referral);
+              },
+            ),
+        ],
       ),
     );
   }

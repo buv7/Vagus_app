@@ -7,6 +7,7 @@ import '../../components/settings/language_selector.dart';
 import '../../components/settings/reminder_defaults.dart';
 import '../../widgets/branding/vagus_appbar.dart';
 import '../../widgets/settings/WorkoutPopoutPrefsSection.dart';
+import '../../theme/app_theme.dart';
 import 'music_settings_screen.dart';
 import 'google_integrations_screen.dart';
 import 'earn_rewards_screen.dart';
@@ -34,353 +35,258 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
     setState(() {});
   }
 
+  Widget _buildModernCard({
+    required IconData icon,
+    required String title,
+    required Widget child,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: AppTheme.mintAqua,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          child,
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(
-        title: const Text('Settings'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: AppTheme.primaryBlack,
+      appBar: AppBar(
+        backgroundColor: AppTheme.primaryBlack,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Theme Settings Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.palette,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Theme',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    ThemeToggle(
-                      settingsController: _settingsController,
-                    ),
-                  ],
-                ),
+            _buildModernCard(
+              icon: Icons.palette,
+              title: 'Theme',
+              child: ThemeToggle(
+                settingsController: _settingsController,
               ),
             ),
-            const SizedBox(height: 16),
 
             // Language Settings Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.language,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Language',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    LanguageSelector(
-                      settingsController: _settingsController,
-                    ),
-                  ],
-                ),
+            _buildModernCard(
+              icon: Icons.language,
+              title: 'Language',
+              child: LanguageSelector(
+                settingsController: _settingsController,
               ),
             ),
-            const SizedBox(height: 16),
 
             // Reminder Defaults Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.notifications,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Reminder Defaults',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    ReminderDefaults(
-                      settingsController: _settingsController,
-                    ),
-                  ],
-                ),
+            _buildModernCard(
+              icon: Icons.notifications,
+              title: 'Reminder Defaults',
+              child: ReminderDefaults(
+                settingsController: _settingsController,
               ),
             ),
-            const SizedBox(height: 16),
 
             // Reduce Motion Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.accessibility,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Accessibility',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    SwitchListTile(
-                      title: const Text('Reduce Motion'),
-                      subtitle: const Text('Use simpler effects to save battery or reduce motion'),
-                      value: context.watch<ReduceMotion>().enabled,
-                      onChanged: (v) => context.read<ReduceMotion>().setEnabled(v),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ],
+            _buildModernCard(
+              icon: Icons.accessibility,
+              title: 'Accessibility',
+              child: SwitchListTile(
+                title: const Text(
+                  'Reduce Motion',
+                  style: TextStyle(color: Colors.white),
                 ),
+                subtitle: const Text(
+                  'Use simpler effects to save battery or reduce motion',
+                  style: TextStyle(color: Colors.white70),
+                ),
+                value: context.watch<ReduceMotion>().enabled,
+                onChanged: (v) => context.read<ReduceMotion>().setEnabled(v),
+                contentPadding: EdgeInsets.zero,
+                activeColor: AppTheme.mintAqua,
               ),
             ),
             const SizedBox(height: 16),
 
             // Workout Popout Defaults Card
-            const WorkoutPopoutPrefsSection(),
-            const SizedBox(height: 16),
+            _buildModernCard(
+              icon: Icons.fitness_center,
+              title: 'Workout Preferences',
+              child: const WorkoutPopoutPrefsSection(),
+            ),
 
             // Music Settings Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.music_note,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Music Integration',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+            _buildModernCard(
+              icon: Icons.music_note,
+              title: 'Music Integration',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Configure music app preferences and auto-open settings',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 14,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Configure music app preferences and auto-open settings',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MusicSettingsScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.settings),
-                        label: const Text('Music Settings'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.primary,
-                          side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MusicSettingsScreen(),
                           ),
+                        );
+                      },
+                      icon: const Icon(Icons.settings, size: 18),
+                      label: const Text('Music Settings'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.mintAqua,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
 
             // Google Integrations Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.cloud,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Google Integration',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+            _buildModernCard(
+              icon: Icons.cloud,
+              title: 'Google Integration',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Export data to Sheets and attach files from Drive',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 14,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Export data to Sheets and attach files from Drive',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const GoogleIntegrationsScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.settings),
-                        label: const Text('Google (Sheets & Drive)'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.primary,
-                          side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GoogleIntegrationsScreen(),
                           ),
+                        );
+                      },
+                      icon: const Icon(Icons.settings, size: 18),
+                      label: const Text('Google (Sheets & Drive)'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.mintAqua,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
 
             // Earn Rewards Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.card_giftcard,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Earn Rewards',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+            _buildModernCard(
+              icon: Icons.card_giftcard,
+              title: 'Earn Rewards',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Invite friends and earn Pro days, VP points, and Shield progress',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 14,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Invite friends and earn Pro days, VP points, and Shield progress',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const EarnRewardsScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.card_giftcard),
-                        label: const Text('Referrals & Rewards'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.primary,
-                          side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EarnRewardsScreen(),
                           ),
+                        );
+                      },
+                      icon: const Icon(Icons.card_giftcard, size: 18),
+                      label: const Text('Referrals & Rewards'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.mintAqua,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
 
             // AI Quotas Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.psychology,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'AI Usage & Quotas',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    const AIQuotasCard(),
-                  ],
-                ),
-              ),
+            _buildModernCard(
+              icon: Icons.psychology,
+              title: 'AI Usage & Quotas',
+              child: const AIQuotasCard(),
             ),
           ],
         ),

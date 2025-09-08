@@ -15,6 +15,7 @@ import '../calling/modern_live_calls_screen.dart';
 import '../progress/modern_progress_tracker.dart';
 import '../../components/common/quick_add_sheet.dart';
 import '../../widgets/fab/simple_glassmorphism_fab.dart';
+import '../../widgets/fab/camera_glassmorphism_fab.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/messaging/messaging_wrapper.dart';
@@ -37,6 +38,9 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
   bool _showBottomNav = true;
   late AnimationController _bottomNavAnimationController;
   late Animation<double> _bottomNavSlideAnimation;
+  
+  // Camera FAB key for coordination
+  final GlobalKey<CameraGlassmorphismFABState> _cameraFABKey = GlobalKey<CameraGlassmorphismFABState>();
 
   @override
   void initState() {
@@ -94,6 +98,10 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
         _userRole = 'client';
       });
     }
+  }
+
+  void _openCameraFAB() {
+    _cameraFABKey.currentState?.openCameraFAB();
   }
 
   // Build tabs based on user role
@@ -223,11 +231,28 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
     final tabs = _buildTabs();
 
     return Scaffold(
-      body: TabBarView(
-        controller: _tabController,
-        children: tabs.map((tab) => tab.screen).toList(),
+      body: Stack(
+        children: [
+          TabBarView(
+            controller: _tabController,
+            children: tabs.map((tab) => tab.screen).toList(),
+          ),
+          // Camera FAB - positioned in upper half (hidden icon but functional)
+          if (_currentIndex == 0) 
+            Positioned(
+              right: 0,
+              top: 100,
+              child: CameraGlassmorphismFAB(
+                key: _cameraFABKey,
+                isCoach: _userRole == 'coach',
+              ),
+            ),
+        ],
       ),
-      floatingActionButton: _currentIndex == 0 ? SimpleGlassmorphismFAB(isCoach: _userRole == 'coach') : null,
+      floatingActionButton: _currentIndex == 0 ? SimpleGlassmorphismFAB(
+        isCoach: _userRole == 'coach',
+        onOpenCameraFAB: _openCameraFAB,
+      ) : null,
       bottomNavigationBar: _showBottomNav ? AnimatedBuilder(
         animation: _bottomNavSlideAnimation,
         builder: (context, child) {

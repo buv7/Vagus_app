@@ -44,24 +44,42 @@ class SessionService {
       // Get platform
       deviceData['platform'] = Platform.operatingSystem;
       
-      // Get device model
+      // Get OS version
       if (Platform.isAndroid) {
         final AndroidDeviceInfo androidInfo = await _deviceInfo.androidInfo;
         deviceData['model'] = '${androidInfo.brand} ${androidInfo.model}';
+        deviceData['os_version'] = 'Android ${androidInfo.version.release}';
       } else if (Platform.isIOS) {
         final IosDeviceInfo iosInfo = await _deviceInfo.iosInfo;
         deviceData['model'] = '${iosInfo.name} ${iosInfo.model}';
+        deviceData['os_version'] = 'iOS ${iosInfo.systemVersion}';
       } else {
         deviceData['model'] = 'Unknown Device';
+        deviceData['os_version'] = 'Unknown OS';
       }
+      
+      // OneSignal ID (currently disabled)
+      deviceData['onesignal_id'] = '';
     } catch (e) {
       debugPrint('Failed to get device info: $e');
       deviceData['platform'] = Platform.operatingSystem;
       deviceData['model'] = 'Unknown Device';
       deviceData['app_version'] = 'Unknown';
+      deviceData['os_version'] = 'Unknown OS';
+      deviceData['onesignal_id'] = '';
     }
     
     return deviceData;
+  }
+
+  /// Get app version string
+  Future<String> _getAppVersion() async {
+    try {
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      return '${packageInfo.version} (${packageInfo.buildNumber})';
+    } catch (e) {
+      return 'Unknown';
+    }
   }
 
   /// Create or update the current device record
@@ -73,11 +91,7 @@ class SessionService {
       final deviceId = await _getDeviceId();
       final deviceInfo = await _getDeviceInfo();
 
-      // Set all other devices to not current
-      await _supabase
-          .from('user_devices')
-          .update({'is_current': false})
-          .eq('user_id', user.id);
+      // Note: Current schema doesn't have is_current field, so we skip this step
 
       // Upsert current device
       await _supabase
@@ -85,13 +99,11 @@ class SessionService {
           .upsert({
             'user_id': user.id,
             'device_id': deviceId,
-            'platform': deviceInfo['platform'],
-            'model': deviceInfo['model'],
+            'device_type': deviceInfo['platform'],
+            'os_version': deviceInfo['os_version'],
             'app_version': deviceInfo['app_version'],
-            'last_seen': DateTime.now().toIso8601String(),
-            'is_current': true,
-            'revoke': false,
-          }, onConflict: 'user_id,device_id');
+            'onesignal_player_id': deviceInfo['onesignal_id'],
+          }, onConflict: 'device_id');
 
       if (kDebugMode) {
         debugPrint('✅ Device upserted: ${deviceInfo['model']}');
@@ -101,7 +113,7 @@ class SessionService {
     }
   }
 
-  /// Update last_seen timestamp for current device
+  /// Update heartbeat for current device (using updated_at field)
   Future<void> heartbeat() async {
     try {
       final user = _supabase.auth.currentUser;
@@ -109,10 +121,11 @@ class SessionService {
 
       final deviceId = await _getDeviceId();
 
+      // Update the device record to trigger updated_at timestamp
       await _supabase
           .from('user_devices')
           .update({
-            'last_seen': DateTime.now().toIso8601String(),
+            'app_version': await _getAppVersion(),
           })
           .eq('user_id', user.id)
           .eq('device_id', deviceId);

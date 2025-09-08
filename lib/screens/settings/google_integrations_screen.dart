@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../models/google/google_models.dart';
 import '../../services/google/google_apps_service.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/app_theme.dart';
 import '../../widgets/common/pro_upgrade_chip.dart';
 
 class GoogleIntegrationsScreen extends StatefulWidget {
@@ -130,22 +131,35 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.primaryBlack,
       appBar: AppBar(
-        title: const Text('Google Integration'),
-        backgroundColor: DesignTokens.blue500,
+        backgroundColor: AppTheme.primaryBlack,
         foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Google Integration',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.mintAqua,
+              ),
+            )
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildConnectionCard(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   _buildExportsPanel(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   _buildScheduledExportsPanel(),
                 ],
               ),
@@ -154,79 +168,97 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
   }
 
   Widget _buildConnectionCard() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.cloud_done,
-                  color: _connectedAccount != null ? Colors.green : Colors.grey,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  'Google Account',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_connectedAccount != null) ...[
-              _buildConnectedAccountInfo(),
-              const SizedBox(height: 16),
-              _buildWorkspaceFolderField(),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isDisconnecting ? null : _disconnectAccount,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: _isDisconnecting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Disconnect'),
-                ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.cloud_done,
+                color: _connectedAccount != null ? Colors.green : AppTheme.mintAqua,
+                size: 20,
               ),
-            ] else ...[
+              const SizedBox(width: 8),
               const Text(
-                'Connect your Google account to export data to Sheets and attach files from Drive.',
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isConnecting ? null : _connectAccount,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: DesignTokens.blue500,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: _isConnecting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Connect Google Account'),
+                'Google Account',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+          if (_connectedAccount != null) ...[
+            _buildConnectedAccountInfo(),
+            const SizedBox(height: 16),
+            _buildWorkspaceFolderField(),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isDisconnecting ? null : _disconnectAccount,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _isDisconnecting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Disconnect'),
+              ),
+            ),
+          ] else ...[
+            Text(
+              'Connect your Google account to export data to Sheets and attach files from Drive.',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.7),
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isConnecting ? null : _connectAccount,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.mintAqua,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _isConnecting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Connect Google Account'),
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -247,14 +279,15 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               color: Colors.green,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'Connected on: ${_formatDate(_connectedAccount!.connectedAt)}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: Colors.grey,
+              color: Colors.white.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -266,19 +299,36 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Workspace Folder (optional)',
           style: TextStyle(
             fontWeight: FontWeight.w500,
+            color: Colors.white.withValues(alpha: 0.8),
+            fontSize: 14,
           ),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _workspaceFolderController,
-          decoration: const InputDecoration(
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
             hintText: 'Enter Google Drive folder name',
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: AppTheme.mintAqua),
+            ),
+            filled: true,
+            fillColor: const Color(0xFF1A1C1E),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
         ),
         const SizedBox(height: 8),
@@ -287,8 +337,12 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
           child: ElevatedButton(
             onPressed: _updateWorkspaceFolder,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: AppTheme.mintAqua,
               foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Update Folder'),
           ),
@@ -298,50 +352,57 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
   }
 
   Widget _buildExportsPanel() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Export to Google Sheets',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Export to Google Sheets',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (_connectedAccount != null) ...[
+            _buildExportRow('Metrics', 'metrics'),
+            _buildExportRow('Check-ins', 'checkins'),
+            _buildExportRow('Workouts', 'workouts'),
+            _buildExportRow('Nutrition', 'nutrition'),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning, color: Colors.orange, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Connect your Google account to export data to Sheets',
+                      style: const TextStyle(color: Colors.orange, fontSize: 14),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            if (_connectedAccount != null) ...[
-              _buildExportRow('Metrics', 'metrics'),
-              _buildExportRow('Check-ins', 'checkins'),
-              _buildExportRow('Workouts', 'workouts'),
-              _buildExportRow('Nutrition', 'nutrition'),
-            ] else ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.warning, color: Colors.orange, size: 20),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Connect your Google account to export data to Sheets',
-                        style: TextStyle(color: Colors.orange),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
           ],
-        ),
+        ],
       ),
     );
   }
@@ -354,14 +415,22 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 14,
+              ),
             ),
           ),
           ElevatedButton(
             onPressed: () => unawaited(_exportToSheets(kind)),
             style: ElevatedButton.styleFrom(
-              backgroundColor: DesignTokens.blue500,
+              backgroundColor: AppTheme.mintAqua,
               foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Export'),
           ),
@@ -371,49 +440,62 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
   }
 
   Widget _buildScheduledExportsPanel() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.schedule,
+                color: AppTheme.mintAqua,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'Scheduled Exports',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 8),
+              const ProUpgradeChip(),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+            ),
+            child: const Row(
               children: [
-                Text(
-                  'Scheduled Exports',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Icon(Icons.schedule, color: Colors.blue, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Upgrade to Pro to schedule automatic weekly exports',
+                    style: TextStyle(color: Colors.blue),
                   ),
                 ),
-                SizedBox(width: 8),
-                ProUpgradeChip(),
               ],
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-                ),
-              child: const Row(
-                children: [
-                  Icon(Icons.schedule, color: Colors.blue, size: 20),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Upgrade to Pro to schedule automatic weekly exports',
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

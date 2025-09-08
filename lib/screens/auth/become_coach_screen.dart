@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../theme/app_theme.dart';
 
 class BecomeCoachScreen extends StatefulWidget {
   const BecomeCoachScreen({super.key});
@@ -179,126 +180,239 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
     return null;
   }
 
+  Widget _buildModernFormField({
+    required String label,
+    required IconData icon,
+    required Widget child,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: AppTheme.mintAqua,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          child,
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.primaryBlack,
       appBar: AppBar(
-        title: const Text('Apply to Become a Coach'),
+        backgroundColor: AppTheme.primaryBlack,
+        foregroundColor: Colors.white,
         elevation: 0,
+        title: const Text(
+          'Apply to become a Coach',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Coach Application',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2C2F33),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppTheme.mintAqua.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.school,
+                          color: AppTheme.mintAqua,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Coach Application',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tell us about your coaching experience and qualifications.',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Tell us about your coaching experience and qualifications.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               
               // Bio Field
-              const Text(
-                'Bio',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              _buildModernFormField(
+                label: 'Bio',
+                icon: Icons.person,
+                child: TextFormField(
+                  controller: _bioController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Tell us about your coaching philosophy, experience, and what makes you unique...',
+                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFF1A1C1E),
+                    alignLabelWithHint: true,
+                  ),
+                  maxLines: 4,
+                  validator: _validateBio,
                 ),
               ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _bioController,
-                decoration: const InputDecoration(
-                  hintText: 'Tell us about your coaching philosophy, experience, and what makes you unique...',
-                  border: OutlineInputBorder(),
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 4,
-                validator: _validateBio,
-              ),
-              const SizedBox(height: 24),
               
               // Specialization Field
-              const Text(
-                'Primary Specialization',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              _buildModernFormField(
+                label: 'Primary Specialization',
+                icon: Icons.category,
+                child: DropdownButtonFormField<String>(
+                  value: _selectedSpecialization,
+                  dropdownColor: const Color(0xFF2C2F33),
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFF1A1C1E),
+                  ),
+                  items: _specializations.map((String specialization) {
+                    return DropdownMenuItem<String>(
+                      value: specialization,
+                      child: Text(specialization),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedSpecialization = newValue!;
+                    });
+                  },
                 ),
               ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: _selectedSpecialization,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-                items: _specializations.map((String specialization) {
-                  return DropdownMenuItem<String>(
-                    value: specialization,
-                    child: Text(specialization),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedSpecialization = newValue!;
-                  });
-                },
-              ),
-              const SizedBox(height: 24),
               
               // Years of Experience Field
-              const Text(
-                'Years of Experience',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              _buildModernFormField(
+                label: 'Years of Experience',
+                icon: Icons.schedule,
+                child: TextFormField(
+                  controller: _yearsExperienceController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'e.g., 5',
+                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFF1A1C1E),
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: _validateYearsExperience,
                 ),
               ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _yearsExperienceController,
-                decoration: const InputDecoration(
-                  hintText: 'e.g., 5',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                validator: _validateYearsExperience,
-              ),
-              const SizedBox(height: 24),
               
               // Certifications Field
-              const Text(
-                'Certifications & Qualifications',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              _buildModernFormField(
+                label: 'Certifications & Qualifications',
+                icon: Icons.verified,
+                child: TextFormField(
+                  controller: _certificationsController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'List your relevant certifications, licenses, and qualifications...',
+                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFF1A1C1E),
+                    alignLabelWithHint: true,
+                  ),
+                  maxLines: 3,
+                  validator: _validateCertifications,
                 ),
               ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _certificationsController,
-                decoration: const InputDecoration(
-                  hintText: 'List your relevant certifications, licenses, and qualifications...',
-                  border: OutlineInputBorder(),
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 3,
-                validator: _validateCertifications,
-              ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               
               // Submit Button
               SizedBox(
@@ -306,13 +420,36 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                 child: ElevatedButton(
                   onPressed: _loading ? null : _submitApplication,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.mintAqua,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
                   ),
                   child: _loading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Submit Application',
-                          style: TextStyle(fontSize: 16),
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.send, size: 18),
+                            SizedBox(width: 8),
+                            Text(
+                              'Submit Application',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                 ),
               ),

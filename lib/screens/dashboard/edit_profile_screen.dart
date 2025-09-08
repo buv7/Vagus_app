@@ -7,6 +7,7 @@ import '../auth/device_list_screen.dart';
 import '../auth/become_coach_screen.dart';
 import '../billing/billing_settings.dart';
 import '../settings/user_settings_screen.dart';
+import '../../theme/app_theme.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -129,172 +130,490 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _avatarPreview() {
-    if (_pickedImage != null) {
-      return CircleAvatar(
-        radius: 40,
-        backgroundImage: FileImage(_pickedImage!),
-      );
-    } else if (_avatarUrl.isNotEmpty) {
-      return CircleAvatar(
-        radius: 40,
-        backgroundImage: NetworkImage(_avatarUrl),
-      );
-    } else {
-      return const CircleAvatar(
-        radius: 40,
-        child: Icon(Icons.person, size: 40),
-      );
-    }
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.3),
+          width: 3,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.mintAqua.withValues(alpha: 0.2),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: CircleAvatar(
+        radius: 50,
+        backgroundColor: AppTheme.cardBackground,
+        backgroundImage: _pickedImage != null 
+          ? FileImage(_pickedImage!) 
+          : (_avatarUrl.isNotEmpty ? NetworkImage(_avatarUrl) : null),
+        child: (_pickedImage == null && _avatarUrl.isEmpty) 
+          ? Icon(
+              Icons.person,
+              size: 50,
+              color: AppTheme.mintAqua,
+            )
+          : null,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      backgroundColor: const Color(0xFF1A1C1E),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1C1E),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Edit Profile',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.mintAqua,
+              ),
+            )
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: _avatarPreview(),
-            ),
-            const SizedBox(height: 12),
-            const Text('Tap image to change avatar'),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Your Name',
-                border: OutlineInputBorder(),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                children: [
+                  // Avatar Section
+                  _buildAvatarSection(),
+                  const SizedBox(height: 16),
+                  
+                  // Profile Information Card
+                  _buildProfileInfoCard(),
+                  const SizedBox(height: 12),
+                  
+                  // Security Settings Card
+                  _buildSecuritySettingsCard(),
+                  const SizedBox(height: 12),
+                  
+                  // Save Button
+                  _buildSaveButton(),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _bioController,
-              decoration: const InputDecoration(
-                labelText: 'Bio',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 2,
+    );
+  }
+
+  Widget _buildAvatarSection() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: _pickImage,
+          child: _avatarPreview(),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Tap image to change avatar',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 13,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileInfoCard() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Profile Information',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _locationController,
-              decoration: const InputDecoration(
-                labelText: 'Location',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _role,
-              items: const [
-                DropdownMenuItem(value: 'client', child: Text('Client')),
-                DropdownMenuItem(value: 'coach', child: Text('Coach')),
-                DropdownMenuItem(value: 'admin', child: Text('Admin')),
-              ],
-              onChanged: _isAdmin
-                  ? (val) => setState(() => _role = val!)
-                  : null,
-              decoration: const InputDecoration(
-                labelText: 'Role',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            if (!_isAdmin)
-              const Padding(
-                padding: EdgeInsets.only(top: 4),
-                child: Text(
-                  'Only admins can change roles.',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          
+          // Name Field
+          _buildCompactTextField(
+            controller: _nameController,
+            label: 'Your Name',
+            icon: Icons.person,
+          ),
+          const SizedBox(height: 6),
+          
+          // Bio Field
+          _buildCompactTextField(
+            controller: _bioController,
+            label: 'Bio',
+            icon: Icons.description,
+            maxLines: 2,
+          ),
+          const SizedBox(height: 6),
+          
+          // Location Field
+          _buildCompactTextField(
+            controller: _locationController,
+            label: 'Location',
+            icon: Icons.location_on,
+          ),
+          const SizedBox(height: 6),
+          
+          // Role Dropdown
+          _buildCompactRoleDropdown(),
+          if (!_isAdmin)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                'Only admins can change roles.',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  fontSize: 10,
                 ),
               ),
-            const SizedBox(height: 24),
-            
-            // Security Settings Section
-            const Divider(),
-            const SizedBox(height: 16),
-            const Text(
-              '🔐 Security Settings',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            
-            // Device Management
-            ListTile(
-              leading: const Icon(Icons.devices_other),
-              title: const Text('Manage devices'),
-              subtitle: const Text('View and manage your signed-in devices'),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const DeviceListScreen(),
-                  ),
-                );
-              },
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.8),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1C1E),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
             ),
-            
-            // Billing & Upgrade
-            ListTile(
-              leading: const Icon(Icons.credit_card),
-              title: const Text('Billing & Upgrade'),
-              subtitle: const Text('Manage your subscription and billing'),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const BillingSettings(),
-                  ),
-                );
-              },
+          ),
+          child: TextField(
+            controller: controller,
+            maxLines: maxLines,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: InputDecoration(
+              prefixIcon: Icon(icon, color: AppTheme.mintAqua, size: 16),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
-            
-            // Settings
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              subtitle: const Text('Theme, language, and reminder preferences'),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const UserSettingsScreen(),
-                  ),
-                );
-              },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildModernTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    int maxLines = 1,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1C1E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: TextField(
+        controller: controller,
+        maxLines: maxLines,
+        style: const TextStyle(color: Colors.white, fontSize: 13),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 13,
+          ),
+          prefixIcon: Icon(icon, color: AppTheme.mintAqua, size: 18),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactRoleDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Role',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.8),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1C1E),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
             ),
-            
-            // Coach Application (only for clients)
-            if (_role == 'client')
-              ListTile(
-                leading: const Icon(Icons.sports_gymnastics),
-                title: const Text('Apply to become a Coach'),
-                subtitle: const Text('Submit your coaching application'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const BecomeCoachScreen(),
-                    ),
-                  );
-                },
+          ),
+          child: DropdownButtonFormField<String>(
+            value: _role,
+            dropdownColor: const Color(0xFF2C2F33),
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            icon: Icon(Icons.keyboard_arrow_down, color: AppTheme.mintAqua, size: 16),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.admin_panel_settings, color: AppTheme.mintAqua, size: 16),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            items: const [
+              DropdownMenuItem(value: 'client', child: Text('Client')),
+              DropdownMenuItem(value: 'coach', child: Text('Coach')),
+              DropdownMenuItem(value: 'admin', child: Text('Admin')),
+            ],
+            onChanged: _isAdmin
+                ? (val) => setState(() => _role = val!)
+                : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRoleDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1C1E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: DropdownButtonFormField<String>(
+        value: _role,
+        dropdownColor: const Color(0xFF2C2F33),
+        style: const TextStyle(color: Colors.white, fontSize: 13),
+        icon: Icon(Icons.keyboard_arrow_down, color: AppTheme.mintAqua, size: 18),
+        decoration: const InputDecoration(
+          labelText: 'Role',
+          labelStyle: TextStyle(color: Colors.white70, fontSize: 13),
+          border: InputBorder.none,
+          prefixIcon: Icon(Icons.admin_panel_settings, color: AppTheme.mintAqua, size: 18),
+          contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        ),
+        items: const [
+          DropdownMenuItem(value: 'client', child: Text('Client')),
+          DropdownMenuItem(value: 'coach', child: Text('Coach')),
+          DropdownMenuItem(value: 'admin', child: Text('Admin')),
+        ],
+        onChanged: _isAdmin
+            ? (val) => setState(() => _role = val!)
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildSecuritySettingsCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.security, color: AppTheme.softYellow, size: 18),
+              const SizedBox(width: 8),
+              const Text(
+                'Security Settings',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _saveProfile,
-              icon: const Icon(Icons.save),
-              label: const Text('Save Changes'),
+            ],
+          ),
+          const SizedBox(height: 12),
+          
+          // Device Management
+          _buildSettingsTile(
+            icon: Icons.devices_other,
+            title: 'Manage devices',
+            subtitle: 'View and manage your signed-in devices',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const DeviceListScreen(),
+                ),
+              );
+            },
+          ),
+          
+          // Billing & Upgrade
+          _buildSettingsTile(
+            icon: Icons.credit_card,
+            title: 'Billing & Upgrade',
+            subtitle: 'Manage your subscription and billing',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const BillingSettings(),
+                ),
+              );
+            },
+          ),
+          
+          // Settings
+          _buildSettingsTile(
+            icon: Icons.settings,
+            title: 'Settings',
+            subtitle: 'Theme, language, and reminder preferences',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const UserSettingsScreen(),
+                ),
+              );
+            },
+          ),
+          
+          // Coach Application (only for clients)
+          if (_role == 'client')
+            _buildSettingsTile(
+              icon: Icons.sports_gymnastics,
+              title: 'Apply to become a Coach',
+              subtitle: 'Submit your coaching application',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BecomeCoachScreen(),
+                  ),
+                );
+              },
             ),
-          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1C1E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        leading: Icon(icon, color: AppTheme.mintAqua, size: 18),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 12,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: AppTheme.mintAqua,
+          size: 12,
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _saveProfile,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.mintAqua,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
+        ),
+        child: const Text(
+          'Save Changes',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

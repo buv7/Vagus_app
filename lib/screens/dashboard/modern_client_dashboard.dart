@@ -17,6 +17,19 @@ import '../../services/progress/progress_service.dart';
 import '../../services/nutrition/grocery_service.dart';
 import '../../services/nutrition/calendar_bridge.dart';
 import '../../models/nutrition/nutrition_plan.dart';
+import '../../components/health/health_rings.dart';
+import '../../components/streak/streak_chip.dart';
+import '../../components/rank/neon_rank_chip.dart';
+import '../../widgets/ai/ai_usage_meter.dart';
+import '../supplements/supplements_today_screen.dart';
+import '../progress/modern_progress_tracker.dart';
+import '../workouts/modern_workout_plan_viewer.dart';
+import '../nutrition/modern_nutrition_plan_viewer.dart';
+import '../calendar/modern_calendar_viewer.dart';
+import '../messaging/modern_messenger_screen.dart';
+import '../rank/rank_hub_screen.dart';
+import '../streaks/streak_screen.dart';
+import '../billing/upgrade_screen.dart';
 
 class ModernClientDashboard extends StatefulWidget {
   const ModernClientDashboard({super.key});
@@ -36,7 +49,12 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   final GroceryService _groceryService = GroceryService();
   final NutritionCalendarBridge _calendarBridge = NutritionCalendarBridge();
   String? _error;
-  bool _showProfileDropdown = false;
+  
+  // Dashboard data
+  Map<String, dynamic>? _upcomingSession;
+  List<Map<String, dynamic>> _recentActivity = [];
+  Map<String, dynamic>? _userStats;
+  Map<String, dynamic>? _healthData;
   
   // Mock data for the design
   final String _selectedNutritionPlan = 'Muscle Gain Protocol';
@@ -44,6 +62,13 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   final int _targetCalories = 2800;
   final int _currentProtein = 163;
   final int _targetProtein = 180;
+  
+  // Supplement states
+  Map<String, bool> _supplementStates = {
+    'Whey Protein': true, // Pre-marked as taken
+    'Creatine': false,
+    'Multivitamin': false,
+  };
 
   @override
   void initState() {
@@ -66,31 +91,40 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
         return;
       }
 
-      // Load profile data
-      final profileResponse = await Supabase.instance.client
+      // Load all dashboard data in parallel
+      final profileFuture = Supabase.instance.client
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single();
+          .single() as Future<Map<String, dynamic>>;
+      
+      final nutritionPlansFuture = _nutritionService.fetchPlansForClient(user.id);
+      final dailyProgressFuture = _loadDailyProgress(user.id);
+      final upcomingSessionFuture = _loadUpcomingSession(user.id);
+      final recentActivityFuture = _loadRecentActivity(user.id);
+      final userStatsFuture = _loadUserStats(user.id);
+      final healthDataFuture = _loadHealthData(user.id);
 
-      // Load nutrition plans for the user
-      final nutritionPlans = await _nutritionService.fetchPlansForClient(user.id);
-
-      // Load daily progress (today's metrics)
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      final progressData = await _progressService.fetchMetrics(user.id);
-      final todayProgress = progressData.isNotEmpty 
-          ? progressData.firstWhere(
-              (metric) => metric['date'] == today,
-              orElse: () => {},
-            )
-          : {};
+      // Wait for all futures to complete
+      final results = await Future.wait<dynamic>([
+        profileFuture,
+        nutritionPlansFuture,
+        dailyProgressFuture,
+        upcomingSessionFuture,
+        recentActivityFuture,
+        userStatsFuture,
+        healthDataFuture,
+      ]);
 
       if (mounted) {
         setState(() {
-          _profile = profileResponse;
-          _nutritionPlans = nutritionPlans;
-          _dailyProgress = Map<String, dynamic>.from(todayProgress);
+          _profile = results[0] as Map<String, dynamic>;
+          _nutritionPlans = results[1] as List<NutritionPlan>;
+          _dailyProgress = results[2] as Map<String, dynamic>?;
+          _upcomingSession = results[3] as Map<String, dynamic>?;
+          _recentActivity = results[4] as List<Map<String, dynamic>>;
+          _userStats = results[5] as Map<String, dynamic>?;
+          _healthData = results[6] as Map<String, dynamic>?;
           _isLoading = false;
           _error = null;
         });
@@ -103,6 +137,107 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<Map<String, dynamic>?> _loadDailyProgress(String userId) async {
+    try {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final progressData = await _progressService.fetchMetrics(userId);
+      return progressData.isNotEmpty 
+          ? progressData.firstWhere(
+              (metric) => metric['date'] == today,
+              orElse: () => {},
+            )
+          : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  Future<Map<String, dynamic>?> _loadUpcomingSession(String userId) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('calendar_events')
+          .select('*')
+          .eq('user_id', userId)
+          .gte('start_at', DateTime.now().toIso8601String())
+          .order('start_at')
+          .limit(1)
+          .maybeSingle();
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _loadRecentActivity(String userId) async {
+    try {
+      // Load recent workouts, meals, and progress updates
+      final activities = <Map<String, dynamic>>[];
+      
+      // Add mock recent activities for now
+      activities.addAll([
+        {
+          'type': 'workout',
+          'title': 'Upper Body Strength',
+          'time': '2 hours ago',
+          'icon': Icons.fitness_center,
+          'color': AppTheme.mintAqua,
+        },
+        {
+          'type': 'meal',
+          'title': 'Chicken & Rice Bowl',
+          'time': '4 hours ago',
+          'icon': Icons.restaurant,
+          'color': AppTheme.softYellow,
+        },
+        {
+          'type': 'progress',
+          'title': 'Weight: 75.2 kg',
+          'time': '1 day ago',
+          'icon': Icons.trending_up,
+          'color': AppTheme.mintAqua,
+        },
+      ]);
+      
+      return activities;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>?> _loadUserStats(String userId) async {
+    try {
+      // Load user statistics like streak, rank, level
+      return {
+        'current_streak': 12,
+        'longest_streak': 28,
+        'rank': 'Gold Tier',
+        'level': 8,
+        'xp': 2450,
+        'xp_to_next': 550,
+        'total_workouts': 156,
+        'total_meals_logged': 423,
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> _loadHealthData(String userId) async {
+    try {
+      // Load health data for rings
+      return {
+        'activity_ring': 0.75,
+        'exercise_ring': 0.60,
+        'stand_ring': 0.90,
+        'activity_value': 450,
+        'exercise_value': 30,
+        'stand_value': 12,
+      };
+    } catch (e) {
+      return null;
     }
   }
 
@@ -137,7 +272,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: const Color(0xFF1A1C1E),
         body: const Center(
           child: CircularProgressIndicator(color: AppTheme.mintAqua),
         ),
@@ -146,7 +281,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
 
     if (_error != null) {
       return Scaffold(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: const Color(0xFF1A1C1E),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +301,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: const Color(0xFF1A1C1E),
       drawerEdgeDragWidth: 24,
       drawer: VagusSideMenu(
         isClient: true,
@@ -174,24 +309,29 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(DesignTokens.space16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with hamburger menu, welcome message, and profile dropdown
+              // Header
               _buildHeader(),
               
-              const SizedBox(height: DesignTokens.space24),
+              const SizedBox(height: 24),
               
-              // Nutrition Plans Section
-              _buildNutritionPlansSection(),
+              // Top Grid: Profile, Progress, Supplements/Sessions
+              _buildTopGrid(),
               
-              const SizedBox(height: DesignTokens.space24),
+              const SizedBox(height: 24),
               
-              // Daily Summary Section
-              _buildDailySummarySection(),
+              // Horizontal Scroll: Health Rings, Streak, Rank, AI Usage
+              _buildHorizontalScrollSection(),
               
-              const SizedBox(height: DesignTokens.space24),
+              const SizedBox(height: 24),
+              
+              // Bottom Grid: Quick Actions, Recent Activity
+              _buildBottomGrid(),
+              
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -217,16 +357,18 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             children: [
               Text(
                 'Welcome back, ${_profile?['full_name'] ?? _profile?['name'] ?? 'User'}!',
-                style: DesignTokens.titleLarge.copyWith(
+                style: const TextStyle(
                   color: Colors.white,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 'Ready to crush your fitness goals today?',
-                style: DesignTokens.bodyMedium.copyWith(
-                  color: Colors.white70,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 16,
                 ),
               ),
             ],
@@ -234,370 +376,555 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
         ),
         
         // Profile dropdown
-        Stack(
-          children: [
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _showProfileDropdown = !_showProfileDropdown;
-                });
-              },
+        PopupMenuButton<String>(
+          icon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: AppTheme.mintAqua,
+                backgroundImage: _profile?['avatar_url'] != null 
+                  ? NetworkImage(_profile!['avatar_url']) 
+                  : null,
+                child: _profile?['avatar_url'] == null 
+                  ? Text(
+                      (_profile?['first_name'] ?? 'A')[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: AppTheme.primaryBlack,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
+              ),
+              const SizedBox(width: 4),
+              const Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.white,
+                size: 16,
+              ),
+            ],
+          ),
+          color: const Color(0xFF2C2F33),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          elevation: 8,
+          onSelected: (String value) {
+            switch (value) {
+              case 'edit_profile':
+                _goToEditProfile();
+                break;
+              case 'logout':
+                _logout();
+                break;
+            }
+          },
+          itemBuilder: (BuildContext context) => [
+            const PopupMenuItem<String>(
+              value: 'edit_profile',
               child: Row(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: AppTheme.mintAqua,
-                    backgroundImage: _profile?['avatar_url'] != null 
-                      ? NetworkImage(_profile!['avatar_url']) 
-                      : null,
-                    child: _profile?['avatar_url'] == null 
-                      ? Text(
-                          (_profile?['first_name'] ?? 'A')[0].toUpperCase(),
-                          style: const TextStyle(
-                            color: AppTheme.primaryBlack,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.white,
-                    size: 16,
+                  Icon(Icons.edit, color: Colors.white, size: 16),
+                  SizedBox(width: 8),
+                  Text(
+                    'Edit Profile',
+                    style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                 ],
               ),
             ),
-            
-            // Dropdown menu
-            if (_showProfileDropdown)
-              Positioned(
-                top: 40,
-                right: 0,
-                child: Container(
-                  width: 150,
-                  decoration: BoxDecoration(
-                    color: AppTheme.cardBackground,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+            const PopupMenuItem<String>(
+              value: 'logout',
+              child: Row(
+                children: [
+                  Icon(Icons.logout, color: Colors.red, size: 16),
+                  SizedBox(width: 8),
+                  Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.red, fontSize: 14),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.edit, color: Colors.white, size: 16),
-                        title: Text(
-                          'Edit Profile',
-                          style: DesignTokens.bodySmall.copyWith(color: Colors.white),
-                        ),
-                        onTap: () {
-                          setState(() => _showProfileDropdown = false);
-                          _goToEditProfile();
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.logout, color: Colors.red, size: 16),
-                        title: Text(
-                          'Logout',
-                          style: DesignTokens.bodySmall.copyWith(color: Colors.red),
-                        ),
-                        onTap: () {
-                          setState(() => _showProfileDropdown = false);
-                          _logout();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildNutritionPlansSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Section title
-        Text(
-          'Nutrition Plans',
-          style: DesignTokens.titleLarge.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+  Widget _buildTopGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth > 768;
+        final isDesktop = constraints.maxWidth > 1024;
         
-        const SizedBox(height: DesignTokens.space12),
-        
-        // Dropdown selector
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space16,
-            vertical: DesignTokens.space12,
-          ),
-          decoration: BoxDecoration(
-            color: AppTheme.cardBackground,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _nutritionPlans.isNotEmpty 
-                      ? _nutritionPlans.first.name 
-                      : 'No nutrition plans',
-                  style: DesignTokens.bodyMedium.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.white,
-                size: 20,
-              ),
-            ],
-          ),
-        ),
-        
-        const SizedBox(height: DesignTokens.space16),
-        
-        // Nutrition plan card
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignTokens.space16),
-          decoration: BoxDecoration(
-            color: AppTheme.cardBackground,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
+        if (isDesktop) {
+          // 3-column layout for desktop
+          return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title and tag
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _nutritionPlans.isNotEmpty 
-                          ? _nutritionPlans.first.name 
-                          : 'No nutrition plan',
-                      style: DesignTokens.titleMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.mintAqua,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      'Bulking',
-                      style: DesignTokens.bodySmall.copyWith(
-                        color: AppTheme.primaryBlack,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 8),
-              
-              // Created info
-              Text(
-                'Created March 1, 2024 • By Coach Sarah',
-                style: DesignTokens.bodySmall.copyWith(
-                  color: Colors.white70,
-                ),
-              ),
-              
-              const SizedBox(height: DesignTokens.space16),
-              
-              // Metrics
-              Row(
-                children: [
-                  _buildMetricTag('\$45/week'),
-                  const SizedBox(width: 8),
-                  _buildMetricTag('2,800 calories/day'),
-                  const SizedBox(width: 8),
-                  _buildMetricTag('180g protein'),
-                ],
-              ),
-              
-              const SizedBox(height: DesignTokens.space16),
-              
-              // Action buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      'Export PDF',
-                      Icons.description,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildActionButton(
-                      'Grocery List',
-                      Icons.shopping_cart,
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 8),
-              
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      'Add to Calendar',
-                      Icons.calendar_today,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildActionButton(
-                      'Prep Reminders',
-                      Icons.notifications,
-                    ),
-                  ),
-                ],
-              ),
+              Expanded(child: _buildProfileCard()),
+              const SizedBox(width: 16),
+              Expanded(child: _buildProgressCard()),
+              const SizedBox(width: 16),
+              Expanded(child: _buildSupplementsCard()),
             ],
-          ),
-        ),
-      ],
+          );
+        } else if (isTablet) {
+          // 2-column layout for tablet
+          return Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: _buildProfileCard()),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildProgressCard()),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildSupplementsCard(),
+            ],
+          );
+        } else {
+          // Single column layout for mobile
+          return Column(
+            children: [
+              _buildProfileCard(),
+              const SizedBox(height: 16),
+              _buildProgressCard(),
+              const SizedBox(height: 16),
+              _buildSupplementsCard(),
+            ],
+          );
+        }
+      },
     );
   }
 
-  Widget _buildDailySummarySection() {
-    // Get real progress data or use defaults
-    final currentCalories = _dailyProgress?['calories_consumed'] ?? _currentCalories;
-    final targetCalories = _dailyProgress?['calorie_target'] ?? _targetCalories;
-    final currentProtein = _dailyProgress?['protein_consumed'] ?? _currentProtein;
-    final targetProtein = _dailyProgress?['protein_target'] ?? _targetProtein;
-    
-    final calorieProgress = targetCalories > 0 ? currentCalories / targetCalories : 0.0;
-    final proteinProgress = targetProtein > 0 ? currentProtein / targetProtein : 0.0;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Section title
-        Text(
-          'Daily Summary',
-          style: DesignTokens.titleLarge.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+  Widget _buildProfileCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
         ),
-        
-        const SizedBox(height: DesignTokens.space16),
-        
-        // Daily summary card
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignTokens.space16),
-          decoration: BoxDecoration(
-            color: AppTheme.cardBackground,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Avatar and basic info
+          Row(
             children: [
-              // Circular progress indicator
-              SizedBox(
-                width: 120,
-                height: 120,
-                child: Stack(
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: AppTheme.mintAqua,
+                backgroundImage: _profile?['avatar_url'] != null 
+                  ? NetworkImage(_profile!['avatar_url']) 
+                  : null,
+                child: _profile?['avatar_url'] == null 
+                  ? Text(
+                      (_profile?['first_name'] ?? 'A')[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: AppTheme.primaryBlack,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Background circle
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 8,
-                        ),
+                    Text(
+                      _profile?['full_name'] ?? _profile?['name'] ?? 'User',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // Progress circle
-                    SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: CircularProgressIndicator(
-                        value: calorieProgress,
-                        strokeWidth: 8,
-                        backgroundColor: Colors.transparent,
-                        valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Client',
+                      style: TextStyle(
+                        color: AppTheme.mintAqua,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    // Center text
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    if (_userStats != null) ...[
+                      const SizedBox(height: 8),
+                      Row(
                         children: [
+                          Icon(Icons.local_fire_department, 
+                               color: AppTheme.softYellow, size: 16),
+                          const SizedBox(width: 4),
                           Text(
-                            '$currentCalories',
-                            style: DesignTokens.titleLarge.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                            ),
-                          ),
-                          Text(
-                            '/$targetCalories',
-                            style: DesignTokens.bodySmall.copyWith(
+                            '${_userStats!['current_streak']} day streak',
+                            style: const TextStyle(
                               color: Colors.white70,
+                              fontSize: 12,
                             ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
-              
-              const SizedBox(height: DesignTokens.space24),
-              
-              // Progress bars
-              _buildProgressBar(
-                'Calories',
-                currentCalories,
-                targetCalories,
-                AppTheme.mintAqua,
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Stats row
+          if (_userStats != null)
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem('Level', '${_userStats!['level']}'),
+                ),
+                Expanded(
+                  child: _buildStatItem('XP', '${_userStats!['xp']}'),
+                ),
+                Expanded(
+                  child: _buildStatItem('Workouts', '${_userStats!['total_workouts']}'),
+                ),
+              ],
+            ),
+          
+          const SizedBox(height: 16),
+          
+          // Edit profile button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _goToEditProfile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.mintAqua,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              
-              const SizedBox(height: DesignTokens.space12),
-              
-              _buildProgressBar(
-                'Protein',
-                currentProtein,
-                targetProtein,
-                AppTheme.softYellow,
-                showPercentage: true,
+              child: const Text('Edit Profile'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgressCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.trending_up, color: AppTheme.mintAqua, size: 24),
+              const SizedBox(width: 8),
+              const Text(
+                'Progress',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Weight tracking
+          _buildProgressItem('Weight', '75.2 kg', '↗ +0.3 kg', AppTheme.mintAqua),
+          
+          const SizedBox(height: 12),
+          
+          // Body fat
+          _buildProgressItem('Body Fat', '12.5%', '↘ -0.2%', AppTheme.softYellow),
+          
+          const SizedBox(height: 12),
+          
+          // Muscle mass
+          _buildProgressItem('Muscle', '68.1 kg', '↗ +0.5 kg', AppTheme.mintAqua),
+          
+          const SizedBox(height: 16),
+          
+          // View all progress button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ModernProgressTracker(),
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.mintAqua,
+                side: BorderSide(color: AppTheme.mintAqua),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('View All Progress'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressItem(String label, String value, String change, Color color) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              change,
+              style: TextStyle(
+                color: color,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSupplementsCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.medication, color: AppTheme.mintAqua, size: 24),
+              const SizedBox(width: 8),
+              const Text(
+                'Supplements Today',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Supplement list
+          _buildSupplementItem('Whey Protein', 'Morning', _supplementStates['Whey Protein'] ?? false, (value) {
+            setState(() {
+              _supplementStates['Whey Protein'] = value ?? false;
+            });
+          }),
+          _buildSupplementItem('Creatine', 'Pre-Workout', _supplementStates['Creatine'] ?? false, (value) {
+            setState(() {
+              _supplementStates['Creatine'] = value ?? false;
+            });
+          }),
+          _buildSupplementItem('Multivitamin', 'Evening', _supplementStates['Multivitamin'] ?? false, (value) {
+            setState(() {
+              _supplementStates['Multivitamin'] = value ?? false;
+            });
+          }),
+          
+          const SizedBox(height: 16),
+          
+          // Progress bar
+          Row(
+            children: [
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: _getSupplementsProgress(),
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${_getSupplementsTakenCount()}/3',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // View all supplements button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SupplementsTodayScreen(),
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.mintAqua,
+                side: BorderSide(color: AppTheme.mintAqua),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('View All Supplements'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSupplementItem(String name, String time, bool isTaken, ValueChanged<bool?> onChanged) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Checkbox(
+            value: isTaken,
+            onChanged: onChanged,
+            activeColor: AppTheme.mintAqua,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: isTaken ? Colors.white70 : Colors.white,
+                    fontSize: 14,
+                    decoration: isTaken ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+                Text(
+                  time,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  double _getSupplementsProgress() {
+    final takenCount = _supplementStates.values.where((taken) => taken).length;
+    return takenCount / _supplementStates.length;
+  }
+
+  int _getSupplementsTakenCount() {
+    return _supplementStates.values.where((taken) => taken).length;
+  }
+
+  Widget _buildHorizontalScrollSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Today\'s Overview',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        
+        const SizedBox(height: 16),
+        
+        SizedBox(
+          height: 200,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildHealthRingsCard(),
+              const SizedBox(width: 16),
+              _buildStreakCard(),
+              const SizedBox(width: 16),
+              _buildRankCard(),
+              const SizedBox(width: 16),
+              _buildAIUsageCard(),
             ],
           ),
         ),
@@ -605,142 +932,570 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
     );
   }
 
-  Widget _buildMetricTag(String text) {
+  Widget _buildHealthRingsCard() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 4,
-      ),
+      width: 280,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlack.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        text,
-        style: DesignTokens.bodySmall.copyWith(
-          color: Colors.white70,
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
         ),
       ),
-    );
-  }
-
-  Widget _buildActionButton(String text, IconData icon) {
-    return GestureDetector(
-      onTap: () => _handleActionButton(text),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: DesignTokens.space12,
-          vertical: DesignTokens.space8,
-        ),
-        decoration: BoxDecoration(
-          color: AppTheme.primaryBlack.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: AppTheme.mintAqua.withOpacity(0.3),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.favorite, color: AppTheme.mintAqua, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'Health Rings',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: AppTheme.mintAqua,
-              size: 16,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              text,
-              style: DesignTokens.bodySmall.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+          
+          const SizedBox(height: 16),
+          
+          // Health rings
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildHealthRing('Activity', 0.75, AppTheme.mintAqua, '450'),
+              _buildHealthRing('Exercise', 0.60, AppTheme.softYellow, '30'),
+              _buildHealthRing('Stand', 0.90, const Color(0xFFFF5A5A), '12'),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildProgressBar(String label, int current, int target, Color color, {bool showPercentage = false}) {
-    final progress = (current / target).clamp(0.0, 1.0);
-    final percentage = (progress * 100).round();
-    
+  Widget _buildHealthRing(String label, double progress, Color color, String value) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: DesignTokens.bodyMedium.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            if (showPercentage)
-              Text(
-                '$percentage%',
-                style: DesignTokens.bodyMedium.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
-            else
-              Text(
-                '$current/$target',
-                style: DesignTokens.bodyMedium.copyWith(
-                  color: Colors.white70,
+        SizedBox(
+          width: 60,
+          height: 60,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 6,
+                  backgroundColor: color.withValues(alpha: 0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
               ),
-          ],
+              Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 8),
-        Container(
-          height: 8,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: progress,
-            child: Container(
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 10,
           ),
         ),
       ],
     );
   }
 
-  // Action button handler
-  void _handleActionButton(String action) {
-    switch (action) {
-      case 'Export PDF':
-        _exportNutritionPlanToPDF();
-        break;
-      case 'Grocery List':
-        _generateGroceryList();
-        break;
-      case 'Add to Calendar':
-        _addToCalendar();
-        break;
-      case 'Prep Reminders':
-        _addPrepReminders();
-        break;
-      default:
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$action feature coming soon!'),
-            backgroundColor: AppTheme.mintAqua,
-            duration: const Duration(seconds: 2),
+  Widget _buildStreakCard() {
+    return Container(
+      width: 280,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.softYellow.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.local_fire_department, color: AppTheme.softYellow, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'Streak',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-        );
-    }
+          
+          const SizedBox(height: 16),
+          
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${_userStats?['current_streak'] ?? 0}',
+                  style: const TextStyle(
+                    color: AppTheme.softYellow,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'days',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Longest: ${_userStats?['longest_streak'] ?? 0} days',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 10,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
+
+  Widget _buildRankCard() {
+    return Container(
+      width: 280,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.softYellow.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.emoji_events, color: AppTheme.softYellow, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'Rank & Level',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppTheme.softYellow, AppTheme.softYellow.withValues(alpha: 0.7)],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    _userStats?['rank'] ?? 'Bronze Tier',
+                    style: const TextStyle(
+                      color: AppTheme.primaryBlack,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Level ${_userStats?['level'] ?? 1}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${_userStats?['xp'] ?? 0} / ${(_userStats?['xp'] ?? 0) + (_userStats?['xp_to_next'] ?? 0)} XP',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 10,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
+                LinearProgressIndicator(
+                  value: (_userStats?['xp'] ?? 0) / ((_userStats?['xp'] ?? 0) + (_userStats?['xp_to_next'] ?? 1)),
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.softYellow),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAIUsageCard() {
+    return Container(
+      width: 280,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.psychology, color: AppTheme.mintAqua, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'AI Usage',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 8),
+          
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '45 / 100',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'requests this month',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 8,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                LinearProgressIndicator(
+                  value: 0.45,
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '55 remaining',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 8,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UpgradeScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.mintAqua,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                    ),
+                    child: const Text(
+                      'Upgrade for More',
+                      style: TextStyle(fontSize: 10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth > 768;
+        
+        if (isTablet) {
+          // 2-column layout for tablet
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _buildQuickActionsCard()),
+              const SizedBox(width: 16),
+              Expanded(child: _buildRecentActivityCard()),
+            ],
+          );
+        } else {
+          // Single column layout for mobile
+          return Column(
+            children: [
+              _buildQuickActionsCard(),
+              const SizedBox(height: 16),
+              _buildRecentActivityCard(),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildQuickActionsCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.flash_on, color: AppTheme.mintAqua, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'Quick Actions',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Action buttons grid
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.5,
+            children: [
+              _buildQuickActionButton('Start Workout', Icons.fitness_center, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ModernWorkoutPlanViewer(),
+                  ),
+                );
+              }),
+              _buildQuickActionButton('Log Meal', Icons.restaurant, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ModernNutritionPlanViewer(),
+                  ),
+                );
+              }),
+              _buildQuickActionButton('Add Photo', Icons.camera_alt, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ModernProgressTracker(),
+                  ),
+                );
+              }),
+              _buildQuickActionButton('Message Coach', Icons.message, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ModernMessengerScreen(),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButton(String label, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppTheme.primaryBlack.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppTheme.mintAqua.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: AppTheme.mintAqua, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentActivityCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.history, color: AppTheme.mintAqua, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'Recent Activity',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Activity list
+          ...(_recentActivity.map((activity) => _buildActivityItem(activity))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityItem(Map<String, dynamic> activity) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: (activity['color'] as Color).withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              activity['icon'] as IconData,
+              color: activity['color'] as Color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  activity['title'] as String,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  activity['time'] as String,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   // Export nutrition plan to PDF
   Future<void> _exportNutritionPlanToPDF() async {

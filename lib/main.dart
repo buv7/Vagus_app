@@ -15,6 +15,7 @@ import 'theme/app_theme.dart';
 import 'screens/settings/user_settings_screen.dart';
 import 'screens/billing/billing_settings.dart';
 import 'screens/admin/admin_screen.dart';
+import 'screens/workout/cardio_log_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,6 +79,8 @@ class VagusMainApp extends StatelessWidget {
           routes: {
             // ✅ Add this route for client workout plan viewer
             '/client-workout': (context) => const ClientWorkoutDashboardScreen(),
+            // Workout routes
+            '/cardio-log': (context) => const CardioLogScreen(),
             // Side menu routes
             '/settings': (context) => const UserSettingsScreen(),
             '/billing': (context) => const BillingSettings(),

@@ -12,10 +12,12 @@ import '../../models/nutrition/nutrition_plan.dart';
 
 class SimpleGlassmorphismFAB extends StatefulWidget {
   final bool isCoach;
+  final VoidCallback? onOpenCameraFAB;
   
   const SimpleGlassmorphismFAB({
     super.key,
     this.isCoach = false,
+    this.onOpenCameraFAB,
   });
 
   @override
@@ -125,10 +127,16 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
         _handleMealTap();
         break;
       case '/progress/photo':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const UploadPhotosScreen()),
-        );
+        // Open camera FAB instead of navigating directly
+        if (widget.onOpenCameraFAB != null) {
+          widget.onOpenCameraFAB!();
+        } else {
+          // Fallback to original behavior if no callback provided
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const UploadPhotosScreen()),
+          );
+        }
         break;
       case '/notes/add':
         _handleNoteTap();

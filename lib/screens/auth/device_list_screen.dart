@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/session/session_service.dart';
+import '../../theme/app_theme.dart';
 
 class DeviceListScreen extends StatefulWidget {
   const DeviceListScreen({super.key});
@@ -140,14 +141,52 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     final String lastSeen = device['last_seen'] ?? '';
     final bool isRevoked = device['revoke'] == true;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2F33),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isCurrentDevice 
+              ? AppTheme.mintAqua.withValues(alpha: 0.3)
+              : Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: isCurrentDevice ? Colors.blue : Colors.grey.shade300,
-          child: Text(
-            _getPlatformIcon(platform),
-            style: const TextStyle(fontSize: 20),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: isCurrentDevice 
+                ? AppTheme.mintAqua.withValues(alpha: 0.2)
+                : const Color(0xFF1A1C1E),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isCurrentDevice 
+                  ? AppTheme.mintAqua
+                  : Colors.white.withValues(alpha: 0.2),
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              _getPlatformIcon(platform),
+              style: TextStyle(
+                fontSize: 20,
+                color: isCurrentDevice 
+                    ? AppTheme.mintAqua
+                    : Colors.white.withValues(alpha: 0.7),
+              ),
+            ),
           ),
         ),
         title: Row(
@@ -157,7 +196,10 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 model,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: isRevoked ? Colors.grey : null,
+                  fontSize: 16,
+                  color: isRevoked 
+                      ? Colors.white.withValues(alpha: 0.5)
+                      : Colors.white,
                 ),
               ),
             ),
@@ -165,20 +207,21 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: AppTheme.mintAqua,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
                   'This device',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             if (isRevoked)
               Container(
+                margin: const EdgeInsets.only(left: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.red,
@@ -188,7 +231,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                   'Revoked',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -198,45 +241,77 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 4),
             Text(
               '$platform • $appVersion',
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 12,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               'Last seen: ${_formatLastSeen(lastSeen)}',
               style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 12,
+                color: Colors.white.withValues(alpha: 0.5),
+                fontSize: 11,
               ),
             ),
           ],
         ),
         trailing: isCurrentDevice
-            ? TextButton(
-                onPressed: _signOutCurrentDevice,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.red,
+            ? Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.red.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
                 ),
-                child: const Text('Sign out'),
+                child: TextButton(
+                  onPressed: _signOutCurrentDevice,
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  ),
+                  child: const Text(
+                    'Sign out',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               )
             : PopupMenuButton<String>(
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
+                color: const Color(0xFF2C2F33),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 onSelected: (value) {
                   if (value == 'revoke') {
                     _revokeDevice(device['device_id']);
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'revoke',
                     child: Row(
                       children: [
-                        Icon(Icons.logout, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text('Sign out this device (next check)'),
+                        Icon(Icons.logout, color: Colors.red, size: 16),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Sign out this device',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -249,42 +324,75 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.primaryBlack,
       appBar: AppBar(
-        title: const Text('My Devices'),
+        backgroundColor: AppTheme.primaryBlack,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'My Devices',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadDevices,
-            tooltip: 'Refresh',
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: AppTheme.mintAqua.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.refresh,
+                color: AppTheme.mintAqua,
+              ),
+              onPressed: _loadDevices,
+              tooltip: 'Refresh',
+            ),
           ),
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.mintAqua,
+              ),
+            )
           : _devices.isEmpty
-              ? const Center(
+              ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.devices_other,
-                        size: 64,
-                        color: Colors.grey,
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'No devices found',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Icon(
+                          Icons.devices_other,
+                          size: 64,
+                          color: AppTheme.mintAqua,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'No devices found',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Text(
                         'Your devices will appear here once you sign in',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -292,6 +400,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                   ),
                 )
               : RefreshIndicator(
+                  color: AppTheme.mintAqua,
                   onRefresh: _loadDevices,
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 8),

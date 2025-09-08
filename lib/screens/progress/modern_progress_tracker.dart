@@ -173,9 +173,9 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
           .eq('user_id', user.id)
           .order('created_at', ascending: false);
 
-      // Load measurements from measurements table
+      // Load measurements from client_metrics table
       final measurementsResponse = await Supabase.instance.client
-          .from('measurements')
+          .from('client_metrics')
           .select()
           .eq('user_id', user.id)
           .order('created_at', ascending: false);
@@ -461,6 +461,39 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildProgressSummary() {
+    if (_progressPhotos.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(DesignTokens.space16),
+        decoration: BoxDecoration(
+          color: AppTheme.cardBackground,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Progress Summary',
+              style: DesignTokens.titleMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: DesignTokens.space12),
+            const Center(
+              child: Text(
+                'No progress photos yet.\nTake your first progress photo to see your journey!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
     final latestPhoto = _progressPhotos.first;
     final previousPhoto = _progressPhotos.length > 1 ? _progressPhotos[1] : null;
     
