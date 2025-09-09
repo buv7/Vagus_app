@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../screens/billing/upgrade_screen.dart';
+import '../../theme/design_tokens.dart';
+import '../../theme/app_theme.dart';
 
 /// AI Usage Meter widget that displays AI usage statistics for the current user
 /// Shows usage count, limits, and remaining quota
@@ -46,29 +48,50 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
         return;
       }
 
-      // Query AI usage summary for the current user using the database function
-      final response = await supabase.rpc('get_ai_usage_summary', params: {
-        'uid': user.id,
-      });
+      // Try to query AI usage summary, but handle missing table gracefully
+      try {
+        final response = await supabase.rpc('get_ai_usage_summary', params: {
+          'uid': user.id,
+        });
 
-      if (response != null && response.isNotEmpty) {
-        setState(() {
-          _usageData = response.first;
-          _loading = false;
-        });
-      } else {
-        // No usage data found, create default
-        setState(() {
-          _usageData = {
-            'total_requests': 0,
-            'requests_this_month': 0,
-            'monthly_limit': 100,
-            'total_tokens': 0,
-            'tokens_this_month': 0,
-            'last_used': null,
-          };
-          _loading = false;
-        });
+        if (response != null && response.isNotEmpty) {
+          setState(() {
+            _usageData = response.first;
+            _loading = false;
+          });
+        } else {
+          // No usage data found, create default
+          setState(() {
+            _usageData = {
+              'total_requests': 0,
+              'requests_this_month': 0,
+              'monthly_limit': 100,
+              'total_tokens': 0,
+              'tokens_this_month': 0,
+              'last_used': null,
+            };
+            _loading = false;
+          });
+        }
+      } catch (e) {
+        // Handle missing table or function gracefully
+        if (e.toString().contains('does not exist') || e.toString().contains('ai_usage')) {
+          // Create default data when table doesn't exist
+          setState(() {
+            _usageData = {
+              'total_requests': 0,
+              'requests_this_month': 0,
+              'monthly_limit': 100,
+              'total_tokens': 0,
+              'tokens_this_month': 0,
+              'last_used': null,
+            };
+            _loading = false;
+          });
+        } else {
+          // Re-throw other errors
+          rethrow;
+        }
       }
     } catch (e) {
       setState(() {
@@ -101,84 +124,93 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
   }
 
   Widget _buildLoadingState() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.space16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+      ),
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
             ),
-            const SizedBox(width: 12),
-            Text(
-              'Loading AI usage...',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: widget.isCompact ? 14 : 16,
-              ),
+          ),
+          const SizedBox(width: DesignTokens.space12),
+          Text(
+            'Loading AI usage...',
+            style: TextStyle(
+              color: AppTheme.lightGrey,
+              fontSize: widget.isCompact ? 14 : 16,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildErrorState() {
-    return Card(
-      color: Colors.red.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.error_outline, color: Colors.red.shade600, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                _error!,
-                style: TextStyle(
-                  color: Colors.red.shade700,
-                  fontSize: widget.isCompact ? 14 : 16,
-                ),
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.space16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+        border: Border.all(color: DesignTokens.danger.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline, color: DesignTokens.danger, size: 20),
+          const SizedBox(width: DesignTokens.space12),
+          Expanded(
+            child: Text(
+              _error!,
+              style: TextStyle(
+                color: DesignTokens.danger,
+                fontSize: widget.isCompact ? 14 : 16,
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.refresh, size: 18),
-              onPressed: _refresh,
-              tooltip: 'Retry',
-            ),
-          ],
-        ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh, size: 18, color: AppTheme.lightGrey),
+            onPressed: _refresh,
+            tooltip: 'Retry',
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildNoDataState() {
-    return Card(
-      color: Colors.blue.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline, color: Colors.blue.shade600, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'No AI usage data available',
-                style: TextStyle(
-                  color: Colors.blue.shade700,
-                  fontSize: widget.isCompact ? 14 : 16,
-                ),
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.space16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+        border: Border.all(color: AppTheme.mintAqua.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: AppTheme.mintAqua, size: 20),
+          const SizedBox(width: DesignTokens.space12),
+          Expanded(
+            child: Text(
+              'No AI usage data available',
+              style: TextStyle(
+                color: AppTheme.mintAqua,
+                fontSize: widget.isCompact ? 14 : 16,
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.refresh, size: 18),
-              onPressed: _refresh,
-              tooltip: 'Refresh',
-            ),
-          ],
-        ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh, size: 18, color: AppTheme.lightGrey),
+            onPressed: _refresh,
+            tooltip: 'Refresh',
+          ),
+        ],
       ),
     );
   }
@@ -195,180 +227,182 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
     final remainingRequests = monthlyLimit - requestsThisMonth;
 
     Color getUsageColor() {
-      if (usagePercentage >= 0.9) return Colors.red;
-      if (usagePercentage >= 0.7) return Colors.orange;
-      if (usagePercentage >= 0.5) return Colors.yellow;
-      return Colors.green;
+      if (usagePercentage >= 0.9) return DesignTokens.danger;
+      if (usagePercentage >= 0.7) return AppTheme.softYellow;
+      if (usagePercentage >= 0.5) return AppTheme.softYellow;
+      return DesignTokens.success;
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.psychology,
-                  color: Colors.purple.shade600,
-                  size: widget.isCompact ? 18 : 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'AI Usage Meter',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: widget.isCompact ? 16 : 18,
-                    color: Colors.purple.shade700,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.refresh, size: 18),
-                  onPressed: _refresh,
-                  tooltip: 'Refresh usage data',
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            
-            // Monthly usage progress
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'This Month',
-                            style: TextStyle(
-                              fontSize: widget.isCompact ? 12 : 14,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                          Text(
-                            '$requestsThisMonth / $monthlyLimit',
-                            style: TextStyle(
-                              fontSize: widget.isCompact ? 12 : 14,
-                              fontWeight: FontWeight.w500,
-                              color: getUsageColor(),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      LinearProgressIndicator(
-                        value: usagePercentage.clamp(0.0, 1.0),
-                        backgroundColor: Colors.grey.shade200,
-                        valueColor: AlwaysStoppedAnimation<Color>(getUsageColor()),
-                        minHeight: 6,
-                      ),
-                    ],
-                  ),
-                ),
-                // Upgrade button when remaining is low
-                if (remainingRequests <= (monthlyLimit * 0.1) || remainingRequests == 0) ...[
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const UpgradeScreen()),
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      'Upgrade',
-                      style: TextStyle(
-                        fontSize: widget.isCompact ? 10 : 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.amber.shade700,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            
-            const SizedBox(height: 12),
-            
-            // Usage statistics
-            if (!widget.isCompact) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatItem(
-                      'Total Requests',
-                      '$totalRequests',
-                      Icons.history,
-                      Colors.blue.shade600,
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildStatItem(
-                      'Remaining',
-                      '$remainingRequests',
-                      Icons.access_time,
-                      remainingRequests > 0 ? Colors.green.shade600 : Colors.red.shade600,
-                    ),
-                  ),
-                ],
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.space20),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.psychology,
+                color: AppTheme.mintAqua,
+                size: widget.isCompact ? 18 : 20,
               ),
-              
-              const SizedBox(height: 12),
-              
-              // Tokens usage
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatItem(
-                      'Total Tokens',
-                      '${_usageData!['total_tokens'] ?? 0}',
-                      Icons.token,
-                      Colors.purple.shade600,
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildStatItem(
-                      'This Month',
-                      '${_usageData!['tokens_this_month'] ?? 0}',
-                      Icons.calendar_month,
-                      Colors.orange.shade600,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: DesignTokens.space8),
+              Text(
+                'AI Usage Meter', // Fixed Syntax
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: widget.isCompact ? 16 : 18,
+                  color: AppTheme.neutralWhite,
+                ),
               ),
-              
-              if (lastUsed != null) ...[
-                const SizedBox(height: 8),
-                Row(
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.refresh, size: 18, color: AppTheme.lightGrey),
+                onPressed: _refresh,
+                tooltip: 'Refresh usage data',
+              ),
+            ],
+          ),
+          const SizedBox(height: DesignTokens.space12),
+          
+          // Monthly usage progress
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 16,
-                      color: Colors.grey.shade600,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'This Month',
+                          style: TextStyle(
+                            fontSize: widget.isCompact ? 12 : 14,
+                            color: AppTheme.lightGrey,
+                          ),
+                        ),
+                        Text(
+                          '$requestsThisMonth / $monthlyLimit',
+                          style: TextStyle(
+                            fontSize: widget.isCompact ? 12 : 14,
+                            fontWeight: FontWeight.w500,
+                            color: getUsageColor(),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Last used: ${_formatDate(lastUsed)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
+                    const SizedBox(height: 4),
+                    LinearProgressIndicator(
+                      value: usagePercentage.clamp(0.0, 1.0),
+                      backgroundColor: AppTheme.steelGrey,
+                      valueColor: AlwaysStoppedAnimation<Color>(getUsageColor()),
+                      minHeight: 6,
                     ),
                   ],
                 ),
+              ),
+              // Upgrade button when remaining is low
+              if (remainingRequests <= (monthlyLimit * 0.1) || remainingRequests == 0) ...[
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const UpgradeScreen()),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    'Upgrade',
+                    style: TextStyle(
+                      fontSize: widget.isCompact ? 10 : 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.softYellow,
+                    ),
+                  ),
+                ),
               ],
             ],
+          ),
+          
+          const SizedBox(height: DesignTokens.space12),
+          
+          // Usage statistics
+          if (!widget.isCompact) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem(
+                    'Total Requests',
+                    '$totalRequests',
+                    Icons.history,
+                    AppTheme.mintAqua,
+                  ),
+                ),
+                Expanded(
+                  child: _buildStatItem(
+                    'Remaining',
+                    '$remainingRequests',
+                    Icons.access_time,
+                    remainingRequests > 0 ? DesignTokens.success : DesignTokens.danger,
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: DesignTokens.space12),
+            
+            // Tokens usage
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem(
+                    'Total Tokens',
+                    '${_usageData!['total_tokens'] ?? 0}',
+                    Icons.token,
+                    AppTheme.mintAqua,
+                  ),
+                ),
+                Expanded(
+                  child: _buildStatItem(
+                    'This Month',
+                    '${_usageData!['tokens_this_month'] ?? 0}',
+                    Icons.calendar_month,
+                    AppTheme.softYellow,
+                  ),
+                ),
+              ],
+            ),
+            
+            if (lastUsed != null) ...[
+              const SizedBox(height: DesignTokens.space8),
+              Row(
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 16,
+                    color: AppTheme.lightGrey,
+                  ),
+                  const SizedBox(width: DesignTokens.space6),
+                  Text(
+                    'Last used: ${_formatDate(lastUsed)}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.lightGrey,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
-        ),
+        ],
       ),
     );
   }
@@ -377,7 +411,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
     return Row(
       children: [
         Icon(icon, size: 16, color: color),
-        const SizedBox(width: 6),
+        const SizedBox(width: DesignTokens.space6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +420,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey.shade600,
+                  color: AppTheme.lightGrey,
                 ),
               ),
               Text(

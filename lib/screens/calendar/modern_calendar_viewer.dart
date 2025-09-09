@@ -151,15 +151,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
       padding: const EdgeInsets.all(DesignTokens.space16),
       child: Row(
         children: [
-          // Hamburger menu
-          Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
-          ),
-          
-          // Title
+          // Title (centered without menu icon) // Menu Icon Removed
           Expanded(
             child: Text(
               'Calendar',
@@ -167,6 +159,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         ],

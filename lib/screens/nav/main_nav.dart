@@ -4,15 +4,21 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../dashboard/modern_client_dashboard.dart';
 import '../dashboard/coach_home_screen.dart';
+import '../dashboard/modern_coach_dashboard.dart';
 import '../workouts/modern_workout_plan_viewer.dart';
 import '../workout/coach_plan_builder_screen.dart';
+import '../workout/modern_plan_builder_screen.dart';
 import '../calendar/modern_calendar_viewer.dart';
 import '../nutrition/modern_nutrition_plan_viewer.dart';
-import '../nutrition/nutrition_plan_builder.dart';
+import '../nutrition/modern_nutrition_plan_builder.dart';
 import '../messaging/modern_messenger_screen.dart';
 import '../messaging/coach_threads_screen.dart';
+import '../messaging/modern_coach_messenger_screen.dart';
+import '../messaging/modern_client_messages_screen.dart';
+import '../coach/modern_client_management_screen.dart';
 import '../calling/modern_live_calls_screen.dart';
 import '../progress/modern_progress_tracker.dart';
+import '../menu/modern_coach_menu_screen.dart';
 import '../../components/common/quick_add_sheet.dart';
 import '../../widgets/fab/simple_glassmorphism_fab.dart';
 import '../../widgets/fab/camera_glassmorphism_fab.dart';
@@ -110,16 +116,22 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
     
     return [
       NavTab(
-        icon: Icons.home_rounded,
-        activeIcon: Icons.home_rounded,
-        label: 'Home',
-        screen: isCoach ? const CoachHomeScreen() : const ModernClientDashboard(),
+        icon: Icons.dashboard_outlined,
+        activeIcon: Icons.dashboard_rounded,
+        label: 'Dashboard', // Modern Design
+        screen: isCoach ? const ModernCoachDashboard() : const ModernClientDashboard(),
+      ),
+      NavTab(
+        icon: Icons.people_outline,
+        activeIcon: Icons.people_rounded,
+        label: 'Clients',
+        screen: isCoach ? const ModernClientManagementScreen() : const ModernClientDashboard(),
       ),
       NavTab(
         icon: Icons.fitness_center_outlined,
         activeIcon: Icons.fitness_center_rounded,
-        label: 'Workouts',
-        screen: isCoach ? const CoachPlanBuilderScreen() : const ModernWorkoutPlanViewer(),
+        label: 'Plans',
+        screen: isCoach ? const ModernPlanBuilderScreen() : const ModernWorkoutPlanViewer(),
       ),
       const NavTab(
         icon: Icons.calendar_month_outlined,
@@ -128,21 +140,11 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
         screen: ModernCalendarViewer(), // Shared for both roles
       ),
       NavTab(
-        icon: Icons.restaurant_outlined,
-        activeIcon: Icons.restaurant_rounded,
-        label: 'Nutrition',
-        screen: isCoach ? const NutritionPlanBuilder() : const ModernNutritionPlanViewer(),
-      ),
-      NavTab(
         icon: Icons.chat_outlined,
         activeIcon: Icons.chat_rounded,
         label: 'Messages',
         screen: isCoach 
-          ? MessagingWrapper(
-              onShowBottomNav: showBottomNavigation,
-              onHideBottomNav: hideBottomNavigation,
-              child: const CoachThreadsScreen(),
-            )
+          ? const ModernClientMessagesScreen()
           : MessagingWrapper(
               onShowBottomNav: showBottomNavigation,
               onHideBottomNav: hideBottomNavigation,
@@ -260,11 +262,12 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
             offset: Offset(0, (1 - _bottomNavSlideAnimation.value) * 100),
             child: SafeArea(
               child: Container(
+                height: 80,
                 decoration: BoxDecoration(
                   color: AppTheme.primaryBlack,
                   border: Border(
                     top: BorderSide(
-                      color: Colors.white.withOpacity(0.1),
+                      color: AppTheme.steelGrey,
                       width: 1,
                     ),
                   ),
@@ -272,6 +275,7 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
                 child: Padding(
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).padding.bottom,
+                    top: DesignTokens.space8,
                   ),
                   child: Row(
                     children: tabs.asMap().entries.map((entry) {
@@ -318,53 +322,28 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
           return Transform.scale(
             scale: index == _currentIndex ? _tabScaleAnimation.value : 1.0,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: DesignTokens.space8),
+              padding: const EdgeInsets.symmetric(vertical: DesignTokens.space4),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Icon with active state
-                  AnimatedContainer(
-                    duration: DesignTokens.durationFast,
-                    padding: const EdgeInsets.all(DesignTokens.space8),
-                    decoration: BoxDecoration(
-                      color: isActive 
-                          ? AppTheme.mintAqua.withValues(alpha: 0.1)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(DesignTokens.radius12),
-                    ),
-                    child: Icon(
-                      isActive ? tab.activeIcon : tab.icon,
-                      color: isActive 
-                          ? AppTheme.mintAqua
-                          : Colors.white.withValues(alpha: 0.6),
-                      size: 24,
-                    ),
+                  Icon(
+                    isActive ? tab.activeIcon : tab.icon,
+                    color: isActive 
+                        ? AppTheme.mintAqua
+                        : AppTheme.lightGrey,
+                    size: 20,
                   ),
                   
-                  const SizedBox(height: DesignTokens.space4),
+                  const SizedBox(height: DesignTokens.space2),
                   
                   // Label with active state
-                  AnimatedDefaultTextStyle(
-                    duration: DesignTokens.durationFast,
+                  Text(
+                    tab.label,
                     style: TextStyle(
-                      color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.6),
-                      fontSize: 12,
+                      color: isActive ? AppTheme.neutralWhite : AppTheme.lightGrey,
+                      fontSize: 10,
                       fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                    ),
-                    child: Text(tab.label),
-                  ),
-                  
-                  // Active indicator line
-                  AnimatedContainer(
-                    duration: DesignTokens.durationFast,
-                    margin: const EdgeInsets.only(top: DesignTokens.space4),
-                    height: 2,
-                    width: isActive ? 20 : 0,
-                    decoration: BoxDecoration(
-                      color: isActive 
-                          ? AppTheme.mintAqua
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                     ),
                   ),
                 ],

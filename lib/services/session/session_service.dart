@@ -93,17 +93,34 @@ class SessionService {
 
       // Note: Current schema doesn't have is_current field, so we skip this step
 
-      // Upsert current device
-      await _supabase
-          .from('user_devices')
-          .upsert({
-            'user_id': user.id,
-            'device_id': deviceId,
-            'device_type': deviceInfo['platform'],
-            'os_version': deviceInfo['os_version'],
-            'app_version': deviceInfo['app_version'],
-            'onesignal_player_id': deviceInfo['onesignal_id'],
-          }, onConflict: 'device_id');
+      // Upsert current device - handle missing columns gracefully
+      try {
+        await _supabase
+            .from('user_devices')
+            .upsert({
+              'user_id': user.id,
+              'device_id': deviceId,
+              'device_type': deviceInfo['platform'],
+              'os_version': deviceInfo['os_version'],
+              'app_version': deviceInfo['app_version'],
+              'onesignal_player_id': deviceInfo['onesignal_id'],
+            }, onConflict: 'device_id');
+      } catch (e) {
+        // If device_type column doesn't exist, try without it
+        if (e.toString().contains('device_type')) {
+          await _supabase
+              .from('user_devices')
+              .upsert({
+                'user_id': user.id,
+                'device_id': deviceId,
+                'os_version': deviceInfo['os_version'],
+                'app_version': deviceInfo['app_version'],
+                'onesignal_player_id': deviceInfo['onesignal_id'],
+              }, onConflict: 'device_id');
+        } else {
+          rethrow;
+        }
+      }
 
       if (kDebugMode) {
         debugPrint('✅ Device upserted: ${deviceInfo['model']}');
@@ -122,13 +139,30 @@ class SessionService {
       final deviceId = await _getDeviceId();
 
       // Update the device record to trigger updated_at timestamp
-      await _supabase
-          .from('user_devices')
-          .update({
-            'app_version': await _getAppVersion(),
-          })
-          .eq('user_id', user.id)
-          .eq('device_id', deviceId);
+      // Handle missing updated_at field gracefully
+      try {
+        await _supabase
+            .from('user_devices')
+            .update({
+              'app_version': await _getAppVersion(),
+              'updated_at': DateTime.now().toIso8601String(),
+            })
+            .eq('user_id', user.id)
+            .eq('device_id', deviceId);
+      } catch (e) {
+        // If updated_at field doesn't exist, try without it
+        if (e.toString().contains('updated_at')) {
+          await _supabase
+              .from('user_devices')
+              .update({
+                'app_version': await _getAppVersion(),
+              })
+              .eq('user_id', user.id)
+              .eq('device_id', deviceId);
+        } else {
+          rethrow;
+        }
+      }
 
       if (kDebugMode) {
         debugPrint('💓 Heartbeat updated');

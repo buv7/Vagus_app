@@ -311,6 +311,7 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
     setState(() => _analyticsBusy = true);
     try {
       final analytics = await _analyticsService.getSummary(
+        coachId: coachId,
         days: _analyticsDays,
       );
       if (mounted) {
