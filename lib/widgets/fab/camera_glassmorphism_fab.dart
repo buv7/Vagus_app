@@ -210,26 +210,25 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300, // Fixed width to prevent infinite constraints
-      height: 400, // Fixed height to prevent infinite constraints
-      child: Stack(
-        children: [
-          // Animated action boxes
-          if (_isOpen) ..._buildActionBoxes(),
-          
-          // Main FAB - Hidden but still functional for positioning
-          Positioned(
-            right: 20,
-            bottom: 100, // Position above the main FAB
-            child: Container(
-              width: 56,
-              height: 56,
-              // Invisible container to maintain positioning
-              color: Colors.transparent,
+    if (!_isOpen) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned.fill(
+      child: GestureDetector(
+        onTap: _toggleFAB, // Dismiss when tapping outside
+        child: Container(
+          color: Colors.black.withValues(alpha: 0.3), // Semi-transparent backdrop
+          child: Center(
+            child: GestureDetector(
+              onTap: () {}, // Prevent dismissal when tapping on the boxes
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _buildActionBoxes(),
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -246,9 +245,8 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
             _animationController.value,
           );
           
-          return Positioned(
-            right: 20,
-            bottom: 180 + (index * 120), // Stack vertically with spacing
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Transform.scale(
               scale: animationValue,
               child: Opacity(
@@ -256,7 +254,7 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
                 child: GestureDetector(
                   onTap: () => _onActionTap(action),
                   child: Container(
-                    width: 200,
+                    width: 280,
                     height: 100,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
