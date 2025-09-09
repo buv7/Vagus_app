@@ -245,8 +245,8 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
             _animationController.value,
           );
           
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 12), // Separate each box with margin
             child: Transform.scale(
               scale: animationValue,
               child: Opacity(
@@ -254,86 +254,65 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
                 child: GestureDetector(
                   onTap: () => _onActionTap(action),
                   child: Container(
-                    width: 280,
-                    height: 100,
+                    width: 320,
+                    height: 80,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: RadialGradient(
-                        colors: [
-                          AppTheme.mintAqua.withValues(alpha: 0.3),
-                          AppTheme.mintAqua.withValues(alpha: 0.1),
-                        ],
-                      ),
+                      borderRadius: BorderRadius.circular(16), // Rounded corners
+                      color: AppTheme.mintAqua, // Solid teal background like in the image
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.mintAqua.withValues(alpha: 0.2),
-                          blurRadius: 15,
-                          spreadRadius: 1,
+                          color: AppTheme.mintAqua.withValues(alpha: 0.3),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      child: Row(
+                        children: [
+                          // Icon container with circular background
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
                               color: Colors.white.withValues(alpha: 0.2),
-                              width: 1,
+                            ),
+                            child: Icon(
+                              action.icon,
+                              color: Colors.white,
+                              size: 24,
                             ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Row(
+                          const SizedBox(width: 16),
+                          // Text content
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppTheme.mintAqua.withValues(alpha: 0.2),
-                                    border: Border.all(
-                                      color: AppTheme.mintAqua.withValues(alpha: 0.5),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    action.icon,
-                                    color: AppTheme.mintAqua,
-                                    size: 24,
+                                Text(
+                                  action.label,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        action.label,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        action.description,
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.7),
-                                          fontSize: 10,
-                                        ),
-                                      ),
-                                    ],
+                                const SizedBox(height: 4),
+                                Text(
+                                  action.description,
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
