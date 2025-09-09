@@ -104,20 +104,55 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
       String role = 'client'; // Default role for new users
       
       if (profile == null) {
-        debugPrint('⚠️ AuthGate: No profile found for user, creating default profile...');
-        // Create a default profile for the user
-        try {
-          await supabase.from('profiles').insert({
-            'id': user.id,
-            'email': user.email,
-            'name': 'New User',
-            'role': 'client', // New users default to client
-            'created_at': DateTime.now().toIso8601String(),
-          });
-          debugPrint('✅ AuthGate: Default profile created successfully');
-        } catch (e) {
-          debugPrint('❌ AuthGate: Failed to create profile: $e');
-          // Continue with default role - don't let this block login
+        debugPrint('⚠️ AuthGate: No profile found for user, attempting to create default profile...');
+        // Create a default profile for the user with retry logic
+        bool profileCreated = false;
+        int retryCount = 0;
+        const maxRetries = 3;
+        
+        while (!profileCreated && retryCount < maxRetries) {
+          try {
+            // Wait a bit for the user to be fully committed to auth.users
+            if (retryCount > 0) {
+              await Future.delayed(Duration(milliseconds: 500 * retryCount));
+            }
+            
+            await supabase.from('profiles').insert({
+              'id': user.id,
+              'email': user.email,
+              'name': user.userMetadata?['name'] ?? 'New User',
+              'role': 'client', // New users default to client
+            });
+            profileCreated = true;
+            debugPrint('✅ AuthGate: Default profile created successfully');
+          } catch (e) {
+            retryCount++;
+            debugPrint('❌ AuthGate: Failed to create profile (attempt $retryCount): $e');
+            
+            if (retryCount >= maxRetries) {
+              debugPrint('❌ AuthGate: Max retries reached, continuing with default role');
+              // Check if profile was created by trigger in the meantime
+              try {
+                final retryProfile = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .maybeSingle();
+                if (retryProfile != null) {
+                  role = retryProfile['role'] ?? 'client';
+                  profileCreated = true;
+                  debugPrint('✅ AuthGate: Profile found after retry, role: $role');
+                }
+              } catch (retryError) {
+                debugPrint('❌ AuthGate: Error checking profile after retry: $retryError');
+              }
+            }
+          }
+        }
+        
+        // If still no profile, continue with default role
+        if (!profileCreated) {
+          debugPrint('⚠️ AuthGate: Continuing with default client role');
         }
       } else {
         // Use the existing role from the database, don't default to client
