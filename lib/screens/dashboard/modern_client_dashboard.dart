@@ -56,19 +56,20 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   Map<String, dynamic>? _userStats;
   Map<String, dynamic>? _healthData;
   
-  // Mock data for the design
-  final String _selectedNutritionPlan = 'Muscle Gain Protocol';
-  final int _currentCalories = 2340;
-  final int _targetCalories = 2800;
-  final int _currentProtein = 163;
-  final int _targetProtein = 180;
+  // Real data from Supabase
+  Map<String, dynamic>? _coachProfile;
+  List<Map<String, dynamic>> _supplements = [];
+  Map<String, dynamic>? _progressData;
+  Map<String, dynamic>? _streakData;
+  Map<String, dynamic>? _rankData;
+  String? _selectedNutritionPlan;
+  int _currentCalories = 0;
+  int _targetCalories = 0;
+  int _currentProtein = 0;
+  int _targetProtein = 0;
   
   // Supplement states
-  Map<String, bool> _supplementStates = {
-    'Whey Protein': true, // Pre-marked as taken
-    'Creatine': false,
-    'Multivitamin': false,
-  };
+  Map<String, bool> _supplementStates = {};
 
   @override
   void initState() {
@@ -105,6 +106,15 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
       final userStatsFuture = _loadUserStats(user.id);
       final healthDataFuture = _loadHealthData(user.id);
 
+      // Load additional data
+      await Future.wait([
+        _loadCoachData(),
+        _loadSupplements(),
+        _loadProgressData(),
+        _loadStreakData(),
+        _loadRankData(),
+      ]);
+
       // Wait for all futures to complete
       final results = await Future.wait<dynamic>([
         profileFuture,
@@ -137,6 +147,132 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _loadCoachData() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      // Get coach relationship
+      final coachRelation = await Supabase.instance.client
+          .from('coach_clients')
+          .select('coach_id')
+          .eq('client_id', user.id)
+          .eq('status', 'active')
+          .single();
+
+      if (coachRelation != null) {
+        // Get coach profile
+        final coachProfile = await Supabase.instance.client
+            .from('profiles')
+            .select('*')
+            .eq('id', coachRelation['coach_id'])
+            .single();
+
+        if (mounted) {
+          setState(() {
+            _coachProfile = coachProfile;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading coach data: $e');
+    }
+  }
+
+  Future<void> _loadSupplements() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      final supplements = await Supabase.instance.client
+          .from('supplements')
+          .select('*')
+          .eq('client_id', user.id)
+          .eq('is_active', true);
+
+      if (mounted) {
+        setState(() {
+          _supplements = List<Map<String, dynamic>>.from(supplements);
+          // Initialize supplement states
+          _supplementStates = Map.fromEntries(
+            _supplements.map((s) => MapEntry(
+              s['name'] ?? '',
+              s['taken_today'] ?? false,
+            )),
+          );
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading supplements: $e');
+    }
+  }
+
+  Future<void> _loadProgressData() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      final progressData = await Supabase.instance.client
+          .from('progress_entries')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', ascending: false)
+          .limit(1)
+          .maybeSingle();
+
+      if (mounted) {
+        setState(() {
+          _progressData = progressData;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading progress data: $e');
+    }
+  }
+
+  Future<void> _loadStreakData() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      final streakData = await Supabase.instance.client
+          .from('user_streaks')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('streak_type', 'workout')
+          .single();
+
+      if (mounted) {
+        setState(() {
+          _streakData = streakData;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading streak data: $e');
+    }
+  }
+
+  Future<void> _loadRankData() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      final rankData = await Supabase.instance.client
+          .from('user_ranks')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+      if (mounted) {
+        setState(() {
+          _rankData = rankData;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading rank data: $e');
     }
   }
 
@@ -318,8 +454,14 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               
               const SizedBox(height: 24),
               
-              // Top Grid: Profile, Progress, Supplements/Sessions
-              _buildTopGrid(),
+              // Profile Card
+              _buildProfileCard(),
+              
+              // Progress Metrics Card
+              _buildProgressMetricsCard(),
+              
+              // Supplements Card
+              _buildSupplementsCard(),
               
               const SizedBox(height: 24),
               
@@ -340,7 +482,444 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildHeader() {
+    final userName = _profile?['name'] ?? 'User';
+    final userEmail = _profile?['email'] ?? '';
+    final avatarUrl = _profile?['avatar_url'];
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          // Hamburger menu icon
+          IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () {
+              // Menu functionality can be added here
+            },
+          ),
+          
+          // Welcome message
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Welcome back, $userName!',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'Ready to crush your fitness goals today?',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Profile picture with dropdown
+          GestureDetector(
+            onTap: () {
+              // Profile menu functionality
+            },
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
+                  child: avatarUrl == null ? const Icon(Icons.person, color: Colors.white) : null,
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.keyboard_arrow_down, color: Colors.white70),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileCard() {
+    final userName = _profile?['name'] ?? 'User';
+    final userEmail = _profile?['email'] ?? '';
+    final avatarUrl = _profile?['avatar_url'];
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2D2E),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          // Profile image
+          CircleAvatar(
+            radius: 30,
+            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
+            child: avatarUrl == null ? const Icon(Icons.person, size: 30, color: Colors.white) : null,
+          ),
+          
+          const SizedBox(width: 16),
+          
+          // User info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'Premium Client',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                
+                // Coach info
+                if (_coachProfile != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[800],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.person, color: Colors.white70, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Coach: ${_coachProfile!['name'] ?? 'Unknown'}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                
+                const SizedBox(height: 8),
+                
+                // Streak and Rank
+                Row(
+                  children: [
+                    const Icon(Icons.flash_on, color: Colors.orange, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${_streakData?['current_streak'] ?? 0} Day Streak',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      'Rank: ${_rankData?['rank_name'] ?? 'Bronze'}',
+                      style: const TextStyle(
+                        color: Colors.amber,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressMetricsCard() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2D2E),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Progress Metrics',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          Row(
+            children: [
+              // Weight display
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${_progressData?['weight'] ?? '0.0'} lbs',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          (_progressData?['weight_change'] ?? 0) >= 0 
+                              ? Icons.trending_up 
+                              : Icons.trending_down, 
+                          color: (_progressData?['weight_change'] ?? 0) >= 0 
+                              ? Colors.red 
+                              : Colors.green, 
+                          size: 16
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${(_progressData?['weight_change'] ?? 0) >= 0 ? '+' : ''}${_progressData?['weight_change'] ?? 0} lbs this week',
+                          style: TextStyle(
+                            color: (_progressData?['weight_change'] ?? 0) >= 0 
+                                ? Colors.red 
+                                : Colors.green,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Goal info
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Goal: ${_progressData?['goal_weight'] ?? '0'} lbs',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Text(
+                    '${((_progressData?['goal_weight'] ?? 0) - (_progressData?['weight'] ?? 0)).toStringAsFixed(1)} lbs to go',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Body measurements
+          Row(
+            children: [
+              Text(
+                'Waist ${_progressData?['waist'] ?? '0.0"'}',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                'Chest ${_progressData?['chest'] ?? '0.0"'}',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Add progress photo button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                // Add progress photo functionality
+              },
+              icon: const Icon(Icons.camera_alt, color: Colors.white),
+              label: const Text(
+                'Add Progress Photo',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue[600],
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSupplementsCard() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2D2E),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Supplements Today',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Display real supplements
+          if (_supplements.isEmpty)
+            const Text(
+              'No supplements scheduled for today',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
+            )
+          else
+            ..._supplements.map((supplement) {
+              final name = supplement['name'] ?? '';
+              final time = supplement['time_of_day'] ?? 'Morning';
+              final isTaken = _supplementStates[name] ?? false;
+              
+              return Column(
+                children: [
+                  _buildSupplementItem(
+                    name,
+                    time,
+                    isTaken,
+                    onTap: () {
+                      _markSupplementTaken(supplement['id'], name);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              );
+            }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _markSupplementTaken(String supplementId, String name) async {
+    try {
+      // Update in Supabase
+      await Supabase.instance.client
+          .from('supplements')
+          .update({'taken_today': true})
+          .eq('id', supplementId);
+
+      // Update local state
+      setState(() {
+        _supplementStates[name] = true;
+      });
+    } catch (e) {
+      debugPrint('Error marking supplement as taken: $e');
+    }
+  }
+
+  Widget _buildSupplementItem(String name, String time, bool isTaken, {VoidCallback? onTap}) {
     return Row(
+      children: [
+        const Icon(Icons.access_time, color: Colors.grey, size: 16),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                time,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        if (isTaken)
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 16,
+            ),
+          )
+        else
+          GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.blue[600],
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Text(
+                'Mark Taken',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildOldHeader() {return Row(
       children: [
         // Hamburger menu
         Builder(

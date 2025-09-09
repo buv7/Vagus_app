@@ -119,48 +119,85 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
     final isCoach = _userRole == 'coach';
     debugPrint('🔧 MainNav: Building tabs for role: $_userRole, isCoach: $isCoach');
     
-    return [
-      NavTab(
-        icon: Icons.dashboard_outlined,
-        activeIcon: Icons.dashboard_rounded,
-        label: 'Dashboard',
-        screen: isCoach ? const ModernCoachDashboard() : const ModernClientDashboard(),
-      ),
-      NavTab(
-        icon: isCoach ? Icons.people_outline : Icons.person_outline,
-        activeIcon: isCoach ? Icons.people_rounded : Icons.person_rounded,
-        label: isCoach ? 'Clients' : 'My Coach',
-        screen: isCoach ? const ModernClientManagementScreen() : const MyCoachScreen(),
-      ),
-      NavTab(
-        icon: Icons.fitness_center_outlined,
-        activeIcon: Icons.fitness_center_rounded,
-        label: isCoach ? 'Plans' : 'My Plans',
-        screen: isCoach ? const ModernPlanBuilderScreen() : const ModernWorkoutPlanViewer(),
-      ),
-      const NavTab(
-        icon: Icons.calendar_month_outlined,
-        activeIcon: Icons.calendar_month_rounded,
-        label: 'Calendar',
-        screen: ModernCalendarViewer(), // Shared for both roles
-      ),
-      NavTab(
-        icon: Icons.chat_outlined,
-        activeIcon: Icons.chat_rounded,
-        label: 'Messages',
-        screen: isCoach 
-          ? const ModernClientMessagesScreen()
-          : MessagingWrapper(
-              onShowBottomNav: showBottomNavigation,
-              onHideBottomNav: hideBottomNavigation,
-              child: const ModernMessengerScreen(),
-            ),
-        onEnter: () {
-          // Hide bottom navigation when entering messages
-          hideBottomNavigation();
-        },
-      ),
-    ];
+    if (isCoach) {
+      // Coach navigation
+      return [
+        NavTab(
+          icon: Icons.dashboard_outlined,
+          activeIcon: Icons.dashboard_rounded,
+          label: 'Dashboard',
+          screen: const ModernCoachDashboard(),
+        ),
+        NavTab(
+          icon: Icons.people_outline,
+          activeIcon: Icons.people_rounded,
+          label: 'Clients',
+          screen: const ModernClientManagementScreen(),
+        ),
+        NavTab(
+          icon: Icons.fitness_center_outlined,
+          activeIcon: Icons.fitness_center_rounded,
+          label: 'Plans',
+          screen: const ModernPlanBuilderScreen(),
+        ),
+        const NavTab(
+          icon: Icons.calendar_month_outlined,
+          activeIcon: Icons.calendar_month_rounded,
+          label: 'Calendar',
+          screen: ModernCalendarViewer(),
+        ),
+        NavTab(
+          icon: Icons.chat_outlined,
+          activeIcon: Icons.chat_rounded,
+          label: 'Messages',
+          screen: const ModernClientMessagesScreen(),
+          onEnter: () {
+            hideBottomNavigation();
+          },
+        ),
+      ];
+    } else {
+      // Client navigation - matching the design
+      return [
+        NavTab(
+          icon: Icons.home_outlined,
+          activeIcon: Icons.home_rounded,
+          label: 'Home',
+          screen: const ModernClientDashboard(),
+        ),
+        NavTab(
+          icon: Icons.fitness_center_outlined,
+          activeIcon: Icons.fitness_center_rounded,
+          label: 'Workouts',
+          screen: const ModernWorkoutPlanViewer(),
+        ),
+        const NavTab(
+          icon: Icons.calendar_month_outlined,
+          activeIcon: Icons.calendar_month_rounded,
+          label: 'Calendar',
+          screen: ModernCalendarViewer(),
+        ),
+        NavTab(
+          icon: Icons.restaurant_outlined,
+          activeIcon: Icons.restaurant_rounded,
+          label: 'Nutrition',
+          screen: const ModernNutritionPlanViewer(),
+        ),
+        NavTab(
+          icon: Icons.chat_outlined,
+          activeIcon: Icons.chat_rounded,
+          label: 'Messages',
+          screen: MessagingWrapper(
+            onShowBottomNav: showBottomNavigation,
+            onHideBottomNav: hideBottomNavigation,
+            child: const ModernMessengerScreen(),
+          ),
+          onEnter: () {
+            hideBottomNavigation();
+          },
+        ),
+      ];
+    }
   }
 
   @override
