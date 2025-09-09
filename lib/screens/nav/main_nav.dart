@@ -168,12 +168,20 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
 
   void _handleTabChange() {
     if (_tabController.indexIsChanging) {
+      final previousIndex = _currentIndex;
       setState(() {
         _currentIndex = _tabController.index;
       });
       
-      // Call onEnter callback if it exists
+      // Handle navigation bar visibility based on tab changes
       final tabs = _buildTabs();
+      
+      // If leaving messages tab, show navigation bar
+      if (previousIndex == 4 && _currentIndex != 4) { // Messages tab is index 4
+        showBottomNavigation();
+      }
+      
+      // Call onEnter callback if it exists
       if (_currentIndex < tabs.length && tabs[_currentIndex].onEnter != null) {
         tabs[_currentIndex].onEnter!();
       }

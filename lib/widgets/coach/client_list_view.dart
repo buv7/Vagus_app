@@ -275,7 +275,7 @@ class _ClientListViewState extends State<ClientListView> {
                           ),
                           decoration: BoxDecoration(
                             color: statusColor,
-                            borderRadius: BorderRadius.circular(DesignTokens.radius6),
+                            borderRadius: BorderRadius.circular(DesignTokens.radius8),
                           ),
                           child: Text(
                             status,
@@ -318,7 +318,7 @@ class _ClientListViewState extends State<ClientListView> {
                           ),
                           decoration: BoxDecoration(
                             color: AppTheme.steelGrey,
-                            borderRadius: BorderRadius.circular(DesignTokens.radius6),
+                            borderRadius: BorderRadius.circular(DesignTokens.radius8),
                           ),
                           child: Text(
                             tag,
@@ -405,7 +405,7 @@ class _ClientListViewState extends State<ClientListView> {
                       vertical: DesignTokens.space8,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(DesignTokens.radius6),
+                      borderRadius: BorderRadius.circular(DesignTokens.radius8),
                     ),
                   ),
                 ),
@@ -432,7 +432,7 @@ class _ClientListViewState extends State<ClientListView> {
                       vertical: DesignTokens.space8,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(DesignTokens.radius6),
+                      borderRadius: BorderRadius.circular(DesignTokens.radius8),
                     ),
                   ),
                 ),
@@ -459,7 +459,7 @@ class _ClientListViewState extends State<ClientListView> {
                       vertical: DesignTokens.space8,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(DesignTokens.radius6),
+                      borderRadius: BorderRadius.circular(DesignTokens.radius8),
                     ),
                   ),
                 ),

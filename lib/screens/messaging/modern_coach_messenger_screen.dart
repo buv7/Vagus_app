@@ -7,6 +7,7 @@ import '../../widgets/messaging/message_list_view.dart';
 import '../../widgets/messaging/smart_replies_panel.dart';
 import '../../widgets/messaging/message_input_bar.dart';
 import '../../services/coach/coach_messaging_service.dart';
+import '../coach/program_ingest_upload_sheet.dart';
 
 class ModernCoachMessengerScreen extends StatefulWidget {
   final Map<String, dynamic> client;
@@ -179,6 +180,14 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
               },
             ),
             ListTile(
+              leading: const Icon(Icons.upload_outlined, color: AppTheme.mintAqua),
+              title: const Text('Import Program', style: TextStyle(color: AppTheme.neutralWhite)),
+              onTap: () {
+                Navigator.pop(context);
+                _showImportProgramSheet();
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.archive_outlined, color: AppTheme.neutralWhite),
               title: const Text('Archive Chat', style: TextStyle(color: AppTheme.neutralWhite)),
               onTap: () {
@@ -188,6 +197,17 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showImportProgramSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ProgramIngestUploadSheet(
+        preselectedClientId: widget.client['id'],
       ),
     );
   }

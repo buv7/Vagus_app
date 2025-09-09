@@ -15,6 +15,8 @@ import '../../services/coach/coach_analytics_service.dart';
 import '../../services/coach/coach_inbox_service.dart';
 import '../../services/coach/coach_client_management_service.dart';
 import '../menu/modern_coach_menu_screen.dart';
+import '../../widgets/ads/ad_banner_strip.dart';
+import '../coach/program_ingest_upload_sheet.dart';
 
 class ModernCoachDashboard extends StatefulWidget {
   const ModernCoachDashboard({super.key});
@@ -303,6 +305,11 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
               // Modern Header
               _buildModernHeader(),
               
+              const SizedBox(height: DesignTokens.space16),
+              
+              // Ad Banner Strip
+              const AdBannerStrip(audience: 'coach'),
+              
               const SizedBox(height: DesignTokens.space24),
               
               // Performance Analytics
@@ -435,6 +442,9 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
                 onViewAnalytics: () {
                   // Navigate to analytics
                 },
+                onImportProgram: () {
+                  _showImportProgramSheet();
+                },
               ),
               
               const SizedBox(height: DesignTokens.space32),
@@ -491,6 +501,15 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
       MaterialPageRoute(
         builder: (context) => const ModernCoachMenuScreen(),
       ),
+    );
+  }
+
+  void _showImportProgramSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const ProgramIngestUploadSheet(),
     );
   }
 }

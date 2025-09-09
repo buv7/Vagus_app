@@ -30,6 +30,7 @@ import '../messaging/modern_messenger_screen.dart';
 import '../rank/rank_hub_screen.dart';
 import '../streaks/streak_screen.dart';
 import '../billing/upgrade_screen.dart';
+import '../../widgets/ads/ad_banner_strip.dart';
 
 class ModernClientDashboard extends StatefulWidget {
   const ModernClientDashboard({super.key});
@@ -315,6 +316,11 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             children: [
               // Header
               _buildHeader(),
+              
+              const SizedBox(height: 16),
+              
+              // Ad Banner Strip
+              const AdBannerStrip(audience: 'client'),
               
               const SizedBox(height: 24),
               

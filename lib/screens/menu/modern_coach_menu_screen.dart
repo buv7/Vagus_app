@@ -9,6 +9,8 @@ import '../business/business_profile_screen.dart';
 import '../analytics/analytics_reports_screen.dart';
 import '../billing/billing_payments_screen.dart';
 import '../support/help_center_screen.dart';
+import '../admin/admin_ads_screen.dart';
+import '../../services/admin/ad_banner_service.dart';
 
 class ModernCoachMenuScreen extends StatefulWidget {
   const ModernCoachMenuScreen({super.key});
@@ -19,13 +21,16 @@ class ModernCoachMenuScreen extends StatefulWidget {
 
 class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
   final supabase = Supabase.instance.client;
+  final AdBannerService _adService = AdBannerService();
   Map<String, dynamic>? _profile;
   bool _loading = true;
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
     _loadProfile();
+    _checkAdminStatus();
   }
 
   Future<void> _loadProfile() async {
@@ -48,6 +53,13 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
         _loading = false;
       });
     }
+  }
+
+  Future<void> _checkAdminStatus() async {
+    final isAdmin = await _adService.isCurrentUserAdmin();
+    setState(() {
+      _isAdmin = isAdmin;
+    });
   }
 
   Future<void> _signOut() async {
@@ -174,6 +186,19 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
               ]),
 
               const SizedBox(height: DesignTokens.space24),
+
+              // Admin Section (only show if user is admin)
+              if (_isAdmin) ...[
+                _buildMenuSection('Admin', [
+                  _buildMenuItem(
+                    icon: Icons.campaign_outlined,
+                    title: 'Ad Management',
+                    subtitle: 'Manage ad banners and campaigns',
+                    onTap: () => _navigateToScreen(const AdminAdsScreen()),
+                  ),
+                ]),
+                const SizedBox(height: DesignTokens.space24),
+              ],
 
               _buildMenuSection('Support', [
                 _buildMenuItem(

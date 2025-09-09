@@ -12,6 +12,7 @@ class QuickActionsGrid extends StatelessWidget {
   final VoidCallback onIntakeForms;
   final VoidCallback onPublishAvailability;
   final VoidCallback onViewAnalytics;
+  final VoidCallback onImportProgram;
 
   const QuickActionsGrid({
     super.key,
@@ -24,6 +25,7 @@ class QuickActionsGrid extends StatelessWidget {
     required this.onIntakeForms,
     required this.onPublishAvailability,
     required this.onViewAnalytics,
+    required this.onImportProgram,
   });
 
   @override
@@ -130,6 +132,13 @@ class QuickActionsGrid extends StatelessWidget {
                 subtitle: 'Detailed performance metrics',
                 onTap: onViewAnalytics,
                 color: AppTheme.softYellow,
+              ),
+              _buildActionCard(
+                icon: Icons.upload_outlined,
+                title: 'Import Program',
+                subtitle: 'Upload or paste program text',
+                onTap: onImportProgram,
+                color: AppTheme.mintAqua,
               ),
             ],
           ),
