@@ -13,7 +13,7 @@ import 'ai_config_panel.dart';
 import 'user_manager_panel.dart';
 import 'coach_approval_panel.dart';
 import 'global_settings_panel.dart';
-import '../auth/login_screen.dart';
+import '../auth/modern_login_screen.dart';
 import '../messaging/admin_support_chat_screen.dart';
 import 'admin_hub_screen.dart';
 import 'price_editor_screen.dart';
@@ -305,7 +305,7 @@ class _AdminScreenState extends State<AdminScreen> {
     // ignore: unawaited_futures
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => const ModernLoginScreen()),
           (route) => false,
     );
   }

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import '../../widgets/branding/vagus_appbar.dart';
-import '../auth/login_screen.dart';
+import '../auth/modern_login_screen.dart';
 import 'edit_profile_screen.dart';
 import '../coach/coach_search_screen.dart';
 
@@ -450,7 +450,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     if (!mounted) return;
     await Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => const ModernLoginScreen()),
           (route) => false,
     );
   }

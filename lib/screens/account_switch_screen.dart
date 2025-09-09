@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/account_switcher.dart';
-import 'auth/login_screen.dart';
+import 'auth/modern_login_screen.dart';
 
 class AccountSwitchScreen extends StatefulWidget {
   const AccountSwitchScreen({super.key});
@@ -93,7 +93,7 @@ class _AccountSwitchScreenState extends State<AccountSwitchScreen> {
                   leading: const Icon(Icons.person_add_alt),
                   title: const Text('Add account'),
                   onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+                    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ModernLoginScreen()));
                     await _load();
                   },
                 )

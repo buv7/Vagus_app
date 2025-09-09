@@ -7,7 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import '../auth/login_screen.dart';
+import '../auth/modern_login_screen.dart';
 import 'edit_profile_screen.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
@@ -86,7 +86,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            MaterialPageRoute(builder: (context) => const ModernLoginScreen()),
           );
         }
         return;
@@ -248,7 +248,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => const ModernLoginScreen()),
         );
       }
     } catch (e) {

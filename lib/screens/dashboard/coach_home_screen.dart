@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
-import '../auth/login_screen.dart';
+import '../auth/modern_login_screen.dart';
 import '../workout/workout_plan_viewer_screen.dart';
 import '../workout/coach_plan_builder_screen.dart';
 import '../nutrition/nutrition_plan_builder.dart';
@@ -619,7 +619,7 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
     if (!mounted) return;
     await Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => const ModernLoginScreen()),
           (route) => false,
     );
   }
