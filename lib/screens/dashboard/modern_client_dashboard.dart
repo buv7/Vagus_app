@@ -11,7 +11,6 @@ import '../auth/modern_login_screen.dart';
 import 'edit_profile_screen.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/navigation/vagus_side_menu.dart';
 import '../../services/nutrition/nutrition_service.dart';
 import '../../services/progress/progress_service.dart';
 import '../../services/nutrition/grocery_service.dart';
@@ -303,11 +302,6 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF1A1C1E),
-      drawerEdgeDragWidth: 24,
-      drawer: VagusSideMenu(
-        isClient: true,
-        onLogout: _logout,
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
