@@ -16,6 +16,7 @@ import '../messaging/coach_threads_screen.dart';
 import '../messaging/modern_coach_messenger_screen.dart';
 import '../messaging/modern_client_messages_screen.dart';
 import '../coach/modern_client_management_screen.dart';
+import '../coach/my_coach_screen.dart';
 import '../calling/modern_live_calls_screen.dart';
 import '../progress/modern_progress_tracker.dart';
 import '../menu/modern_coach_menu_screen.dart';
@@ -94,11 +95,14 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
             .select('role')
             .eq('id', user.id)
             .single();
+        final role = profile['role'] as String?;
+        debugPrint('🔧 MainNav: User role detected: $role');
         setState(() {
-          _userRole = profile['role'] as String?;
+          _userRole = role;
         });
       }
     } catch (e) {
+      debugPrint('❌ MainNav: Role detection failed: $e');
       // Default to client if role detection fails
       setState(() {
         _userRole = 'client';
@@ -113,24 +117,25 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
   // Build tabs based on user role
   List<NavTab> _buildTabs() {
     final isCoach = _userRole == 'coach';
+    debugPrint('🔧 MainNav: Building tabs for role: $_userRole, isCoach: $isCoach');
     
     return [
       NavTab(
         icon: Icons.dashboard_outlined,
         activeIcon: Icons.dashboard_rounded,
-        label: 'Dashboard', // Modern Design
+        label: 'Dashboard',
         screen: isCoach ? const ModernCoachDashboard() : const ModernClientDashboard(),
       ),
       NavTab(
-        icon: Icons.people_outline,
-        activeIcon: Icons.people_rounded,
-        label: 'Clients',
-        screen: isCoach ? const ModernClientManagementScreen() : const ModernClientDashboard(),
+        icon: isCoach ? Icons.people_outline : Icons.person_outline,
+        activeIcon: isCoach ? Icons.people_rounded : Icons.person_rounded,
+        label: isCoach ? 'Clients' : 'My Coach',
+        screen: isCoach ? const ModernClientManagementScreen() : const MyCoachScreen(),
       ),
       NavTab(
         icon: Icons.fitness_center_outlined,
         activeIcon: Icons.fitness_center_rounded,
-        label: 'Plans',
+        label: isCoach ? 'Plans' : 'My Plans',
         screen: isCoach ? const ModernPlanBuilderScreen() : const ModernWorkoutPlanViewer(),
       ),
       const NavTab(
