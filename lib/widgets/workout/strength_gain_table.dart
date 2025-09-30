@@ -1,0 +1,312 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../models/workout/analytics_models.dart';
+import '../../utils/locale_helper.dart';
+
+/// Sortable strength gains table
+///
+/// Displays per-exercise strength data with:
+/// - Sortable columns (exercise, starting weight, current weight, gain)
+/// - Color-coded gain indicators
+/// - Trend icons
+/// - 1RM estimates
+class StrengthGainTable extends StatefulWidget {
+  final Map<String, ExerciseGains> gainsByExercise;
+  final bool showEstimated1RM;
+  final Function(String exerciseName)? onExerciseTap;
+
+  const StrengthGainTable({
+    Key? key,
+    required this.gainsByExercise,
+    this.showEstimated1RM = true,
+    this.onExerciseTap,
+  }) : super(key: key);
+
+  @override
+  State<StrengthGainTable> createState() => _StrengthGainTableState();
+}
+
+class _StrengthGainTableState extends State<StrengthGainTable> {
+  SortColumn _sortColumn = SortColumn.gainPercentage;
+  bool _sortAscending = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final sortedEntries = _getSortedEntries();
+
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  LocaleHelper.t(context, 'strength_progression'),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Text(
+                  '${sortedEntries.length} ${LocaleHelper.t(context, 'exercises')}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+
+          // Table
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              sortColumnIndex: _sortColumn.index,
+              sortAscending: _sortAscending,
+              columns: [
+                DataColumn(
+                  label: Text(LocaleHelper.t(context, 'exercise')),
+                  onSort: (columnIndex, ascending) => _sort(SortColumn.exercise, ascending),
+                ),
+                DataColumn(
+                  label: Text(LocaleHelper.t(context, 'starting')),
+                  numeric: true,
+                  onSort: (columnIndex, ascending) => _sort(SortColumn.startingWeight, ascending),
+                ),
+                DataColumn(
+                  label: Text(LocaleHelper.t(context, 'current')),
+                  numeric: true,
+                  onSort: (columnIndex, ascending) => _sort(SortColumn.currentWeight, ascending),
+                ),
+                DataColumn(
+                  label: Text(LocaleHelper.t(context, 'gain')),
+                  numeric: true,
+                  onSort: (columnIndex, ascending) => _sort(SortColumn.gainPercentage, ascending),
+                ),
+                if (widget.showEstimated1RM)
+                  DataColumn(
+                    label: Text(LocaleHelper.t(context, '1rm_est')),
+                    numeric: true,
+                    onSort: (columnIndex, ascending) => _sort(SortColumn.current1RM, ascending),
+                  ),
+                DataColumn(
+                  label: Text(LocaleHelper.t(context, 'trend')),
+                ),
+              ],
+              rows: sortedEntries.map((entry) {
+                final exerciseName = entry.key;
+                final gain = entry.value;
+
+                return DataRow(
+                  cells: [
+                    // Exercise name
+                    DataCell(
+                      InkWell(
+                        onTap: widget.onExerciseTap != null
+                            ? () => widget.onExerciseTap!(exerciseName)
+                            : null,
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 150),
+                          child: Text(
+                            exerciseName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              decoration: widget.onExerciseTap != null
+                                  ? TextDecoration.underline
+                                  : null,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Starting weight
+                    DataCell(
+                      Text(
+                        '${gain.startingWeight.toStringAsFixed(1)} kg',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    // Current weight
+                    DataCell(
+                      Text(
+                        '${gain.currentWeight.toStringAsFixed(1)} kg',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
+                    // Gain percentage
+                    DataCell(
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _getGainColor(gain.gainPercentage).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _getGainIcon(gain.gainPercentage),
+                              size: 14,
+                              color: _getGainColor(gain.gainPercentage),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${gain.gainPercentage >= 0 ? '+' : ''}${gain.gainPercentage.toStringAsFixed(1)}%',
+                              style: TextStyle(
+                                color: _getGainColor(gain.gainPercentage),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // 1RM estimate
+                    if (widget.showEstimated1RM)
+                      DataCell(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '${gain.current1RM.toStringAsFixed(1)} kg',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            Text(
+                              '${((gain.current1RM - gain.starting1RM) / gain.starting1RM * 100).toStringAsFixed(1)}%',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[600],
+                                    fontSize: 10,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    // Trend
+                    DataCell(
+                      _buildTrendBadge(gain.trend),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<MapEntry<String, ExerciseGains>> _getSortedEntries() {
+    final entries = widget.gainsByExercise.entries.toList();
+
+    entries.sort((a, b) {
+      int comparison;
+      switch (_sortColumn) {
+        case SortColumn.exercise:
+          comparison = a.key.compareTo(b.key);
+          break;
+        case SortColumn.startingWeight:
+          comparison = a.value.startingWeight.compareTo(b.value.startingWeight);
+          break;
+        case SortColumn.currentWeight:
+          comparison = a.value.currentWeight.compareTo(b.value.currentWeight);
+          break;
+        case SortColumn.gainPercentage:
+          comparison = a.value.gainPercentage.compareTo(b.value.gainPercentage);
+          break;
+        case SortColumn.current1RM:
+          comparison = a.value.current1RM.compareTo(b.value.current1RM);
+          break;
+      }
+
+      return _sortAscending ? comparison : -comparison;
+    });
+
+    return entries;
+  }
+
+  void _sort(SortColumn column, bool ascending) {
+    setState(() {
+      _sortColumn = column;
+      _sortAscending = ascending;
+    });
+  }
+
+  Widget _buildTrendBadge(String trend) {
+    Color color;
+    IconData icon;
+    String label;
+
+    switch (trend) {
+      case 'improving':
+        color = Colors.green;
+        icon = Icons.trending_up;
+        label = LocaleHelper.t(context, 'improving');
+        break;
+      case 'declining':
+        color = Colors.red;
+        icon = Icons.trending_down;
+        label = LocaleHelper.t(context, 'declining');
+        break;
+      default:
+        color = Colors.blue;
+        icon = Icons.trending_flat;
+        label = LocaleHelper.t(context, 'stable');
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getGainColor(double gainPercentage) {
+    if (gainPercentage > 10) return Colors.green[700]!;
+    if (gainPercentage > 5) return Colors.green;
+    if (gainPercentage > 0) return Colors.blue;
+    if (gainPercentage > -5) return Colors.orange;
+    return Colors.red;
+  }
+
+  IconData _getGainIcon(double gainPercentage) {
+    if (gainPercentage > 0) return Icons.arrow_upward;
+    if (gainPercentage < 0) return Icons.arrow_downward;
+    return Icons.remove;
+  }
+}
+
+enum SortColumn {
+  exercise,
+  startingWeight,
+  currentWeight,
+  gainPercentage,
+  current1RM,
+}

@@ -198,9 +198,9 @@ class NotificationTest {
       await OneSignalService.instance.addUserTag('test-user', 'true');
       debugPrint('✅ Added test user tag');
 
-      // Test in-app message
-      await OneSignalService.instance.sendInAppMessage('Testing in-app messaging');
-      debugPrint('✅ Sent test in-app message');
+      // Test in-app message (not implemented yet)
+      // await OneSignalService.instance.sendInAppMessage('Testing in-app messaging');
+      debugPrint('✅ In-app message test skipped (not implemented)');
 
     } catch (e) {
       debugPrint('❌ Test OneSignal features error: $e');

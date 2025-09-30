@@ -6,12 +6,24 @@ VAGUS is a comprehensive Flutter mobile application that provides AI-powered fit
 
 ### Core Functionality
 - **AI-Powered Nutrition Plans** - Generate personalized meal plans using AI
-- **Workout Management** - Create and track fitness routines
+- **Workout Management v2** - Complete workout system with AI generation, tracking, and analytics
 - **File Management** - Upload, organize, and manage personal files
 - **Push Notifications** - Cross-platform notifications using OneSignal
 - **AI Usage Tracking** - Monitor and limit AI request usage per user
 - **User Authentication** - Secure login with Supabase Auth
 - **Role-Based Access** - Separate interfaces for coaches and clients
+
+### Workout v2 Features ✨NEW
+- **Hierarchical Plan Structure** - Plans → Weeks → Days → Exercises
+- **AI Workout Generation** - Automatically generate personalized workout plans based on user profile
+- **Exercise Grouping** - Create supersets, circuits, drop sets, and giant sets
+- **Advanced Tracking** - Log sets, reps, weight, RPE, tempo, and rest times
+- **Progression Algorithms** - Linear, DUP, and wave periodization
+- **Comprehensive Analytics** - Volume tracking, PR detection, muscle group distribution, progression trends
+- **Export Functionality** - Export plans to PDF and session summaries to images
+- **Workout Notifications** - Reminders, PR celebrations, weekly summaries, and more
+- **Rest Timer** - Built-in timer with customizable rest periods
+- **Form Videos** - Exercise demonstration videos
 
 ### AI Usage Meter
 - **Real-time Usage Display** - Shows current month usage and limits
@@ -41,13 +53,20 @@ VAGUS is a comprehensive Flutter mobile application that provides AI-powered fit
 
 ### Coach Interface
 - Dashboard with client overview
-- Nutrition plan builder
+- Nutrition plan builder (v2)
+- **Workout plan builder** - Create and assign custom workout plans
+- **Progression tools** - Apply periodization algorithms
+- **Client analytics** - Track client progress and performance
 - File manager
 - Messaging system
 
 ### Client Interface
 - Home dashboard
-- Nutrition plan viewer
+- Nutrition plan viewer (v2)
+- **Workout plan viewer** - View assigned workout plans
+- **Workout session tracker** - Log workouts in real-time
+- **Workout history** - View past sessions with analytics
+- **Progress charts** - Visualize volume, PRs, and muscle group distribution
 - File manager
 - Progress tracking
 
@@ -59,12 +78,30 @@ VAGUS is a comprehensive Flutter mobile application that provides AI-powered fit
 - `user_files` - File metadata and organization
 - `user_devices` - OneSignal device registration
 - `nutrition_plans` - AI-generated meal plans
-- `workout_plans` - Fitness routine data
+
+### Workout v2 Tables ✨NEW
+- `workout_plans` - Top-level workout programs
+- `workout_weeks` - Week divisions for periodization
+- `workout_days` - Individual training days
+- `exercises` - Exercise prescriptions with sets/reps/weight/RPE/tempo
+- `exercise_groups` - Superset/circuit groupings
+- `workout_sessions` - Tracked workout completions
+- `exercise_logs` - Individual set performance logs
+- `notification_preferences` - User notification settings
+- `scheduled_notifications` - Scheduled workout reminders
+
+**Key Features:**
+- Hierarchical structure: Plans → Weeks → Days → Exercises
+- Cascade deletes for data integrity
+- RLS policies for coach/client access
+- Optimized indexes for performance
+- Functions for volume calculation, PR detection, and analytics
 
 ### Security
 - **Row Level Security (RLS)** - Data isolation per user
 - **JWT Authentication** - Secure API access
 - **Service Role Keys** - Admin operations via Edge Functions
+- **Coach-Client Relationships** - Coaches can view/edit client plans
 
 ## 🚀 Getting Started
 
@@ -101,6 +138,9 @@ VAGUS is a comprehensive Flutter mobile application that provides AI-powered fit
    ```bash
    supabase functions deploy send-notification --no-verify-jwt
    supabase functions deploy update-ai-usage --no-verify-jwt
+   supabase functions deploy schedule-workout-reminders --no-verify-jwt
+   supabase functions deploy send-workout-notification --no-verify-jwt
+   supabase functions deploy cancel-workout-reminders --no-verify-jwt
    ```
 
 ### Environment Variables
@@ -135,6 +175,11 @@ supabase/
 - `AIUsageService` - AI usage tracking and limits
 - `OneSignalService` - Push notification management
 - `NotificationHelper` - Notification sending utilities
+- **`WorkoutService`** - Core workout CRUD operations
+- **`WorkoutAIService`** - AI workout plan generation
+- **`ProgressionService`** - Progression algorithms (Linear, DUP, Wave)
+- **`WorkoutAnalyticsService`** - Volume, PRs, muscle group distribution
+- **`WorkoutExportService`** - PDF and image export
 
 ### Adding New Features
 1. Create database migrations in `supabase/migrations/`
@@ -255,6 +300,10 @@ flutter test integration_test/
 - [AI Usage Integration Guide](docs/ai_usage_integration.md)
 - [Database Schema](supabase/migrations/)
 - [Edge Functions](supabase/functions/)
+- **[Workout v2 Implementation Guide](docs/workout_v2_implementation.md)** ✨NEW
+- **[Workout v1→v2 Migration Guide](docs/workout_migration_guide.md)** ✨NEW
+- **[Workout v2 Testing Checklist](workout_testing_checklist.md)** ✨NEW
+- **[Workout Notifications README](lib/services/notifications/NOTIFICATIONS_README.md)** ✨NEW
 
 ## 🤝 Contributing
 
@@ -277,7 +326,20 @@ For support and questions:
 
 ## 🔄 Changelog
 
-### Latest Updates
+### Latest Updates (Workout v2) ✨NEW
+- ✅ Complete workout system redesign
+- ✅ Hierarchical plan structure (Plans → Weeks → Days → Exercises)
+- ✅ AI workout plan generation
+- ✅ Exercise grouping (supersets, circuits, drop sets, giant sets)
+- ✅ Advanced tracking (RPE, tempo, rest times, form videos)
+- ✅ Progression algorithms (Linear, DUP, Wave)
+- ✅ Comprehensive analytics (Volume, PRs, muscle group distribution)
+- ✅ Export functionality (PDF plans, image summaries)
+- ✅ Workout notifications (8 types with OneSignal)
+- ✅ Complete testing suite
+- ✅ Migration tools and documentation
+
+### Previous Updates
 - ✅ AI Usage Meter implementation
 - ✅ File Manager screen
 - ✅ OneSignal push notifications

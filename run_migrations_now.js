@@ -15,27 +15,42 @@ async function runMigrations() {
     await client.connect();
     console.log('✅ Connected!\n');
 
-    // Migration 1: Foundation
-    console.log('📦 Running Migration 1: Foundation...');
-    const migration1 = fs.readFileSync(
-      'supabase/migrations/20251001000001_nutrition_v2_foundation_fixed.sql',
-      'utf8'
-    );
+    // Idempotency check: if nutrition v2 already present, skip applying migrations
+    const v2Check = await client.query(`
+      SELECT COUNT(*) as count
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = 'nutrition_plans'
+        AND column_name = 'format_version'
+    `);
 
-    const start1 = Date.now();
-    await client.query(migration1);
-    console.log(`✅ Migration 1 completed in ${((Date.now() - start1) / 1000).toFixed(2)}s\n`);
+    const hasV2 = Number(v2Check.rows[0]?.count || 0) > 0;
 
-    // Migration 2: Data Migration
-    console.log('📦 Running Migration 2: Data Migration...');
-    const migration2 = fs.readFileSync(
-      'supabase/migrations/20251001000002_archive_and_migrate_fixed.sql',
-      'utf8'
-    );
+    if (!hasV2) {
+      // Migration 1: Foundation
+      console.log('📦 Running Migration 1: Foundation...');
+      const migration1 = fs.readFileSync(
+        'supabase/migrations/20251001000001_nutrition_v2_foundation_fixed.sql',
+        'utf8'
+      );
 
-    const start2 = Date.now();
-    await client.query(migration2);
-    console.log(`✅ Migration 2 completed in ${((Date.now() - start2) / 1000).toFixed(2)}s\n`);
+      const start1 = Date.now();
+      await client.query(migration1);
+      console.log(`✅ Migration 1 completed in ${((Date.now() - start1) / 1000).toFixed(2)}s\n`);
+
+      // Migration 2: Data Migration
+      console.log('📦 Running Migration 2: Data Migration...');
+      const migration2 = fs.readFileSync(
+        'supabase/migrations/20251001000002_archive_and_migrate_fixed.sql',
+        'utf8'
+      );
+
+      const start2 = Date.now();
+      await client.query(migration2);
+      console.log(`✅ Migration 2 completed in ${((Date.now() - start2) / 1000).toFixed(2)}s\n`);
+    } else {
+      console.log('⚠️  Nutrition v2 indicators found. Skipping SQL application and running verification only.');
+    }
 
     // Verification
     console.log('🔍 Verification...\n');
