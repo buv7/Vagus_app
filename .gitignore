@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment variables - NEVER COMMIT
+.env
+.env.local
+.env.*.local
+*.env
+supabase_connection.env
+node_modules/

@@ -38,17 +38,21 @@ You'll need these from your Supabase project:
 4. **Database Port**: `5432` (for session pooler)
 5. **Database Name**: `postgres`
 
-From your connection string:
+⚠️ **SECURITY WARNING**: Never commit actual credentials! Get them from Supabase dashboard.
+
+From your connection string format:
 ```
-postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws-0-eu-central-1.pooler.supabase.com:5432/postgres
+postgresql://postgres.<your-project-ref>:<YOUR-PASSWORD>@<your-region>.pooler.supabase.com:5432/postgres
 ```
 
 Extract:
-- **Username**: `postgres.kydrpnrmqbedjflklgue`
-- **Password**: `X.7achoony.X`
-- **Host**: `aws-0-eu-central-1.pooler.supabase.com`
+- **Username**: `postgres.<your-project-ref>`
+- **Password**: `<YOUR-DATABASE-PASSWORD>`
+- **Host**: `<your-region>.pooler.supabase.com`
 - **Port**: `5432`
 - **Database**: `postgres`
+
+📌 **Get credentials from**: https://supabase.com/dashboard/project/_/settings/database
 
 ## ⚙️ Step 3: Configure Cursor IDE
 
@@ -67,21 +71,22 @@ Create a configuration file for Cursor IDE:
       "command": "npx",
       "args": [
         "@modelcontextprotocol/server-supabase",
-        "--host", "aws-0-eu-central-1.pooler.supabase.com",
+        "--host", "<your-region>.pooler.supabase.com",
         "--port", "5432",
         "--database", "postgres",
-        "--username", "postgres.kydrpnrmqbedjflklgue",
-        "--password", "X.7achoony.X",
+        "--username", "postgres.<your-project-ref>",
+        "--password", "<YOUR-DATABASE-PASSWORD>",
         "--ssl", "true"
       ],
       "env": {
-        "SUPABASE_URL": "https://kydrpnrmqbedjflklgue.supabase.co",
-        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZHJwbnJtcWJlZGpmbGtsZ3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUxODAsImV4cCI6MjA2OTgwMTE4MH0.qlpGUiy17IbDsfgOf3-F2XBjOajjwxfy2NLMlUZWaqo"
+        "SUPABASE_URL": "https://<your-project-ref>.supabase.co",
+        "SUPABASE_ANON_KEY": "<YOUR-ANON-KEY>"
       }
     }
   }
 }
 ```
+⚠️ **DO NOT commit this file with actual credentials!**
 
 ### Alternative: Environment Variables Configuration
 
@@ -89,17 +94,18 @@ Create a `.env` file in your project root:
 
 ```env
 # Supabase Database Connection
-SUPABASE_DB_HOST=aws-0-eu-central-1.pooler.supabase.com
+SUPABASE_DB_HOST=<your-region>.pooler.supabase.com
 SUPABASE_DB_PORT=5432
 SUPABASE_DB_NAME=postgres
-SUPABASE_DB_USERNAME=postgres.kydrpnrmqbedjflklgue
-SUPABASE_DB_PASSWORD=X.7achoony.X
+SUPABASE_DB_USERNAME=postgres.<your-project-ref>
+SUPABASE_DB_PASSWORD=<YOUR-DATABASE-PASSWORD>
 SUPABASE_DB_SSL=true
 
 # Supabase API
-SUPABASE_URL=https://kydrpnrmqbedjflklgue.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZHJwbnJtcWJlZGpmbGtsZ3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUxODAsImV4cCI6MjA2OTgwMTE4MH0.qlpGUiy17IbDsfgOf3-F2XBjOajjwxfy2NLMlUZWaqo
+SUPABASE_URL=https://<your-project-ref>.supabase.co
+SUPABASE_ANON_KEY=<YOUR-ANON-KEY>
 ```
+⚠️ **Add .env to .gitignore!** Never commit this file!
 
 Then update your config.json:
 
@@ -112,14 +118,14 @@ Then update your config.json:
         "@modelcontextprotocol/server-supabase"
       ],
       "env": {
-        "SUPABASE_DB_HOST": "aws-0-eu-central-1.pooler.supabase.com",
+        "SUPABASE_DB_HOST": "<your-region>.pooler.supabase.com",
         "SUPABASE_DB_PORT": "5432",
         "SUPABASE_DB_NAME": "postgres",
-        "SUPABASE_DB_USERNAME": "postgres.kydrpnrmqbedjflklgue",
-        "SUPABASE_DB_PASSWORD": "X.7achoony.X",
+        "SUPABASE_DB_USERNAME": "postgres.<your-project-ref>",
+        "SUPABASE_DB_PASSWORD": "<YOUR-DATABASE-PASSWORD>",
         "SUPABASE_DB_SSL": "true",
-        "SUPABASE_URL": "https://kydrpnrmqbedjflklgue.supabase.co",
-        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZHJwbnJtcWJlZGpmbGtsZ3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUxODAsImV4cCI6MjA2OTgwMTE4MH0.qlpGUiy17IbDsfgOf3-F2XBjOajjwxfy2NLMlUZWaqo"
+        "SUPABASE_URL": "https://<your-project-ref>.supabase.co",
+        "SUPABASE_ANON_KEY": "<YOUR-ANON-KEY>"
       }
     }
   }

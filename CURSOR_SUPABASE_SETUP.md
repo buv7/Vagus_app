@@ -4,19 +4,24 @@ This guide will help you connect Cursor IDE directly to your Supabase PostgreSQL
 
 ## 🔗 Connection Details
 
+⚠️ **SECURITY WARNING**: Never commit actual credentials to Git!
+Get your credentials from the Supabase dashboard or use environment variables.
+
 ### Session Pooler Connection (Recommended)
 ```
-Host: aws-0-eu-central-1.pooler.supabase.com
+Host: <your-region>.pooler.supabase.com
 Port: 5432
 Database: postgres
-Username: postgres.kydrpnrmqbedjflklgue
-Password: X.7achoony.X
+Username: postgres.<your-project-ref>
+Password: <YOUR-DATABASE-PASSWORD>
 ```
 
 ### Connection String Format
 ```
-postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws-0-eu-central-1.pooler.supabase.com:5432/postgres
+postgresql://postgres.<your-project-ref>:<YOUR-PASSWORD>@<your-region>.pooler.supabase.com:5432/postgres
 ```
+
+📌 **Get your credentials from**: https://supabase.com/dashboard/project/_/settings/database
 
 ## 🛠️ Setting Up Cursor IDE Database Connection
 
@@ -32,15 +37,15 @@ postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws-0-eu-central-1.poole
    - Open Command Palette (Ctrl+Shift+P)
    - Type "PostgreSQL: New Connection"
    - Fill in the connection details:
-     ```
-     Connection Name: Vagus App Supabase
-     Host: aws-0-eu-central-1.pooler.supabase.com
-     Port: 5432
-     Database: postgres
-     Username: postgres.kydrpnrmqbedjflklgue
-     Password: X.7achoony.X
-     SSL Mode: Require
-     ```
+    ```
+    Connection Name: Vagus App Supabase
+    Host: <your-region>.pooler.supabase.com
+    Port: 5432
+    Database: postgres
+    Username: postgres.<your-project-ref>
+    Password: <YOUR-DATABASE-PASSWORD>
+    SSL Mode: Require
+    ```
 
 3. **Test Connection**
    - Click "Test Connection" to verify
@@ -69,27 +74,28 @@ postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws-0-eu-central-1.poole
     {
       "name": "Vagus Supabase",
       "type": "postgresql",
-      "host": "aws-0-eu-central-1.pooler.supabase.com",
+      "host": "<your-region>.pooler.supabase.com",
       "port": 5432,
       "database": "postgres",
-      "username": "postgres.kydrpnrmqbedjflklgue",
-      "password": "X.7achoony.X",
+      "username": "postgres.<your-project-ref>",
+      "password": "<YOUR-DATABASE-PASSWORD>",
       "ssl": true
     }
   ]
 }
 ```
+⚠️ **WARNING**: Never commit this file with actual credentials!
 
 ## 🔍 Alternative Connection Options
 
 ### Shared Pooler (Port 6543)
 ```
-postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+postgresql://postgres.<your-project-ref>:<YOUR-PASSWORD>@<your-region>.pooler.supabase.com:6543/postgres
 ```
 
 ### Direct Connection (if pooler is unavailable)
 ```
-postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws-0-eu-central-1.pooler.supabase.com:5432/postgres
+postgresql://postgres.<your-project-ref>:<YOUR-PASSWORD>@<your-region>.pooler.supabase.com:5432/postgres
 ```
 
 ## 📊 Database Schema Overview
