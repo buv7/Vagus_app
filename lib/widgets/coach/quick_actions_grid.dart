@@ -4,6 +4,7 @@ import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../screens/workout/modern_plan_builder_screen.dart';
+import '../../screens/workout/coach_workout_dashboard_screen.dart';
 import '../../screens/nutrition/nutrition_hub_screen.dart';
 import '../../screens/nutrition/coach_nutrition_dashboard.dart';
 import '../../screens/messaging/coach_threads_screen.dart';
@@ -122,6 +123,13 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.accentGreen,
               ),
               _buildActionCard(
+                icon: Icons.view_list_outlined,
+                title: 'View Workout Plans',
+                subtitle: 'Manage client workouts',
+                onTap: () => _navigateToWorkoutViewer(context),
+                color: AppTheme.accentGreen,
+              ),
+              _buildActionCard(
                 icon: Icons.restaurant_outlined,
                 title: 'Nutrition Plans',
                 subtitle: 'View & manage nutrition',
@@ -203,6 +211,14 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const ModernPlanBuilderScreen()),
+    );
+  }
+
+  void _navigateToWorkoutViewer(BuildContext context) {
+    _onActionTap();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CoachWorkoutDashboardScreen()),
     );
   }
 
