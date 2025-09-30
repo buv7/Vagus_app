@@ -6,10 +6,10 @@ class CallParticipantGrid extends StatelessWidget {
   final bool isVideoCall;
 
   const CallParticipantGrid({
-    Key? key,
+    super.key,
     required this.participants,
     this.isVideoCall = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +221,7 @@ class CallParticipantGrid extends StatelessWidget {
             // Avatar
             CircleAvatar(
               radius: 32,
-              backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
               child: Text(
                 participant.initials,
                 style: const TextStyle(
@@ -257,7 +257,7 @@ class CallParticipantGrid extends StatelessWidget {
         vertical: isCompact ? 4 : 8,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(isCompact ? 4 : 8),
       ),
       child: Row(
@@ -376,7 +376,7 @@ class CallParticipantGrid extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Icon(

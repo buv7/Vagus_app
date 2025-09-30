@@ -109,7 +109,7 @@ class _AdminKnowledgeScreenState extends State<AdminKnowledgeScreen> {
                     updatedBy: 'Admin',
                   );
                   await _svc.upsert(art);
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
                 child: const Text('Save'),

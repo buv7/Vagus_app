@@ -8,7 +8,7 @@ class LearnClientScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(title: const Text('Master VAGUS')),
+      appBar: const VagusAppBar(title: Text('Master VAGUS')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -19,13 +19,13 @@ class LearnClientScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: const BoxDecoration(
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'MASTER VAGUS',
                     style: TextStyle(
                       color: Colors.white,
@@ -34,8 +34,8 @@ class LearnClientScreen extends StatelessWidget {
                       letterSpacing: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
+                  SizedBox(height: 8),
+                  Text(
                     'Your complete guide to getting the most out of VAGUS',
                     style: TextStyle(
                       color: Colors.white70,
@@ -182,24 +182,24 @@ class LearnClientScreen extends StatelessWidget {
                 borderRadius: const BorderRadius.all(Radius.circular(12)),
                 border: Border.all(color: AppTheme.lightGrey),
               ),
-              child: Column(
+              child: const Column(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.school,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     size: 32,
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
+                  SizedBox(height: 12),
+                  Text(
                     'Ready to Master VAGUS?',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
+                  SizedBox(height: 8),
+                  Text(
                     'Start implementing these tips today and unlock your full potential with VAGUS.',
                     style: TextStyle(
                       color: Colors.grey,
@@ -226,7 +226,7 @@ class LearnClientScreen extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: AppTheme.primaryBlack,
+              color: AppTheme.primaryDark,
               size: 24,
             ),
             const SizedBox(width: 12),
@@ -235,7 +235,7 @@ class LearnClientScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
               ),
             ),
           ],
@@ -259,7 +259,7 @@ class LearnClientScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
               ),
             ),
             const SizedBox(height: 8),
@@ -283,7 +283,7 @@ class LearnClientScreen extends StatelessWidget {
                 steps,
                 style: const TextStyle(
                   fontSize: 13,
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   height: 1.4,
                 ),
               ),

@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../theme/design_tokens.dart';
 
 class AdminCommandPalette extends StatefulWidget {
   const AdminCommandPalette({super.key});
@@ -20,9 +22,30 @@ class _AdminCommandPaletteState extends State<AdminCommandPalette> {
   Widget build(BuildContext context) {
     final filtered = _items.where((c) => c.title.toLowerCase().contains(_q.text.toLowerCase())).toList();
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        decoration: BoxDecoration(
+          color: DesignTokens.cardBackground,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentPink.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
           TextField(controller: _q, autofocus: true, decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search commands…')),
           const SizedBox(height: 12),
           ...filtered.map((c) => ListTile(
@@ -30,7 +53,10 @@ class _AdminCommandPaletteState extends State<AdminCommandPalette> {
             title: Text(c.title),
             onTap: () { Navigator.pop(context, c.key); /* Handle in AdminHub if needed */ },
           )),
-        ]),
+              ]),
+            ),
+          ),
+        ),
       ),
     );
   }

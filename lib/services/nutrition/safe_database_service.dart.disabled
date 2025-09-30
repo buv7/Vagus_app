@@ -1,0 +1,470 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../models/nutrition/food_item.dart';
+import '../../models/nutrition/nutrition_plan.dart';
+import '../../models/nutrition/meal.dart';
+import '../network/connectivity_service.dart';
+import '../cache/cache_service.dart';
+
+/// Safe database service with comprehensive error handling and resilience
+/// Features: Graceful error handling, optimistic updates, offline support, retries
+class SafeDatabaseService {
+  static final _instance = SafeDatabaseService._internal();
+  factory SafeDatabaseService() => _instance;
+  SafeDatabaseService._internal();
+
+  final SupabaseClient _supabase = Supabase.instance.client;
+  final CacheService _cache = CacheService();
+  final ConnectivityService _connectivity = ConnectivityService();
+
+  // Cache for expensive operations
+  final Map<String, dynamic> _operationCache = {};
+  final Map<String, DateTime> _cacheTimestamps = {};
+  static const Duration _cacheTimeout = Duration(minutes: 5);
+
+  /// Safe single record fetch with proper error handling
+  Future<T?> safeSingle<T>(
+    String table,
+    T Function(Map<String, dynamic>) fromJson, {
+    String? id,
+    Map<String, dynamic>? filters,
+    String? select,
+    String? cacheKey,
+  }) async {
+    try {
+      // Check cache first
+      if (cacheKey != null) {
+        final cached = _getCachedResult<T>(cacheKey);
+        if (cached != null) return cached;
+      }
+
+      var query = _supabase.from(table).select(select ?? '*');
+
+      // Apply filters
+      if (id != null) {
+        query = query.eq('id', id);
+      }
+      if (filters != null) {
+        for (final entry in filters.entries) {
+          query = query.eq(entry.key, entry.value);
+        }
+      }
+
+      final result = await query.maybeSingle();
+
+      if (result == null) return null;
+
+      final parsed = fromJson(result);
+
+      // Cache the result
+      if (cacheKey != null) {
+        _setCachedResult(cacheKey, parsed);
+      }
+
+      return parsed;
+    } on PostgrestException catch (e) {
+      _handlePostgrestError(e, 'safeSingle');
+      return null;
+    } catch (e) {
+      _handleGenericError(e, 'safeSingle');
+      return null;
+    }
+  }
+
+  /// Safe list fetch with pagination and error handling
+  Future<List<T>> safeList<T>(
+    String table,
+    T Function(Map<String, dynamic>) fromJson, {
+    Map<String, dynamic>? filters,
+    String? select,
+    String? orderBy,
+    bool ascending = true,
+    int? limit,
+    int? offset,
+    String? cacheKey,
+  }) async {
+    try {
+      // Check cache first
+      if (cacheKey != null) {
+        final cached = _getCachedResult<List<T>>(cacheKey);
+        if (cached != null) return cached;
+      }
+
+      var query = _supabase.from(table).select(select ?? '*');
+
+      // Apply filters
+      if (filters != null) {
+        for (final entry in filters.entries) {
+          query = query.eq(entry.key, entry.value);
+        }
+      }
+
+      // Apply ordering
+      if (orderBy != null) {
+        query = query.order(orderBy, ascending: ascending);
+      }
+
+      // Apply pagination
+      if (limit != null) {
+        query = query.limit(limit);
+      }
+      if (offset != null) {
+        query = query.range(offset, offset + (limit ?? 10) - 1);
+      }
+
+      final results = await query;
+      final parsed = results.map<T>((item) => fromJson(item)).toList();
+
+      // Cache the result
+      if (cacheKey != null) {
+        _setCachedResult(cacheKey, parsed);
+      }
+
+      return parsed;
+    } on PostgrestException catch (e) {
+      _handlePostgrestError(e, 'safeList');
+      return [];
+    } catch (e) {
+      _handleGenericError(e, 'safeList');
+      return [];
+    }
+  }
+
+  /// Safe insert with optimistic updates and rollback
+  Future<T?> safeInsert<T>(
+    String table,
+    Map<String, dynamic> data,
+    T Function(Map<String, dynamic>) fromJson, {
+    String? cacheKey,
+    Function(T)? onOptimisticUpdate,
+    Function()? onRollback,
+  }) async {
+    T? optimisticResult;
+
+    try {
+      // Create optimistic result if possible
+      if (onOptimisticUpdate != null) {
+        // Add temporary ID for optimistic update
+        final optimisticData = Map<String, dynamic>.from(data);
+        optimisticData['id'] = 'temp_${DateTime.now().millisecondsSinceEpoch}';
+        optimisticResult = fromJson(optimisticData);
+        onOptimisticUpdate(optimisticResult);
+      }
+
+      final result = await _supabase
+          .from(table)
+          .insert(data)
+          .select()
+          .single();
+
+      final parsed = fromJson(result);
+
+      // Clear related cache
+      if (cacheKey != null) {
+        _clearRelatedCache(cacheKey);
+      }
+
+      return parsed;
+    } on PostgrestException catch (e) {
+      // Rollback optimistic update
+      if (onRollback != null) {
+        onRollback();
+      }
+      _handlePostgrestError(e, 'safeInsert');
+      return null;
+    } catch (e) {
+      // Rollback optimistic update
+      if (onRollback != null) {
+        onRollback();
+      }
+      _handleGenericError(e, 'safeInsert');
+      return null;
+    }
+  }
+
+  /// Safe update with optimistic updates and rollback
+  Future<T?> safeUpdate<T>(
+    String table,
+    String id,
+    Map<String, dynamic> data,
+    T Function(Map<String, dynamic>) fromJson, {
+    T? currentValue,
+    String? cacheKey,
+    Function(T)? onOptimisticUpdate,
+    Function()? onRollback,
+  }) async {
+    try {
+      // Apply optimistic update
+      if (onOptimisticUpdate != null && currentValue != null) {
+        onOptimisticUpdate(currentValue);
+      }
+
+      final result = await _supabase
+          .from(table)
+          .update(data)
+          .eq('id', id)
+          .select()
+          .single();
+
+      final parsed = fromJson(result);
+
+      // Clear related cache
+      if (cacheKey != null) {
+        _clearRelatedCache(cacheKey);
+      }
+
+      return parsed;
+    } on PostgrestException catch (e) {
+      // Rollback optimistic update
+      if (onRollback != null) {
+        onRollback();
+      }
+      _handlePostgrestError(e, 'safeUpdate');
+      return null;
+    } catch (e) {
+      // Rollback optimistic update
+      if (onRollback != null) {
+        onRollback();
+      }
+      _handleGenericError(e, 'safeUpdate');
+      return null;
+    }
+  }
+
+  /// Safe delete with optimistic updates
+  Future<bool> safeDelete(
+    String table,
+    String id, {
+    String? cacheKey,
+    Function()? onOptimisticUpdate,
+    Function()? onRollback,
+  }) async {
+    try {
+      // Apply optimistic update
+      if (onOptimisticUpdate != null) {
+        onOptimisticUpdate();
+      }
+
+      await _supabase
+          .from(table)
+          .delete()
+          .eq('id', id);
+
+      // Clear related cache
+      if (cacheKey != null) {
+        _clearRelatedCache(cacheKey);
+      }
+
+      return true;
+    } on PostgrestException catch (e) {
+      // Rollback optimistic update
+      if (onRollback != null) {
+        onRollback();
+      }
+      _handlePostgrestError(e, 'safeDelete');
+      return false;
+    } catch (e) {
+      // Rollback optimistic update
+      if (onRollback != null) {
+        onRollback();
+      }
+      _handleGenericError(e, 'safeDelete');
+      return false;
+    }
+  }
+
+  /// Safe batch operations with transaction-like behavior
+  Future<bool> safeBatch(List<Future<dynamic> Function()> operations) async {
+    final results = <dynamic>[];
+    final rollbacks = <Function()>[];
+
+    try {
+      for (final operation in operations) {
+        final result = await operation();
+        results.add(result);
+      }
+      return true;
+    } catch (e) {
+      // Rollback all operations
+      for (final rollback in rollbacks.reversed) {
+        try {
+          rollback();
+        } catch (rollbackError) {
+          _handleGenericError(rollbackError, 'safeBatch.rollback');
+        }
+      }
+      _handleGenericError(e, 'safeBatch');
+      return false;
+    }
+  }
+
+  /// Get nutrition plan with safe relationships
+  Future<NutritionPlan?> getNutritionPlan(String planId) async {
+    return safeSingle(
+      'nutrition_plans',
+      (data) => NutritionPlan.fromJson(data),
+      id: planId,
+      select: '''
+        *,
+        meals:meals(
+          *,
+          meal_items:meal_items(
+            *,
+            food_item:food_items(*)
+          )
+        )
+      ''',
+      cacheKey: 'nutrition_plan_$planId',
+    );
+  }
+
+  /// Get coach clients with safe relationship handling
+  Future<List<Map<String, dynamic>>> getCoachClients(String coachId) async {
+    return safeList(
+      'coach_clients',
+      (data) => data,
+      filters: {'coach_id': coachId, 'status': 'active'},
+      select: '''
+        client_id,
+        created_at,
+        profiles!coach_clients_client_id_fkey(
+          id,
+          name,
+          email,
+          avatar_url
+        )
+      ''',
+      cacheKey: 'coach_clients_$coachId',
+    );
+  }
+
+  /// Get meals with safe food item relationships
+  Future<List<Meal>> getMeals(String planId, DateTime date) async {
+    final dateString = date.toIso8601String().split('T')[0];
+    return safeList(
+      'meals',
+      (data) => Meal.fromJson(data),
+      filters: {'plan_id': planId, 'date': dateString},
+      select: '''
+        *,
+        meal_items:meal_items(
+          *,
+          food_item:food_items(*)
+        )
+      ''',
+      orderBy: 'meal_type',
+      cacheKey: 'meals_${planId}_$dateString',
+    );
+  }
+
+  /// Cache management
+  T? _getCachedResult<T>(String key) {
+    final timestamp = _cacheTimestamps[key];
+    if (timestamp == null) return null;
+
+    if (DateTime.now().difference(timestamp) > _cacheTimeout) {
+      _operationCache.remove(key);
+      _cacheTimestamps.remove(key);
+      return null;
+    }
+
+    return _operationCache[key] as T?;
+  }
+
+  void _setCachedResult<T>(String key, T result) {
+    _operationCache[key] = result;
+    _cacheTimestamps[key] = DateTime.now();
+  }
+
+  void _clearRelatedCache(String pattern) {
+    final keysToRemove = _operationCache.keys
+        .where((key) => key.contains(pattern))
+        .toList();
+
+    for (final key in keysToRemove) {
+      _operationCache.remove(key);
+      _cacheTimestamps.remove(key);
+    }
+  }
+
+  /// Error handling
+  void _handlePostgrestError(PostgrestException error, String operation) {
+    switch (error.code) {
+      case 'PGRST116':
+        // No rows returned - this is often expected
+        break;
+      case '23505':
+        // Unique constraint violation
+        _logError('Duplicate record in $operation: ${error.message}');
+        break;
+      case '23503':
+        // Foreign key constraint violation
+        _logError('Invalid reference in $operation: ${error.message}');
+        break;
+      default:
+        _logError('Database error in $operation: ${error.message} (${error.code})');
+    }
+  }
+
+  void _handleGenericError(dynamic error, String operation) {
+    if (error is SocketException) {
+      _logError('Network error in $operation: No internet connection');
+    } else {
+      _logError('Unexpected error in $operation: $error');
+    }
+  }
+
+  void _logError(String message) {
+    // TODO: Integrate with proper logging service (Sentry, Firebase Crashlytics)
+    print('SafeDatabaseService Error: $message');
+  }
+
+  /// Clear all caches
+  void clearCache() {
+    _operationCache.clear();
+    _cacheTimestamps.clear();
+  }
+
+  /// Check if operation should be retried
+  bool shouldRetry(dynamic error, int attemptCount) {
+    if (attemptCount >= 3) return false;
+
+    if (error is SocketException) return true;
+    if (error is PostgrestException) {
+      // Retry on temporary errors
+      return ['timeout', 'connection'].any(
+        (keyword) => error.message.toLowerCase().contains(keyword),
+      );
+    }
+
+    return false;
+  }
+
+  /// Retry wrapper for operations
+  Future<T?> withRetry<T>(
+    Future<T?> Function() operation, {
+    int maxAttempts = 3,
+    Duration delay = const Duration(seconds: 1),
+  }) async {
+    int attempts = 0;
+    dynamic lastError;
+
+    while (attempts < maxAttempts) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error;
+        attempts++;
+
+        if (!shouldRetry(error, attempts)) {
+          rethrow;
+        }
+
+        if (attempts < maxAttempts) {
+          await Future.delayed(delay * attempts);
+        }
+      }
+    }
+
+    throw lastError;
+  }
+}

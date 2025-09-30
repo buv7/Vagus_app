@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/supplement.dart';
 
@@ -43,7 +44,7 @@ class SupplementsService {
 
       return supplements;
     } catch (e) {
-      print('Error fetching supplements for day: $e');
+      debugPrint('Error fetching supplements for day: $e');
       return [];
     }
   }
@@ -62,7 +63,7 @@ class SupplementsService {
           .map((row) => Supplement.fromMap(row))
           .toList();
     } catch (e) {
-      print('Error fetching supplements for plan: $e');
+      debugPrint('Error fetching supplements for plan: $e');
       return [];
     }
   }
@@ -83,7 +84,7 @@ class SupplementsService {
       
       return newSupplement;
     } catch (e) {
-      print('Error adding supplement: $e');
+      debugPrint('Error adding supplement: $e');
       rethrow;
     }
   }
@@ -109,7 +110,7 @@ class SupplementsService {
       
       return updatedSupplement;
     } catch (e) {
-      print('Error updating supplement: $e');
+      debugPrint('Error updating supplement: $e');
       rethrow;
     }
   }
@@ -130,7 +131,7 @@ class SupplementsService {
         _clearCacheForPlanDay(supplement.planId, supplement.dayIndex);
       }
     } catch (e) {
-      print('Error deleting supplement: $e');
+      debugPrint('Error deleting supplement: $e');
       rethrow;
     }
   }
@@ -149,7 +150,7 @@ class SupplementsService {
       }
       return null;
     } catch (e) {
-      print('Error fetching supplement by ID: $e');
+      debugPrint('Error fetching supplement by ID: $e');
       return null;
     }
   }
@@ -169,7 +170,7 @@ class SupplementsService {
           .map((row) => Supplement.fromMap(row))
           .toList();
     } catch (e) {
-      print('Error fetching supplements by timing: $e');
+      debugPrint('Error fetching supplements by timing: $e');
       return [];
     }
   }
@@ -190,7 +191,7 @@ class SupplementsService {
       names.sort();
       return names;
     } catch (e) {
-      print('Error fetching unique supplement names: $e');
+      debugPrint('Error fetching unique supplement names: $e');
       return [];
     }
   }
@@ -223,7 +224,7 @@ class SupplementsService {
         timings: timings,
       );
     } catch (e) {
-      print('Error calculating supplements summary: $e');
+      debugPrint('Error calculating supplements summary: $e');
       return SupplementsSummary.empty();
     }
   }

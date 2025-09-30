@@ -99,6 +99,7 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
         });
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error picking file: $e'),
@@ -140,7 +141,7 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
 
       if (mounted) {
         Navigator.of(context).pop();
-        Navigator.of(context).push(
+        await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ProgramIngestPreviewScreen(jobId: jobId),
           ),
@@ -202,7 +203,7 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
 
       if (mounted) {
         Navigator.of(context).pop();
-        Navigator.of(context).push(
+        await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ProgramIngestPreviewScreen(jobId: jobId),
           ),
@@ -275,9 +276,9 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
           // Tab bar
           TabBar(
             controller: _tabController,
-            labelColor: AppTheme.mintAqua,
+            labelColor: AppTheme.accentGreen,
             unselectedLabelColor: AppTheme.lightGrey,
-            indicatorColor: AppTheme.mintAqua,
+            indicatorColor: AppTheme.accentGreen,
             tabs: const [
               Tab(text: 'Paste Text'),
               Tab(text: 'Upload File'),
@@ -334,10 +335,10 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
                   hintStyle: TextStyle(color: AppTheme.lightGrey),
                   border: OutlineInputBorder(),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppTheme.steelGrey),
+                    borderSide: BorderSide(color: AppTheme.mediumGrey),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppTheme.mintAqua),
+                    borderSide: BorderSide(color: AppTheme.accentGreen),
                   ),
                 ),
                 style: const TextStyle(color: AppTheme.neutralWhite),
@@ -358,17 +359,17 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
               child: ElevatedButton(
                 onPressed: _submitting ? null : _submitText,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.mintAqua,
+                  backgroundColor: AppTheme.accentGreen,
                   padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
                 ),
                 child: _submitting
                     ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryBlack),
+                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryDark),
                       )
                     : const Text(
                         'Process Text',
                         style: TextStyle(
-                          color: AppTheme.primaryBlack,
+                          color: AppTheme.primaryDark,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -409,7 +410,7 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
               height: 120,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: AppTheme.steelGrey,
+                color: AppTheme.mediumGrey,
                 borderRadius: BorderRadius.circular(DesignTokens.radius12),
                 border: Border.all(
                   color: AppTheme.lightGrey,
@@ -424,7 +425,7 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
                         children: [
                           const Icon(
                             Icons.description,
-                            color: AppTheme.mintAqua,
+                            color: AppTheme.accentGreen,
                             size: 32,
                           ),
                           const SizedBox(height: DesignTokens.space8),
@@ -483,17 +484,17 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
             child: ElevatedButton(
               onPressed: _submitting ? null : _submitFile,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.mintAqua,
+                backgroundColor: AppTheme.accentGreen,
                 padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
               ),
               child: _submitting
                   ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryBlack),
+                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryDark),
                     )
                   : const Text(
                       'Process File',
                       style: TextStyle(
-                        color: AppTheme.primaryBlack,
+                        color: AppTheme.primaryDark,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -522,14 +523,14 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
         if (_loadingClients)
           const Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
             ),
           )
         else if (_clients.isEmpty)
           Container(
             padding: const EdgeInsets.all(DesignTokens.space16),
             decoration: BoxDecoration(
-              color: AppTheme.steelGrey,
+              color: AppTheme.mediumGrey,
               borderRadius: BorderRadius.circular(DesignTokens.radius12),
             ),
             child: const Center(
@@ -546,10 +547,10 @@ class _ProgramIngestUploadSheetState extends State<ProgramIngestUploadSheet>
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppTheme.steelGrey),
+                borderSide: BorderSide(color: AppTheme.mediumGrey),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppTheme.mintAqua),
+                borderSide: BorderSide(color: AppTheme.accentGreen),
               ),
             ),
             dropdownColor: AppTheme.cardBackground,

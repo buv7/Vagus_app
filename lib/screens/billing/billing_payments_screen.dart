@@ -125,9 +125,9 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -147,7 +147,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               ),
             )
           : SingleChildScrollView(
@@ -191,7 +191,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         color: AppTheme.lightGrey,
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -258,7 +258,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
               Text(
                 '\$${subscription['price']?.toStringAsFixed(2) ?? '0.00'}',
                 style: const TextStyle(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -270,7 +270,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
           
           Text(
             'Billed ${subscription['billing_cycle'] ?? 'monthly'}',
-            style: TextStyle(
+            style: const TextStyle(
               color: AppTheme.lightGrey,
               fontSize: 14,
             ),
@@ -280,7 +280,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
             const SizedBox(height: DesignTokens.space4),
             Text(
               'Next billing: ${_formatDate(subscription['next_billing_date'])}',
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.lightGrey,
                 fontSize: 14,
               ),
@@ -291,7 +291,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
           
           // Features
           if (subscription['features'] != null) ...[
-            Text(
+            const Text(
               'Features:',
               style: TextStyle(
                 color: AppTheme.lightGrey,
@@ -304,7 +304,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
               padding: const EdgeInsets.only(bottom: DesignTokens.space4),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.check,
                     color: DesignTokens.success,
                     size: 16,
@@ -333,7 +333,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius16),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -344,21 +344,21 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
               Container(
                 padding: const EdgeInsets.all(DesignTokens.space12),
                 decoration: BoxDecoration(
-                  color: AppTheme.mintAqua.withOpacity(0.2),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: const Icon(
                   Icons.credit_card,
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   size: 24,
                 ),
               ),
               const SizedBox(width: DesignTokens.space16),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Visa ending in 4242',
                       style: TextStyle(
                         color: AppTheme.neutralWhite,
@@ -380,7 +380,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
                 onPressed: () => _updatePaymentMethod(),
                 icon: const Icon(
                   Icons.edit,
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                 ),
               ),
             ],
@@ -391,7 +391,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
             child: OutlinedButton(
               onPressed: () => _addPaymentMethod(),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppTheme.mintAqua),
+                side: const BorderSide(color: AppTheme.accentGreen),
                 padding: const EdgeInsets.symmetric(vertical: DesignTokens.space12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
@@ -400,7 +400,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
               child: const Text(
                 'Add Payment Method',
                 style: TextStyle(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -419,11 +419,11 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
           color: AppTheme.cardBackground,
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
           border: Border.all(
-            color: AppTheme.steelGrey,
+            color: AppTheme.mediumGrey,
             width: 1,
           ),
         ),
-        child: Center(
+        child: const Center(
           child: Column(
             children: [
               Icon(
@@ -431,7 +431,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
                 color: AppTheme.lightGrey,
                 size: 48,
               ),
-              const SizedBox(height: DesignTokens.space16),
+              SizedBox(height: DesignTokens.space16),
               Text(
                 'No payment history',
                 style: TextStyle(
@@ -462,7 +462,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -495,7 +495,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
                 ),
                 Text(
                   _formatDate(payment['created_at']),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppTheme.lightGrey,
                     fontSize: 12,
                   ),
@@ -569,7 +569,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -577,7 +577,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
         contentPadding: const EdgeInsets.all(DesignTokens.space16),
         leading: Icon(
           icon,
-          color: isDestructive ? DesignTokens.danger : AppTheme.mintAqua,
+          color: isDestructive ? DesignTokens.danger : AppTheme.accentGreen,
           size: 24,
         ),
         title: Text(
@@ -590,12 +590,12 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios,
           color: AppTheme.lightGrey,
           size: 16,
@@ -620,7 +620,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Billing settings coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -629,7 +629,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Update payment method coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -638,7 +638,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Add payment method coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -647,7 +647,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Plan upgrade coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -656,7 +656,7 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Downloading invoices...'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }

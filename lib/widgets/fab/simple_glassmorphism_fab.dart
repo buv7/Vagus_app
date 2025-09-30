@@ -2,12 +2,10 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 import '../../screens/notes/coach_note_screen.dart';
 import '../../screens/files/upload_photos_screen.dart';
-import '../../screens/calendar/event_editor.dart';
 import '../../screens/nutrition/meal_editor.dart';
-import '../../screens/calling/calling_demo_screen.dart';
 import '../../models/nutrition/nutrition_plan.dart';
 
 class SimpleGlassmorphismFAB extends StatefulWidget {
@@ -31,7 +29,7 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
   late Animation<double> _rotationAnimation;
 
   // Action items configuration
-  final List<FABAction> _actions = [
+  final List<FABAction> _actions = const [
     FABAction(
       icon: Icons.fitness_center,
       label: 'Add Workout',
@@ -232,7 +230,7 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
                 top: position.dy,
                 child: _buildActionButton(index, action),
               );
-            }).toList(),
+            }),
         ],
       ),
     );
@@ -249,16 +247,28 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
             height: 64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppTheme.mintAqua.withValues(alpha: 0.9),
+              gradient: RadialGradient(
+                colors: [
+                  DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  DesignTokens.accentBlue.withValues(alpha: 0.1),
+                ],
+              ),
               border: Border.all(
-                color: AppTheme.mintAqua.withValues(alpha: 0.5),
+                color: DesignTokens.accentBlue.withValues(alpha: 0.4),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.3),
                   blurRadius: 20,
+                  spreadRadius: 0,
                   offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -270,11 +280,11 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
                   child: InkWell(
                     onTap: _toggleFAB,
                     borderRadius: BorderRadius.circular(32),
-                    child: Center(
+                    child: const Center(
                       child: Icon(
                         Icons.add,
                         size: 28,
-                        color: AppTheme.primaryBlack,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -304,16 +314,28 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
               height: 48, // Decreased from 56 to 48
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.cardBackground.withValues(alpha: 0.85),
+                gradient: RadialGradient(
+                  colors: [
+                    DesignTokens.accentBlue.withValues(alpha: 0.25),
+                    DesignTokens.accentBlue.withValues(alpha: 0.08),
+                  ],
+                ),
                 border: Border.all(
-                  color: AppTheme.mintAqua.withValues(alpha: 0.3),
-                  width: 2,
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.35),
+                  width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: DesignTokens.accentBlue.withValues(alpha: 0.25),
+                    blurRadius: 15,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 6),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -329,7 +351,7 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
                           child: Icon(
                             action.icon,
                             size: 24, // Increased from 20 to 24
-                            color: AppTheme.mintAqua,
+                            color: Colors.white,
                           ),
                         ),
                     ),
@@ -367,7 +389,7 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
         .map((p) => Offset(p.dx.roundToDouble(), p.dy.roundToDouble()))
         .toList();
     for (int i = 0; i < rounded.length; i++) {
-      print('B$i -> (${rounded[i].dx.toInt()}, ${rounded[i].dy.toInt()})');
+      debugPrint('B$i -> (${rounded[i].dx.toInt()}, ${rounded[i].dy.toInt()})');
     }
 
     return positions;

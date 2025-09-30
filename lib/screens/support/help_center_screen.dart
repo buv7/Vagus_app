@@ -104,9 +104,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -128,7 +128,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 color: AppTheme.cardBackground,
                 borderRadius: BorderRadius.circular(DesignTokens.radius12),
                 border: Border.all(
-                  color: AppTheme.steelGrey,
+                  color: AppTheme.mediumGrey,
                   width: 1,
                 ),
               ),
@@ -143,7 +143,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   contentPadding: const EdgeInsets.all(DesignTokens.space16),
                   prefixIcon: const Icon(
                     Icons.search,
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                     size: 20,
                   ),
                   suffixIcon: _searchQuery.isNotEmpty
@@ -194,7 +194,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         color: AppTheme.lightGrey,
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -249,7 +249,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           color: AppTheme.cardBackground,
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
           border: Border.all(
-            color: AppTheme.steelGrey,
+            color: AppTheme.mediumGrey,
             width: 1,
           ),
         ),
@@ -258,7 +258,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           children: [
             Icon(
               icon,
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
               size: 32,
             ),
             const SizedBox(height: DesignTokens.space8),
@@ -290,7 +290,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -298,7 +298,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         contentPadding: const EdgeInsets.all(DesignTokens.space16),
         leading: Icon(
           option['icon'],
-          color: AppTheme.mintAqua,
+          color: AppTheme.accentGreen,
           size: 24,
         ),
         title: Text(
@@ -311,12 +311,12 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         ),
         subtitle: Text(
           option['subtitle'],
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios,
           color: AppTheme.lightGrey,
           size: 16,
@@ -336,11 +336,11 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           color: AppTheme.cardBackground,
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
           border: Border.all(
-            color: AppTheme.steelGrey,
+            color: AppTheme.mediumGrey,
             width: 1,
           ),
         ),
-        child: Center(
+        child: const Center(
           child: Column(
             children: [
               Icon(
@@ -348,7 +348,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 color: AppTheme.lightGrey,
                 size: 48,
               ),
-              const SizedBox(height: DesignTokens.space16),
+              SizedBox(height: DesignTokens.space16),
               Text(
                 'No results found',
                 style: TextStyle(
@@ -381,7 +381,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -398,12 +398,12 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         leading: Container(
           padding: const EdgeInsets.all(DesignTokens.space8),
           decoration: BoxDecoration(
-            color: AppTheme.mintAqua.withOpacity(0.2),
+            color: AppTheme.accentGreen.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.help_outline,
-            color: AppTheme.mintAqua,
+            color: AppTheme.accentGreen,
             size: 20,
           ),
         ),
@@ -417,17 +417,17 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         ),
         subtitle: Text(
           item['category'],
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
         ),
-        iconColor: AppTheme.mintAqua,
+        iconColor: AppTheme.accentGreen,
         collapsedIconColor: AppTheme.lightGrey,
         children: [
           Text(
             item['answer'],
-            style: TextStyle(
+            style: const TextStyle(
               color: AppTheme.lightGrey,
               fontSize: 14,
               height: 1.5,
@@ -443,7 +443,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Getting started guide coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -452,7 +452,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Video tutorials coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -461,7 +461,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('User guide coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -470,7 +470,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Feature requests coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -485,6 +485,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Could not open email client'),
@@ -498,7 +499,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Live chat coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -507,7 +508,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Video call scheduling coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -518,6 +519,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     if (await canLaunchUrl(phoneUri)) {
       await launchUrl(phoneUri);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Could not open phone dialer'),

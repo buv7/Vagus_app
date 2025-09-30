@@ -148,7 +148,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isCurrentDevice 
-              ? AppTheme.mintAqua.withValues(alpha: 0.3)
+              ? AppTheme.accentGreen.withValues(alpha: 0.3)
               : Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
@@ -167,12 +167,12 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
           height: 48,
           decoration: BoxDecoration(
             color: isCurrentDevice 
-                ? AppTheme.mintAqua.withValues(alpha: 0.2)
+                ? AppTheme.accentGreen.withValues(alpha: 0.2)
                 : const Color(0xFF1A1C1E),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: isCurrentDevice 
-                  ? AppTheme.mintAqua
+                  ? AppTheme.accentGreen
                   : Colors.white.withValues(alpha: 0.2),
               width: 2,
             ),
@@ -183,7 +183,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
               style: TextStyle(
                 fontSize: 20,
                 color: isCurrentDevice 
-                    ? AppTheme.mintAqua
+                    ? AppTheme.accentGreen
                     : Colors.white.withValues(alpha: 0.7),
               ),
             ),
@@ -207,7 +207,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
@@ -299,13 +299,13 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                   }
                 },
                 itemBuilder: (context) => [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'revoke',
                     child: Row(
                       children: [
                         Icon(Icons.logout, color: Colors.red, size: 16),
-                        const SizedBox(width: 8),
-                        const Text(
+                        SizedBox(width: 8),
+                        Text(
                           'Sign out this device',
                           style: TextStyle(
                             color: Colors.white,
@@ -324,9 +324,9 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -341,13 +341,13 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
           Container(
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
-              color: AppTheme.mintAqua.withValues(alpha: 0.1),
+              color: AppTheme.accentGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.refresh,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
               onPressed: _loadDevices,
               tooltip: 'Refresh',
@@ -356,9 +356,9 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         ],
       ),
       body: _loading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
             )
           : _devices.isEmpty
@@ -369,13 +369,13 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                          color: AppTheme.accentGreen.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.devices_other,
                           size: 64,
-                          color: AppTheme.mintAqua,
+                          color: AppTheme.accentGreen,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -400,7 +400,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                   ),
                 )
               : RefreshIndicator(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   onRefresh: _loadDevices,
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 8),

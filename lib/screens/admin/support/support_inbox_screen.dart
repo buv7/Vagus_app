@@ -46,7 +46,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
 
   // Right pane state
   String? _previewTicketId;     // selected ticket to preview
-  Map<String, SlaPolicy> _sla = const {};
+  final Map<String, SlaPolicy> _sla = const {};
 
 
 
@@ -228,10 +228,11 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
                       tooltip: 'Escalate breached',
                       icon: const Icon(Icons.trending_up),
                       onPressed: () async {
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         final list = await _svc.listTickets(filter: _filter);
                         for (final t in list) { await _svc.escalateIfNeeded(t); }
                         if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Escalations applied')));
+                        scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Escalations applied')));
                         setState(() {});
                       },
                     ),
@@ -244,9 +245,10 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
                       tooltip: 'Copy CSV (current filter)',
                       icon: const Icon(Icons.table_view),
                       onPressed: () async {
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         final count = await _svc.copyCsvToClipboard(filter: _filter);
                         if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        scaffoldMessenger.showSnackBar(
                           SnackBar(content: Text('CSV copied ($count rows)')),
                         );
                       },
@@ -426,7 +428,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
                  }
                })
            : () {
-                 setState(() => _previewTicketId = '${ticket.id}');
+                 setState(() => _previewTicketId = ticket.id);
                  _openTicket(ticket);
                },
     );
@@ -499,7 +501,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
   void _bulkSetStatus() async {
     final status = await showDialog<String>(
       context: context,
-      builder: (context) => _SimplePicker(
+      builder: (context) => const _SimplePicker(
         title: 'Set Status',
         options: ['open', 'replied', 'resolved', 'closed'],
         currentValue: null,
@@ -513,7 +515,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
   void _bulkSetPriority() async {
     final priority = await showDialog<String>(
       context: context,
-      builder: (context) => _SimplePicker(
+      builder: (context) => const _SimplePicker(
         title: 'Set Priority',
         options: ['low', 'normal', 'high', 'urgent'],
         currentValue: null,
@@ -527,7 +529,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
   void _bulkAssign() async {
     final assignedTo = await showDialog<String>(
       context: context,
-      builder: (context) => _SimplePicker(
+      builder: (context) => const _SimplePicker(
         title: 'Assign To',
         options: ['admin1', 'admin2', 'admin3'], // TODO: Get from service
         currentValue: null,
@@ -541,7 +543,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
   void _bulkAddTags() async {
     final tags = await showDialog<List<String>>(
       context: context,
-      builder: (context) => _SimplePicker(
+      builder: (context) => const _SimplePicker(
         title: 'Add Tags',
         options: ['bug', 'feature', 'urgent', 'documentation'],
         currentValue: null,
@@ -937,8 +939,9 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
               leading: const Icon(Icons.inbox_outlined),
               title: const Text('Open'),
               onTap: () async {
+                final navigator = Navigator.of(context);
                 await _svc.updateTicket(id: ticket.id, status: 'open');
-                Navigator.pop(context);
+                navigator.pop();
                 unawaited(_load());
               },
             ),
@@ -946,8 +949,9 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
               leading: const Icon(Icons.pending_outlined),
               title: const Text('Pending'),
               onTap: () async {
+                final navigator = Navigator.of(context);
                 await _svc.updateTicket(id: ticket.id, status: 'pending');
-                Navigator.pop(context);
+                navigator.pop();
                 unawaited(_load());
               },
             ),
@@ -955,8 +959,9 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
               leading: const Icon(Icons.check_circle_outline),
               title: const Text('Resolved'),
               onTap: () async {
+                final navigator = Navigator.of(context);
                 await _svc.updateTicket(id: ticket.id, status: 'resolved');
-                Navigator.pop(context);
+                navigator.pop();
                 unawaited(_load());
               },
             ),
@@ -964,8 +969,9 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
               leading: const Icon(Icons.close),
               title: const Text('Closed'),
               onTap: () async {
+                final navigator = Navigator.of(context);
                 await _svc.updateTicket(id: ticket.id, status: 'closed');
-                Navigator.pop(context);
+                navigator.pop();
                 unawaited(_load());
               },
             ),
@@ -1083,7 +1089,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
   Widget _buildRightPane() {
     SupportTicket? t;
     try {
-      t = _tickets.firstWhere((x) => '${x.id}' == _previewTicketId);
+      t = _tickets.firstWhere((x) => x.id == _previewTicketId);
     } catch (e) {
       t = _tickets.isNotEmpty ? _tickets.first : null;
     }
@@ -1092,8 +1098,8 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
     }
 
     // After null check, t is guaranteed to be non-null
-    final ticket = t!;
-    final due = ticket.createdAt == null ? null : _svc.computeResolutionDue(ticket.createdAt, ticket.priority, _sla);
+    final ticket = t;
+    final due = _svc.computeResolutionDue(ticket.createdAt, ticket.priority, _sla);
     final isBreaching = due != null && DateTime.now().toUtc().isAfter(due);
 
     return Column(
@@ -1103,7 +1109,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Row(children: [
-            Expanded(child: Text('#${ticket.id} • ${ticket.title ?? '(untitled)'}', maxLines: 2, style: const TextStyle(fontWeight: FontWeight.w700))),
+            Expanded(child: Text('#${ticket.id} • ${ticket.title}', maxLines: 2, style: const TextStyle(fontWeight: FontWeight.w700))),
             IconButton(
               tooltip: 'Co-Pilot',
               icon: const Icon(Icons.auto_awesome),
@@ -1116,8 +1122,8 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Wrap(spacing: 8, runSpacing: 6, children: [
-            _pill(icon: Icons.flag, text: ticket.priority ?? 'normal', danger: ticket.priority == 'urgent' || ticket.priority == 'high'),
-            _pill(icon: Icons.timelapse, text: ticket.status ?? 'open'),
+            _pill(icon: Icons.flag, text: ticket.priority, danger: ticket.priority == 'urgent' || ticket.priority == 'high'),
+            _pill(icon: Icons.timelapse, text: ticket.status),
             if (due != null) _pill(icon: Icons.schedule, text: 'Due ${_relative(due)}', danger: isBreaching),
           ]),
         ),
@@ -1154,7 +1160,7 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
         Expanded(child: _buildMiniThread(ticket)),
 
         // Inline reply
-        _inlineReplyComposer(ticketId: '${ticket.id}'),
+        _inlineReplyComposer(ticketId: ticket.id),
       ],
     );
   }
@@ -1251,14 +1257,14 @@ class _SupportInboxScreenState extends State<SupportInboxScreen> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.orange.withValues(alpha: .25)),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.warning_amber_rounded, size: 16, color: Colors.orange),
-                    const SizedBox(width: 8),
+                    Icon(Icons.warning_amber_rounded, size: 16, color: Colors.orange),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Another agent is replying. Coordinate before sending.',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],

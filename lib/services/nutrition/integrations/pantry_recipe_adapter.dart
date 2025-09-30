@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../pantry_service.dart';
 import '../recipe_service.dart';
 import 'package:vagus_app/models/nutrition/pantry_item.dart';
@@ -25,7 +26,7 @@ class PantryRecipeAdapter {
         servings: servings,
       );
     } catch (e) {
-      print('Failed to get pantry coverage for recipe: $e');
+      debugPrint('Failed to get pantry coverage for recipe: $e');
       return 0.0;
     }
   }
@@ -48,7 +49,7 @@ class PantryRecipeAdapter {
         servings: servings,
       );
     } catch (e) {
-      print('Failed to get detailed pantry coverage: $e');
+      debugPrint('Failed to get detailed pantry coverage: $e');
       return const PantryCoverage(0.0, []);
     }
   }
@@ -69,7 +70,7 @@ class PantryRecipeAdapter {
         servings: servings,
       );
     } catch (e) {
-      print('Failed to plan consumption: $e');
+      debugPrint('Failed to plan consumption: $e');
       return [];
     }
   }
@@ -94,7 +95,7 @@ class PantryRecipeAdapter {
         );
       }
     } catch (e) {
-      print('Failed to apply consumption: $e');
+      debugPrint('Failed to apply consumption: $e');
       rethrow;
     }
   }
@@ -116,7 +117,7 @@ class PantryRecipeAdapter {
         );
         coverageMap[recipeId] = coverage;
       } catch (e) {
-        print('Failed to get coverage for recipe $recipeId: $e');
+        debugPrint('Failed to get coverage for recipe $recipeId: $e');
         coverageMap[recipeId] = 0.0;
       }
     }

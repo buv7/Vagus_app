@@ -1,8 +1,6 @@
-import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
-import 'weekly_review_service.dart';
-import '../progress/progress_service.dart';
 
 final _sb = Supabase.instance.client;
 
@@ -21,6 +19,16 @@ class ClientFlag {
     required this.lastUpdate,
     this.avatarUrl,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'clientId': clientId,
+      'clientName': clientName,
+      'issues': issues,
+      'lastUpdate': lastUpdate.toIso8601String(),
+      'avatarUrl': avatarUrl,
+    };
+  }
 }
 
 /// Service for managing coach inbox with auto-flagged clients
@@ -51,7 +59,6 @@ class CoachInboxService {
       }
 
       // Get flags for all clients in parallel
-      final clientIds = clients.map((c) => c['id'] as String).toList();
       final flags = <ClientFlag>[];
 
       for (final client in clients) {
@@ -78,7 +85,7 @@ class CoachInboxService {
 
       return flags;
     } catch (e) {
-      print('CoachInboxService: Error getting flags for coach $coachId - $e');
+      debugPrint('CoachInboxService: Error getting flags for coach $coachId - $e');
       return [];
     }
   }
@@ -102,7 +109,7 @@ class CoachInboxService {
 
       return List<Map<String, dynamic>>.from(clients);
     } catch (e) {
-      print('CoachInboxService: Error getting coach clients - $e');
+      debugPrint('CoachInboxService: Error getting coach clients - $e');
       return [];
     }
   }
@@ -136,7 +143,7 @@ class CoachInboxService {
       if (checkinIssue) issues.add('Check-in overdue');
 
     } catch (e) {
-      print('CoachInboxService: Error checking client issues for $clientId - $e');
+      debugPrint('CoachInboxService: Error checking client issues for $clientId - $e');
     }
 
     return issues;
@@ -173,7 +180,7 @@ class CoachInboxService {
 
       return avgHours < 6.0;
     } catch (e) {
-      print('CoachInboxService: Error checking sleep for $clientId - $e');
+      debugPrint('CoachInboxService: Error checking sleep for $clientId - $e');
       return false;
     }
   }
@@ -209,7 +216,7 @@ class CoachInboxService {
 
       return avgSteps < 5000;
     } catch (e) {
-      print('CoachInboxService: Error checking steps for $clientId - $e');
+      debugPrint('CoachInboxService: Error checking steps for $clientId - $e');
       return false;
     }
   }
@@ -227,7 +234,7 @@ class CoachInboxService {
 
       return (response as List<dynamic>).isNotEmpty;
     } catch (e) {
-      print('CoachInboxService: Error checking skipped sessions for $clientId - $e');
+      debugPrint('CoachInboxService: Error checking skipped sessions for $clientId - $e');
       return false;
     }
   }
@@ -280,7 +287,7 @@ class CoachInboxService {
 
       return avgNet < -1000;
     } catch (e) {
-      print('CoachInboxService: Error checking kcal for $clientId - $e');
+      debugPrint('CoachInboxService: Error checking kcal for $clientId - $e');
       return false;
     }
   }
@@ -302,7 +309,7 @@ class CoachInboxService {
 
       return lastCheckin.isBefore(sevenDaysAgo);
     } catch (e) {
-      print('CoachInboxService: Error checking check-ins for $clientId - $e');
+      debugPrint('CoachInboxService: Error checking check-ins for $clientId - $e');
       return false;
     }
   }

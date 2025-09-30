@@ -23,7 +23,6 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
   List<Map<String, dynamic>> _callHistory = [];
   bool _isLoading = true;
   String? _error;
-  String _role = 'client';
 
   // Mock data as fallback
   final List<Map<String, dynamic>> _mockUpcomingCalls = [
@@ -102,14 +101,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
 
-      // Get user role
-      final profile = await Supabase.instance.client
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
 
-      _role = (profile['role'] ?? 'client').toString();
 
       // Load upcoming calls from calls table
       final upcomingResponse = await Supabase.instance.client
@@ -153,10 +145,10 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: VagusAppBar(
         title: const Text('Calls'),
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -171,7 +163,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
       body: _isLoading 
           ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
             )
           : _error != null
@@ -179,7 +171,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.error_outline,
                         color: Colors.red,
                         size: 48,
@@ -203,8 +195,8 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
                       ElevatedButton(
                         onPressed: _loadCallsData,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.mintAqua,
-                          foregroundColor: AppTheme.primaryBlack,
+                          backgroundColor: AppTheme.accentGreen,
+                          foregroundColor: AppTheme.primaryDark,
                         ),
                         child: const Text('Retry'),
                       ),
@@ -248,7 +240,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
             icon: Icons.videocam,
             title: 'Video Call',
             subtitle: 'Start video call',
-            color: AppTheme.mintAqua,
+            color: AppTheme.accentGreen,
             onTap: () {
               setState(() {
                 _isInCall = true;
@@ -291,7 +283,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
           color: AppTheme.cardBackground,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -300,7 +292,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Icon(
@@ -353,7 +345,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: _getCallTypeColor(call['type']).withOpacity(0.2),
+                color: _getCallTypeColor(call['type']).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Icon(
@@ -388,7 +380,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
                     children: [
                       Icon(
                         Icons.person,
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         size: 16,
                       ),
                       const SizedBox(width: 4),
@@ -401,7 +393,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
                       const SizedBox(width: DesignTokens.space16),
                       Icon(
                         Icons.access_time,
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         size: 16,
                       ),
                       const SizedBox(width: 4),
@@ -430,7 +422,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
                 },
                 icon: Icon(
                   call['type'] == 'video' ? Icons.videocam : Icons.phone,
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                 ),
               ),
               IconButton(
@@ -466,8 +458,8 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppTheme.primaryBlack,
-            AppTheme.primaryBlack.withOpacity(0.8),
+            AppTheme.primaryDark,
+            AppTheme.primaryDark.withValues(alpha: 0.8),
           ],
         ),
       ),
@@ -543,7 +535,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
             height: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: AppTheme.primaryBlack.withOpacity(0.3),
+              color: AppTheme.primaryDark.withValues(alpha: 0.3),
             ),
             child: const Center(
               child: Column(
@@ -551,11 +543,11 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     child: Text(
                       'CS',
                       style: TextStyle(
-                        color: AppTheme.primaryBlack,
+                        color: AppTheme.primaryDark,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -583,17 +575,17 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
               width: 120,
               height: 90,
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlack.withOpacity(0.8),
+                color: AppTheme.primaryDark.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   width: 2,
                 ),
               ),
               child: const Center(
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundColor: AppTheme.primaryBlack,
+                  backgroundColor: AppTheme.primaryDark,
                   child: Text(
                     'A',
                     style: TextStyle(
@@ -625,18 +617,18 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
               color: AppTheme.cardBackground,
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 width: 3,
               ),
             ),
             child: const Center(
               child: CircleAvatar(
                 radius: 60,
-                backgroundColor: AppTheme.mintAqua,
+                backgroundColor: AppTheme.accentGreen,
                 child: Text(
                   'CS',
                   style: TextStyle(
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
@@ -729,10 +721,10 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        color: backgroundColor ?? (isActive ? AppTheme.mintAqua : AppTheme.cardBackground),
+        color: backgroundColor ?? (isActive ? AppTheme.accentGreen : AppTheme.cardBackground),
         shape: BoxShape.circle,
         border: Border.all(
-          color: backgroundColor ?? (isActive ? AppTheme.mintAqua : Colors.white.withOpacity(0.3)),
+          color: backgroundColor ?? (isActive ? AppTheme.accentGreen : Colors.white.withValues(alpha: 0.3)),
         ),
       ),
       child: IconButton(
@@ -741,7 +733,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
           icon,
           color: backgroundColor != null 
             ? Colors.white 
-            : (isActive ? AppTheme.primaryBlack : Colors.white),
+            : (isActive ? AppTheme.primaryDark : Colors.white),
           size: 24,
         ),
       ),
@@ -751,7 +743,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
   Color _getCallTypeColor(String type) {
     switch (type) {
       case 'video':
-        return AppTheme.mintAqua;
+        return AppTheme.accentGreen;
       case 'audio':
         return Colors.blue;
       default:
@@ -819,8 +811,8 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.mintAqua,
-              foregroundColor: AppTheme.primaryBlack,
+              backgroundColor: AppTheme.accentGreen,
+              foregroundColor: AppTheme.primaryDark,
             ),
             child: const Text('Schedule'),
           ),
@@ -852,8 +844,8 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.mintAqua,
-              foregroundColor: AppTheme.primaryBlack,
+              backgroundColor: AppTheme.accentGreen,
+              foregroundColor: AppTheme.primaryDark,
             ),
             child: const Text('Reschedule'),
           ),

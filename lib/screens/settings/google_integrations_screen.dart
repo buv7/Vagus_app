@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/google/google_models.dart';
 import '../../services/google/google_apps_service.dart';
-import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common/pro_upgrade_chip.dart';
 
@@ -131,9 +130,9 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -146,9 +145,9 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
         ),
       ),
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
             )
           : SingleChildScrollView(
@@ -186,7 +185,7 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
             children: [
               Icon(
                 Icons.cloud_done,
-                color: _connectedAccount != null ? Colors.green : AppTheme.mintAqua,
+                color: _connectedAccount != null ? Colors.green : AppTheme.accentGreen,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -241,7 +240,7 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
               child: ElevatedButton(
                 onPressed: _isConnecting ? null : _connectAccount,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.mintAqua,
+                  backgroundColor: AppTheme.accentGreen,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -324,7 +323,7 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppTheme.mintAqua),
+              borderSide: const BorderSide(color: AppTheme.accentGreen),
             ),
             filled: true,
             fillColor: const Color(0xFF1A1C1E),
@@ -337,7 +336,7 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
           child: ElevatedButton(
             onPressed: _updateWorkspaceFolder,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.mintAqua,
+              backgroundColor: AppTheme.accentGreen,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
@@ -388,14 +387,14 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
               ),
-              child: Row(
+              child: const Row(
                 children: [
-                  const Icon(Icons.warning, color: Colors.orange, size: 20),
-                  const SizedBox(width: 8),
+                  Icon(Icons.warning, color: Colors.orange, size: 20),
+                  SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Connect your Google account to export data to Sheets',
-                      style: const TextStyle(color: Colors.orange, fontSize: 14),
+                      style: TextStyle(color: Colors.orange, fontSize: 14),
                     ),
                   ),
                 ],
@@ -425,7 +424,7 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
           ElevatedButton(
             onPressed: () => unawaited(_exportToSheets(kind)),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.mintAqua,
+              backgroundColor: AppTheme.accentGreen,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               shape: RoundedRectangleBorder(
@@ -454,15 +453,15 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.schedule,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'Scheduled Exports',
                 style: TextStyle(
                   fontSize: 18,
@@ -470,8 +469,8 @@ class _GoogleIntegrationsScreenState extends State<GoogleIntegrationsScreen> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(width: 8),
-              const ProUpgradeChip(),
+              SizedBox(width: 8),
+              ProUpgradeChip(),
             ],
           ),
           const SizedBox(height: 16),

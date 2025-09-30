@@ -1,4 +1,3 @@
-import 'dart:math';
 
 /// Represents a parsed time with start, duration, and source text
 class ParsedTime {
@@ -41,13 +40,6 @@ class NaturalTimeParser {
     'الاحد': 7, 'احد': 7,
   };
 
-  // Relative time keywords
-  static const Map<String, String> _relativeKeywords = {
-    'now': 'now',
-    'tmrw': 'tomorrow', 'tomorrow': 'tomorrow',
-    'غدا': 'tomorrow', 'غداً': 'tomorrow', 'باجر': 'tomorrow',
-    'today': 'today', 'اليوم': 'today',
-  };
 
   /// Parses natural language time expressions
   static ParsedTime? parse(String text, {
@@ -330,7 +322,7 @@ class NaturalTimeParser {
 
   /// Gets the next occurrence of a weekday
   static DateTime _getNextWeekday(DateTime now, int targetWeekday, int hour, int minute) {
-    var target = DateTime(now.year, now.month, now.day, hour, minute);
+    final target = DateTime(now.year, now.month, now.day, hour, minute);
     
     // If today is the target weekday and time hasn't passed, use today
     if (now.weekday == targetWeekday && target.isAfter(now)) {

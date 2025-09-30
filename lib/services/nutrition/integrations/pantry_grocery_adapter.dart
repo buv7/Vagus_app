@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import '../pantry_service.dart';
 import '../grocery_service.dart';
 import 'package:vagus_app/models/nutrition/grocery_list.dart';
-import 'package:vagus_app/models/nutrition/grocery_item.dart';
 import 'package:vagus_app/services/nutrition/pantry_service.dart' as ps;
 typedef PantrySummary = ps.PantrySummary;
 
@@ -69,7 +69,7 @@ class PantryGroceryAdapter {
       
       return (list, summary);
     } catch (e) {
-      print('Failed to generate grocery list with pantry: $e');
+      debugPrint('Failed to generate grocery list with pantry: $e');
       // Fallback to regular generation
       final list = await _grocery.generateForPlanWeek(
         planId: planId,
@@ -115,7 +115,7 @@ class PantryGroceryAdapter {
         coveredIngredients: coveredIngredients,
       );
     } catch (e) {
-      print('Failed to get pantry coverage: $e');
+      debugPrint('Failed to get pantry coverage: $e');
       return const PantrySummary(
         coveragePercent: 0.0,
         itemsCovered: 0,

@@ -1,15 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// Dev tool for exercise catalog statistics
 /// Run with: dart tooling/dev_seed_exercise_catalog.dart
 Future<void> main() async {
-  await printCatalogStats();
+  await debugPrintCatalogStats();
 }
 
 /// Prints catalog statistics including count and common muscle groups
-Future<void> printCatalogStats() async {
+Future<void> debugPrintCatalogStats() async {
   try {
     // Load the catalog JSON
     final String jsonString = await rootBundle.loadString('assets/exercises/catalog.json');
@@ -17,10 +17,10 @@ Future<void> printCatalogStats() async {
     
     final List<dynamic> exercises = catalog['exercises'] as List<dynamic>? ?? [];
     
-    print('📊 Exercise Catalog Statistics');
-    print('=' * 40);
-    print('Total exercises: ${exercises.length}');
-    print('');
+    debugPrint('📊 Exercise Catalog Statistics');
+    debugPrint('=' * 40);
+    debugPrint('Total exercises: ${exercises.length}');
+    debugPrint('');
     
     // Count muscle groups
     final Map<String, int> muscleCounts = {};
@@ -42,13 +42,13 @@ Future<void> printCatalogStats() async {
     final sortedMuscles = muscleCounts.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     
-    print('Muscle groups (${allMuscles.length} unique):');
+    debugPrint('Muscle groups (${allMuscles.length} unique):');
     for (final entry in sortedMuscles) {
-      print('  ${entry.key}: ${entry.value} exercises');
+      debugPrint('  ${entry.key}: ${entry.value} exercises');
     }
     
-    print('');
-    print('Exercise list:');
+    debugPrint('');
+    debugPrint('Exercise list:');
     for (int i = 0; i < exercises.length; i++) {
       final exercise = exercises[i] as Map<String, dynamic>;
       final name = exercise['name'] as String? ?? 'Unknown';
@@ -56,15 +56,15 @@ Future<void> printCatalogStats() async {
       final secondary = (exercise['secondaryMuscles'] as List<dynamic>? ?? []).cast<String>();
       final mediaCount = (exercise['media'] as List<dynamic>? ?? []).length;
       
-      print('  ${i + 1}. $name');
-      print('     Primary: ${primary.join(', ')}');
-      print('     Secondary: ${secondary.join(', ')}');
-      print('     Media files: $mediaCount');
-      print('');
+      debugPrint('  ${i + 1}. $name');
+      debugPrint('     Primary: ${primary.join(', ')}');
+      debugPrint('     Secondary: ${secondary.join(', ')}');
+      debugPrint('     Media files: $mediaCount');
+      debugPrint('');
     }
     
   } catch (e) {
-    print('❌ Error loading catalog: $e');
-    print('Make sure assets/exercises/catalog.json exists and is valid JSON.');
+    debugPrint('❌ Error loading catalog: $e');
+    debugPrint('Make sure assets/exercises/catalog.json exists and is valid JSON.');
   }
 }

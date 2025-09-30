@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/app_theme.dart';
@@ -102,7 +103,7 @@ class _CompareCheckinsModalState extends State<CompareCheckinsModal> {
 
       // Load initial photos if weeks are selected
       if (_selectedWeek1 != null && _selectedWeek2 != null) {
-        _loadPhotosForComparison();
+        unawaited(_loadPhotosForComparison());
       }
     } catch (e) {
       setState(() {
@@ -197,7 +198,7 @@ class _CompareCheckinsModalState extends State<CompareCheckinsModal> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
@@ -317,7 +318,7 @@ class _CompareCheckinsModalState extends State<CompareCheckinsModal> {
           label,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
-            color: AppTheme.primaryBlack,
+            color: AppTheme.primaryDark,
           ),
         ),
         const SizedBox(height: 8),
@@ -348,7 +349,7 @@ class _CompareCheckinsModalState extends State<CompareCheckinsModal> {
           'Pose: ',
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: AppTheme.primaryBlack,
+            color: AppTheme.primaryDark,
           ),
         ),
         const SizedBox(width: 8),
@@ -366,14 +367,14 @@ class _CompareCheckinsModalState extends State<CompareCheckinsModal> {
                   });
                 }
               },
-              selectedColor: AppTheme.primaryBlack,
+              selectedColor: AppTheme.primaryDark,
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : AppTheme.primaryBlack,
+                color: isSelected ? Colors.white : AppTheme.primaryDark,
                 fontWeight: FontWeight.w600,
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -406,21 +407,21 @@ class _CompareCheckinsModalState extends State<CompareCheckinsModal> {
                   _formatWeekLabel(_selectedWeek1!),
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
               const Icon(
                 Icons.compare_arrows,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
               ),
               Expanded(
                 child: Text(
                   _formatWeekLabel(_selectedWeek2!),
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -532,7 +533,7 @@ class _CompareCheckinsModalState extends State<CompareCheckinsModal> {
                   _formatWeekLabel(weekLabel),
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                   ),
                 ),
                 if (photo != null) ...[

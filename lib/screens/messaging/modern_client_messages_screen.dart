@@ -76,7 +76,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       body: SafeArea(
         child: Column(
           children: [
@@ -91,7 +91,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
               child: _loading
                   ? const Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                       ),
                     )
                   : _conversations.isEmpty
@@ -112,15 +112,15 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
           // Title with icon
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.chat_bubble_outline,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 24,
               ),
               const SizedBox(width: DesignTokens.space8),
-              Text(
+              const Text(
                 'Client Messages', // Fixed Service Integration
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppTheme.neutralWhite,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -160,7 +160,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
                 _searchController.clear();
               });
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.search,
               color: AppTheme.lightGrey,
               size: 24,
@@ -181,14 +181,14 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
       child: TextField(
         controller: _searchController,
         style: const TextStyle(color: AppTheme.neutralWhite),
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: 'Search conversations...',
           hintStyle: TextStyle(color: AppTheme.lightGrey),
           border: InputBorder.none,
@@ -208,7 +208,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -217,7 +217,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
             color: AppTheme.lightGrey,
             size: 64,
           ),
-          const SizedBox(height: DesignTokens.space16),
+          SizedBox(height: DesignTokens.space16),
           Text(
             'No client conversations yet',
             style: TextStyle(
@@ -226,7 +226,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: DesignTokens.space8),
+          SizedBox(height: DesignTokens.space8),
           Text(
             'Clients will appear here when they connect',
             style: TextStyle(
@@ -258,7 +258,6 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
     final timestamp = conversation.lastMessageAt;
     final unreadCount = conversation.unreadCount;
     final isOnline = conversation.isOnline;
-    final isTyping = false; // TODO: Add typing status to Conversation model
     
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space8),
@@ -266,7 +265,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -276,11 +275,11 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundColor: AppTheme.mintAqua,
+              backgroundColor: AppTheme.accentGreen,
               child: Text(
                 clientName.substring(0, 1).toUpperCase(),
                 style: const TextStyle(
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -297,7 +296,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
                     color: DesignTokens.success,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       width: 2,
                     ),
                   ),
@@ -314,9 +313,9 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
           ),
         ),
         subtitle: Text(
-          isTyping ? '...typing...' : lastMessage,
-          style: TextStyle(
-            color: isTyping ? AppTheme.mintAqua : AppTheme.lightGrey,
+          lastMessage,
+          style: const TextStyle(
+            color: AppTheme.lightGrey,
             fontSize: 14,
           ),
           maxLines: 1,
@@ -328,7 +327,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
             // Action Icons
             IconButton(
               onPressed: () => _makeCall(conversation),
-              icon: Icon(
+              icon: const Icon(
                 Icons.phone,
                 color: AppTheme.lightGrey,
                 size: 20,
@@ -336,14 +335,14 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
             ),
             IconButton(
               onPressed: () => _makeVideoCall(conversation),
-              icon: Icon(
+              icon: const Icon(
                 Icons.videocam,
                 color: AppTheme.lightGrey,
                 size: 20,
               ),
             ),
             PopupMenuButton<String>(
-              icon: Icon(
+              icon: const Icon(
                 Icons.more_vert,
                 color: AppTheme.lightGrey,
                 size: 20,
@@ -372,7 +371,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
               children: [
                 Text(
                   _formatTimestamp(timestamp),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppTheme.lightGrey,
                     fontSize: 12,
                   ),
@@ -423,7 +422,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Calling ${conversation.clientName}...'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -433,7 +432,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Video calling ${conversation.clientName}...'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -457,7 +456,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Marked as read'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -467,7 +466,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Conversation pinned'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -477,7 +476,7 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Conversation archived'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -528,7 +527,6 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
   List<Map<String, dynamic>> _messages = [];
   bool _loading = true;
   bool _showSearch = false;
-  bool _showScheduleModal = false;
 
   @override
   void initState() {
@@ -574,7 +572,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       body: SafeArea(
         child: Column(
           children: [
@@ -586,7 +584,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
               child: _loading
                   ? const Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                       ),
                     )
                   : _buildMessagesList(),
@@ -603,11 +601,11 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppTheme.cardBackground,
         border: Border(
           bottom: BorderSide(
-            color: AppTheme.steelGrey,
+            color: AppTheme.mediumGrey,
             width: 1,
           ),
         ),
@@ -626,11 +624,11 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
           // Client Info
           CircleAvatar(
             radius: 20,
-            backgroundColor: AppTheme.mintAqua,
+            backgroundColor: AppTheme.accentGreen,
             child: Text(
               widget.conversation.clientName.substring(0, 1).toUpperCase(),
               style: const TextStyle(
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -662,7 +660,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
                       ),
                     ),
                     const SizedBox(width: DesignTokens.space4),
-                    Text(
+                    const Text(
                       'Online',
                       style: TextStyle(
                         color: AppTheme.lightGrey,
@@ -734,11 +732,11 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
           if (!isFromCoach) ...[
             CircleAvatar(
               radius: 16,
-              backgroundColor: AppTheme.mintAqua,
+              backgroundColor: AppTheme.accentGreen,
             child: Text(
               widget.conversation.clientName.substring(0, 1).toUpperCase(),
               style: const TextStyle(
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -751,10 +749,10 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
             child: Container(
               padding: const EdgeInsets.all(DesignTokens.space12),
               decoration: BoxDecoration(
-                color: isFromCoach ? AppTheme.mintAqua : AppTheme.cardBackground,
+                color: isFromCoach ? AppTheme.accentGreen : AppTheme.cardBackground,
                 borderRadius: BorderRadius.circular(DesignTokens.radius12),
                 border: isFromCoach ? null : Border.all(
-                  color: AppTheme.steelGrey,
+                  color: AppTheme.mediumGrey,
                   width: 1,
                 ),
               ),
@@ -764,7 +762,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
                   Text(
                     content,
                     style: TextStyle(
-                      color: isFromCoach ? AppTheme.primaryBlack : AppTheme.neutralWhite,
+                      color: isFromCoach ? AppTheme.primaryDark : AppTheme.neutralWhite,
                       fontSize: 14,
                     ),
                   ),
@@ -773,7 +771,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
                     _formatMessageTime(timestamp),
                     style: TextStyle(
                       color: isFromCoach 
-                          ? AppTheme.primaryBlack.withOpacity(0.7)
+                          ? AppTheme.primaryDark.withValues(alpha: 0.7)
                           : AppTheme.lightGrey,
                       fontSize: 10,
                     ),
@@ -785,10 +783,10 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
           
           if (isFromCoach) ...[
             const SizedBox(width: DesignTokens.space8),
-            CircleAvatar(
+            const CircleAvatar(
               radius: 16,
-              backgroundColor: AppTheme.steelGrey,
-              child: const Icon(
+              backgroundColor: AppTheme.mediumGrey,
+              child: Icon(
                 Icons.person,
                 color: AppTheme.neutralWhite,
                 size: 16,
@@ -803,11 +801,11 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
   Widget _buildMessageInput() {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppTheme.cardBackground,
         border: Border(
           top: BorderSide(
-            color: AppTheme.steelGrey,
+            color: AppTheme.mediumGrey,
             width: 1,
           ),
         ),
@@ -832,24 +830,16 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
             ),
           ),
           
-          // Schedule Button
-          IconButton(
-            onPressed: () => setState(() => _showScheduleModal = true),
-            icon: const Icon(
-              Icons.schedule,
-              color: AppTheme.lightGrey,
-            ),
-          ),
           
           // Message Input
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space12),
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 borderRadius: BorderRadius.circular(DesignTokens.radius12),
                 border: Border.all(
-                  color: AppTheme.steelGrey,
+                  color: AppTheme.mediumGrey,
                   width: 1,
                 ),
               ),
@@ -871,15 +861,15 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
           
           // Send Button
           Container(
-            decoration: BoxDecoration(
-              color: AppTheme.mintAqua,
+            decoration: const BoxDecoration(
+              color: AppTheme.accentGreen,
               shape: BoxShape.circle,
             ),
             child: IconButton(
               onPressed: _sendMessage,
               icon: const Icon(
                 Icons.send,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
               ),
             ),
           ),
@@ -921,7 +911,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Calling ${widget.conversation.clientName}...'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -930,7 +920,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Video calling ${widget.conversation.clientName}...'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -948,7 +938,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.search, color: AppTheme.mintAqua),
+              leading: const Icon(Icons.search, color: AppTheme.accentGreen),
               title: const Text('Search Messages', style: TextStyle(color: AppTheme.neutralWhite)),
               onTap: () {
                 Navigator.pop(context);
@@ -956,7 +946,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.notifications_off, color: AppTheme.mintAqua),
+              leading: const Icon(Icons.notifications_off, color: AppTheme.accentGreen),
               title: const Text('Mute Notifications', style: TextStyle(color: AppTheme.neutralWhite)),
               onTap: () => Navigator.pop(context),
             ),
@@ -976,7 +966,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('File attachment feature coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -986,7 +976,7 @@ class _ModernConversationScreenState extends State<ModernConversationScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Voice message feature coming soon'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }

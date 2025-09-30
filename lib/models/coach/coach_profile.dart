@@ -1,6 +1,7 @@
 class CoachProfile {
   final String coachId;
   final String? displayName;
+  final String? username;
   final String? headline;
   final String? bio;
   final List<String> specialties;
@@ -10,6 +11,7 @@ class CoachProfile {
   const CoachProfile({
     required this.coachId,
     this.displayName,
+    this.username,
     this.headline,
     this.bio,
     this.specialties = const [],
@@ -21,6 +23,7 @@ class CoachProfile {
     return CoachProfile(
       coachId: map['coach_id']?.toString() ?? '',
       displayName: map['display_name']?.toString(),
+      username: map['username']?.toString(),
       headline: map['headline']?.toString(),
       bio: map['bio']?.toString(),
       specialties: (map['specialties'] as List<dynamic>?)
@@ -36,6 +39,7 @@ class CoachProfile {
     return {
       'coach_id': coachId,
       'display_name': displayName,
+      'username': username,
       'headline': headline,
       'bio': bio,
       'specialties': specialties,

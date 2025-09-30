@@ -145,8 +145,8 @@ class _HealthRingsState extends State<HealthRings> {
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
           gradient: LinearGradient(
             colors: [
-              DesignTokens.blue50,
-              DesignTokens.blue50.withValues(alpha: 0.5),
+              DesignTokens.accentBlue.withValues(alpha: 0.1),
+              DesignTokens.accentBlue.withValues(alpha: 0.05),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -158,14 +158,14 @@ class _HealthRingsState extends State<HealthRings> {
             const Icon(
               Icons.favorite,
               size: 48,
-              color: DesignTokens.blue600,
+              color: DesignTokens.accentBlue,
             ),
             const SizedBox(height: DesignTokens.space16),
             Text(
               'Connect Health',
               style: DesignTokens.titleMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                color: DesignTokens.blue600,
+                color: DesignTokens.accentBlue,
               ),
             ),
             const SizedBox(height: DesignTokens.space8),
@@ -232,7 +232,7 @@ class _HealthRingsState extends State<HealthRings> {
               children: [
                 const Icon(
                   Icons.favorite,
-                  color: DesignTokens.blue600,
+                  color: DesignTokens.accentBlue,
                 ),
                 const SizedBox(width: DesignTokens.space8),
                 Text(
@@ -263,7 +263,7 @@ class _HealthRingsState extends State<HealthRings> {
                   _buildRing(
                     label: 'Sleep',
                     progress: sleepProgress,
-                    color: DesignTokens.blue600,
+                    color: DesignTokens.accentBlue,
                     value: (sleepMinutes / 60).toInt().toString(),
                     unit: 'hrs',
                     icon: Icons.bedtime,

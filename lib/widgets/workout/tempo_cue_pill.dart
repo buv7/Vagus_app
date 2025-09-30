@@ -1,7 +1,8 @@
 // lib/widgets/workout/tempo_cue_pill.dart
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import '../../theme/design_tokens.dart';
 import '../../services/haptics.dart';
 import '../../utils/tempo_parser.dart';
 import '../../services/settings/user_prefs_service.dart';
@@ -87,10 +88,15 @@ class _TempoCuePillState extends State<TempoCuePill> {
     _phaseRemaining = _phaseSeconds(_phase);
     if (widget.enableHaptics) {
       // subtle phase marker haptics
-      if (_phase == 0) Haptics.selection();       // start eccentric
-      else if (_phase == 1) Haptics.tap();        // bottom pause
-      else if (_phase == 2) Haptics.selection();  // start concentric
-      else if (_phase == 3) Haptics.tap();        // top pause
+      if (_phase == 0) {
+        Haptics.selection();       // start eccentric
+      } else if (_phase == 1) {
+        Haptics.tap();        // bottom pause
+      } else if (_phase == 2) {
+        Haptics.selection();  // start concentric
+      } else if (_phase == 3) {
+        Haptics.tap();        // top pause
+      }
     }
   }
 
@@ -112,16 +118,27 @@ class _TempoCuePillState extends State<TempoCuePill> {
     final theme = Theme.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: (active ? theme.colorScheme.primary : theme.colorScheme.surface)
-            .withValues(alpha: active ? 0.15 : 0.08),
+        color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (active ? theme.colorScheme.primary : theme.dividerColor)
-              .withValues(alpha: active ? 0.9 : 0.4),
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: (active ? DesignTokens.accentPink : DesignTokens.accentPink.withValues(alpha: 0.2)).withValues(alpha: 0.3),
+            blurRadius: active ? 20 : 10,
+            spreadRadius: 0,
+          ),
+        ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -136,6 +153,9 @@ class _TempoCuePillState extends State<TempoCuePill> {
             ),
           Text(label, style: theme.textTheme.labelMedium),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -83,9 +83,9 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -98,13 +98,13 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
         ),
       ),
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
             )
           : RefreshIndicator(
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
               onRefresh: _loadData,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -138,15 +138,15 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.card_giftcard,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'Your Code & Link',
                 style: TextStyle(
                   fontSize: 18,
@@ -188,7 +188,7 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
                           fontFamily: 'monospace',
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.mintAqua,
+                          color: AppTheme.accentGreen,
                         ),
                       ),
                     ],
@@ -197,12 +197,12 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: _copyLink,
-                  icon: Icon(Icons.copy, size: 18, color: AppTheme.mintAqua),
+                  icon: const Icon(Icons.copy, size: 18, color: AppTheme.accentGreen),
                   tooltip: 'Copy link',
                 ),
                 IconButton(
                   onPressed: _shareLink,
-                  icon: Icon(Icons.share, size: 18, color: AppTheme.mintAqua),
+                  icon: const Icon(Icons.share, size: 18, color: AppTheme.accentGreen),
                   tooltip: 'Share link',
                 ),
               ],
@@ -217,7 +217,7 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
                   icon: const Icon(Icons.copy, size: 16),
                   label: const Text('Copy Link'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -264,15 +264,15 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.help_outline,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'How Rewards Work',
                 style: TextStyle(
                   fontSize: 18,
@@ -287,7 +287,7 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
             icon: Icons.star,
             title: '7 Pro Days',
             description: 'Both you and your friend get 7 days of Pro features',
-            color: AppTheme.mintAqua,
+            color: AppTheme.accentGreen,
           ),
           const SizedBox(height: 12),
           _buildRewardItem(
@@ -411,9 +411,9 @@ class _EarnRewardsScreenState extends State<EarnRewardsScreen> {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.history,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
               const SizedBox(width: 8),

@@ -193,9 +193,10 @@ class _EventEditorState extends State<EventEditor> {
   }
 
   Future<void> _saveEvent() async {
+    final contextRef = context;
     if (!_formKey.currentState!.validate()) return;
     if (_startDate == null || _startTime == null || _endDate == null || _endTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(contextRef).showSnackBar(
         const SnackBar(content: Text('Please set start and end times')),
       );
       return;
@@ -223,7 +224,7 @@ class _EventEditorState extends State<EventEditor> {
 
       // Validate times
       if (endDateTime.isBefore(startDateTime)) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(contextRef).showSnackBar(
           const SnackBar(content: Text('End time must be after start time')),
         );
         setState(() => _saving = false);
@@ -242,7 +243,7 @@ class _EventEditorState extends State<EventEditor> {
         if (hasConflict) {
           if (!mounted || !context.mounted) return;
           final shouldContinue = await showDialog<bool>(
-            context: context,
+            context: contextRef,
             builder: (context) => AlertDialog(
               title: const Text('Scheduling Conflict'),
               content: const Text('You have a scheduling conflict. Do you want to continue?'),
@@ -289,6 +290,7 @@ class _EventEditorState extends State<EventEditor> {
         updatedAt: DateTime.now(),
       );
 
+      if (!mounted) return;
       final savedEvent = await runWithBlockingLoader(
         context,
         _eventService.createOrUpdate(event),

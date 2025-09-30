@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/money.dart';
-import '../../theme/design_tokens.dart';
 import '../../services/nutrition/locale_helper.dart';
 
 class PriceEditorScreen extends StatefulWidget {

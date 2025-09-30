@@ -1,7 +1,13 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../models/nutrition/nutrition_plan.dart';
-import '../../services/ai/nutrition_ai.dart';
-import '../../widgets/anim/blocking_overlay.dart';
+import '../../widgets/nutrition/meal_detail_sheet.dart';
+import '../../widgets/nutrition/file_attach_to_meal.dart';
+import '../../widgets/nutrition/client_nutrition_comment_box.dart';
+import '../../widgets/nutrition/food_item_card.dart';
+import '../../widgets/nutrition/animated_food_item_edit_modal.dart';
+import '../../widgets/nutrition/animated/food_item_modal_route.dart';
+import '../../theme/design_tokens.dart';
 
 class MacroTableRow extends StatefulWidget {
   final FoodItem item;
@@ -9,6 +15,7 @@ class MacroTableRow extends StatefulWidget {
   final VoidCallback onDelete;
   final bool isReadOnly;
   final String language;
+  final Meal? parentMeal; // Add parent meal for detail sheet
 
   const MacroTableRow({
     super.key,
@@ -17,6 +24,7 @@ class MacroTableRow extends StatefulWidget {
     required this.onDelete,
     this.isReadOnly = false,
     this.language = 'en',
+    this.parentMeal,
   });
 
   @override
@@ -36,9 +44,6 @@ class _MacroTableRowState extends State<MacroTableRow> {
   late TextEditingController _targetProteinController;
   late TextEditingController _targetCarbsController;
   late TextEditingController _targetFatController;
-  
-  final NutritionAI _nutritionAI = NutritionAI();
-  bool _isLoadingAI = false;
 
   @override
   void initState() {
@@ -72,393 +77,187 @@ class _MacroTableRowState extends State<MacroTableRow> {
     super.dispose();
   }
 
-  void _updateItem() {
-    final amount = double.tryParse(_amountController.text) ?? 0.0;
-    final protein = double.tryParse(_proteinController.text) ?? 0.0;
-    final carbs = double.tryParse(_carbsController.text) ?? 0.0;
-    final fat = double.tryParse(_fatController.text) ?? 0.0;
-    final sodium = double.tryParse(_sodiumController.text) ?? 0.0;
-    final potassium = double.tryParse(_potassiumController.text) ?? 0.0;
-    final kcal = NutritionPlan.calcKcal(protein, carbs, fat);
 
-    final updatedItem = widget.item.copyWith(
-      name: _nameController.text,
-      amount: amount,
-      protein: protein,
-      carbs: carbs,
-      fat: fat,
-      kcal: kcal,
-      sodium: sodium,
-      potassium: potassium,
+
+  void _openMealDetailSheet() {
+    if (widget.parentMeal == null) return;
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => MealDetailSheet(
+        meal: widget.parentMeal!,
+        coachNotes: const SizedBox.shrink(), // No coach notes for individual food items
+        foodItems: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Food Item Details',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              title: Text(widget.item.name),
+              subtitle: Text('${widget.item.amount.toStringAsFixed(1)}g'),
+              trailing: Text('${widget.item.kcal.toStringAsFixed(0)} kcal'),
+            ),
+          ],
+        ),
+        onAddFood: () {},
+        mealSummary: Text(
+          'P: ${widget.item.protein.toStringAsFixed(1)}g • C: ${widget.item.carbs.toStringAsFixed(1)}g • F: ${widget.item.fat.toStringAsFixed(1)}g • ${widget.item.kcal.toStringAsFixed(0)} kcal',
+        ),
+        attachments: FileAttachToMeal(
+          attachments: widget.parentMeal!.attachments,
+          onAttachmentsChanged: (_) {},
+          isReadOnly: widget.isReadOnly,
+        ),
+        onAddFile: () {},
+        clientComment: ClientNutritionCommentBox(
+          comment: widget.parentMeal!.clientComment,
+          onCommentChanged: (_) {},
+          isReadOnly: widget.isReadOnly,
+          isClientView: false,
+        ),
+      ),
     );
-
-    widget.onChanged(updatedItem);
   }
 
-  Future<void> _generateFromTargetMacros() async {
+  void _openEditModal() {
     if (widget.isReadOnly) return;
-    
-    final targetProtein = double.tryParse(_targetProteinController.text);
-    final targetCarbs = double.tryParse(_targetCarbsController.text);
-    final targetFat = double.tryParse(_targetFatController.text);
-    
-    // Check if at least one target macro is specified
-    if (targetProtein == null && targetCarbs == null && targetFat == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter at least one target macro amount')),
-      );
-      return;
-    }
-    
-    // Check if food name is provided
-    if (_nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a food name first')),
-      );
-      return;
-    }
 
-    setState(() => _isLoadingAI = true);
-
-    try {
-      // Create target macro map
-      final targets = <String, double>{};
-      if (targetProtein != null) targets['protein'] = targetProtein;
-      if (targetCarbs != null) targets['carbs'] = targetCarbs;
-      if (targetFat != null) targets['fat'] = targetFat;
-
-      // Generate food item with target macros
-      final generatedItems = await runWithBlockingLoader(
-        context,
-        _nutritionAI.generateFoodWithTargetMacros(
-          calories: targets['calories'] ?? 0.0,
-          protein: targets['protein'] ?? 0.0,
-          carbs: targets['carbs'] ?? 0.0,
-          fat: targets['fat'] ?? 0.0,
-          locale: Localizations.localeOf(context).languageCode,
-        ),
-        showSuccess: true,
-      );
-
-      if (generatedItems.isNotEmpty) {
-        final generatedItem = generatedItems.first;
-        
-        // Update the form fields with generated data
-        _nameController.text = generatedItem.name;
-        _amountController.text = generatedItem.amount > 0 ? generatedItem.amount.toString() : '';
-        _proteinController.text = generatedItem.protein.toString();
-        _carbsController.text = generatedItem.carbs.toString();
-        _fatController.text = generatedItem.fat.toString();
-        _sodiumController.text = generatedItem.sodium.toString();
-        _potassiumController.text = generatedItem.potassium.toString();
-        
-        // Clear target macro fields
-        _targetProteinController.clear();
-        _targetCarbsController.clear();
-        _targetFatController.clear();
-        
-        // Update the item
-        _updateItem();
-        
-        if (!mounted || !context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✅ Food item generated with target macros')),
-        );
-      }
-    } catch (e) {
-      if (!mounted || !context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Failed to generate food item: $e')),
-      );
-    } finally {
-      setState(() => _isLoadingAI = false);
-    }
-    if (!mounted) return;
+    // Use custom route with spring physics and animations
+    showFoodItemModal(
+      context,
+      modal: AnimatedFoodItemEditModal(
+        foodItem: widget.item,
+        onSave: (updatedItem) {
+          widget.onChanged(updatedItem);
+        },
+        // TODO: Implement these callbacks
+        // onSearchDatabase: () {},
+        // onScanBarcode: () {},
+        // onAIGenerate: () {},
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Main macro row
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                // Food Name
-                SizedBox(
-                  width: 120, // Match header width
-                  child: TextFormField(
-                    controller: _nameController,
-                    enabled: !widget.isReadOnly,
-                    decoration: const InputDecoration(
-                      hintText: 'Food name',
-                      border: InputBorder.none,
-                      isDense: true,
-                    ),
-                    onChanged: (_) => _updateItem(),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                
-                // Amount
-                SizedBox(
-                  width: 60, // Match header width
-                  child: TextFormField(
-                    controller: _amountController,
-                    enabled: !widget.isReadOnly,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: '0',
-                      border: InputBorder.none,
-                      isDense: true,
-                      suffixText: 'g',
-                    ),
-                    onChanged: (_) => _updateItem(),
-                  ),
-                ),
-              const SizedBox(width: 8),
-              
-              // Protein
-              SizedBox(
-                width: 60,
-                child: TextFormField(
-                  controller: _proteinController,
-                  enabled: !widget.isReadOnly,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: '0',
-                    border: InputBorder.none,
-                    isDense: true,
-                    suffixText: 'g',
-                  ),
-                  onChanged: (_) => _updateItem(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              
-              // Carbs
-              SizedBox(
-                width: 60,
-                child: TextFormField(
-                  controller: _carbsController,
-                  enabled: !widget.isReadOnly,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: '0',
-                    border: InputBorder.none,
-                    isDense: true,
-                    suffixText: 'g',
-                  ),
-                  onChanged: (_) => _updateItem(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              
-              // Fat
-              SizedBox(
-                width: 60,
-                child: TextFormField(
-                  controller: _fatController,
-                  enabled: !widget.isReadOnly,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: '0',
-                    border: InputBorder.none,
-                    isDense: true,
-                    suffixText: 'g',
-                  ),
-                  onChanged: (_) => _updateItem(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              
-              // Kcal (read-only)
-              SizedBox(
-                width: 70,
-                child: Text(
-                  '${widget.item.kcal.toStringAsFixed(0)} kcal',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              
-              // Sodium
-              SizedBox(
-                width: 60,
-                child: TextFormField(
-                  controller: _sodiumController,
-                  enabled: !widget.isReadOnly,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: '0',
-                    border: InputBorder.none,
-                    isDense: true,
-                    suffixText: 'mg',
-                  ),
-                  onChanged: (_) => _updateItem(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              
-              // Potassium
-              SizedBox(
-                width: 60,
-                child: TextFormField(
-                  controller: _potassiumController,
-                  enabled: !widget.isReadOnly,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: '0',
-                    border: InputBorder.none,
-                    isDense: true,
-                    suffixText: 'mg',
-                  ),
-                  onChanged: (_) => _updateItem(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              
-              // AI Generate button
-              if (!widget.isReadOnly)
-                IconButton(
-                  icon: _isLoadingAI 
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.auto_awesome, color: Colors.purple, size: 20),
-                  onPressed: _isLoadingAI ? null : _generateFromTargetMacros,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  tooltip: 'Generate from target macros',
-                ),
-              
-              const SizedBox(width: 8),
-              
-              // Delete button
-              if (!widget.isReadOnly)
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                  onPressed: widget.onDelete,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ],
-            ),
+    // If read-only, still show the old cramped row (for client view compatibility)
+    if (widget.isReadOnly) {
+      return _buildOldRow();
+    }
+
+    // Use new FoodItemCard design for editable items
+    return FoodItemCard(
+      foodItem: widget.item,
+      onTap: _openEditModal,
+      onDelete: widget.onDelete,
+      showTargetMacros: false,
+    );
+  }
+
+  // Keep the old row design for read-only mode (client view)
+  Widget _buildOldRow() {
+    return GestureDetector(
+      onTap: _openMealDetailSheet,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          color: DesignTokens.cardBackground,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
           ),
-          
-          // Target macro row (only show if not read-only)
-          if (!widget.isReadOnly) ...[
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(4),
-              ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    // Target Macro Label
+                    // Food Name
                     SizedBox(
-                      width: 120, // Match header width
+                      width: 120,
                       child: Text(
-                        'Target Macros:',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
-                          fontWeight: FontWeight.w500,
+                        widget.item.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
                         ),
                       ),
                     ),
-                  const SizedBox(width: 8),
-                  
-                  // Target Protein
-                  SizedBox(
-                    width: 60,
-                    child: TextFormField(
-                      controller: _targetProteinController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: '0',
-                        border: InputBorder.none,
-                        isDense: true,
-                        suffixText: 'g',
-                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    const SizedBox(width: 8),
+
+                    // Protein
+                    SizedBox(
+                      width: 60,
+                      child: Text(
+                        '${widget.item.protein.toStringAsFixed(1)}g P',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  
-                  // Target Carbs
-                  SizedBox(
-                    width: 60,
-                    child: TextFormField(
-                      controller: _targetCarbsController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: '0',
-                        border: InputBorder.none,
-                        isDense: true,
-                        suffixText: 'g',
-                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    const SizedBox(width: 8),
+
+                    // Carbs
+                    SizedBox(
+                      width: 60,
+                      child: Text(
+                        '${widget.item.carbs.toStringAsFixed(1)}g C',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  
-                  // Target Fat
-                  SizedBox(
-                    width: 60,
-                    child: TextFormField(
-                      controller: _targetFatController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: '0',
-                        border: InputBorder.none,
-                        isDense: true,
-                        suffixText: 'g',
-                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    const SizedBox(width: 8),
+
+                    // Fat
+                    SizedBox(
+                      width: 60,
+                      child: Text(
+                        '${widget.item.fat.toStringAsFixed(1)}g F',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  
-                  // Generate button
-                  ElevatedButton(
-                    onPressed: _isLoadingAI ? null : _generateFromTargetMacros,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      minimumSize: const Size(0, 28),
+                    const SizedBox(width: 8),
+
+                    // Kcal
+                    Text(
+                      '${widget.item.kcal.toStringAsFixed(0)} kcal',
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 12,
+                      ),
                     ),
-                    child: _isLoadingAI
-                      ? const SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Text('Generate', style: TextStyle(fontSize: 11)),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-          ],
-        ],
+        ),
       ),
     );
   }

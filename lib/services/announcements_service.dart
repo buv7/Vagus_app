@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/announcements/announcement.dart';
 
@@ -45,7 +46,7 @@ class AnnouncementsService {
       }
     } catch (e) {
       // Don't throw - impressions are not critical
-      print('Failed to record impression: $e');
+      debugPrint('Failed to record impression: $e');
     }
   }
 
@@ -62,7 +63,7 @@ class AnnouncementsService {
       });
     } catch (e) {
       // Don't throw - clicks are not critical
-      print('Failed to record click: $e');
+      debugPrint('Failed to record click: $e');
     }
   }
 

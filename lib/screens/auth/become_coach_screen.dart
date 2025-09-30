@@ -1,6 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 
 class BecomeCoachScreen extends StatefulWidget {
   const BecomeCoachScreen({super.key});
@@ -194,16 +195,14 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
             children: [
               Icon(
                 icon,
-                color: AppTheme.mintAqua,
+                color: DesignTokens.accentGreen,
                 size: 18,
               ),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                style: DesignTokens.labelMedium.copyWith(
+                  color: DesignTokens.neutralWhite,
                 ),
               ),
             ],
@@ -218,9 +217,9 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: DesignTokens.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: DesignTokens.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -232,64 +231,84 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DesignTokens.darkGradient,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2C2F33),
-                  borderRadius: BorderRadius.circular(16),
+                  color: DesignTokens.cardBackground,
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: AppTheme.mintAqua.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.school,
-                          color: AppTheme.mintAqua,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          'Coach Application',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Tell us about your coaching experience and qualifications.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+                      blurRadius: 20,
+                      spreadRadius: 0,
                     ),
                   ],
                 ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(
+                                Icons.school,
+                                color: DesignTokens.accentGreen,
+                                size: 24,
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                'Coach Application',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Tell us about your coaching experience and qualifications.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
+              
               const SizedBox(height: 24),
               
               // Bio Field
               _buildModernFormField(
-                label: 'Bio',
-                icon: Icons.person,
-                child: TextFormField(
+              label: 'Bio',
+              icon: Icons.person,
+              child: TextFormField(
                   controller: _bioController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: DesignTokens.neutralWhite),
                   decoration: InputDecoration(
                     hintText: 'Tell us about your coaching philosophy, experience, and what makes you unique...',
                     hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
@@ -303,10 +322,10 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF1A1C1E),
+                    fillColor: DesignTokens.primaryDark,
                     alignLabelWithHint: true,
                   ),
                   maxLines: 4,
@@ -321,7 +340,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                 child: DropdownButtonFormField<String>(
                   value: _selectedSpecialization,
                   dropdownColor: const Color(0xFF2C2F33),
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: DesignTokens.neutralWhite),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -333,10 +352,10 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF1A1C1E),
+                    fillColor: DesignTokens.primaryDark,
                   ),
                   items: _specializations.map((String specialization) {
                     return DropdownMenuItem<String>(
@@ -358,7 +377,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                 icon: Icons.schedule,
                 child: TextFormField(
                   controller: _yearsExperienceController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: DesignTokens.neutralWhite),
                   decoration: InputDecoration(
                     hintText: 'e.g., 5',
                     hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
@@ -372,10 +391,10 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF1A1C1E),
+                    fillColor: DesignTokens.primaryDark,
                   ),
                   keyboardType: TextInputType.number,
                   validator: _validateYearsExperience,
@@ -388,7 +407,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                 icon: Icons.verified,
                 child: TextFormField(
                   controller: _certificationsController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: DesignTokens.neutralWhite),
                   decoration: InputDecoration(
                     hintText: 'List your relevant certifications, licenses, and qualifications...',
                     hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
@@ -402,10 +421,10 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.mintAqua, width: 2),
+                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF1A1C1E),
+                    fillColor: DesignTokens.primaryDark,
                     alignLabelWithHint: true,
                   ),
                   maxLines: 3,
@@ -420,7 +439,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                 child: ElevatedButton(
                   onPressed: _loading ? null : _submitApplication,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: DesignTokens.accentGreen,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -479,7 +498,8 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
                   ],
                 ),
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

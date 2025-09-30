@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../models/program_ingest/program_ingest_job.dart';
@@ -28,7 +28,7 @@ class ProgramIngestService {
 
       return response['id'] as String;
     } catch (e) {
-      print('Error creating text job: $e');
+      debugPrint('Error creating text job: $e');
       rethrow;
     }
   }
@@ -57,7 +57,7 @@ class ProgramIngestService {
 
       return response['id'] as String;
     } catch (e) {
-      print('Error creating file job: $e');
+      debugPrint('Error creating file job: $e');
       rethrow;
     }
   }
@@ -71,9 +71,9 @@ class ProgramIngestService {
           .eq('id', id)
           .single();
 
-      return ProgramIngestJob.fromJson(response as Map<String, dynamic>);
+      return ProgramIngestJob.fromJson(response);
     } catch (e) {
-      print('Error fetching job: $e');
+      debugPrint('Error fetching job: $e');
       rethrow;
     }
   }
@@ -88,9 +88,9 @@ class ProgramIngestService {
           .maybeSingle();
 
       if (response == null) return null;
-      return ProgramIngestResult.fromJson(response as Map<String, dynamic>);
+      return ProgramIngestResult.fromJson(response);
     } catch (e) {
-      print('Error fetching result: $e');
+      debugPrint('Error fetching result: $e');
       return null;
     }
   }
@@ -104,9 +104,9 @@ class ProgramIngestService {
         body: {'jobId': jobId},
       );
 
-      print('Edge function response: $response');
+      debugPrint('Edge function response: $response');
     } catch (e) {
-      print('Error triggering edge function: $e');
+      debugPrint('Error triggering edge function: $e');
       rethrow;
     }
   }
@@ -117,7 +117,7 @@ class ProgramIngestService {
         .from('program_ingest_jobs')
         .stream(primaryKey: ['id'])
         .eq('id', jobId)
-        .map((data) => ProgramIngestJob.fromJson(data.first as Map<String, dynamic>));
+        .map((data) => ProgramIngestJob.fromJson(data.first));
   }
 
   /// Get all jobs for a coach
@@ -133,7 +133,7 @@ class ProgramIngestService {
           .map((json) => ProgramIngestJob.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('Error fetching coach jobs: $e');
+      debugPrint('Error fetching coach jobs: $e');
       return [];
     }
   }
@@ -151,7 +151,7 @@ class ProgramIngestService {
           .map((json) => ProgramIngestJob.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('Error fetching client jobs: $e');
+      debugPrint('Error fetching client jobs: $e');
       return [];
     }
   }
@@ -167,7 +167,7 @@ class ProgramIngestService {
         try {
           await _supabase.storage.from('program_ingest').remove([job.storagePath!]);
         } catch (e) {
-          print('Error deleting file from storage: $e');
+          debugPrint('Error deleting file from storage: $e');
           // Continue with database deletion even if storage deletion fails
         }
       }
@@ -175,7 +175,7 @@ class ProgramIngestService {
       // Delete from database (cascade will handle results)
       await _supabase.from('program_ingest_jobs').delete().eq('id', jobId);
     } catch (e) {
-      print('Error deleting job: $e');
+      debugPrint('Error deleting job: $e');
       rethrow;
     }
   }

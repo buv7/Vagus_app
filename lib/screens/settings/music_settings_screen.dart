@@ -78,9 +78,9 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -93,9 +93,9 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
         ),
       ),
       body: _loading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
             )
           : SingleChildScrollView(
@@ -118,15 +118,15 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(
                               Icons.play_circle_outline,
-                              color: AppTheme.mintAqua,
+                              color: AppTheme.accentGreen,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Auto-open on workout start',
                               style: TextStyle(
                                 fontSize: 18,
@@ -152,7 +152,7 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                             style: TextStyle(color: Colors.white),
                           ),
                           value: _prefs?.autoOpen ?? true,
-                          activeColor: AppTheme.mintAqua,
+                          activeColor: AppTheme.accentGreen,
                           onChanged: (value) {
                             _updatePrefs((prefs) => prefs.copyWith(autoOpen: value));
                             _musicService.logMusicPrefUpdate(_prefs!.userId, 'auto_open');
@@ -177,15 +177,15 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(
                               Icons.music_note,
-                              color: AppTheme.mintAqua,
+                              color: AppTheme.accentGreen,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Default Music Provider',
                               style: TextStyle(
                                 fontSize: 18,
@@ -221,7 +221,7 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: AppTheme.mintAqua),
+                              borderSide: const BorderSide(color: AppTheme.accentGreen),
                             ),
                             filled: true,
                             fillColor: const Color(0xFF1A1C1E),
@@ -276,15 +276,15 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(
                               Icons.category,
-                              color: AppTheme.mintAqua,
+                              color: AppTheme.accentGreen,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Preferred Genres',
                               style: TextStyle(
                                 fontSize: 18,
@@ -323,15 +323,15 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(
                               Icons.speed,
-                              color: AppTheme.mintAqua,
+                              color: AppTheme.accentGreen,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'BPM Range',
                               style: TextStyle(
                                 fontSize: 18,
@@ -360,25 +360,25 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                      color: AppTheme.accentGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppTheme.mintAqua.withValues(alpha: 0.3),
+                        color: AppTheme.accentGreen.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(
                               Icons.star,
-                              color: AppTheme.mintAqua,
+                              color: AppTheme.accentGreen,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Upgrade to Pro',
                               style: TextStyle(
                                 fontSize: 18,
@@ -409,7 +409,7 @@ class _MusicSettingsScreenState extends State<MusicSettingsScreen> {
                             icon: const Icon(Icons.upgrade),
                             label: const Text('Upgrade to Pro'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.mintAqua,
+                              backgroundColor: AppTheme.accentGreen,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(

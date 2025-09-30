@@ -1,6 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../services/messages_service.dart';
+import '../../theme/design_tokens.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -70,11 +72,27 @@ class MessageBubble extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.7,
                 ),
-                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isOwnMessage ? Colors.blue[100] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(16),
+                  color: DesignTokens.cardBackground,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                      blurRadius: 20,
+                      spreadRadius: 0,
+                    ),
+                  ],
                 ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -214,6 +232,9 @@ class MessageBubble extends StatelessWidget {
                       ),
                     ],
                   ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

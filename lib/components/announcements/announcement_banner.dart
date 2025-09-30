@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../models/announcements/announcement.dart';
 import '../../services/announcements_service.dart';
 import '../../services/navigation/app_navigator.dart';
-import '../../theme/app_theme.dart';
 
 class AnnouncementBanner extends StatefulWidget {
   final Announcement announcement;
@@ -55,7 +54,9 @@ class _AnnouncementBannerState extends State<AnnouncementBanner> {
         }
       } else if (widget.announcement.ctaType == 'coach' && widget.announcement.ctaValue != null) {
         // Navigate to coach profile
-        AppNavigator.coachProfile(context, widget.announcement.ctaValue!);
+        if (mounted) {
+          AppNavigator.coachProfile(context, widget.announcement.ctaValue!);
+        }
       }
     } catch (e) {
       // Silently handle errors - clicks are not critical
@@ -81,7 +82,7 @@ class _AnnouncementBannerState extends State<AnnouncementBanner> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

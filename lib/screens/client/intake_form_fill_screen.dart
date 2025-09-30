@@ -130,7 +130,7 @@ class _IntakeFormFillScreenState extends State<IntakeFormFillScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(title: const Text('Intake Form')),
+      appBar: const VagusAppBar(title: Text('Intake Form')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -176,7 +176,7 @@ class _IntakeFormFillScreenState extends State<IntakeFormFillScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
-                            color: AppTheme.primaryBlack,
+                            color: AppTheme.primaryDark,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +218,7 @@ class _IntakeFormFillScreenState extends State<IntakeFormFillScreen> {
                                   child: ElevatedButton(
                                     onPressed: _submitting ? null : _submitForm,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppTheme.primaryBlack,
+                                      backgroundColor: AppTheme.primaryDark,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(vertical: 16),
                                       shape: RoundedRectangleBorder(
@@ -271,7 +271,7 @@ class _IntakeFormFillScreenState extends State<IntakeFormFillScreen> {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                     ),
                   ),
                 ),

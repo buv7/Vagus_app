@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 import '../../models/nutrition/food_item.dart';
 
 /// AI-powered nutrition estimation service
@@ -8,16 +7,13 @@ class NutritionAI {
   factory NutritionAI() => _instance;
   NutritionAI._internal();
 
-  final SupabaseClient _supabase = Supabase.instance.client;
   
   // Cache for estimations
   final Map<String, _CachedEstimation> _estimationCache = {};
-  final int _maxCacheSize = 100;
   
   // Rate limiting
   final Map<String, DateTime> _rateLimitMap = {};
   final Duration _rateLimitWindow = const Duration(minutes: 1);
-  final int _maxRequestsPerWindow = 10;
 
   /// Estimate nutrition from food photo
   Future<FoodItem?> estimateFromPhoto(Uint8List imageBytes, {String? locale}) async {
@@ -44,7 +40,7 @@ class NutritionAI {
         source: 'photo',
       );
     } catch (e) {
-      print('Error estimating nutrition from photo: $e');
+      debugPrint('Error estimating nutrition from photo: $e');
       return null;
     }
   }

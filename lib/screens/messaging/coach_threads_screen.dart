@@ -88,7 +88,7 @@ class _CoachThreadsScreenState extends State<CoachThreadsScreen> {
   Future<List<Map<String, dynamic>>> _getCoachClients(String coachId) async {
     try {
       // Try coach_clients table first
-      var links = await Supabase.instance.client
+      final links = await Supabase.instance.client
           .from('coach_clients')
           .select('client_id')
           .eq('coach_id', coachId);
@@ -108,7 +108,7 @@ class _CoachThreadsScreenState extends State<CoachThreadsScreen> {
       }
 
       // Try coach_client_links table
-      var response = await Supabase.instance.client
+      final response = await Supabase.instance.client
           .from('coach_client_links')
           .select('''
             client_id,

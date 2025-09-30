@@ -28,8 +28,12 @@ class _SupportSlaEditorScreenState extends State<SupportSlaEditorScreen> {
 
   @override
   void dispose() {
-    for (final ctrl in _first.values) ctrl.dispose();
-    for (final ctrl in _resol.values) ctrl.dispose();
+    for (final ctrl in _first.values) {
+      ctrl.dispose();
+    }
+    for (final ctrl in _resol.values) {
+      ctrl.dispose();
+    }
     super.dispose();
   }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
@@ -24,7 +25,6 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
   final supabase = Supabase.instance.client;
   final AdBannerService _adService = AdBannerService();
   Map<String, dynamic>? _profile;
-  bool _loading = true;
   bool _isAdmin = false;
 
   @override
@@ -47,12 +47,9 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
 
       setState(() {
         _profile = response;
-        _loading = false;
       });
     } catch (e) {
-      setState(() {
-        _loading = false;
-      });
+      // Handle error
     }
   }
 
@@ -66,19 +63,19 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
   Future<void> _signOut() async {
     await supabase.auth.signOut();
     if (mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
+      unawaited(Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const ModernLoginScreen()),
         (route) => false,
-      );
+      ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -106,11 +103,11 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     child: Text(
                       _profile?['full_name']?.toString().substring(0, 1).toUpperCase() ?? 'C',
                       style: const TextStyle(
-                        color: AppTheme.primaryBlack,
+                        color: AppTheme.primaryDark,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -131,7 +128,7 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
                         ),
                         Text(
                           _profile?['email'] ?? '',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.lightGrey,
                             fontSize: 14,
                           ),
@@ -264,7 +261,7 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -289,7 +286,7 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -300,7 +297,7 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
         ),
         leading: Icon(
           icon,
-          color: AppTheme.mintAqua,
+          color: AppTheme.accentGreen,
           size: 24,
         ),
         title: Text(
@@ -313,12 +310,12 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios,
           color: AppTheme.lightGrey,
           size: 16,
@@ -373,13 +370,13 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Thank you for your feedback!'),
-                  backgroundColor: AppTheme.mintAqua,
+                  backgroundColor: AppTheme.accentGreen,
                 ),
               );
             },
             child: const Text(
               'Send',
-              style: TextStyle(color: AppTheme.mintAqua),
+              style: TextStyle(color: AppTheme.accentGreen),
             ),
           ),
         ],
@@ -396,21 +393,21 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
           'About Vagus Coach',
           style: TextStyle(color: AppTheme.neutralWhite),
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Version 1.0.0',
               style: TextStyle(color: AppTheme.lightGrey),
             ),
-            const SizedBox(height: DesignTokens.space8),
-            const Text(
+            SizedBox(height: DesignTokens.space8),
+            Text(
               'Vagus Coach is a comprehensive coaching platform designed to help fitness professionals manage their clients, create personalized plans, and track progress.',
               style: TextStyle(color: AppTheme.lightGrey),
             ),
-            const SizedBox(height: DesignTokens.space16),
-            const Text(
+            SizedBox(height: DesignTokens.space16),
+            Text(
               '© 2024 Vagus Technologies. All rights reserved.',
               style: TextStyle(color: AppTheme.lightGrey),
             ),
@@ -421,7 +418,7 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
             onPressed: () => Navigator.of(context).pop(),
             child: const Text(
               'Close',
-              style: TextStyle(color: AppTheme.mintAqua),
+              style: TextStyle(color: AppTheme.accentGreen),
             ),
           ),
         ],

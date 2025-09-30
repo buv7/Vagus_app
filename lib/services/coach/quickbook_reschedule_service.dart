@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'calendar_quick_book_service.dart';
 import 'calendar_peek_service.dart';
 import 'quickbook_autoconfirm_service.dart';
@@ -29,10 +29,10 @@ class QuickBookRescheduleService {
   bool isRescheduleIntent(String text) {
     final t = text.toLowerCase().trim();
     const keys = [
-      "can't make", "cant make", "cannot make", "need to move", "resched", "reschedule", 
-      "push it", "change time", "later time", "earlier time", "can we move", "delay", 
-      "postpone", "move it", "shift it", "reschedule it", "change it", "different time",
-      "أجل", "تأجيل", "غير الموعد", "مو أگدر", "تغيير الموعد", "تأخير" // Arabic/Kurdish
+      'can\'t make', 'cant make', 'cannot make', 'need to move', 'resched', 'reschedule', 
+      'push it', 'change time', 'later time', 'earlier time', 'can we move', 'delay', 
+      'postpone', 'move it', 'shift it', 'reschedule it', 'change it', 'different time',
+      'أجل', 'تأجيل', 'غير الموعد', 'مو أگدر', 'تغيير الموعد', 'تأخير' // Arabic/Kurdish
     ];
     return keys.any((k) => t.contains(k));
   }
@@ -82,16 +82,16 @@ class QuickBookRescheduleService {
       }
 
       if (options.isEmpty) {
-        return ReschedResult.failure("No alternative times available in the next 48 hours.");
+        return ReschedResult.failure('No alternative times available in the next 48 hours.');
       }
 
       return ReschedResult.success(
-        "Found ${options.length} alternative time${options.length == 1 ? '' : 's'}.", 
+        'Found ${options.length} alternative time${options.length == 1 ? '' : 's'}.', 
         options.take(2).toList()
       );
     } catch (e) {
-      print('QuickBookRescheduleService: Error suggesting alternatives - $e');
-      return ReschedResult.failure("Failed to find alternatives: $e");
+      debugPrint('QuickBookRescheduleService: Error suggesting alternatives - $e');
+      return ReschedResult.failure('Failed to find alternatives: $e');
     }
   }
 
@@ -111,7 +111,7 @@ class QuickBookRescheduleService {
       // Send the message using the existing messaging service
       await _sendRescheduleText(conversationId, message);
 
-      // Track the first option as the "active" proposal for auto-confirmation
+      // Track the first option as the 'active' proposal for auto-confirmation
       if (options.isNotEmpty) {
         QuickBookAutoConfirmService.instance.trackProposal(
           ProposedSlot(
@@ -125,22 +125,22 @@ class QuickBookRescheduleService {
         );
       }
     } catch (e) {
-      print('QuickBookRescheduleService: Error sending reschedule message - $e');
+      debugPrint('QuickBookRescheduleService: Error sending reschedule message - $e');
     }
   }
 
   /// Builds the reschedule message text
   String _buildRescheduleMessage(List<QuickBookSlot> options) {
-    final lines = <String>["🔁 Reschedule options:"];
+    final lines = <String>['🔁 Reschedule options:'];
     
     for (int i = 0; i < options.length; i++) {
       final slot = options[i];
       final formattedTime = _formatDateTime(slot.start);
       final durationText = slot.duration.inMinutes == 15 ? '15 min' : '${slot.duration.inMinutes} min';
-      lines.add("• Option ${i + 1}: $formattedTime ($durationText)");
+      lines.add('• Option ${i + 1}: $formattedTime ($durationText)');
     }
     
-    lines.add("Reply \"option 1\" or \"option 2\", or propose another time.");
+    lines.add('Reply \'option 1\' or \'option 2\', or propose another time.');
     
     return lines.join('\n');
   }
@@ -150,7 +150,7 @@ class QuickBookRescheduleService {
     // This would use your existing messaging service
     // For now, we'll use the CalendarQuickBookService as a fallback
     // In a real implementation, you'd call your messaging service directly
-    print('Reschedule message: $message');
+    debugPrint('Reschedule message: $message');
   }
 
   /// Parses option selection from text (option 1, option 2, etc.)
@@ -162,16 +162,16 @@ class QuickBookRescheduleService {
     if (t.isEmpty) return null;
     
     // Check for various option patterns with improved specificity
-    if (t.contains("option 1") || t.contains("option one") || t.contains("1") || t.contains("١")) {
+    if (t.contains('option 1') || t.contains('option one') || t.contains('1') || t.contains('١')) {
       return 1;
     }
-    if (t.contains("option 2") || t.contains("option two") || t.contains("2") || t.contains("٢")) {
+    if (t.contains('option 2') || t.contains('option two') || t.contains('2') || t.contains('٢')) {
       return 2;
     }
     
-    // Check for "first" and "second" patterns
-    if (t.contains("first") || t.contains("أول")) return 1;
-    if (t.contains("second") || t.contains("ثاني")) return 2;
+    // Check for 'first' and 'second' patterns
+    if (t.contains('first') || t.contains('أول')) return 1;
+    if (t.contains('second') || t.contains('ثاني')) return 2;
     
     return null;
   }
@@ -227,7 +227,6 @@ class QuickBookRescheduleService {
     Duration duration = const Duration(minutes: 15),
   }) async {
     try {
-      final now = DateTime.now();
       final options = <QuickBookSlot>[];
 
       // Get events in the specified range
@@ -254,16 +253,16 @@ class QuickBookRescheduleService {
       }
 
       if (options.isEmpty) {
-        return ReschedResult.failure("No available times in the specified range.");
+        return ReschedResult.failure('No available times in the specified range.');
       }
 
       return ReschedResult.success(
-        "Found ${options.length} alternative time${options.length == 1 ? '' : 's'} in range.", 
+        'Found ${options.length} alternative time${options.length == 1 ? '' : 's'} in range.', 
         options.take(2).toList()
       );
     } catch (e) {
-      print('QuickBookRescheduleService: Error suggesting alternatives in range - $e');
-      return ReschedResult.failure("Failed to find alternatives in range: $e");
+      debugPrint('QuickBookRescheduleService: Error suggesting alternatives in range - $e');
+      return ReschedResult.failure('Failed to find alternatives in range: $e');
     }
   }
 
@@ -309,12 +308,12 @@ class QuickBookRescheduleService {
       }
 
       return ReschedResult.success(
-        "Found ${options.length} preferred time${options.length == 1 ? '' : 's'}.", 
+        'Found ${options.length} preferred time${options.length == 1 ? '' : 's'}.', 
         options.take(2).toList()
       );
     } catch (e) {
-      print('QuickBookRescheduleService: Error suggesting alternatives with preferences - $e');
-      return ReschedResult.failure("Failed to find preferred alternatives: $e");
+      debugPrint('QuickBookRescheduleService: Error suggesting alternatives with preferences - $e');
+      return ReschedResult.failure('Failed to find preferred alternatives: $e');
     }
   }
 }

@@ -1,0 +1,474 @@
+import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
+import '../../models/nutrition/nutrition_plan.dart' hide Meal, FoodItem;
+import '../../models/nutrition/meal.dart';
+import '../../models/nutrition/food_item.dart' as food;
+import '../performance/performance_service.dart';
+import '../cache/cache_service.dart';
+import '../offline/offline_operation_queue.dart';
+import '../nutrition/safe_database_service.dart';
+
+/// Comprehensive nutrition state manager with optimistic updates and caching
+/// Features: Optimistic UI, rollback capability, performance optimization, offline support
+class NutritionStateManager extends ChangeNotifier {
+  static final _instance = NutritionStateManager._internal();
+  factory NutritionStateManager() => _instance;
+  NutritionStateManager._internal();
+
+  final PerformanceService _performance = PerformanceService();
+  final CacheService _cache = CacheService();
+  final OfflineOperationQueue _offlineQueue = OfflineOperationQueue();
+  final SafeDatabaseService _database = SafeDatabaseService();
+
+  // Current state
+  NutritionPlan? _currentPlan;
+  Map<String, List<Meal>> _mealsByDate = {};
+  Map<String, MacroSummary> _dailyMacros = {};
+  Map<String, FoodItem> _foodItemCache = {};
+
+  // UI state
+  bool _isLoading = false;
+  bool _isSyncing = false;
+  String? _error;
+  DateTime _selectedDate = DateTime.now();
+
+  // Optimistic updates tracking
+  final Map<String, dynamic> _optimisticUpdates = {};
+  final Map<String, VoidCallback> _rollbackCallbacks = {};
+
+  // Getters
+  NutritionPlan? get currentPlan => _currentPlan;
+  List<Meal> get todaysMeals => getMealsForDate(_selectedDate);
+  MacroSummary get todaysMacros => getDailyMacros(_selectedDate);
+  bool get isLoading => _isLoading;
+  bool get isSyncing => _isSyncing;
+  String? get error => _error;
+  DateTime get selectedDate => _selectedDate;
+  bool get hasOfflineChanges => _offlineQueue.hasPendingOperations;
+
+  // Initialization
+  Future<void> initialize() async {
+    await _cache.initialize();
+    await _loadCachedData();
+
+    // Listen to offline queue changes
+    _offlineQueue.addListener(_onOfflineQueueChanged);
+  }
+
+  void _onOfflineQueueChanged() {
+    _isSyncing = _offlineQueue.isSyncing;
+    notifyListeners();
+  }
+
+  /// Load nutrition plan
+  Future<void> loadNutritionPlan(String planId) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      // Try cache first
+      final cached = _cache.getCachedNutritionPlan(planId);
+      if (cached != null) {
+        _currentPlan = cached;
+        notifyListeners();
+      }
+
+      // Load from database
+      final plan = await _database.getNutritionPlan(planId);
+      if (plan != null) {
+        _currentPlan = plan;
+        await _cache.cacheNutritionPlan(plan);
+        notifyListeners();
+      } else {
+        _setError('Nutrition plan not found');
+      }
+    } catch (e) {
+      _setError('Failed to load nutrition plan: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Load meals for a specific date
+  Future<void> loadMealsForDate(DateTime date) async {
+    if (_currentPlan == null) return;
+
+    final dateKey = _getDateKey(date);
+
+    try {
+      // Try cache first
+      final cached = _cache.getCachedMeals(_currentPlan!.id!, date);
+      if (cached != null) {
+        _mealsByDate[dateKey] = cached;
+        _updateDailyMacros(date);
+        notifyListeners();
+      }
+
+      // Load from database
+      final meals = await _database.getMeals(_currentPlan!.id!, date);
+      _mealsByDate[dateKey] = meals;
+      await _cache.cacheMeals(_currentPlan!.id!, date, meals);
+
+      _updateDailyMacros(date);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to load meals for $date: $e');
+    }
+  }
+
+  /// Add food item to meal with optimistic update
+  Future<void> addFoodToMeal(
+    String mealId,
+    FoodItem food,
+    double quantity, {
+    bool optimistic = true,
+  }) async {
+    final meal = _findMealById(mealId);
+    if (meal == null) return;
+
+    final mealItem = MealItem(
+      id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+      foodItem: food,
+      quantity: quantity,
+      createdAt: DateTime.now(),
+    );
+
+    VoidCallback? rollback;
+
+    if (optimistic) {
+      // Apply optimistic update
+      final originalItems = List<MealItem>.from(meal.items);
+      meal.items.add(mealItem);
+
+      _updateDailyMacros(_selectedDate);
+      notifyListeners();
+
+      // Setup rollback
+      rollback = () {
+        meal.items.clear();
+        meal.items.addAll(originalItems);
+        _updateDailyMacros(_selectedDate);
+        notifyListeners();
+      };
+    }
+
+    try {
+      // Queue operation for offline sync
+      final operation = _offlineQueue.createAddFoodItemOperation(
+        mealId: mealId,
+        foodData: {
+          'food_id': food.id,
+          'quantity': quantity,
+        },
+      );
+
+      await _offlineQueue.queueOperation(operation);
+
+      // If online, try immediate sync
+      if (!_offlineQueue.isSyncing) {
+        await _offlineQueue.forcSync();
+      }
+    } catch (e) {
+      // Rollback on error
+      rollback?.call();
+      _setError('Failed to add food item: $e');
+    }
+  }
+
+  /// Update meal with optimistic update
+  Future<void> updateMeal(
+    String mealId,
+    Map<String, dynamic> updates, {
+    bool optimistic = true,
+  }) async {
+    final meal = _findMealById(mealId);
+    if (meal == null) return;
+
+    Map<String, dynamic>? originalData;
+    VoidCallback? rollback;
+
+    if (optimistic) {
+      // Store original data for rollback
+      originalData = meal.toJson();
+
+      // Apply optimistic updates
+      if (updates.containsKey('name')) meal.name = updates['name'];
+      if (updates.containsKey('meal_type')) meal.mealType = updates['meal_type'];
+      if (updates.containsKey('time')) meal.time = DateTime.parse(updates['time']);
+      if (updates.containsKey('notes')) meal.notes = updates['notes'];
+
+      notifyListeners();
+
+      // Setup rollback
+      rollback = () {
+        if (originalData != null) {
+          final restoredMeal = Meal.fromJson(originalData);
+          final index = _findMealIndex(mealId);
+          if (index != -1) {
+            final dateKey = _getDateKey(_selectedDate);
+            _mealsByDate[dateKey]![index] = restoredMeal;
+            notifyListeners();
+          }
+        }
+      };
+    }
+
+    try {
+      // Queue operation for offline sync
+      final operation = _offlineQueue.createMealUpdateOperation(
+        mealId: mealId,
+        data: updates,
+      );
+
+      await _offlineQueue.queueOperation(operation);
+
+      // Try immediate sync if online
+      if (!_offlineQueue.isSyncing) {
+        await _offlineQueue.forcSync();
+      }
+    } catch (e) {
+      // Rollback on error
+      rollback?.call();
+      _setError('Failed to update meal: $e');
+    }
+  }
+
+  /// Remove food item from meal
+  Future<void> removeFoodFromMeal(String mealId, String mealItemId) async {
+    final meal = _findMealById(mealId);
+    if (meal == null) return;
+
+    final itemIndex = meal.items.indexWhere((item) => item.id == mealItemId);
+    if (itemIndex == -1) return;
+
+    // Store for rollback
+    final removedItem = meal.items[itemIndex];
+
+    // Apply optimistic update
+    meal.items.removeAt(itemIndex);
+    _updateDailyMacros(_selectedDate);
+    notifyListeners();
+
+    try {
+      // Queue delete operation
+      final operation = QueuedOperation(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        type: OperationType.deleteFoodItem,
+        data: {'meal_item_id': mealItemId},
+        entityId: mealId,
+        createdAt: DateTime.now(),
+      );
+
+      await _offlineQueue.queueOperation(operation);
+    } catch (e) {
+      // Rollback on error
+      meal.items.insert(itemIndex, removedItem);
+      _updateDailyMacros(_selectedDate);
+      notifyListeners();
+      _setError('Failed to remove food item: $e');
+    }
+  }
+
+  /// Update food item quantity
+  Future<void> updateFoodQuantity(
+    String mealId,
+    String mealItemId,
+    double newQuantity,
+  ) async {
+    final meal = _findMealById(mealId);
+    if (meal == null) return;
+
+    final itemIndex = meal.items.indexWhere((item) => item.id == mealItemId);
+    if (itemIndex == -1) return;
+
+    final originalQuantity = meal.items[itemIndex].quantity;
+
+    // Apply optimistic update
+    meal.items[itemIndex].quantity = newQuantity;
+
+    // Debounced macro calculation for performance
+    _performance.debouncedMacroCalculation(
+      'meal_$mealId',
+      meal,
+      (macros) => _updateDailyMacros(_selectedDate),
+    );
+
+    notifyListeners();
+
+    try {
+      // Queue update operation
+      final operation = _offlineQueue.createMealUpdateOperation(
+        mealId: mealId,
+        data: {
+          'meal_items': meal.items.map((item) => item.toJson()).toList(),
+        },
+      );
+
+      await _offlineQueue.queueOperation(operation);
+    } catch (e) {
+      // Rollback on error
+      meal.items[itemIndex].quantity = originalQuantity;
+      _updateDailyMacros(_selectedDate);
+      notifyListeners();
+      _setError('Failed to update quantity: $e');
+    }
+  }
+
+  /// Get meals for a specific date
+  List<Meal> getMealsForDate(DateTime date) {
+    final dateKey = _getDateKey(date);
+    return _mealsByDate[dateKey] ?? [];
+  }
+
+  /// Get daily macros for a specific date
+  MacroSummary getDailyMacros(DateTime date) {
+    final dateKey = _getDateKey(date);
+    return _dailyMacros[dateKey] ?? const MacroSummary(
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+    );
+  }
+
+  /// Set selected date and load meals if needed
+  void setSelectedDate(DateTime date) {
+    _selectedDate = date;
+    notifyListeners();
+
+    // Load meals for the new date if not already loaded
+    final dateKey = _getDateKey(date);
+    if (!_mealsByDate.containsKey(dateKey)) {
+      loadMealsForDate(date);
+    }
+  }
+
+  /// Get meal by ID
+  Meal? getMealById(String mealId) {
+    return _findMealById(mealId);
+  }
+
+  /// Check if there are unsaved changes
+  bool hasUnsavedChanges() {
+    return _offlineQueue.hasPendingOperations;
+  }
+
+  /// Force sync all pending operations
+  Future<void> syncPendingChanges() async {
+    await _offlineQueue.forcSync();
+  }
+
+  /// Clear all data and reset state
+  void clearData() {
+    _currentPlan = null;
+    _mealsByDate.clear();
+    _dailyMacros.clear();
+    _foodItemCache.clear();
+    _optimisticUpdates.clear();
+    _rollbackCallbacks.clear();
+    _isLoading = false;
+    _isSyncing = false;
+    _error = null;
+    notifyListeners();
+  }
+
+  /// Refresh current data
+  Future<void> refresh() async {
+    if (_currentPlan != null) {
+      await loadNutritionPlan(_currentPlan!.id!);
+      await loadMealsForDate(_selectedDate);
+    }
+  }
+
+  // Private helper methods
+  void _updateDailyMacros(DateTime date) {
+    final meals = getMealsForDate(date);
+    final dailyMacros = _performance.getBatchMacros(meals)
+        .fold<MacroSummary>(
+          const MacroSummary(calories: 0, protein: 0, carbs: 0, fat: 0),
+          (total, macros) => total + macros,
+        );
+
+    final dateKey = _getDateKey(date);
+    _dailyMacros[dateKey] = dailyMacros;
+  }
+
+  Meal? _findMealById(String mealId) {
+    for (final meals in _mealsByDate.values) {
+      final meal = meals.firstWhereOrNull((m) => m.id == mealId);
+      if (meal != null) return meal;
+    }
+    return null;
+  }
+
+  int _findMealIndex(String mealId) {
+    final meals = getMealsForDate(_selectedDate);
+    return meals.indexWhere((m) => m.id == mealId);
+  }
+
+  String _getDateKey(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  void _setLoading(bool loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
+
+  void _setError(String? error) {
+    _error = error;
+    notifyListeners();
+  }
+
+  void _clearError() {
+    _error = null;
+  }
+
+  Future<void> _loadCachedData() async {
+    // TODO: Load cached nutrition plan and recent meals
+    debugPrint('Loading cached nutrition data...');
+  }
+
+  @override
+  void dispose() {
+    _offlineQueue.removeListener(_onOfflineQueueChanged);
+    super.dispose();
+  }
+}
+
+/// Meal item model
+class MealItem {
+  String id;
+  FoodItem foodItem;
+  double quantity;
+  String? notes;
+  DateTime createdAt;
+
+  MealItem({
+    required this.id,
+    required this.foodItem,
+    required this.quantity,
+    this.notes,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'food_item': foodItem.toJson(),
+      'quantity': quantity,
+      'notes': notes,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+
+  factory MealItem.fromJson(Map<String, dynamic> json) {
+    return MealItem(
+      id: json['id'],
+      foodItem: FoodItem.fromJson(json['food_item']),
+      quantity: (json['quantity'] ?? 0).toDouble(),
+      notes: json['notes'],
+      createdAt: DateTime.parse(json['created_at']),
+    );
+  }
+}

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../branding/vagus_logo.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/design_tokens.dart';
 import '../../services/navigation/app_navigator.dart';
-import '../../screens/nutrition/nutrition_plan_viewer.dart';
 import '../../screens/learn/learn_client_screen.dart';
 import '../../screens/learn/learn_coach_screen.dart';
+import '../../screens/nutrition/coach_nutrition_dashboard.dart';
+import '../../screens/nutrition/nutrition_hub_screen.dart';
 
 class VagusSideMenu extends StatefulWidget {
   final bool isClient;
@@ -42,7 +43,6 @@ class VagusSideMenu extends StatefulWidget {
 
 class _VagusSideMenuState extends State<VagusSideMenu> {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
 
   @override
   void dispose() {
@@ -78,18 +78,22 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
     }
 
     return Drawer(
-      backgroundColor: AppTheme.primaryBlack,
-      child: Column(
-        children: [
-          // Header with VAGUS branding
-          _buildHeader(resolvedSubtitle),
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: DesignTokens.darkGradient,
+        ),
+        child: Column(
+          children: [
+            // Header with VAGUS branding
+            _buildHeader(resolvedSubtitle),
 
-          // Search Bar
-          _buildSearchBar(),
+            // Search Bar
+            _buildSearchBar(),
 
-          // Menu items
-          Expanded(
-            child: ListView(
+            // Menu items
+            Expanded(
+              child: ListView(
               padding: EdgeInsets.zero,
               children: [
                 // Navigation Section
@@ -112,7 +116,18 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
                 _buildMenuItem(
                   icon: Icons.restaurant,
                   title: 'Nutrition',
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Navigate to coach nutrition dashboard for coaches
+                    if (!widget.isClient) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CoachNutritionDashboard(),
+                        ),
+                      );
+                    }
+                  },
                 ),
                 _buildMenuItem(
                   icon: Icons.chat,
@@ -139,6 +154,13 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
                   title: 'Edit Profile',
                   onTap: widget.onEditProfile ?? () => AppNavigator.editProfile(context),
                 ),
+                // Only show Portfolio Marketplace for coaches
+                if (!widget.isClient)
+                  _buildMenuItem(
+                    icon: Icons.storefront,
+                    title: 'Portfolio Marketplace',
+                    onTap: () => AppNavigator.coachPortfolioMarketplace(context),
+                  ),
                 _buildMenuItem(
                   icon: Icons.settings,
                   title: 'Settings',
@@ -208,15 +230,31 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
           if (widget.onLogout != null)
             _buildFooter(),
         ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader(String subtitle) {
-    return Container(
-      width: double.infinity,
-      color: AppTheme.primaryBlack,
-      padding: const EdgeInsets.fromLTRB(DesignTokens.space16, 28, DesignTokens.space16, 24),
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: DesignTokens.blurSm, sigmaY: DesignTokens.blurSm),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: DesignTokens.cardBackground,
+            border: const Border(
+              bottom: BorderSide(color: DesignTokens.glassBorder, width: 1),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentGreen.withValues(alpha: 0.1),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(DesignTokens.space16, 28, DesignTokens.space16, 24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -238,7 +276,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
                 Text(
                   subtitle,
                   style: const TextStyle(
-                    color: Color(0xFFE0E0E0),
+                    color: DesignTokens.textSecondary,
                     fontSize: 13.5,
                     fontWeight: FontWeight.w500,
                   ),
@@ -249,6 +287,8 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
           const SizedBox(width: 12),
           const VagusLogo(size: 36, white: true),
         ],
+        ),
+      ),
       ),
     );
   }
@@ -256,43 +296,55 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
-      child: TextField(
-        controller: _searchController,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: 'Search...',
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.white.withOpacity(0.7),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.3),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: DesignTokens.blurSm, sigmaY: DesignTokens.blurSm),
+          child: Container(
+            decoration: BoxDecoration(
+              color: DesignTokens.cardBackground,
+              borderRadius: BorderRadius.circular(DesignTokens.radius16),
+              border: Border.all(color: DesignTokens.glassBorder),
+            ),
+            child: TextField(
+              controller: _searchController,
+              style: const TextStyle(color: DesignTokens.neutralWhite),
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                hintStyle: const TextStyle(color: DesignTokens.textSecondary),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: DesignTokens.accentGreen,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                  borderSide: const BorderSide(
+                    color: DesignTokens.accentGreen,
+                    width: 2,
+                  ),
+                ),
+                filled: true,
+                fillColor: Colors.transparent,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: DesignTokens.space16,
+                  vertical: DesignTokens.space12,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                });
+              },
             ),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.3),
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: AppTheme.mintAqua,
-              width: 2,
-            ),
-          ),
-          filled: true,
-          fillColor: AppTheme.cardBackground,
         ),
-        onChanged: (value) {
-          setState(() {
-            _searchQuery = value;
-          });
-        },
       ),
     );
   }
@@ -317,7 +369,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -329,7 +381,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
           icon: const Icon(Icons.logout, color: Colors.white70),
           label: const Text('Logout', style: TextStyle(color: Colors.white70)),
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Colors.white.withOpacity(0.3)),
+            side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
         ),
@@ -357,7 +409,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
       ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-      hoverColor: Colors.white.withOpacity(0.1),
+      hoverColor: Colors.white.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),

@@ -2,7 +2,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vagus_app/services/settings/user_prefs_service.dart';
-import 'package:vagus_app/services/workout/exercise_local_log_service.dart';
 
 void main() {
   group('UserPrefsService', () {

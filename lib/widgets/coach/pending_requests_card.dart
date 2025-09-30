@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
@@ -19,12 +20,28 @@ class PendingRequestsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space20),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space20),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
@@ -32,7 +49,7 @@ class PendingRequestsCard extends StatelessWidget {
             children: [
               const Icon(
                 Icons.person_add_outlined,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
               const SizedBox(width: DesignTokens.space8),
@@ -51,7 +68,7 @@ class PendingRequestsCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.steelGrey,
+                  color: AppTheme.mediumGrey,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: Text(
@@ -71,6 +88,9 @@ class PendingRequestsCard extends StatelessWidget {
           // Requests List
           ...requests.map((request) => _buildRequestItem(request)),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -84,7 +104,7 @@ class PendingRequestsCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: DesignTokens.space16),
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlack,
+        color: AppTheme.primaryDark,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
       ),
       child: Column(
@@ -97,14 +117,14 @@ class PendingRequestsCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: const Center(
                   child: Text(
                     'V',
                     style: TextStyle(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -183,19 +203,19 @@ class PendingRequestsCard extends StatelessWidget {
                   onPressed: () => onApprove(request),
                   icon: const Icon(
                     Icons.check,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     size: 16,
                   ),
                   label: const Text(
                     'Approve',
                     style: TextStyle(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space12,
                     ),
@@ -250,7 +270,7 @@ class PendingRequestsCard extends StatelessWidget {
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppTheme.steelGrey),
+                  side: const BorderSide(color: AppTheme.mediumGrey),
                   padding: const EdgeInsets.symmetric(
                     vertical: DesignTokens.space12,
                     horizontal: DesignTokens.space16,
@@ -274,7 +294,7 @@ class PendingRequestsCard extends StatelessWidget {
         vertical: DesignTokens.space4,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.steelGrey,
+        color: AppTheme.mediumGrey,
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
       ),
       child: Text(

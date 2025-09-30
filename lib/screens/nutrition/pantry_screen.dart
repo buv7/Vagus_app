@@ -463,7 +463,7 @@ class _PantryScreenState extends State<PantryScreen> {
     }
 
     try {
-      final now = DateTime.now();
+      // final now = DateTime.now();
       final pantryItem = PantryItem(
         id: existingItem?.id ?? _generateKey(name),
         userId: _currentUserId,
@@ -476,9 +476,11 @@ class _PantryScreenState extends State<PantryScreen> {
       );
 
       await _pantryService.upsert(pantryItem);
+      if (!mounted) return;
       Navigator.pop(context);
-      _loadPantryItems();
+      await _loadPantryItems();
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(existingItem != null ? 'Item updated' : 'Item added'),
@@ -486,6 +488,7 @@ class _PantryScreenState extends State<PantryScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to save item: $e'),
@@ -519,9 +522,11 @@ class _PantryScreenState extends State<PantryScreen> {
   Future<void> _deleteItem(PantryItem item) async {
     try {
       await _pantryService.delete(userId: item.userId, key: item.key);
+      if (!mounted) return;
       Navigator.pop(context); // Close confirmation dialog
-      _loadPantryItems();
+      await _loadPantryItems();
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Item deleted'),
@@ -529,6 +534,7 @@ class _PantryScreenState extends State<PantryScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to delete item: $e'),

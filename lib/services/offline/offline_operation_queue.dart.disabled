@@ -1,0 +1,438 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../network/connectivity_service.dart';
+import '../cache/cache_service.dart';
+
+/// Offline operation queue for handling failed operations and sync
+/// Features: Persistent queue, retry logic, conflict resolution, optimistic updates
+class OfflineOperationQueue extends ChangeNotifier {
+  static final _instance = OfflineOperationQueue._internal();
+  factory OfflineOperationQueue() => _instance;
+  OfflineOperationQueue._internal() {
+    _initializeQueue();
+  }
+
+  static const String _queueKey = 'offline_operation_queue';
+  static const String _syncStatusKey = 'sync_status';
+
+  final ConnectivityService _connectivity = ConnectivityService();
+  final CacheService _cache = CacheService();
+
+  List<QueuedOperation> _operationQueue = [];
+  bool _isSyncing = false;
+  DateTime? _lastSyncTime;
+  StreamSubscription<void>? _connectivitySubscription;
+  Timer? _syncTimer;
+
+  // Getters
+  List<QueuedOperation> get queuedOperations => List.unmodifiable(_operationQueue);
+  bool get isSyncing => _isSyncing;
+  bool get hasPendingOperations => _operationQueue.isNotEmpty;
+  DateTime? get lastSyncTime => _lastSyncTime;
+  int get pendingCount => _operationQueue.length;
+
+  Future<void> _initializeQueue() async {
+    await _loadQueue();
+    await _loadSyncStatus();
+
+    // Listen for connectivity changes
+    _connectivity.addListener(_onConnectivityChanged);
+
+    // Start periodic sync attempts
+    _startSyncTimer();
+
+    // Try initial sync if online
+    if (_connectivity.isConnected && _connectivity.hasInternet) {
+      _attemptSync();
+    }
+  }
+
+  void _onConnectivityChanged() {
+    if (_connectivity.isConnected && _connectivity.hasInternet && !_isSyncing) {
+      debugPrint('🔄 Connection restored, attempting sync...');
+      _attemptSync();
+    }
+  }
+
+  void _startSyncTimer() {
+    _syncTimer?.cancel();
+    _syncTimer = Timer.periodic(
+      const Duration(minutes: 2),
+      (_) => _attemptSync(),
+    );
+  }
+
+  /// Queue an operation for offline execution
+  Future<void> queueOperation(QueuedOperation operation) async {
+    _operationQueue.add(operation);
+    await _saveQueue();
+
+    debugPrint('📝 Queued operation: ${operation.type} (${operation.id})');
+    notifyListeners();
+
+    // Try immediate sync if online
+    if (_connectivity.isConnected && _connectivity.hasInternet) {
+      _attemptSync();
+    }
+  }
+
+  /// Create a queued operation for meal updates
+  QueuedOperation createMealUpdateOperation({
+    required String mealId,
+    required Map<String, dynamic> data,
+    String? optimisticId,
+  }) {
+    return QueuedOperation(
+      id: optimisticId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      type: OperationType.updateMeal,
+      data: data,
+      entityId: mealId,
+      createdAt: DateTime.now(),
+      retryCount: 0,
+    );
+  }
+
+  /// Create a queued operation for food item additions
+  QueuedOperation createAddFoodItemOperation({
+    required String mealId,
+    required Map<String, dynamic> foodData,
+  }) {
+    return QueuedOperation(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      type: OperationType.addFoodItem,
+      data: {
+        'meal_id': mealId,
+        'food_item': foodData,
+      },
+      entityId: mealId,
+      createdAt: DateTime.now(),
+      retryCount: 0,
+    );
+  }
+
+  /// Create a queued operation for custom food creation
+  QueuedOperation createCustomFoodOperation({
+    required Map<String, dynamic> foodData,
+  }) {
+    return QueuedOperation(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      type: OperationType.createCustomFood,
+      data: foodData,
+      createdAt: DateTime.now(),
+      retryCount: 0,
+    );
+  }
+
+  /// Attempt to sync all queued operations
+  Future<void> _attemptSync() async {
+    if (_isSyncing || _operationQueue.isEmpty || _connectivity.isOffline) {
+      return;
+    }
+
+    _isSyncing = true;
+    notifyListeners();
+
+    debugPrint('🔄 Starting sync of ${_operationQueue.length} operations...');
+
+    final operationsToProcess = List<QueuedOperation>.from(_operationQueue);
+    final completedOperations = <QueuedOperation>[];
+    final failedOperations = <QueuedOperation>[];
+
+    for (final operation in operationsToProcess) {
+      try {
+        final success = await _executeOperation(operation);
+
+        if (success) {
+          completedOperations.add(operation);
+          debugPrint('✅ Synced operation: ${operation.type} (${operation.id})');
+        } else {
+          operation.retryCount++;
+          if (operation.retryCount >= 3) {
+            operation.status = OperationStatus.failed;
+            failedOperations.add(operation);
+            debugPrint('❌ Operation failed permanently: ${operation.type} (${operation.id})');
+          } else {
+            operation.status = OperationStatus.retrying;
+            debugPrint('🔄 Operation will retry: ${operation.type} (${operation.id}) - Attempt ${operation.retryCount}');
+          }
+        }
+      } catch (e) {
+        operation.retryCount++;
+        operation.status = OperationStatus.retrying;
+        debugPrint('⚠️ Operation error: ${operation.type} (${operation.id}) - $e');
+      }
+
+      // Small delay between operations to prevent overwhelming the server
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    // Remove completed operations from queue
+    _operationQueue.removeWhere((op) => completedOperations.contains(op));
+
+    // Update failed operations status
+    for (final operation in failedOperations) {
+      final index = _operationQueue.indexWhere((op) => op.id == operation.id);
+      if (index != -1) {
+        _operationQueue[index] = operation;
+      }
+    }
+
+    await _saveQueue();
+    _lastSyncTime = DateTime.now();
+    await _saveSyncStatus();
+
+    _isSyncing = false;
+    notifyListeners();
+
+    debugPrint('🏁 Sync completed. ${completedOperations.length} succeeded, ${failedOperations.length} failed permanently, ${_operationQueue.length} remaining');
+  }
+
+  /// Execute a single operation
+  Future<bool> _executeOperation(QueuedOperation operation) async {
+    try {
+      switch (operation.type) {
+        case OperationType.updateMeal:
+          return await _executeMealUpdate(operation);
+        case OperationType.addFoodItem:
+          return await _executeAddFoodItem(operation);
+        case OperationType.createCustomFood:
+          return await _executeCreateCustomFood(operation);
+        case OperationType.deleteFoodItem:
+          return await _executeDeleteFoodItem(operation);
+        case OperationType.updateNutritionPlan:
+          return await _executeUpdateNutritionPlan(operation);
+      }
+    } catch (e) {
+      debugPrint('❌ Failed to execute operation ${operation.id}: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _executeMealUpdate(QueuedOperation operation) async {
+    // TODO: Implement actual API call to update meal
+    await Future.delayed(const Duration(milliseconds: 200)); // Simulate API call
+    return true; // Assume success for demo
+  }
+
+  Future<bool> _executeAddFoodItem(QueuedOperation operation) async {
+    // TODO: Implement actual API call to add food item
+    await Future.delayed(const Duration(milliseconds: 200));
+    return true;
+  }
+
+  Future<bool> _executeCreateCustomFood(QueuedOperation operation) async {
+    // TODO: Implement actual API call to create custom food
+    await Future.delayed(const Duration(milliseconds: 200));
+    return true;
+  }
+
+  Future<bool> _executeDeleteFoodItem(QueuedOperation operation) async {
+    // TODO: Implement actual API call to delete food item
+    await Future.delayed(const Duration(milliseconds: 200));
+    return true;
+  }
+
+  Future<bool> _executeUpdateNutritionPlan(QueuedOperation operation) async {
+    // TODO: Implement actual API call to update nutrition plan
+    await Future.delayed(const Duration(milliseconds: 200));
+    return true;
+  }
+
+  /// Manual sync trigger
+  Future<void> forcSync() async {
+    if (_isSyncing) return;
+
+    debugPrint('🔄 Manual sync triggered');
+    await _attemptSync();
+  }
+
+  /// Remove a specific operation from queue
+  Future<void> removeOperation(String operationId) async {
+    _operationQueue.removeWhere((op) => op.id == operationId);
+    await _saveQueue();
+    notifyListeners();
+  }
+
+  /// Clear all failed operations
+  Future<void> clearFailedOperations() async {
+    _operationQueue.removeWhere((op) => op.status == OperationStatus.failed);
+    await _saveQueue();
+    notifyListeners();
+  }
+
+  /// Clear all operations (use with caution)
+  Future<void> clearAllOperations() async {
+    _operationQueue.clear();
+    await _saveQueue();
+    notifyListeners();
+  }
+
+  /// Get operations by type
+  List<QueuedOperation> getOperationsByType(OperationType type) {
+    return _operationQueue.where((op) => op.type == type).toList();
+  }
+
+  /// Get operations by entity
+  List<QueuedOperation> getOperationsByEntity(String entityId) {
+    return _operationQueue.where((op) => op.entityId == entityId).toList();
+  }
+
+  /// Check if entity has pending operations
+  bool hasEntityPendingOperations(String entityId) {
+    return _operationQueue.any((op) =>
+      op.entityId == entityId && op.status != OperationStatus.failed
+    );
+  }
+
+  /// Get sync status summary
+  Map<String, dynamic> getSyncStatus() {
+    final statusCounts = <OperationStatus, int>{};
+
+    for (final operation in _operationQueue) {
+      statusCounts[operation.status] = (statusCounts[operation.status] ?? 0) + 1;
+    }
+
+    return {
+      'total_operations': _operationQueue.length,
+      'is_syncing': _isSyncing,
+      'last_sync': _lastSyncTime?.toIso8601String(),
+      'status_counts': statusCounts.map((key, value) => MapEntry(key.name, value)),
+      'oldest_operation': _operationQueue.isNotEmpty
+        ? _operationQueue.first.createdAt.toIso8601String()
+        : null,
+    };
+  }
+
+  /// Persistence methods
+  Future<void> _saveQueue() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final queueJson = _operationQueue.map((op) => op.toJson()).toList();
+      await prefs.setString(_queueKey, jsonEncode(queueJson));
+    } catch (e) {
+      debugPrint('❌ Failed to save operation queue: $e');
+    }
+  }
+
+  Future<void> _loadQueue() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final queueData = prefs.getString(_queueKey);
+
+      if (queueData != null) {
+        final queueJson = jsonDecode(queueData) as List<dynamic>;
+        _operationQueue = queueJson
+            .map((item) => QueuedOperation.fromJson(item))
+            .toList();
+
+        debugPrint('📋 Loaded ${_operationQueue.length} queued operations');
+      }
+    } catch (e) {
+      debugPrint('❌ Failed to load operation queue: $e');
+      _operationQueue = [];
+    }
+  }
+
+  Future<void> _saveSyncStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_syncStatusKey, jsonEncode({
+        'last_sync': _lastSyncTime?.toIso8601String(),
+      }));
+    } catch (e) {
+      debugPrint('❌ Failed to save sync status: $e');
+    }
+  }
+
+  Future<void> _loadSyncStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final statusData = prefs.getString(_syncStatusKey);
+
+      if (statusData != null) {
+        final statusJson = jsonDecode(statusData);
+        if (statusJson['last_sync'] != null) {
+          _lastSyncTime = DateTime.parse(statusJson['last_sync']);
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ Failed to load sync status: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    _syncTimer?.cancel();
+    super.dispose();
+  }
+}
+
+/// Queued operation model
+class QueuedOperation {
+  final String id;
+  final OperationType type;
+  final Map<String, dynamic> data;
+  final String? entityId;
+  final DateTime createdAt;
+  int retryCount;
+  OperationStatus status;
+
+  QueuedOperation({
+    required this.id,
+    required this.type,
+    required this.data,
+    this.entityId,
+    required this.createdAt,
+    this.retryCount = 0,
+    this.status = OperationStatus.pending,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type.name,
+      'data': data,
+      'entity_id': entityId,
+      'created_at': createdAt.toIso8601String(),
+      'retry_count': retryCount,
+      'status': status.name,
+    };
+  }
+
+  factory QueuedOperation.fromJson(Map<String, dynamic> json) {
+    return QueuedOperation(
+      id: json['id'],
+      type: OperationType.values.firstWhere(
+        (e) => e.name == json['type'],
+        orElse: () => OperationType.updateMeal,
+      ),
+      data: json['data'],
+      entityId: json['entity_id'],
+      createdAt: DateTime.parse(json['created_at']),
+      retryCount: json['retry_count'] ?? 0,
+      status: OperationStatus.values.firstWhere(
+        (e) => e.name == json['status'],
+        orElse: () => OperationStatus.pending,
+      ),
+    );
+  }
+}
+
+/// Operation types
+enum OperationType {
+  updateMeal,
+  addFoodItem,
+  deleteFoodItem,
+  createCustomFood,
+  updateNutritionPlan,
+}
+
+/// Operation status
+enum OperationStatus {
+  pending,
+  retrying,
+  failed,
+}

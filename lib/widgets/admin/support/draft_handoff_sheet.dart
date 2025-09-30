@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../services/admin/admin_support_service.dart';
+import '../../../theme/design_tokens.dart';
 
 class DraftHandoffSheet extends StatefulWidget {
   final String ticketId;
@@ -44,9 +46,30 @@ class _DraftHandoffSheetState extends State<DraftHandoffSheet> {
   Widget build(BuildContext context) {
     final pad = MediaQuery.of(context).size.width > 600 ? 24.0 : 16.0;
     return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(pad, pad, pad, pad + MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
+      child: Container(
+        margin: EdgeInsets.fromLTRB(pad, pad, pad, pad + MediaQuery.of(context).viewInsets.bottom),
+        decoration: BoxDecoration(
+          color: DesignTokens.cardBackground,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withValues(alpha:.2), borderRadius: BorderRadius.circular(4))),
@@ -113,6 +136,9 @@ class _DraftHandoffSheetState extends State<DraftHandoffSheet> {
           ],
         ),
       ),
+        ),
+      ),
+        ),
     );
   }
 

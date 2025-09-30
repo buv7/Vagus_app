@@ -20,10 +20,9 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
   List<Map<String, dynamic>> _events = [];
   bool _isLoading = true;
   String? _error;
-  String _role = 'client';
   
   // Current month for display
-  DateTime _currentMonth = DateTime.now();
+  // DateTime _currentMonth = DateTime.now();
 
   @override
   void initState() {
@@ -38,14 +37,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
 
-      // Get user role
-      final profile = await Supabase.instance.client
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
 
-      _role = (profile['role'] ?? 'client').toString();
 
       // Load events from calendar_events table
       final response = await Supabase.instance.client
@@ -75,14 +67,14 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       drawerEdgeDragWidth: 24,
       drawer: const VagusSideMenu(isClient: true),
       body: SafeArea(
         child: _isLoading 
             ? const Center(
                 child: CircularProgressIndicator(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                 ),
               )
             : _error != null
@@ -90,22 +82,25 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.error_outline,
                           color: Colors.red,
                           size: 48,
                         ),
                         const SizedBox(height: DesignTokens.space16),
-                        Text(
+                        const Text(
                           'Error loading calendar events',
-                          style: DesignTokens.titleMedium.copyWith(
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: DesignTokens.space8),
                         Text(
                           _error!,
-                          style: DesignTokens.bodyMedium.copyWith(
+                          style: const TextStyle(
+                            fontSize: 14,
                             color: Colors.white70,
                           ),
                           textAlign: TextAlign.center,
@@ -114,8 +109,8 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
                         ElevatedButton(
                           onPressed: _loadEvents,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.mintAqua,
-                            foregroundColor: AppTheme.primaryBlack,
+                            backgroundColor: AppTheme.accentGreen,
+                            foregroundColor: AppTheme.primaryDark,
                           ),
                           child: const Text('Retry'),
                         ),
@@ -206,7 +201,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
           vertical: DesignTokens.space8,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.mintAqua : Colors.transparent,
+          color: isSelected ? AppTheme.accentGreen : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Row(
@@ -214,14 +209,14 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryBlack : Colors.white70,
+              color: isSelected ? AppTheme.primaryDark : Colors.white70,
               size: 16,
             ),
             const SizedBox(width: 4),
             Text(
               label,
               style: DesignTokens.bodySmall.copyWith(
-                color: isSelected ? AppTheme.primaryBlack : Colors.white70,
+                color: isSelected ? AppTheme.primaryDark : Colors.white70,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
@@ -442,14 +437,14 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
                 children: [
                   Icon(
                     Icons.event_available,
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     size: 64,
                   ),
                   const SizedBox(height: DesignTokens.space16),
                   Text(
                     'No events scheduled',
                     style: DesignTokens.bodyLarge.copyWith(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -488,9 +483,9 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
         margin: const EdgeInsets.all(1),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppTheme.mintAqua
+              ? AppTheme.accentGreen
               : isToday
-                  ? AppTheme.mintAqua.withOpacity(0.3)
+                  ? AppTheme.accentGreen.withValues(alpha: 0.3)
                   : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
@@ -502,9 +497,9 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
                 '$day',
                 style: DesignTokens.bodyMedium.copyWith(
                   color: isSelected
-                      ? AppTheme.primaryBlack
+                      ? AppTheme.primaryDark
                       : isToday
-                          ? AppTheme.mintAqua
+                          ? AppTheme.accentGreen
                           : Colors.white,
                   fontWeight: isToday ? FontWeight.w600 : FontWeight.normal,
                 ),
@@ -531,7 +526,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
               Text(
                 '+${events.length - 3}',
                 style: DesignTokens.bodySmall.copyWith(
-                  color: isSelected ? AppTheme.primaryBlack : Colors.white70,
+                  color: isSelected ? AppTheme.primaryDark : Colors.white70,
                 ),
               ),
           ],
@@ -548,10 +543,10 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
         vertical: isCompact ? 2 : 4,
       ),
       decoration: BoxDecoration(
-        color: event['color'].withOpacity(0.2),
+        color: event['color'].withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: event['color'].withOpacity(0.5),
+          color: event['color'].withValues(alpha: 0.5),
         ),
       ),
       child: Text(
@@ -631,7 +626,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: event['color'].withOpacity(0.2),
+                color: event['color'].withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
@@ -653,7 +648,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
         color: AppTheme.cardBackground,
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -670,7 +665,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
           const SizedBox(height: DesignTokens.space12),
           Row(
             children: [
-              _buildLegendItem('Workout', AppTheme.mintAqua),
+              _buildLegendItem('Workout', AppTheme.accentGreen),
               const SizedBox(width: DesignTokens.space16),
               _buildLegendItem('Nutrition', Colors.orange),
               const SizedBox(width: DesignTokens.space16),
@@ -707,7 +702,8 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
   }
 
   List<Map<String, dynamic>> _getEventsForDate(DateTime date) {
-    // Mock events for the design
+    // Mock events for the design (currently unused)
+    /*
     final mockEvents = [
       {
         'id': '1',
@@ -716,7 +712,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
         'startTime': DateTime(2025, 9, 7, 10, 0),
         'endTime': DateTime(2025, 9, 7, 11, 0),
         'type': 'workout',
-        'color': AppTheme.mintAqua,
+        'color': AppTheme.accentGreen,
       },
       {
         'id': '2',
@@ -746,6 +742,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
         'color': Colors.purple,
       },
     ];
+    */
 
     // Filter real events for the specific date
     return _events.where((event) {
@@ -775,7 +772,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
     switch (type.toLowerCase()) {
       case 'workout':
       case 'training':
-        return AppTheme.mintAqua;
+        return AppTheme.accentGreen;
       case 'nutrition':
         return Colors.orange;
       case 'progress':
@@ -784,7 +781,7 @@ class _ModernCalendarViewerState extends State<ModernCalendarViewer> {
       case 'video':
         return Colors.purple;
       default:
-        return AppTheme.softYellow;
+        return AppTheme.accentOrange;
     }
   }
 

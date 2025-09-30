@@ -23,6 +23,8 @@ import 'package:vagus_app/screens/admin/admin_session_copilot_screen.dart';
 import 'package:vagus_app/screens/admin/admin_live_session_screen.dart';
 import 'package:vagus_app/screens/admin/admin_triage_rules_screen.dart';
 import 'package:vagus_app/screens/coach/coach_profile_public_screen.dart';
+import 'package:vagus_app/screens/coach/coach_portfolio_marketplace_screen.dart';
+import 'package:vagus_app/screens/coach/unified_coach_profile_screen.dart';
 
 class AppNavigator {
   // Always close Drawer first, then navigate on next frame to avoid wrong targets.
@@ -108,7 +110,33 @@ class AppNavigator {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => const AdminTriageRulesScreen()));
 
-  // Coach profile navigation
-  static void coachProfile(BuildContext context, String coachId) =>
+  // Coach profile navigation - unified screen (replaces old CoachProfilePublicScreen)
+  static void coachProfile(BuildContext context, String coachId, {String? username, bool editMode = false}) =>
+      _closeDrawerAndPush(context, UnifiedCoachProfileScreen(
+        coachId: coachId,
+        username: username,
+        initialEditMode: editMode,
+      ));
+
+  // Legacy coach profile navigation (for backward compatibility)
+  static void legacyCoachProfile(BuildContext context, String coachId) =>
       _closeDrawerAndPush(context, CoachProfilePublicScreen(coachId: coachId));
+
+  // Coach profile by username navigation
+  static void coachProfileByUsername(BuildContext context, String username) =>
+      _closeDrawerAndPush(context, UnifiedCoachProfileScreen(
+        coachId: '', // Will be resolved by username
+        username: username,
+      ));
+
+  // Edit coach profile navigation
+  static void editCoachProfile(BuildContext context, String coachId) =>
+      _closeDrawerAndPush(context, UnifiedCoachProfileScreen(
+        coachId: coachId,
+        initialEditMode: true,
+      ));
+
+  // Coach portfolio marketplace navigation
+  static void coachPortfolioMarketplace(BuildContext context) =>
+      _closeDrawerAndPush(context, const CoachPortfolioMarketplaceScreen());
 }

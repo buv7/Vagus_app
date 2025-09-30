@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import '../pantry_service.dart';
 import '../locale_helper.dart';
-import 'pantry_grocery_adapter.dart' as pga;
 import 'pantry_recipe_adapter.dart';
-import 'package:vagus_app/services/nutrition/pantry_service.dart' as ps;
 import 'package:vagus_app/models/nutrition/recipe.dart';
 import 'package:vagus_app/screens/nutrition/pantry_screen.dart';
-import '../grocery_service.dart';
 import '../recipe_service.dart';
 
 /// Helper class for pantry integration across screens
 class PantryIntegrationHelper {
   static final PantryService _pantryService = PantryService();
-  static final pga.PantryGroceryAdapter _groceryAdapter = pga.PantryGroceryAdapter(_pantryService, GroceryService());
   static final PantryRecipeAdapter _recipeAdapter = PantryRecipeAdapter(_pantryService, RecipeService());
   
   // Cache for coverage results
@@ -26,7 +22,7 @@ class PantryIntegrationHelper {
     required String userId,
     double servings = 1.0,
   }) async {
-    final cacheKey = '${recipeId}_${userId}_${servings}';
+    final cacheKey = '${recipeId}_${userId}_$servings';
     
     // Check cache first
     if (_coverageCache.containsKey(cacheKey)) {
@@ -52,7 +48,7 @@ class PantryIntegrationHelper {
       
       return coverage;
     } catch (e) {
-      print('Failed to get recipe coverage: $e');
+      debugPrint('Failed to get recipe coverage: $e');
       return 0.0;
     }
   }

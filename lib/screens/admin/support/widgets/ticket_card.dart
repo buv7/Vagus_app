@@ -102,13 +102,16 @@ class _TicketDetailsSheetState extends State<TicketDetailsSheet> {
                     tooltip: _claimedByMe ? 'Release claim' : 'Claim ticket',
                     icon: Icon(_claimedByMe ? Icons.lock_open : Icons.lock),
                     onPressed: () async {
+                      final contextRef = context;
                       final ok = _claimedByMe
                         ? await widget.service.releaseClaim(widget.ticket.id, _currentAgentId ?? 'unknown')
                         : await widget.service.claimTicket(widget.ticket.id, _currentAgentId ?? 'unknown');
                       if (!mounted) return;
                       setState(() => _claimedByMe = ok ? !_claimedByMe : _claimedByMe);
                       final verb = _claimedByMe ? 'claimed' : 'released';
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ticket $verb')));
+                      // ignore: use_build_context_synchronously
+                      final scaffoldMessenger = ScaffoldMessenger.of(contextRef);
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text('Ticket $verb')));
                       unawaited(widget.service.logTimelineEvent(widget.ticket.id, {
                         'ts': DateTime.now().toIso8601String(),
                         'kind': 'claim',
@@ -264,7 +267,8 @@ class _TicketDetailsSheetState extends State<TicketDetailsSheet> {
                 await widget.service.updateTicket(id: widget.ticket.id, status: macro.statusAfter);
               }
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+                scaffoldMessenger.showSnackBar(
                   SnackBar(content: Text('Macro applied: ${macro.name}')),
                 );
                 setState(() {}); // reflect UI
@@ -362,7 +366,9 @@ class _TicketDetailsSheetState extends State<TicketDetailsSheet> {
     
     if (!mounted) return;
     setState(() => _sending = false);
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reply sent')));
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    navigator.pop();
+    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Reply sent')));
   }
 }

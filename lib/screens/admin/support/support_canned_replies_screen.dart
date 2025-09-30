@@ -216,8 +216,8 @@ class _SupportCannedRepliesScreenState extends State<SupportCannedRepliesScreen>
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete'),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
           ),
         ],
       ),

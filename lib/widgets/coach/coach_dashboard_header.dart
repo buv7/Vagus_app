@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -29,16 +30,45 @@ class CoachDashboardHeader extends StatelessWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: AppTheme.mintAqua,
-            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+            color: DesignTokens.cardBackground,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+                blurRadius: 20,
+                spreadRadius: 0,
+              ),
+            ],
           ),
-          child: const Center(
-            child: Text(
-              'V',
-              style: TextStyle(
-                color: AppTheme.primaryBlack,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      DesignTokens.accentGreen.withValues(alpha: 0.3),
+                      DesignTokens.accentBlue.withValues(alpha: 0.3),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: const Center(
+                  child: Text(
+                    'V',
+                    style: TextStyle(
+                      color: DesignTokens.neutralWhite,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -53,18 +83,16 @@ class CoachDashboardHeader extends StatelessWidget {
             children: [
               Text(
                 'Welcome back, $name',
-                style: const TextStyle(
-                  color: AppTheme.neutralWhite,
-                  fontSize: 24,
+                style: DesignTokens.titleMedium.copyWith(
+                  color: DesignTokens.neutralWhite,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: DesignTokens.space4),
-              const Text(
+              Text(
                 'Ready to help your clients achieve their goals?',
-                style: TextStyle(
-                  color: AppTheme.lightGrey,
-                  fontSize: 16,
+                style: DesignTokens.bodyMedium.copyWith(
+                  color: DesignTokens.textSecondary,
                 ),
               ),
               const SizedBox(height: DesignTokens.space12),
@@ -74,20 +102,48 @@ class CoachDashboardHeader extends StatelessWidget {
                 children: [
                   if (isPro)
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: DesignTokens.space12,
-                        vertical: DesignTokens.space6,
-                      ),
                       decoration: BoxDecoration(
-                        color: AppTheme.softYellow,
-                        borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                        color: DesignTokens.cardBackground,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            spreadRadius: 0,
+                          ),
+                        ],
                       ),
-                      child: const Text(
-                        'Pro Coach',
-                        style: TextStyle(
-                          color: AppTheme.primaryBlack,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: DesignTokens.space12,
+                              vertical: DesignTokens.space6,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  DesignTokens.accentOrange.withValues(alpha: 0.3),
+                                  DesignTokens.accentPink.withValues(alpha: 0.3),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: Text(
+                              'Pro Coach',
+                              style: DesignTokens.labelSmall.copyWith(
+                                color: DesignTokens.neutralWhite,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -95,20 +151,38 @@ class CoachDashboardHeader extends StatelessWidget {
                   if (isPro) const SizedBox(width: DesignTokens.space8),
                   
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: DesignTokens.space12,
-                      vertical: DesignTokens.space6,
-                    ),
                     decoration: BoxDecoration(
-                      color: AppTheme.steelGrey,
-                      borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                      color: DesignTokens.cardBackground,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                          blurRadius: 20,
+                          spreadRadius: 0,
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      '$streak Day Streak',
-                      style: const TextStyle(
-                        color: AppTheme.neutralWhite,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: DesignTokens.space12,
+                            vertical: DesignTokens.space6,
+                          ),
+                          child: Text(
+                            '$streak Day Streak',
+                            style: DesignTokens.labelSmall.copyWith(
+                              color: DesignTokens.neutralWhite,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -128,7 +202,7 @@ class CoachDashboardHeader extends StatelessWidget {
                   onPressed: onNotifications,
                   icon: const Icon(
                     Icons.notifications_outlined,
-                    color: AppTheme.neutralWhite,
+                    color: DesignTokens.neutralWhite,
                     size: 24,
                   ),
                 ),
@@ -146,7 +220,7 @@ class CoachDashboardHeader extends StatelessWidget {
                       child: Text(
                         '3',
                         style: TextStyle(
-                          color: AppTheme.neutralWhite,
+                          color: DesignTokens.neutralWhite,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),

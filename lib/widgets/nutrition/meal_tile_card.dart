@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
 
@@ -45,24 +46,44 @@ class _MealTileCardState extends State<MealTileCard> with SingleTickerProviderSt
       animation: _pulse,
       builder: (context, _) {
         final t = (math.sin(_pulse.value) + 1) / 2; // 0..1
-        final borderColor = Color.lerp(DesignTokens.ink100, DesignTokens.blue500, t)!.withValues(alpha: 0.5);
-        return Material(
-          color: Theme.of(context).cardColor,
-          borderRadius: _r8,
-          child: InkWell(
+        final glowIntensity = t * 0.4 + 0.1; // Animate glow intensity
+        return Container(
+          decoration: BoxDecoration(
+            color: DesignTokens.cardBackground,
             borderRadius: _r8,
-            onTap: widget.onTap,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: _r8,
-                border: Border.all(width: 1.5, color: borderColor),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentBlue.withValues(alpha: glowIntensity),
+                blurRadius: 16,
+                spreadRadius: 0,
               ),
-              padding: _pad,
-              child: Center(
-                child: Text(
-                  widget.title,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: DesignTokens.ink500),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: _r8,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: _r8,
+                  onTap: widget.onTap,
+                  child: Container(
+                    padding: _pad,
+                    child: Center(
+                      child: Text(
+                        widget.title,
+                        textAlign: TextAlign.center,
+                        style: DesignTokens.titleMedium.copyWith(
+                          color: DesignTokens.neutralWhite,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

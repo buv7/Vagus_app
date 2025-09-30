@@ -66,7 +66,7 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
         _result = result;
       });
     } catch (e) {
-      print('Error loading result: $e');
+      debugPrint('Error loading result: $e');
     }
   }
 
@@ -128,9 +128,9 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         title: const Text(
           'Program Preview',
           style: TextStyle(color: AppTheme.neutralWhite),
@@ -143,7 +143,7 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               ),
             )
           : _job == null
@@ -209,11 +209,11 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.mintAqua,
+                backgroundColor: AppTheme.accentGreen,
               ),
               child: const Text(
                 'Go Back',
-                style: TextStyle(color: AppTheme.primaryBlack),
+                style: TextStyle(color: AppTheme.primaryDark),
               ),
             ),
           ],
@@ -230,7 +230,7 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               strokeWidth: 3,
             ),
             const SizedBox(height: DesignTokens.space24),
@@ -283,15 +283,15 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
                       color: DesignTokens.success.withValues(alpha: 0.3),
                     ),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.check_circle,
                         color: DesignTokens.success,
                         size: 24,
                       ),
-                      const SizedBox(width: DesignTokens.space12),
-                      const Expanded(
+                      SizedBox(width: DesignTokens.space12),
+                      Expanded(
                         child: Text(
                           'Program parsed successfully!',
                           style: TextStyle(
@@ -403,9 +403,9 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
                         color: AppTheme.cardBackground,
                         borderRadius: BorderRadius.circular(DesignTokens.radius12),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Nutrition plan data detected and will be applied to the client.',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppTheme.neutralWhite,
                           fontSize: 14,
                         ),
@@ -426,9 +426,9 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
                         color: AppTheme.cardBackground,
                         borderRadius: BorderRadius.circular(DesignTokens.radius12),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Workout plan data detected and will be applied to the client.',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppTheme.neutralWhite,
                           fontSize: 14,
                         ),
@@ -448,7 +448,7 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
           decoration: const BoxDecoration(
             color: AppTheme.cardBackground,
             border: Border(
-              top: BorderSide(color: AppTheme.steelGrey),
+              top: BorderSide(color: AppTheme.mediumGrey),
             ),
           ),
           child: Row(
@@ -472,17 +472,17 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
                 child: ElevatedButton(
                   onPressed: _applying ? null : _applyProgram,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
                   ),
                   child: _applying
                       ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryBlack),
+                          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryDark),
                         )
                       : const Text(
                           'Apply to Client',
                           style: TextStyle(
-                            color: AppTheme.primaryBlack,
+                            color: AppTheme.primaryDark,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -508,7 +508,7 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
           children: [
             Icon(
               icon,
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
               size: 20,
             ),
             const SizedBox(width: DesignTokens.space8),

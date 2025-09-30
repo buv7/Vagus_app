@@ -1,7 +1,37 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// Feature flags service for gradual rollout and emergency rollback.
+///
+/// Enhanced with Nutrition Platform 2.0 specific flags and rollout capabilities.
 class FeatureFlagsService {
+  static final FeatureFlagsService _instance = FeatureFlagsService._internal();
+  static FeatureFlagsService get instance => _instance;
+
+  FeatureFlagsService._internal();
+
   final SupabaseClient _supabase = Supabase.instance.client;
+  final Map<String, bool> _cache = {};
+  final Map<String, bool> _localOverrides = {};
+
+  // ============================================================
+  // NUTRITION V2.0 FEATURE FLAGS
+  // ============================================================
+
+  /// Master kill switch for entire Nutrition v2.0 system
+  static const String nutritionV2Enabled = 'nutrition_v2_enabled';
+
+  /// Individual feature flags
+  static const String mealPrepEnabled = 'nutrition_v2_meal_prep';
+  static const String gamificationEnabled = 'nutrition_v2_gamification';
+  static const String restaurantModeEnabled = 'nutrition_v2_restaurant_mode';
+  static const String macroCyclingEnabled = 'nutrition_v2_macro_cycling';
+  static const String allergyTrackingEnabled = 'nutrition_v2_allergy_tracking';
+  static const String advancedAnalyticsEnabled = 'nutrition_v2_advanced_analytics';
+  static const String integrationsEnabled = 'nutrition_v2_integrations';
+  static const String voiceInterfaceEnabled = 'nutrition_v2_voice';
+  static const String collaborationEnabled = 'nutrition_v2_collaboration';
+  static const String sustainabilityEnabled = 'nutrition_v2_sustainability';
 
   /// Get all feature flags for the current user
   Future<Map<String, bool>> getFlagsForUser() async {
@@ -42,7 +72,7 @@ class FeatureFlagsService {
       });
     } catch (e) {
       // Silently handle errors - feature flags are not critical
-      print('Failed to set feature flag $key: $e');
+      debugPrint('Failed to set feature flag $key: $e');
     }
   }
 
@@ -101,7 +131,90 @@ class FeatureFlagsService {
         await setFlag(entry.key, entry.value);
       }
     } catch (e) {
-      print('Failed to reset feature flags: $e');
+      debugPrint('Failed to reset feature flags: $e');
     }
+  }
+
+  // ============================================================
+  // NUTRITION V2.0 SPECIFIC METHODS
+  // ============================================================
+
+  /// Checks if a feature is enabled with caching and local overrides
+  Future<bool> isEnabled(
+    String featureKey, {
+    bool defaultValue = false,
+    bool forceRefresh = false,
+  }) async {
+    // Check local override first (for testing)
+    if (_localOverrides.containsKey(featureKey)) {
+      return _localOverrides[featureKey]!;
+    }
+
+    // Check cache
+    if (!forceRefresh && _cache.containsKey(featureKey)) {
+      return _cache[featureKey]!;
+    }
+
+    // Check master kill switch first
+    if (featureKey != nutritionV2Enabled) {
+      final masterEnabled = await isFeatureEnabled(nutritionV2Enabled);
+      if (!masterEnabled) {
+        _cache[featureKey] = false;
+        return false;
+      }
+    }
+
+    // Fetch from remote
+    final enabled = await isFeatureEnabled(featureKey);
+    _cache[featureKey] = enabled;
+    return enabled;
+  }
+
+  /// Clears the cache
+  void clearCache() {
+    _cache.clear();
+  }
+
+  /// Preloads all nutrition v2 flags (call on app start)
+  Future<void> preloadNutritionFlags() async {
+    await Future.wait([
+      isEnabled(nutritionV2Enabled),
+      isEnabled(mealPrepEnabled),
+      isEnabled(gamificationEnabled),
+      isEnabled(restaurantModeEnabled),
+      isEnabled(macroCyclingEnabled),
+      isEnabled(allergyTrackingEnabled),
+      isEnabled(advancedAnalyticsEnabled),
+      isEnabled(integrationsEnabled),
+      isEnabled(voiceInterfaceEnabled),
+      isEnabled(collaborationEnabled),
+      isEnabled(sustainabilityEnabled),
+    ]);
+  }
+
+  /// Sets a local override for testing (bypasses remote config)
+  void setLocalOverride(String featureKey, bool enabled) {
+    _localOverrides[featureKey] = enabled;
+    debugPrint('Feature flag override: $featureKey = $enabled');
+  }
+
+  /// Clears all local overrides
+  void clearAllLocalOverrides() {
+    _localOverrides.clear();
+  }
+
+  /// Enables all nutrition v2 features locally (testing mode)
+  void enableAllNutritionFeaturesLocally() {
+    setLocalOverride(nutritionV2Enabled, true);
+    setLocalOverride(mealPrepEnabled, true);
+    setLocalOverride(gamificationEnabled, true);
+    setLocalOverride(restaurantModeEnabled, true);
+    setLocalOverride(macroCyclingEnabled, true);
+    setLocalOverride(allergyTrackingEnabled, true);
+    setLocalOverride(advancedAnalyticsEnabled, true);
+    setLocalOverride(integrationsEnabled, true);
+    setLocalOverride(voiceInterfaceEnabled, true);
+    setLocalOverride(collaborationEnabled, true);
+    setLocalOverride(sustainabilityEnabled, true);
   }
 }

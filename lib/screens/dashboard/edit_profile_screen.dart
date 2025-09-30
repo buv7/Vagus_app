@@ -8,6 +8,7 @@ import '../auth/become_coach_screen.dart';
 import '../billing/billing_settings.dart';
 import '../settings/user_settings_screen.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -134,12 +135,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppTheme.mintAqua.withValues(alpha: 0.3),
+          color: AppTheme.accentGreen.withValues(alpha: 0.3),
           width: 3,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.mintAqua.withValues(alpha: 0.2),
+            color: AppTheme.accentGreen.withValues(alpha: 0.2),
             blurRadius: 20,
             spreadRadius: 2,
           ),
@@ -152,10 +153,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ? FileImage(_pickedImage!) 
           : (_avatarUrl.isNotEmpty ? NetworkImage(_avatarUrl) : null),
         child: (_pickedImage == null && _avatarUrl.isEmpty) 
-          ? Icon(
+          ? const Icon(
               Icons.person,
               size: 50,
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
             )
           : null,
       ),
@@ -165,9 +166,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1C1E),
+      backgroundColor: DesignTokens.primaryDark,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1C1E),
+        backgroundColor: DesignTokens.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -186,7 +187,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
             )
           : SingleChildScrollView(
@@ -240,7 +241,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         color: const Color(0xFF2C2F33),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          color: AppTheme.accentGreen.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -320,10 +321,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         const SizedBox(height: 4),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1C1E),
+            color: const Color(0xFF6A6475),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: AppTheme.accentGreen.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -332,8 +333,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             maxLines: maxLines,
             style: const TextStyle(color: Colors.white, fontSize: 14),
             decoration: InputDecoration(
-              prefixIcon: Icon(icon, color: AppTheme.mintAqua, size: 16),
+              prefixIcon: Icon(icon, color: AppTheme.accentGreen, size: 16),
               border: InputBorder.none,
+              fillColor: Colors.transparent,
+              filled: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
@@ -342,38 +345,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildModernTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    int maxLines = 1,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1C1E),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: TextField(
-        controller: controller,
-        maxLines: maxLines,
-        style: const TextStyle(color: Colors.white, fontSize: 13),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
-            fontSize: 13,
-          ),
-          prefixIcon: Icon(icon, color: AppTheme.mintAqua, size: 18),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        ),
-      ),
-    );
-  }
 
   Widget _buildCompactRoleDropdown() {
     return Column(
@@ -390,21 +361,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         const SizedBox(height: 4),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1C1E),
+            color: const Color(0xFF6A6475),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: AppTheme.accentGreen.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
           child: DropdownButtonFormField<String>(
             value: _role,
-            dropdownColor: const Color(0xFF2C2F33),
+            dropdownColor: const Color(0xFF6A6475),
             style: const TextStyle(color: Colors.white, fontSize: 14),
-            icon: Icon(Icons.keyboard_arrow_down, color: AppTheme.mintAqua, size: 16),
+            icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.accentGreen, size: 16),
             decoration: const InputDecoration(
               border: InputBorder.none,
-              prefixIcon: Icon(Icons.admin_panel_settings, color: AppTheme.mintAqua, size: 16),
+              fillColor: Colors.transparent,
+              filled: true,
+              prefixIcon: Icon(Icons.admin_panel_settings, color: AppTheme.accentGreen, size: 16),
               contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             items: const [
@@ -421,39 +394,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildRoleDropdown() {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1C1E),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: DropdownButtonFormField<String>(
-        value: _role,
-        dropdownColor: const Color(0xFF2C2F33),
-        style: const TextStyle(color: Colors.white, fontSize: 13),
-        icon: Icon(Icons.keyboard_arrow_down, color: AppTheme.mintAqua, size: 18),
-        decoration: const InputDecoration(
-          labelText: 'Role',
-          labelStyle: TextStyle(color: Colors.white70, fontSize: 13),
-          border: InputBorder.none,
-          prefixIcon: Icon(Icons.admin_panel_settings, color: AppTheme.mintAqua, size: 18),
-          contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        ),
-        items: const [
-          DropdownMenuItem(value: 'client', child: Text('Client')),
-          DropdownMenuItem(value: 'coach', child: Text('Coach')),
-          DropdownMenuItem(value: 'admin', child: Text('Admin')),
-        ],
-        onChanged: _isAdmin
-            ? (val) => setState(() => _role = val!)
-            : null,
-      ),
-    );
-  }
 
   Widget _buildSecuritySettingsCard() {
     return Container(
@@ -462,18 +402,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         color: const Color(0xFF2C2F33),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          color: AppTheme.accentGreen.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              Icon(Icons.security, color: AppTheme.softYellow, size: 18),
-              const SizedBox(width: 8),
-              const Text(
+              Icon(Icons.security, color: AppTheme.accentOrange, size: 18),
+              SizedBox(width: 8),
+              Text(
                 'Security Settings',
                 style: TextStyle(
                   color: Colors.white,
@@ -559,16 +499,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1C1E),
+        color: DesignTokens.lightGrey,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: AppTheme.accentGreen.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        leading: Icon(icon, color: AppTheme.mintAqua, size: 18),
+        leading: Icon(icon, color: AppTheme.accentGreen, size: 18),
         title: Text(
           title,
           style: const TextStyle(
@@ -584,9 +524,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             fontSize: 12,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios,
-          color: AppTheme.mintAqua,
+          color: AppTheme.accentGreen,
           size: 12,
         ),
         onTap: onTap,
@@ -600,7 +540,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: ElevatedButton(
         onPressed: _saveProfile,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.mintAqua,
+          backgroundColor: AppTheme.accentGreen,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(

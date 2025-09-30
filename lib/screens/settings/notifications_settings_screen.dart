@@ -127,9 +127,9 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -148,7 +148,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                 ),
               ),
             )
@@ -158,7 +158,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
               child: const Text(
                 'Save',
                 style: TextStyle(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -168,7 +168,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               ),
             )
           : SingleChildScrollView(
@@ -289,8 +289,8 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
                     child: ElevatedButton(
                       onPressed: () => _testNotifications(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.mintAqua,
-                        foregroundColor: AppTheme.primaryBlack,
+                        backgroundColor: AppTheme.accentGreen,
+                        foregroundColor: AppTheme.primaryDark,
                         padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(DesignTokens.radius12),
@@ -316,7 +316,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         color: AppTheme.lightGrey,
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -338,7 +338,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -349,7 +349,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
         ),
         leading: Icon(
           icon,
-          color: AppTheme.mintAqua,
+          color: AppTheme.accentGreen,
           size: 24,
         ),
         title: Text(
@@ -362,7 +362,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
@@ -370,10 +370,10 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
         trailing: Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: AppTheme.mintAqua,
-          activeTrackColor: AppTheme.mintAqua.withOpacity(0.3),
+          activeColor: AppTheme.accentGreen,
+          activeTrackColor: AppTheme.accentGreen.withValues(alpha: 0.3),
           inactiveThumbColor: AppTheme.lightGrey,
-          inactiveTrackColor: AppTheme.steelGrey,
+          inactiveTrackColor: AppTheme.mediumGrey,
         ),
       ),
     );
@@ -383,7 +383,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Test notification sent!'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -21,32 +22,43 @@ class SmartRepliesPanel extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space16),
-      decoration: const BoxDecoration(
-        color: AppTheme.cardBackground,
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
         border: Border(
           top: BorderSide(
-            color: AppTheme.steelGrey,
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(
+          const Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.psychology_outlined,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 16,
               ),
-              const SizedBox(width: DesignTokens.space8),
-              const Text(
+              SizedBox(width: DesignTokens.space8),
+              Text(
                 'Smart Replies',
                 style: TextStyle(
-                  color: AppTheme.neutralWhite,
+                  color: DesignTokens.neutralWhite,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -64,23 +76,38 @@ class SmartRepliesPanel extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onReplySelected(reply),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: DesignTokens.space12,
-                    vertical: DesignTokens.space8,
-                  ),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryBlack,
-                    borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                    color: DesignTokens.cardBackground,
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: AppTheme.steelGrey,
+                      color: Colors.white.withValues(alpha: 0.1),
                       width: 1,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                        blurRadius: 12,
+                        spreadRadius: 0,
+                      ),
+                    ],
                   ),
-                  child: Text(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DesignTokens.space12,
+                          vertical: DesignTokens.space8,
+                        ),
+                        child: Text(
                     reply,
                     style: const TextStyle(
-                      color: AppTheme.neutralWhite,
+                      color: DesignTokens.neutralWhite,
                       fontSize: 12,
+                    ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -88,6 +115,9 @@ class SmartRepliesPanel extends StatelessWidget {
             }).toList(),
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

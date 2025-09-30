@@ -40,7 +40,7 @@ class _PhotoCompareSliderState extends State<PhotoCompareSlider> {
                   left: cut - 1,
                   top: 0,
                   bottom: 0,
-                  child: Container(width: 2, color: (isDark ? Colors.white : Colors.black).withOpacity(0.8)),
+                  child: Container(width: 2, color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8)),
                 ),
                 Positioned(
                   left: cut - 16,
@@ -50,7 +50,7 @@ class _PhotoCompareSliderState extends State<PhotoCompareSlider> {
                     child: Container(
                       width: 32, height: 32,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
+                        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.75),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.drag_handle),

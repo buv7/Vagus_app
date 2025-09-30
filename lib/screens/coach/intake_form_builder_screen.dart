@@ -80,7 +80,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(title: const Text('Intake Form Builder')),
+      appBar: const VagusAppBar(title: Text('Intake Form Builder')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -126,7 +126,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
-                            color: AppTheme.primaryBlack,
+                            color: AppTheme.primaryDark,
                           ),
                           child: const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +165,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w700,
-                                    color: AppTheme.primaryBlack,
+                                    color: AppTheme.primaryDark,
                                   ),
                                 ),
                                 
@@ -193,9 +193,9 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                                   width: double.infinity,
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.1),
+                                    color: Colors.red.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                                    border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                                   ),
                                   child: const Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +237,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                                   child: ElevatedButton(
                                     onPressed: _saveForm,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppTheme.primaryBlack,
+                                      backgroundColor: AppTheme.primaryDark,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(vertical: 16),
                                       shape: RoundedRectangleBorder(
@@ -281,7 +281,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                     ),
                   ),
                 ),
@@ -289,7 +289,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
+                      color: Colors.red.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
@@ -324,13 +324,13 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryBlack.withOpacity(0.1),
+                    color: AppTheme.primaryDark.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     question.type.toUpperCase(),
                     style: const TextStyle(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -343,7 +343,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: Colors.orange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text(
@@ -361,11 +361,11 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
             // Show options for select/checkbox questions
             if (question.choiceOptions.isNotEmpty) ...[
               const SizedBox(height: 12),
-              Text(
+              const Text(
                 'Options:',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                 ),
               ),
               const SizedBox(height: 4),
@@ -384,7 +384,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                       option,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: AppTheme.primaryBlack,
+                        color: AppTheme.primaryDark,
                       ),
                     ),
                   );

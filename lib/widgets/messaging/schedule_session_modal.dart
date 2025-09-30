@@ -134,8 +134,8 @@ class _ScheduleSessionModalState extends State<ScheduleSessionModal> {
               child: ElevatedButton(
                 onPressed: _scheduleSession,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.mintAqua,
-                  foregroundColor: AppTheme.primaryBlack,
+                  backgroundColor: AppTheme.accentGreen,
+                  foregroundColor: AppTheme.primaryDark,
                   padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(DesignTokens.radius12),
@@ -177,10 +177,10 @@ class _ScheduleSessionModalState extends State<ScheduleSessionModal> {
         const SizedBox(height: DesignTokens.space8),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.primaryBlack,
+            color: AppTheme.primaryDark,
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
             border: Border.all(
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
               width: 1,
             ),
           ),
@@ -216,8 +216,8 @@ class _ScheduleSessionModalState extends State<ScheduleSessionModal> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.dark(
-              primary: AppTheme.mintAqua,
-              onPrimary: AppTheme.primaryBlack,
+              primary: AppTheme.accentGreen,
+              onPrimary: AppTheme.primaryDark,
               surface: AppTheme.cardBackground,
               onSurface: AppTheme.neutralWhite,
             ),
@@ -240,8 +240,8 @@ class _ScheduleSessionModalState extends State<ScheduleSessionModal> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.dark(
-              primary: AppTheme.mintAqua,
-              onPrimary: AppTheme.primaryBlack,
+              primary: AppTheme.accentGreen,
+              onPrimary: AppTheme.primaryDark,
               surface: AppTheme.cardBackground,
               onSurface: AppTheme.neutralWhite,
             ),

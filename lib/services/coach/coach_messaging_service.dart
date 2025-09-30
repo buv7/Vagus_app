@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
 
 final _sb = Supabase.instance.client;
 
@@ -162,7 +162,7 @@ class CoachMessagingService {
 
       return conversations;
     } catch (e) {
-      print('CoachMessagingService: Error getting conversations - $e');
+      debugPrint('CoachMessagingService: Error getting conversations - $e');
       return [];
     }
   }
@@ -228,7 +228,7 @@ class CoachMessagingService {
 
       return messages.skip(offset).take(limit).toList();
     } catch (e) {
-      print('CoachMessagingService: Error getting messages - $e');
+      debugPrint('CoachMessagingService: Error getting messages - $e');
       return [];
     }
   }
@@ -269,7 +269,7 @@ class CoachMessagingService {
 
       return true;
     } catch (e) {
-      print('CoachMessagingService: Error sending message - $e');
+      debugPrint('CoachMessagingService: Error sending message - $e');
       return false;
     }
   }
@@ -291,7 +291,7 @@ class CoachMessagingService {
 
       return true;
     } catch (e) {
-      print('CoachMessagingService: Error marking messages as read - $e');
+      debugPrint('CoachMessagingService: Error marking messages as read - $e');
       return false;
     }
   }
@@ -331,7 +331,7 @@ class CoachMessagingService {
         ),
       ];
     } catch (e) {
-      print('CoachMessagingService: Error getting smart replies - $e');
+      debugPrint('CoachMessagingService: Error getting smart replies - $e');
       return [];
     }
   }
@@ -352,7 +352,6 @@ class CoachMessagingService {
 
       final lastMessage = response.first;
       final lastMessageContent = lastMessage['content'] as String?;
-      final lastMessageSender = lastMessage['sender_id'] as String;
 
       // Count unread messages (messages not sent by coach)
       final unreadResponse = await _sb
@@ -367,7 +366,7 @@ class CoachMessagingService {
         'unread_count': (unreadResponse as List<dynamic>).length,
       };
     } catch (e) {
-      print('CoachMessagingService: Error getting last message - $e');
+      debugPrint('CoachMessagingService: Error getting last message - $e');
       return {'last_message': null, 'unread_count': 0};
     }
   }

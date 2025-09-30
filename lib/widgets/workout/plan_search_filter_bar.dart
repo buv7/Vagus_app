@@ -75,7 +75,7 @@ class PlanSearchFilterBar extends StatelessWidget {
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppTheme.steelGrey),
+                side: const BorderSide(color: AppTheme.mediumGrey),
                 padding: const EdgeInsets.symmetric(
                   horizontal: DesignTokens.space16,
                   vertical: DesignTokens.space12,

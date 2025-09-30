@@ -150,7 +150,7 @@ class _AdminEscalationMatrixScreenState extends State<AdminEscalationMatrixScree
                     notifySlack:notifySlack,
                   );
                   await _svc.upsertRule(r2);
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   Navigator.of(context).pop();
                 },
                 child: const Text('Save'),

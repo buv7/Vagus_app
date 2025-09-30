@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/settings/settings_controller.dart';
@@ -5,9 +6,9 @@ import '../../services/settings/reduce_motion.dart';
 import '../../components/settings/theme_toggle.dart';
 import '../../components/settings/language_selector.dart';
 import '../../components/settings/reminder_defaults.dart';
-import '../../widgets/branding/vagus_appbar.dart';
-import '../../widgets/settings/WorkoutPopoutPrefsSection.dart';
+import '../../widgets/settings/workout_popout_prefs_section.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 import 'music_settings_screen.dart';
 import 'google_integrations_screen.dart';
 import 'earn_rewards_screen.dart';
@@ -41,40 +42,55 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
     required Widget child,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: DesignTokens.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2F33),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(DesignTokens.radius24),
+        color: AppTheme.cardBackground.withValues(alpha: 0.7),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: AppTheme.accentGreen.withValues(alpha: 0.3),
           width: 1,
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                color: AppTheme.mintAqua,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
-          const SizedBox(height: 12),
-          child,
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(DesignTokens.radius24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Padding(
+            padding: const EdgeInsets.all(DesignTokens.space20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      icon,
+                      color: AppTheme.accentGreen,
+                      size: 24,
+                    ),
+                    const SizedBox(width: DesignTokens.space12),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.neutralWhite,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DesignTokens.space16),
+                child,
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -82,25 +98,78 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
-      appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+      backgroundColor: AppTheme.primaryDark,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppTheme.primaryDark,
+              AppTheme.primaryDark.withValues(alpha: 0.8),
+              AppTheme.accentGreen.withValues(alpha: 0.1),
+            ],
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Custom glassmorphic app bar
+              Container(
+                margin: const EdgeInsets.all(DesignTokens.space16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                  color: AppTheme.cardBackground.withValues(alpha: 0.7),
+                  border: Border.all(
+                    color: AppTheme.accentGreen.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: DesignTokens.space16,
+                        vertical: DesignTokens.space12,
+                      ),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: AppTheme.neutralWhite,
+                              size: 20,
+                            ),
+                          ),
+                          const Expanded(
+                            child: Text(
+                              'Settings',
+                              style: TextStyle(
+                                color: AppTheme.neutralWhite,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(width: 48), // Balance the back button
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Main content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space16, vertical: DesignTokens.space8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
             // Theme Settings Card
             _buildModernCard(
               icon: Icons.palette,
@@ -144,7 +213,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                 value: context.watch<ReduceMotion>().enabled,
                 onChanged: (v) => context.read<ReduceMotion>().setEnabled(v),
                 contentPadding: EdgeInsets.zero,
-                activeColor: AppTheme.mintAqua,
+                activeColor: AppTheme.accentGreen,
               ),
             ),
             const SizedBox(height: 16),
@@ -185,7 +254,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                       icon: const Icon(Icons.settings, size: 18),
                       label: const Text('Music Settings'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.mintAqua,
+                        backgroundColor: AppTheme.accentGreen,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -227,7 +296,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                       icon: const Icon(Icons.settings, size: 18),
                       label: const Text('Google (Sheets & Drive)'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.mintAqua,
+                        backgroundColor: AppTheme.accentGreen,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -269,7 +338,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                       icon: const Icon(Icons.card_giftcard, size: 18),
                       label: const Text('Referrals & Rewards'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.mintAqua,
+                        backgroundColor: AppTheme.accentGreen,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -288,7 +357,12 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
               title: 'AI Usage & Quotas',
               child: const AIQuotasCard(),
             ),
-          ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

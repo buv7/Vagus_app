@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/coach/client_management_header.dart';
 import '../../widgets/coach/client_search_filter_bar.dart';
 import '../../widgets/coach/client_metrics_cards.dart';
 import '../../widgets/coach/client_list_view.dart';
-import '../../services/coach/coach_client_management_service.dart';
 
 class ModernClientManagementScreen extends StatefulWidget {
   const ModernClientManagementScreen({super.key});
@@ -179,17 +176,17 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         body: Center(
           child: CircularProgressIndicator(
-            color: AppTheme.mintAqua,
+            color: AppTheme.accentGreen,
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       body: SafeArea(
         child: Column(
           children: [

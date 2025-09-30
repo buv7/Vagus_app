@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../services/admin/admin_support_service.dart';
+import '../../../theme/design_tokens.dart';
 
 class TicketTimeline extends StatefulWidget {
   final String ticketId;
@@ -98,15 +100,36 @@ class _TicketTimelineState extends State<TicketTimeline> {
 
     return Container(
       decoration: BoxDecoration(
-        color: tint.withValues(alpha:.06),
+        color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: tint.withValues(alpha:.25)),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: ListTile(
-        leading: CircleAvatar(backgroundColor: tint.withValues(alpha:.2), child: Icon(icon, color: tint)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-        subtitle: subtitle == null || subtitle.isEmpty ? null : Text(subtitle),
-        trailing: Text(when, style: TextStyle(color: Colors.black.withValues(alpha:.6))),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: tint.withValues(alpha:.06),
+            ),
+            child: ListTile(
+              leading: CircleAvatar(backgroundColor: tint.withValues(alpha:.2), child: Icon(icon, color: tint)),
+              title: Text(title, style: DesignTokens.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+              subtitle: subtitle == null || subtitle.isEmpty ? null : Text(subtitle),
+              trailing: Text(when, style: TextStyle(color: Colors.black.withValues(alpha:.6))),
+            ),
+          ),
+        ),
       ),
     );
   }

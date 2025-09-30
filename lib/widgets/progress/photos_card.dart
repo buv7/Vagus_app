@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -40,6 +41,7 @@ class _PhotosCardState extends State<PhotosCard> {
     setState(() => _isUploading = true);
 
     try {
+      if (!mounted) return;
       await runWithBlockingLoader(
         context,
         _progressService.uploadProgressPhoto(
@@ -266,24 +268,42 @@ class _PhotosCardState extends State<PhotosCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentPink.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.photo_library, color: Colors.green),
+                const Icon(Icons.photo_library, color: DesignTokens.accentPink),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Progress Photos',
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    style: DesignTokens.titleLarge.copyWith(
+                      color: DesignTokens.neutralWhite,
                     ),
                   ),
                 ),
@@ -308,7 +328,7 @@ class _PhotosCardState extends State<PhotosCard> {
                           : const Icon(Icons.upload),
                       label: Text(_isUploading ? 'Uploading...' : 'Upload Photo'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: DesignTokens.accentPink,
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -318,7 +338,9 @@ class _PhotosCardState extends State<PhotosCard> {
             ),
             const SizedBox(height: 16),
             _buildPhotoGrid(),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1,0 +1,789 @@
+// =====================================================
+// SUSTAINABILITY & ETHICS SERVICE
+// =====================================================
+// Revolutionary sustainability tracking for conscious eating.
+//
+// FEATURES:
+// - Carbon footprint per meal
+// - Environmental impact scoring
+// - Ethical sourcing labels
+// - Food waste reduction tracking
+// - Anti-diet culture language
+// - Sustainable alternatives suggestions
+// - Water usage tracking
+// - Seasonal food recommendations
+// =====================================================
+
+import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+// =====================================================
+// ENUMS
+// =====================================================
+
+enum SustainabilityRating {
+  excellent,  // A+
+  good,       // A
+  fair,       // B
+  poor,       // C
+  veryPoor,   // D
+}
+
+enum EthicalLabel {
+  organic,
+  fairTrade,
+  locallySourced,
+  grassFed,
+  freeRange,
+  wildcaught,
+  msc,           // Marine Stewardship Council
+  rainforestAlliance,
+  nonGMO,
+  vegan,
+  vegetarian,
+  crueltyFree,
+}
+
+enum FoodWasteReason {
+  expired,
+  overBought,
+  tasteBad,
+  forgotAbout,
+  cookedTooMuch,
+  other,
+}
+
+// =====================================================
+// MODELS
+// =====================================================
+
+/// Food item environmental impact
+class EnvironmentalImpact {
+  final String foodItemId;
+  final String foodName;
+  final double carbonFootprintKg; // kg CO2 per serving
+  final double waterUsageLiters; // Liters per serving
+  final double landUseM2; // Square meters per serving
+  final SustainabilityRating rating;
+  final List<String> impactFactors;
+  final DateTime calculatedAt;
+
+  EnvironmentalImpact({
+    required this.foodItemId,
+    required this.foodName,
+    required this.carbonFootprintKg,
+    required this.waterUsageLiters,
+    required this.landUseM2,
+    required this.rating,
+    required this.impactFactors,
+    required this.calculatedAt,
+  });
+
+  factory EnvironmentalImpact.fromJson(Map<String, dynamic> json) {
+    return EnvironmentalImpact(
+      foodItemId: json['food_item_id'] as String,
+      foodName: json['food_name'] as String,
+      carbonFootprintKg: (json['carbon_footprint_kg'] as num).toDouble(),
+      waterUsageLiters: (json['water_usage_liters'] as num).toDouble(),
+      landUseM2: (json['land_use_m2'] as num).toDouble(),
+      rating: SustainabilityRating.values.firstWhere(
+        (e) => e.name == json['rating'],
+        orElse: () => SustainabilityRating.fair,
+      ),
+      impactFactors: List<String>.from(json['impact_factors'] ?? []),
+      calculatedAt: DateTime.parse(json['calculated_at'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'food_item_id': foodItemId,
+      'food_name': foodName,
+      'carbon_footprint_kg': carbonFootprintKg,
+      'water_usage_liters': waterUsageLiters,
+      'land_use_m2': landUseM2,
+      'rating': rating.name,
+      'impact_factors': impactFactors,
+      'calculated_at': calculatedAt.toIso8601String(),
+    };
+  }
+}
+
+/// Daily sustainability summary
+class DailySustainabilitySummary {
+  final String userId;
+  final DateTime date;
+  final double totalCarbonFootprintKg;
+  final double totalWaterUsageLiters;
+  final SustainabilityRating overallRating;
+  final int mealsLogged;
+  final int sustainableMeals;
+  final List<String> achievements;
+  final Map<String, double> breakdownByCategory;
+
+  DailySustainabilitySummary({
+    required this.userId,
+    required this.date,
+    required this.totalCarbonFootprintKg,
+    required this.totalWaterUsageLiters,
+    required this.overallRating,
+    required this.mealsLogged,
+    required this.sustainableMeals,
+    required this.achievements,
+    required this.breakdownByCategory,
+  });
+
+  factory DailySustainabilitySummary.fromJson(Map<String, dynamic> json) {
+    return DailySustainabilitySummary(
+      userId: json['user_id'] as String,
+      date: DateTime.parse(json['date'] as String),
+      totalCarbonFootprintKg: (json['total_carbon_footprint_kg'] as num).toDouble(),
+      totalWaterUsageLiters: (json['total_water_usage_liters'] as num).toDouble(),
+      overallRating: SustainabilityRating.values.firstWhere(
+        (e) => e.name == json['overall_rating'],
+        orElse: () => SustainabilityRating.fair,
+      ),
+      mealsLogged: json['meals_logged'] as int,
+      sustainableMeals: json['sustainable_meals'] as int,
+      achievements: List<String>.from(json['achievements'] ?? []),
+      breakdownByCategory: Map<String, double>.from(json['breakdown_by_category'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': userId,
+      'date': date.toIso8601String(),
+      'total_carbon_footprint_kg': totalCarbonFootprintKg,
+      'total_water_usage_liters': totalWaterUsageLiters,
+      'overall_rating': overallRating.name,
+      'meals_logged': mealsLogged,
+      'sustainable_meals': sustainableMeals,
+      'achievements': achievements,
+      'breakdown_by_category': breakdownByCategory,
+    };
+  }
+}
+
+/// Food with ethical sourcing info
+class EthicalFoodItem {
+  final String foodItemId;
+  final String foodName;
+  final List<EthicalLabel> labels;
+  final String? origin;
+  final String? producer;
+  final bool isLocalSeasonal;
+  final String? certificationInfo;
+  final double? fairTradePrecentage;
+
+  EthicalFoodItem({
+    required this.foodItemId,
+    required this.foodName,
+    required this.labels,
+    this.origin,
+    this.producer,
+    this.isLocalSeasonal = false,
+    this.certificationInfo,
+    this.fairTradePrecentage,
+  });
+
+  factory EthicalFoodItem.fromJson(Map<String, dynamic> json) {
+    return EthicalFoodItem(
+      foodItemId: json['food_item_id'] as String,
+      foodName: json['food_name'] as String,
+      labels: (json['labels'] as List?)
+              ?.map((l) => EthicalLabel.values.firstWhere(
+                    (e) => e.name == l,
+                    orElse: () => EthicalLabel.organic,
+                  ))
+              .toList() ??
+          [],
+      origin: json['origin'] as String?,
+      producer: json['producer'] as String?,
+      isLocalSeasonal: json['is_local_seasonal'] as bool? ?? false,
+      certificationInfo: json['certification_info'] as String?,
+      fairTradePrecentage: json['fair_trade_precentage'] != null
+          ? (json['fair_trade_precentage'] as num).toDouble()
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'food_item_id': foodItemId,
+      'food_name': foodName,
+      'labels': labels.map((l) => l.name).toList(),
+      'origin': origin,
+      'producer': producer,
+      'is_local_seasonal': isLocalSeasonal,
+      'certification_info': certificationInfo,
+      'fair_trade_precentage': fairTradePrecentage,
+    };
+  }
+}
+
+/// Food waste log
+class FoodWasteLog {
+  final String id;
+  final String userId;
+  final String foodName;
+  final double quantityGrams;
+  final FoodWasteReason reason;
+  final double estimatedCost;
+  final double carbonWasted;
+  final String? notes;
+  final DateTime wastedAt;
+
+  FoodWasteLog({
+    required this.id,
+    required this.userId,
+    required this.foodName,
+    required this.quantityGrams,
+    required this.reason,
+    required this.estimatedCost,
+    required this.carbonWasted,
+    this.notes,
+    required this.wastedAt,
+  });
+
+  factory FoodWasteLog.fromJson(Map<String, dynamic> json) {
+    return FoodWasteLog(
+      id: json['id'] as String,
+      userId: json['user_id'] as String,
+      foodName: json['food_name'] as String,
+      quantityGrams: (json['quantity_grams'] as num).toDouble(),
+      reason: FoodWasteReason.values.firstWhere(
+        (e) => e.name == json['reason'],
+        orElse: () => FoodWasteReason.other,
+      ),
+      estimatedCost: (json['estimated_cost'] as num).toDouble(),
+      carbonWasted: (json['carbon_wasted'] as num).toDouble(),
+      notes: json['notes'] as String?,
+      wastedAt: DateTime.parse(json['wasted_at'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'food_name': foodName,
+      'quantity_grams': quantityGrams,
+      'reason': reason.name,
+      'estimated_cost': estimatedCost,
+      'carbon_wasted': carbonWasted,
+      'notes': notes,
+      'wasted_at': wastedAt.toIso8601String(),
+    };
+  }
+}
+
+/// Sustainable alternative suggestion
+class SustainableAlternative {
+  final String originalFoodId;
+  final String originalFoodName;
+  final String alternativeFoodId;
+  final String alternativeFoodName;
+  final double carbonSavingsKg;
+  final double waterSavingsLiters;
+  final double costDifference;
+  final String reason;
+  final SustainabilityRating improvement;
+
+  SustainableAlternative({
+    required this.originalFoodId,
+    required this.originalFoodName,
+    required this.alternativeFoodId,
+    required this.alternativeFoodName,
+    required this.carbonSavingsKg,
+    required this.waterSavingsLiters,
+    required this.costDifference,
+    required this.reason,
+    required this.improvement,
+  });
+
+  factory SustainableAlternative.fromJson(Map<String, dynamic> json) {
+    return SustainableAlternative(
+      originalFoodId: json['original_food_id'] as String,
+      originalFoodName: json['original_food_name'] as String,
+      alternativeFoodId: json['alternative_food_id'] as String,
+      alternativeFoodName: json['alternative_food_name'] as String,
+      carbonSavingsKg: (json['carbon_savings_kg'] as num).toDouble(),
+      waterSavingsLiters: (json['water_savings_liters'] as num).toDouble(),
+      costDifference: (json['cost_difference'] as num).toDouble(),
+      reason: json['reason'] as String,
+      improvement: SustainabilityRating.values.firstWhere(
+        (e) => e.name == json['improvement'],
+        orElse: () => SustainabilityRating.fair,
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'original_food_id': originalFoodId,
+      'original_food_name': originalFoodName,
+      'alternative_food_id': alternativeFoodId,
+      'alternative_food_name': alternativeFoodName,
+      'carbon_savings_kg': carbonSavingsKg,
+      'water_savings_liters': waterSavingsLiters,
+      'cost_difference': costDifference,
+      'reason': reason,
+      'improvement': improvement.name,
+    };
+  }
+}
+
+/// Seasonal food recommendation
+class SeasonalRecommendation {
+  final String foodName;
+  final String season;
+  final List<String> months;
+  final String region;
+  final String? benefits;
+  final List<String> recipes;
+
+  SeasonalRecommendation({
+    required this.foodName,
+    required this.season,
+    required this.months,
+    required this.region,
+    this.benefits,
+    required this.recipes,
+  });
+
+  factory SeasonalRecommendation.fromJson(Map<String, dynamic> json) {
+    return SeasonalRecommendation(
+      foodName: json['food_name'] as String,
+      season: json['season'] as String,
+      months: List<String>.from(json['months'] ?? []),
+      region: json['region'] as String,
+      benefits: json['benefits'] as String?,
+      recipes: List<String>.from(json['recipes'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'food_name': foodName,
+      'season': season,
+      'months': months,
+      'region': region,
+      'benefits': benefits,
+      'recipes': recipes,
+    };
+  }
+}
+
+// =====================================================
+// SERVICE
+// =====================================================
+
+class SustainabilityService extends ChangeNotifier {
+  final SupabaseClient _supabase = Supabase.instance.client;
+
+  // Cache
+  final Map<String, EnvironmentalImpact> _impactCache = {};
+  final Map<String, EthicalFoodItem> _ethicalCache = {};
+
+  // =====================================================
+  // ENVIRONMENTAL IMPACT
+  // =====================================================
+
+  /// Calculate environmental impact for food item
+  Future<EnvironmentalImpact?> calculateEnvironmentalImpact({
+    required String foodItemId,
+    required String foodName,
+    required double servingSize,
+    required String foodCategory,
+  }) async {
+    // Check cache
+    if (_impactCache.containsKey(foodItemId)) {
+      return _impactCache[foodItemId];
+    }
+
+    try {
+      // Get impact data from database or use defaults
+      final impactData = _getImpactDataForFood(foodCategory);
+
+      final carbonFootprint = impactData['carbon'] * servingSize / 100;
+      final waterUsage = impactData['water'] * servingSize / 100;
+      final landUse = impactData['land'] * servingSize / 100;
+
+      final rating = _calculateSustainabilityRating(carbonFootprint);
+      final factors = _getImpactFactors(foodCategory);
+
+      final impact = EnvironmentalImpact(
+        foodItemId: foodItemId,
+        foodName: foodName,
+        carbonFootprintKg: carbonFootprint,
+        waterUsageLiters: waterUsage,
+        landUseM2: landUse,
+        rating: rating,
+        impactFactors: factors,
+        calculatedAt: DateTime.now(),
+      );
+
+      _impactCache[foodItemId] = impact;
+      return impact;
+    } catch (e) {
+      debugPrint('Error calculating impact: $e');
+      return null;
+    }
+  }
+
+  Map<String, double> _getImpactDataForFood(String category) {
+    // Based on real environmental data
+    switch (category.toLowerCase()) {
+      case 'beef':
+        return {'carbon': 27.0, 'water': 15415.0, 'land': 164.0};
+      case 'lamb':
+        return {'carbon': 39.2, 'water': 10400.0, 'land': 185.0};
+      case 'pork':
+        return {'carbon': 12.1, 'water': 5988.0, 'land': 11.0};
+      case 'chicken':
+        return {'carbon': 6.9, 'water': 4325.0, 'land': 7.1};
+      case 'fish':
+        return {'carbon': 5.0, 'water': 3000.0, 'land': 2.0};
+      case 'eggs':
+        return {'carbon': 4.8, 'water': 3265.0, 'land': 5.7};
+      case 'cheese':
+        return {'carbon': 13.5, 'water': 5000.0, 'land': 40.0};
+      case 'milk':
+        return {'carbon': 3.2, 'water': 628.0, 'land': 8.9};
+      case 'rice':
+        return {'carbon': 4.0, 'water': 2497.0, 'land': 2.8};
+      case 'wheat':
+        return {'carbon': 1.4, 'water': 1827.0, 'land': 3.9};
+      case 'potatoes':
+        return {'carbon': 0.5, 'water': 287.0, 'land': 0.9};
+      case 'vegetables':
+        return {'carbon': 2.0, 'water': 322.0, 'land': 0.3};
+      case 'fruits':
+        return {'carbon': 1.1, 'water': 962.0, 'land': 0.7};
+      case 'legumes':
+        return {'carbon': 0.9, 'water': 4055.0, 'land': 3.4};
+      case 'nuts':
+        return {'carbon': 2.3, 'water': 9063.0, 'land': 9.0};
+      default:
+        return {'carbon': 2.0, 'water': 1000.0, 'land': 2.0};
+    }
+  }
+
+  SustainabilityRating _calculateSustainabilityRating(double carbonKg) {
+    if (carbonKg < 1.0) return SustainabilityRating.excellent;
+    if (carbonKg < 3.0) return SustainabilityRating.good;
+    if (carbonKg < 10.0) return SustainabilityRating.fair;
+    if (carbonKg < 20.0) return SustainabilityRating.poor;
+    return SustainabilityRating.veryPoor;
+  }
+
+  List<String> _getImpactFactors(String category) {
+    switch (category.toLowerCase()) {
+      case 'beef':
+      case 'lamb':
+        return ['High methane emissions', 'Significant land use', 'High water consumption'];
+      case 'chicken':
+      case 'pork':
+        return ['Moderate emissions', 'Moderate resource use'];
+      case 'vegetables':
+      case 'fruits':
+        return ['Low emissions', 'Minimal land use', 'Water-efficient'];
+      default:
+        return ['Moderate environmental impact'];
+    }
+  }
+
+  /// Get daily sustainability summary
+  Future<DailySustainabilitySummary?> getDailySummary({
+    required String userId,
+    DateTime? date,
+  }) async {
+    try {
+      final checkDate = date ?? DateTime.now();
+
+      // Fetch all meals for the day
+      final meals = await _supabase
+          .from('meals')
+          .select('*, food_items(*)')
+          .eq('user_id', userId)
+          .gte('date', checkDate.toIso8601String().split('T')[0])
+          .lt('date', checkDate.add(Duration(days: 1)).toIso8601String().split('T')[0]);
+
+      double totalCarbon = 0;
+      double totalWater = 0;
+      int sustainableCount = 0;
+
+      for (final meal in (meals as List)) {
+        // Calculate impact for each food item
+        // This is simplified - would aggregate actual food items
+        totalCarbon += 5.0; // Mock value
+        totalWater += 1000.0; // Mock value
+
+        if (totalCarbon < 3.0) sustainableCount++;
+      }
+
+      final overallRating = _calculateSustainabilityRating(totalCarbon);
+      final achievements = <String>[];
+
+      if (totalCarbon < 10.0) {
+        achievements.add('Low carbon day! 🌱');
+      }
+      if (sustainableCount >= (meals as List).length * 0.8) {
+        achievements.add('80% sustainable meals! ♻️');
+      }
+
+      return DailySustainabilitySummary(
+        userId: userId,
+        date: checkDate,
+        totalCarbonFootprintKg: totalCarbon,
+        totalWaterUsageLiters: totalWater,
+        overallRating: overallRating,
+        mealsLogged: (meals as List).length,
+        sustainableMeals: sustainableCount,
+        achievements: achievements,
+        breakdownByCategory: {
+          'protein': totalCarbon * 0.4,
+          'carbs': totalCarbon * 0.3,
+          'vegetables': totalCarbon * 0.3,
+        },
+      );
+    } catch (e) {
+      debugPrint('Error getting daily summary: $e');
+      return null;
+    }
+  }
+
+  // =====================================================
+  // ETHICAL SOURCING
+  // =====================================================
+
+  /// Get ethical information for food
+  Future<EthicalFoodItem?> getEthicalInfo(String foodItemId) async {
+    if (_ethicalCache.containsKey(foodItemId)) {
+      return _ethicalCache[foodItemId];
+    }
+
+    try {
+      final response = await _supabase
+          .from('ethical_food_items')
+          .select()
+          .eq('food_item_id', foodItemId)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      final item = EthicalFoodItem.fromJson(response as Map<String, dynamic>);
+      _ethicalCache[foodItemId] = item;
+      return item;
+    } catch (e) {
+      debugPrint('Error fetching ethical info: $e');
+      return null;
+    }
+  }
+
+  // =====================================================
+  // FOOD WASTE TRACKING
+  // =====================================================
+
+  /// Log food waste
+  Future<FoodWasteLog?> logFoodWaste({
+    required String userId,
+    required String foodName,
+    required double quantityGrams,
+    required FoodWasteReason reason,
+    required double estimatedCost,
+    String? notes,
+  }) async {
+    try {
+      // Calculate carbon impact of waste
+      final carbonWasted = (quantityGrams / 1000) * 2.5; // Rough estimate
+
+      final wasteData = {
+        'user_id': userId,
+        'food_name': foodName,
+        'quantity_grams': quantityGrams,
+        'reason': reason.name,
+        'estimated_cost': estimatedCost,
+        'carbon_wasted': carbonWasted,
+        'notes': notes,
+        'wasted_at': DateTime.now().toIso8601String(),
+      };
+
+      final response = await _supabase
+          .from('food_waste_logs')
+          .insert(wasteData)
+          .select()
+          .single();
+
+      notifyListeners();
+      return FoodWasteLog.fromJson(response as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error logging food waste: $e');
+      return null;
+    }
+  }
+
+  /// Get waste summary
+  Future<Map<String, dynamic>> getWasteSummary({
+    required String userId,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      final start = startDate ?? DateTime.now().subtract(Duration(days: 30));
+      final end = endDate ?? DateTime.now();
+
+      final response = await _supabase
+          .from('food_waste_logs')
+          .select()
+          .eq('user_id', userId)
+          .gte('wasted_at', start.toIso8601String())
+          .lte('wasted_at', end.toIso8601String());
+
+      final logs = (response as List)
+          .map((json) => FoodWasteLog.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      double totalWasteKg = 0;
+      double totalCost = 0;
+      double totalCarbon = 0;
+
+      for (final log in logs) {
+        totalWasteKg += log.quantityGrams / 1000;
+        totalCost += log.estimatedCost;
+        totalCarbon += log.carbonWasted;
+      }
+
+      return {
+        'total_waste_kg': totalWasteKg,
+        'total_cost': totalCost,
+        'total_carbon_kg': totalCarbon,
+        'waste_events': logs.length,
+      };
+    } catch (e) {
+      debugPrint('Error getting waste summary: $e');
+      return {};
+    }
+  }
+
+  // =====================================================
+  // SUSTAINABLE ALTERNATIVES
+  // =====================================================
+
+  /// Get sustainable alternatives for food
+  Future<List<SustainableAlternative>> getSustainableAlternatives(
+    String foodItemId,
+  ) async {
+    try {
+      final response = await _supabase
+          .from('sustainable_alternatives')
+          .select()
+          .eq('original_food_id', foodItemId)
+          .order('carbon_savings_kg', ascending: false)
+          .limit(5);
+
+      return (response as List)
+          .map((json) => SustainableAlternative.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('Error fetching alternatives: $e');
+      return [];
+    }
+  }
+
+  // =====================================================
+  // SEASONAL RECOMMENDATIONS
+  // =====================================================
+
+  /// Get seasonal food recommendations
+  Future<List<SeasonalRecommendation>> getSeasonalRecommendations({
+    required String region,
+    DateTime? date,
+  }) async {
+    try {
+      final checkDate = date ?? DateTime.now();
+      final month = _getMonthName(checkDate.month);
+
+      final response = await _supabase
+          .from('seasonal_foods')
+          .select()
+          .eq('region', region)
+          .contains('months', [month]);
+
+      return (response as List)
+          .map((json) => SeasonalRecommendation.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('Error fetching seasonal recommendations: $e');
+      return [];
+    }
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return months[month - 1];
+  }
+
+  // =====================================================
+  // GAMIFICATION
+  // =====================================================
+
+  /// Get sustainability achievements
+  Future<List<String>> getSustainabilityAchievements(String userId) async {
+    try {
+      final response = await _supabase
+          .from('sustainability_achievements')
+          .select()
+          .eq('user_id', userId);
+
+      return (response as List)
+          .map((json) => json['achievement_name'] as String)
+          .toList();
+    } catch (e) {
+      debugPrint('Error fetching achievements: $e');
+      return [];
+    }
+  }
+
+  // =====================================================
+  // UTILITY
+  // =====================================================
+
+  /// Compare footprint to average
+  String compareToAverage(double userCarbonKg) {
+    const averageDailyCarbon = 15.0; // kg CO2
+
+    if (userCarbonKg < averageDailyCarbon * 0.5) {
+      return 'Excellent! 50% below average';
+    } else if (userCarbonKg < averageDailyCarbon * 0.8) {
+      return 'Great! 20% below average';
+    } else if (userCarbonKg < averageDailyCarbon) {
+      return 'Good! Below average';
+    } else if (userCarbonKg < averageDailyCarbon * 1.2) {
+      return 'Slightly above average';
+    } else {
+      return 'Consider choosing more plant-based options';
+    }
+  }
+
+  /// Clear cache
+  void clearCache() {
+    _impactCache.clear();
+    _ethicalCache.clear();
+    notifyListeners();
+  }
+}

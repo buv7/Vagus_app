@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../models/nutrition/recipe.dart';
 import '../../models/nutrition/money.dart';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
 import 'pantry_match_chip.dart';
 import 'cost_chip.dart';
 
@@ -34,19 +34,32 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DesignTokens.radius16),
-        side: isSelected 
-            ? BorderSide(color: theme.colorScheme.primary, width: 2)
-            : BorderSide.none,
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(DesignTokens.radius16),
-        child: isCompact ? _buildCompactCard(context, theme, isDark) : _buildFullCard(context, theme, isDark),
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(DesignTokens.radius20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: DesignTokens.blurMd, sigmaY: DesignTokens.blurMd),
+        child: Container(
+          decoration: BoxDecoration(
+            color: DesignTokens.cardBackground,
+            borderRadius: BorderRadius.circular(DesignTokens.radius20),
+            border: Border.all(
+              color: isSelected ? DesignTokens.accentGreen : DesignTokens.glassBorder,
+              width: isSelected ? 2 : 1,
+            ),
+            boxShadow: isSelected
+                ? DesignTokens.glowSm
+                : DesignTokens.cardShadow,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(DesignTokens.radius20),
+              child: isCompact ? _buildCompactCard(context, theme, isDark) : _buildFullCard(context, theme, isDark),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -186,7 +199,7 @@ class RecipeCard extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withValues(alpha: 0.3),
+                    DesignTokens.primaryDark.withValues(alpha: 0.6),
                   ],
                 ),
               ),
@@ -204,8 +217,15 @@ class RecipeCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: DesignTokens.accentGreen,
                   borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
                 ),
                 child: Text(
                   'HALAL',
@@ -228,8 +248,15 @@ class RecipeCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.orange,
+                  color: DesignTokens.accentOrange,
                   borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -316,23 +343,23 @@ class RecipeCard extends StatelessWidget {
           theme,
           '${recipe.calories.round()} kcal',
           Icons.local_fire_department,
-          Colors.orange,
+          DesignTokens.accentOrange,
         ),
-        
+
         // Protein chip
         _buildChip(
           theme,
           '${recipe.protein.toStringAsFixed(1)}g protein',
           Icons.fitness_center,
-          Colors.blue,
+          DesignTokens.accentBlue,
         ),
-        
+
         // Time chip
         _buildChip(
           theme,
           '${recipe.totalMinutes}m',
           Icons.access_time,
-          Colors.grey,
+          DesignTokens.textSecondary,
         ),
         
         // Pantry coverage chip
@@ -353,12 +380,12 @@ class RecipeCard extends StatelessWidget {
         _buildCompactChip(
           theme,
           '${recipe.calories.round()} kcal',
-          Colors.orange,
+          DesignTokens.accentOrange,
         ),
         _buildCompactChip(
           theme,
           '${recipe.totalMinutes}m',
-          Colors.grey,
+          DesignTokens.textSecondary,
         ),
         // Pantry coverage badge (compact)
         if (pantryCoverage != null)

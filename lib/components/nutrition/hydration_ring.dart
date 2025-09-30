@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../services/nutrition/locale_helper.dart';
+import '../../theme/design_tokens.dart';
 
 /// Hydration ring widget for dashboard display
 class HydrationRing extends StatelessWidget {
@@ -32,7 +33,8 @@ class HydrationRing extends StatelessWidget {
             CustomPaint(
               painter: _RingPainter(
                 ratio: ratio,
-                color: Theme.of(context).colorScheme.primary,
+                color: DesignTokens.accentBlue,
+                gradientColors: [DesignTokens.accentBlue, DesignTokens.accentGreen],
               ),
               size: const Size(80, 80),
               child: Center(
@@ -42,14 +44,14 @@ class HydrationRing extends StatelessWidget {
                     Text(
                       '$progress%',
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w700,
+                        color: DesignTokens.accentGreen,
                       ),
                     ),
                     Text(
                       '${(ml / 1000.0).toStringAsFixed(1)}L',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: DesignTokens.textSecondary,
                       ),
                     ),
                   ],
@@ -123,10 +125,12 @@ class HydrationRing extends StatelessWidget {
 class _RingPainter extends CustomPainter {
   final double ratio;
   final Color color;
-  
+  final List<Color>? gradientColors;
+
   _RingPainter({
     required this.ratio,
     required this.color,
+    this.gradientColors,
   });
 
   @override
@@ -136,21 +140,31 @@ class _RingPainter extends CustomPainter {
     
     // Background ring
     final backgroundPaint = Paint()
-      ..color = color.withOpacity(0.15)
+      ..color = color.withValues(alpha: 0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8
       ..strokeCap = StrokeCap.round;
     
-    // Progress ring
+    // Progress ring with gradient support
     final progressPaint = Paint()
-      ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8
       ..strokeCap = StrokeCap.round;
-    
+
+    // Apply gradient if available, otherwise use solid color
+    if (gradientColors != null && gradientColors!.length >= 2) {
+      progressPaint.shader = SweepGradient(
+        colors: gradientColors!,
+        startAngle: -math.pi / 2,
+        endAngle: -math.pi / 2 + (2 * math.pi * ratio),
+      ).createShader(Rect.fromCircle(center: center, radius: radius));
+    } else {
+      progressPaint.color = color;
+    }
+
     // Draw background circle
     canvas.drawCircle(center, radius, backgroundPaint);
-    
+
     // Draw progress arc
     if (ratio > 0) {
       final sweepAngle = 2 * math.pi * ratio;
@@ -166,6 +180,8 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _RingPainter oldDelegate) {
-    return oldDelegate.ratio != ratio || oldDelegate.color != color;
+    return oldDelegate.ratio != ratio ||
+           oldDelegate.color != color ||
+           oldDelegate.gradientColors != gradientColors;
   }
 }

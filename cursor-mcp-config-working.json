@@ -1,0 +1,51 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-supabase",
+        "--host", "aws-0-eu-central-1.pooler.supabase.com",
+        "--port", "5432",
+        "--database", "postgres",
+        "--username", "postgres.kydrpnrmqbedjflklgue",
+        "--password", "X.7achoony.X",
+        "--ssl", "true"
+      ],
+      "env": {
+        "SUPABASE_URL": "https://kydrpnrmqbedjflklgue.supabase.co",
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZHJwbnJtcWJlZGpmbGtsZ3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUxODAsImV4cCI6MjA2OTgwMTE4MH0.qlpGUiy17IbDsfgOf3-F2XBjOajjwxfy2NLMlUZWaqo"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\alhas\\StudioProjects\\vagus_app"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "enhanced-postgres-mcp-server",
+        "--host", "aws-0-eu-central-1.pooler.supabase.com",
+        "--port", "5432",
+        "--database", "postgres",
+        "--username", "postgres.kydrpnrmqbedjflklgue",
+        "--password", "X.7achoony.X",
+        "--ssl", "true"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    }
+  }
+}

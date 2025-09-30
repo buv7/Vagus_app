@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../theme/design_tokens.dart';
 
 /// Notification badge widget for displaying notification counts
 /// Can be used on navigation items, chat icons, etc.
@@ -33,24 +35,39 @@ class NotificationBadge extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: badgeColor,
+        color: DesignTokens.cardBackground,
         shape: BoxShape.circle,
-        // Add subtle shadow for better visibility
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: badgeColor.withValues(alpha: 0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
           ),
         ],
       ),
-      child: Center(
-        child: Text(
-          count > 99 ? '99+' : count.toString(),
-          style: TextStyle(
-            color: badgeTextColor,
-            fontSize: size * 0.4,
-            fontWeight: FontWeight.bold,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size / 2),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: badgeColor,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                count > 99 ? '99+' : count.toString(),
+                style: TextStyle(
+                  color: badgeTextColor,
+                  fontSize: size * 0.4,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
         ),
       ),

@@ -44,7 +44,7 @@ class CalendarPeekService {
       // For now, return mock data to demonstrate the feature
       return _generateMockEvents(hours);
     } catch (e) {
-      print('CalendarPeekService: Error fetching events - $e');
+      debugPrint('CalendarPeekService: Error fetching events - $e');
       return [];
     }
   }

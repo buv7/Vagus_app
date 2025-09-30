@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:pdf/pdf.dart';
@@ -8,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import '../../models/nutrition/grocery_list.dart';
 import '../../models/nutrition/grocery_item.dart';
 import '../../models/nutrition/nutrition_plan.dart';
-import '../../models/nutrition/recipe.dart';
 import 'recipe_service.dart';
 import 'nutrition_service.dart';
 import 'text_normalizer.dart';
@@ -124,7 +122,7 @@ class GroceryService {
           // Merge with existing item
           final existing = itemMap[key]!;
           itemMap[key] = existing.copyWith(
-            amount: (existing.amount ?? 0) + normalizedAmount.amount,
+            amount: existing.amount + normalizedAmount.amount,
           );
         } else {
           // Create new item
@@ -162,7 +160,7 @@ class GroceryService {
       // Merge with existing item
       final existing = itemMap[key]!;
       itemMap[key] = existing.copyWith(
-        amount: (existing.amount ?? 0) + normalizedAmount.amount,
+        amount: existing.amount + normalizedAmount.amount,
       );
     } else {
       // Create new item
@@ -441,7 +439,7 @@ class GroceryService {
     // Write items by aisle
     for (final aisle in itemsByAisle.keys.toList()..sort()) {
       for (final item in itemsByAisle[aisle]!) {
-        buffer.writeln('${_escapeCsv(item.name)},${item.amount ?? ''},${item.unit ?? ''},${item.aisle ?? ''},${_escapeCsv(item.notes ?? '')},${item.isChecked ? 'Yes' : 'No'}');
+        buffer.writeln('${_escapeCsv(item.name)},${item.amount},${item.unit},${item.aisle},${_escapeCsv(item.notes ?? '')},${item.isChecked ? 'Yes' : 'No'}');
       }
     }
     
@@ -500,12 +498,12 @@ class GroceryService {
             pw.Container(
               width: double.infinity,
               padding: const pw.EdgeInsets.all(8),
-              decoration: pw.BoxDecoration(
+              decoration: const pw.BoxDecoration(
                 color: PdfColors.grey200,
-                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+                borderRadius: pw.BorderRadius.all(pw.Radius.circular(4)),
               ),
               child: pw.Text(
-                '${aisle.toUpperCase()} (${checkedCount}/${aisleItems.length} checked)',
+                '${aisle.toUpperCase()} ($checkedCount/${aisleItems.length} checked)',
                 style: pw.TextStyle(
                   fontSize: 14,
                   fontWeight: pw.FontWeight.bold,
@@ -546,9 +544,9 @@ class GroceryService {
                       ),
                     ),
                   ),
-                  if (item.amount != null && item.unit != null)
+                  if (true)
                     pw.Text(
-                      '${item.amount!.toStringAsFixed(1)} ${item.unit}',
+                      '${item.amount.toStringAsFixed(1)} ${item.unit}',
                       style: const pw.TextStyle(fontSize: 10),
                     ),
                 ],

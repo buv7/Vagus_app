@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../models/live_session.dart';
 import '../../services/simple_calling_service.dart';
 import 'simple_call_screen.dart';
 
 class CallingDemoScreen extends StatefulWidget {
-  const CallingDemoScreen({Key? key}) : super(key: key);
+  const CallingDemoScreen({super.key});
 
   @override
   State<CallingDemoScreen> createState() => _CallingDemoScreenState();
@@ -87,7 +88,7 @@ class _CallingDemoScreenState extends State<CallingDemoScreen> {
 
   Future<void> _joinSession(LiveSession session) async {
     try {
-      Navigator.push(
+      unawaited(Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => SimpleCallScreen(
@@ -95,7 +96,7 @@ class _CallingDemoScreenState extends State<CallingDemoScreen> {
             isIncoming: false,
           ),
         ),
-      );
+      ));
     } catch (e) {
       _showErrorSnackBar('Failed to join session: $e');
     }
@@ -284,7 +285,7 @@ class _CallingDemoScreenState extends State<CallingDemoScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(

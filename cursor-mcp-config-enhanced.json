@@ -1,0 +1,58 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-supabase",
+        "--host", "aws-0-eu-central-1.pooler.supabase.com",
+        "--port", "5432",
+        "--database", "postgres",
+        "--username", "postgres.kydrpnrmqbedjflklgue",
+        "--password", "X.7achoony.X",
+        "--ssl", "true"
+      ],
+      "env": {
+        "SUPABASE_URL": "https://kydrpnrmqbedjflklgue.supabase.co",
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZHJwbnJtcWJlZGpmbGtsZ3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUxODAsImV4cCI6MjA2OTgwMTE4MH0.qlpGUiy17IbDsfgOf3-F2XBjOajjwxfy2NLMlUZWaqo"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-github",
+        "--token", "YOUR_GITHUB_TOKEN_HERE"
+      ]
+    },
+    "web-search": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-web-search"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "terminal": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-terminal"
+      ]
+    },
+    "database": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-database"
+      ]
+    }
+  }
+}

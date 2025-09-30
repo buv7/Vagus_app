@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
 
 final _sb = Supabase.instance.client;
 
@@ -110,7 +110,7 @@ class CoachClientManagementService {
       }
 
       // Build query
-      var query = _sb
+      final query = _sb
           .from('coach_clients')
           .select('''
             client_id,
@@ -170,7 +170,7 @@ class CoachClientManagementService {
 
       return clients.skip(offset).take(limit).toList();
     } catch (e) {
-      print('CoachClientManagementService: Error getting clients - $e');
+      debugPrint('CoachClientManagementService: Error getting clients - $e');
       return [];
     }
   }
@@ -209,7 +209,7 @@ class CoachClientManagementService {
         'status': status,
       };
     } catch (e) {
-      print('CoachClientManagementService: Error getting client details for $clientId - $e');
+      debugPrint('CoachClientManagementService: Error getting client details for $clientId - $e');
       return {
         'total_sessions': 0,
         'avg_rating': 0.0,
@@ -257,7 +257,7 @@ class CoachClientManagementService {
         clientRetentionRate: retentionRate,
       );
     } catch (e) {
-      print('CoachClientManagementService: Error getting client metrics - $e');
+      debugPrint('CoachClientManagementService: Error getting client metrics - $e');
       return ClientMetrics.empty();
     }
   }
@@ -282,7 +282,7 @@ class CoachClientManagementService {
 
       return true;
     } catch (e) {
-      print('CoachClientManagementService: Error sending message - $e');
+      debugPrint('CoachClientManagementService: Error sending message - $e');
       return false;
     }
   }
@@ -310,7 +310,7 @@ class CoachClientManagementService {
 
       return response['id'] as String;
     } catch (e) {
-      print('CoachClientManagementService: Error creating conversation - $e');
+      debugPrint('CoachClientManagementService: Error creating conversation - $e');
       rethrow;
     }
   }
@@ -333,7 +333,7 @@ class CoachClientManagementService {
 
       return true;
     } catch (e) {
-      print('CoachClientManagementService: Error assigning plan - $e');
+      debugPrint('CoachClientManagementService: Error assigning plan - $e');
       return false;
     }
   }
@@ -355,7 +355,7 @@ class CoachClientManagementService {
 
       return true;
     } catch (e) {
-      print('CoachClientManagementService: Error removing client - $e');
+      debugPrint('CoachClientManagementService: Error removing client - $e');
       return false;
     }
   }

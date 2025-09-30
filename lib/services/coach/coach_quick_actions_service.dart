@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../messages_service.dart';
-import 'coach_inbox_service.dart';
 
 final _sb = Supabase.instance.client;
 
@@ -53,7 +53,7 @@ class CoachQuickActionsService {
 
       return QuickActionResult.success('Nudge sent successfully');
     } catch (e) {
-      print('CoachQuickActionsService: Error sending nudge - $e');
+      debugPrint('CoachQuickActionsService: Error sending nudge - $e');
       return QuickActionResult.failure('Failed to send nudge: $e');
     }
   }
@@ -86,7 +86,7 @@ class CoachQuickActionsService {
 
       return QuickActionResult.success('Quick call proposed');
     } catch (e) {
-      print('CoachQuickActionsService: Error proposing quick call - $e');
+      debugPrint('CoachQuickActionsService: Error proposing quick call - $e');
       return QuickActionResult.failure('Failed to propose call: $e');
     }
   }
@@ -116,7 +116,7 @@ class CoachQuickActionsService {
 
       return QuickActionResult.success('Plan tweak suggested');
     } catch (e) {
-      print('CoachQuickActionsService: Error suggesting plan tweak - $e');
+      debugPrint('CoachQuickActionsService: Error suggesting plan tweak - $e');
       return QuickActionResult.failure('Failed to suggest tweak: $e');
     }
   }
@@ -185,15 +185,15 @@ class CoachQuickActionsService {
       case 'low_sleep':
         return "Quick nudge on sleep — let's aim for 7–8h tonight. Short evening wind-down and screens off 60m before bed. How does that sound?";
       case 'low_steps':
-        return "Let's add two 10–15 min walks today to hit your step goal. Can you fit one after lunch and one this evening?";
+        return 'Let\'s add two 10–15 min walks today to hit your step goal. Can you fit one after lunch and one this evening?';
       case 'missed_session':
-        return "Missed a session happens. Want a 15-min check-in to re-plan this week or prefer a light at-home session I can send?";
+        return 'Missed a session happens. Want a 15-min check-in to re-plan this week or prefer a light at-home session I can send?';
       case 'overdue_checkin':
-        return "Haven't seen a check-in this week — want to send quick photos + notes now, or book a 15-min catch-up?";
+        return 'Haven\'t seen a check-in this week — want to send quick photos + notes now, or book a 15-min catch-up?';
       case 'high_negative_net':
-        return "Energy deficit looks high recently. Any fatigue or appetite changes? We can add a refeed or adjust training.";
+        return 'Energy deficit looks high recently. Any fatigue or appetite changes? We can add a refeed or adjust training.';
       default:
-        return "Quick check-in — how are things going? Let me know if you need any adjustments to your plan.";
+        return 'Quick check-in — how are things going? Let me know if you need any adjustments to your plan.';
     }
   }
 
@@ -207,13 +207,13 @@ class CoachQuickActionsService {
   String _getPlanTweakTemplate(String tweak) {
     switch (tweak) {
       case 'reduce_load_10':
-        return "💡 Coach suggests: Let's reduce next session load by 10% to focus on form and recovery. How does that sound?";
+        return '💡 Coach suggests: Let\'s reduce next session load by 10% to focus on form and recovery. How does that sound?';
       case 'add_walk_15':
-        return "💡 Coach suggests: Add a 15-minute walk to your next session for extra cardio. Ready to try it?";
+        return '💡 Coach suggests: Add a 15-minute walk to your next session for extra cardio. Ready to try it?';
       case 'swap_rest_day':
-        return "💡 Coach suggests: Let's swap your next session for a rest day to prioritize recovery. Sound good?";
+        return '💡 Coach suggests: Let\'s swap your next session for a rest day to prioritize recovery. Sound good?';
       default:
-        return "💡 Coach suggests: Let's make a small adjustment to your next session. I'll send details shortly.";
+        return '💡 Coach suggests: Let\'s make a small adjustment to your next session. I\'ll send details shortly.';
     }
   }
 

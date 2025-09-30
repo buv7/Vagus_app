@@ -1,7 +1,6 @@
 // lib/services/coach/coach_analytics_service.dart
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
 
 final _sb = Supabase.instance.client;
 
@@ -52,11 +51,11 @@ class CoachAnalyticsSummary {
       clientRetentionRate: 0.0,
       avgResponseTime: 0.0,
       avgCompliance: 0.0,
-      sparkCompliance: const [],
+      sparkCompliance: [],
       avgSteps: 0.0,
-      sparkSteps: const [],
+      sparkSteps: [],
       netEnergyBalance: 0.0,
-      sparkEnergy: const [],
+      sparkEnergy: [],
       checkinsThisWeek: 0,
     );
   }
@@ -98,12 +97,12 @@ class CoachAnalyticsService {
         _getCheckinMetrics(coachId, startDate, endDate),
       ]);
 
-      final clientMetrics = results[0] as Map<String, dynamic>;
-      final sessionMetrics = results[1] as Map<String, dynamic>;
-      final messageMetrics = results[2] as Map<String, dynamic>;
-      final complianceMetrics = results[3] as Map<String, dynamic>;
-      final healthMetrics = results[4] as Map<String, dynamic>;
-      final checkinMetrics = results[5] as Map<String, dynamic>;
+      final clientMetrics = results[0];
+      final sessionMetrics = results[1];
+      final messageMetrics = results[2];
+      final complianceMetrics = results[3];
+      final healthMetrics = results[4];
+      final checkinMetrics = results[5];
 
       final summary = CoachAnalyticsSummary(
         totalClients: clientMetrics['total'] as int,
@@ -129,7 +128,7 @@ class CoachAnalyticsService {
 
       return summary;
     } catch (e) {
-      print('CoachAnalyticsService: Error getting analytics summary - $e');
+      debugPrint('CoachAnalyticsService: Error getting analytics summary - $e');
       return CoachAnalyticsSummary.empty();
     }
   }
@@ -174,7 +173,7 @@ class CoachAnalyticsService {
         'retention_rate': retentionRate,
       };
     } catch (e) {
-      print('CoachAnalyticsService: Error getting client metrics - $e');
+      debugPrint('CoachAnalyticsService: Error getting client metrics - $e');
       return {'total': 0, 'active': 0, 'retention_rate': 0.0};
     }
   }
@@ -199,7 +198,7 @@ class CoachAnalyticsService {
         'avg_rating': avgRating,
       };
     } catch (e) {
-      print('CoachAnalyticsService: Error getting session metrics - $e');
+      debugPrint('CoachAnalyticsService: Error getting session metrics - $e');
       return {'total': 0, 'avg_rating': 0.0};
     }
   }
@@ -246,7 +245,7 @@ class CoachAnalyticsService {
         'avg_response_time': avgResponseTime,
       };
     } catch (e) {
-      print('CoachAnalyticsService: Error getting message metrics - $e');
+      debugPrint('CoachAnalyticsService: Error getting message metrics - $e');
       return {'total': 0, 'unread': 0, 'avg_response_time': 0.0};
     }
   }
@@ -320,7 +319,7 @@ class CoachAnalyticsService {
         'spark_data': dailyCompliance,
       };
     } catch (e) {
-      print('CoachAnalyticsService: Error getting compliance metrics - $e');
+      debugPrint('CoachAnalyticsService: Error getting compliance metrics - $e');
       return {
         'avg_compliance': 0.0,
         'spark_data': <double>[],
@@ -389,7 +388,7 @@ class CoachAnalyticsService {
         'spark_energy': sparkEnergy,
       };
     } catch (e) {
-      print('CoachAnalyticsService: Error getting health metrics - $e');
+      debugPrint('CoachAnalyticsService: Error getting health metrics - $e');
       return {
         'avg_steps': 0.0,
         'spark_steps': <double>[],
@@ -431,7 +430,7 @@ class CoachAnalyticsService {
         'this_week': checkinsThisWeek,
       };
     } catch (e) {
-      print('CoachAnalyticsService: Error getting check-in metrics - $e');
+      debugPrint('CoachAnalyticsService: Error getting check-in metrics - $e');
       return {'this_week': 0};
     }
   }

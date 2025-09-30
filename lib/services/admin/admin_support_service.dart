@@ -339,7 +339,7 @@ class AdminSupportService {
 
   /// Build CSV text for tickets (safe, no extra packages).
   String buildCsv(List<SupportTicket> list) {
-    final esc = (String v) => '"${v.replaceAll('"', '""')}"';
+    String esc(String v) => '"${v.replaceAll('"', '""')}"';
     final buf = StringBuffer()
       ..writeln('id,title,requester_email,priority,status,tags,assignee_id,created_at,updated_at');
     for (final t in list) {
@@ -396,7 +396,7 @@ class AdminSupportService {
     try {
       final r = await _sb.from('support_requests').select().eq('id', id).maybeSingle();
       if (r == null) return null;
-      return SupportTicket.fromJson(r as Map<String, dynamic>);
+      return SupportTicket.fromJson(r);
     } catch (e) {
       debugPrint('Error fetching ticket by ID: $e');
       return null;
@@ -584,7 +584,7 @@ class AdminSupportService {
           .select('value')
           .eq('key', 'sla_policy_v1')
           .maybeSingle();
-      if (row != null && row is Map && row['value'] is Map) {
+      if (row != null && row['value'] is Map) {
         final v = (row['value'] as Map).map((k, val) => MapEntry(k.toString(), val));
         final next = <String, ({Duration response, Duration resolution})>{};
         for (final entry in v.entries) {
@@ -645,16 +645,14 @@ class AdminSupportService {
           .select('id,title,status,priority,created_at')
           .ilike('title', '%$query%')
           .limit(20);
-      if (tix is List) {
-        for (final t in tix) {
-          hits.add(AdminSearchHit(
-            kind: 'ticket',
-            id: '${t['id']}',
-            title: t['title'] ?? '(untitled)',
-            subtitle: 'Ticket • ${t['status'] ?? 'open'} • ${t['priority'] ?? 'normal'}',
-            time: DateTime.tryParse('${t['created_at']}'),
-          ));
-        }
+      for (final t in tix) {
+        hits.add(AdminSearchHit(
+          kind: 'ticket',
+          id: '${t['id']}',
+          title: t['title'] ?? '(untitled)',
+          subtitle: 'Ticket • ${t['status'] ?? 'open'} • ${t['priority'] ?? 'normal'}',
+          time: DateTime.tryParse('${t['created_at']}'),
+        ));
       }
     } catch (_) {/* optional */}
 
@@ -665,16 +663,14 @@ class AdminSupportService {
           .select('id,full_name,email')
           .or('full_name.ilike.%$query%,email.ilike.%$query%')
           .limit(20);
-      if (users is List) {
-        for (final u in users) {
-          hits.add(AdminSearchHit(
-            kind: 'user',
-            id: '${u['id']}',
-            title: (u['full_name'] ?? u['email'] ?? 'User') as String,
-            subtitle: '${u['email'] ?? ''}',
-            time: null,
-          ));
-        }
+      for (final u in users) {
+        hits.add(AdminSearchHit(
+          kind: 'user',
+          id: '${u['id']}',
+          title: (u['full_name'] ?? u['email'] ?? 'User') as String,
+          subtitle: '${u['email'] ?? ''}',
+          time: null,
+        ));
       }
     } catch (_) {/* optional */}
 
@@ -685,18 +681,16 @@ class AdminSupportService {
           .select('id,amount_cents,currency,created_at,customer_email')
           .or('id.ilike.%$query%,customer_email.ilike.%$query%')
           .limit(20);
-      if (pays is List) {
-        for (final p in pays) {
-          final cents = (p['amount_cents'] ?? 0) as int;
-          final curr = (p['currency'] ?? 'USD') as String;
-          hits.add(AdminSearchHit(
-            kind: 'payment',
-            id: '${p['id']}',
-            title: 'Payment ${p['id']}',
-            subtitle: '${(cents / 100).toStringAsFixed(2)} $curr • ${p['customer_email'] ?? ''}',
-            time: DateTime.tryParse('${p['created_at']}'),
-          ));
-        }
+      for (final p in pays) {
+        final cents = (p['amount_cents'] ?? 0) as int;
+        final curr = (p['currency'] ?? 'USD') as String;
+        hits.add(AdminSearchHit(
+          kind: 'payment',
+          id: '${p['id']}',
+          title: 'Payment ${p['id']}',
+          subtitle: '${(cents / 100).toStringAsFixed(2)} $curr • ${p['customer_email'] ?? ''}',
+          time: DateTime.tryParse('${p['created_at']}'),
+        ));
       }
     } catch (_) {/* optional */}
 
@@ -826,7 +820,7 @@ class AdminSupportService {
           .select()
           .order('name');
       
-      return response.map<CannedReply>((e) => CannedReply.fromJson(e as Map<String, dynamic>)).toList();
+      return response.map<CannedReply>((e) => CannedReply.fromJson(e)).toList();
     } catch (e) {
       // Fallback to hardcoded replies if table doesn't exist
       return [
@@ -923,7 +917,7 @@ class AdminSupportService {
 
       String combinedTitle = '';
       String combinedBody = '';
-      Set<String> allTags = {};
+      final Set<String> allTags = {};
       String highestPriority = 'normal';
 
       for (final ticket in secondaryTickets) {
@@ -1355,11 +1349,11 @@ class AdminSupportService {
   // ---------- Saved Views Management ----------
   // Saved views (persist later; store in-memory stub for now)
   final List<SavedView> _memViews = [
-    SavedView(id: 'all', name: 'All', filters: const {}),
-    SavedView(id: 'open', name: 'Open', filters: const {'state':'open'}),
-    SavedView(id: 'urgent', name: 'Urgent', filters: const {'priority':['urgent']}),
-    SavedView(id: 'breached', name: 'Breached', filters: const {'breached':true}),
-    SavedView(id: 'mine', name: 'My claimed', filters: const {'claimedBy':'me'}),
+    const SavedView(id: 'all', name: 'All', filters: {}),
+    const SavedView(id: 'open', name: 'Open', filters: {'state':'open'}),
+    const SavedView(id: 'urgent', name: 'Urgent', filters: {'priority':['urgent']}),
+    const SavedView(id: 'breached', name: 'Breached', filters: {'breached':true}),
+    const SavedView(id: 'mine', name: 'My claimed', filters: {'claimedBy':'me'}),
   ];
 
   Future<List<SavedView>> listSavedViews() async => List.unmodifiable(_memViews);

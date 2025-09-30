@@ -1,29 +1,53 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../models/call_participant.dart';
+import '../../theme/design_tokens.dart';
 
 class ConnectionQualityIndicator extends StatelessWidget {
   final ConnectionQuality quality;
 
   const ConnectionQualityIndicator({
-    Key? key,
+    super.key,
     required this.quality,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(8),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.7),
+            ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildQualityIcon(),
           const SizedBox(width: 4),
           _buildQualityText(),
-        ],
+          ],
+        ),
+      ),
+        ),
       ),
     );
   }

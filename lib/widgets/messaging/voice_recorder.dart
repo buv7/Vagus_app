@@ -1,6 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import '../anim/mic_ripple.dart';
+import '../../theme/design_tokens.dart';
 
 class VoiceRecorder extends StatefulWidget {
   final Function(File audioFile) onVoiceRecorded;
@@ -21,10 +23,30 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
           const Text(
             'Voice Message',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -43,7 +65,10 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
             ],
           ),
           const SizedBox(height: 16),
-        ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -68,7 +93,7 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
           const SizedBox(height: 8),
           Text(
             _isRecording ? 'Recording...' : 'Record',
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
           ),
         ],
       ),

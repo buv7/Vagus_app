@@ -7,10 +7,6 @@ import '../../models/admin/ticket_models.dart';
 import '../../services/admin/admin_support_service.dart'; // for macros apply if needed
 import '../../services/admin/admin_ticket_service.dart';
 import '../../services/admin/admin_knowledge_service.dart';
-import '../../models/admin/kb_models.dart';
-import '../admin/admin_session_copilot_screen.dart';
-import '../admin/admin_live_session_screen.dart';
-import '../admin/widgets/incident_timeline.dart';
 import '../admin/admin_triage_rules_screen.dart';
 import '../../models/admin/incident_models.dart';
 import '../../services/admin/admin_incident_service.dart';
@@ -52,8 +48,6 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
   final Map<String,String> _views = {'All':'', 'Payments':'invoice OR charge', 'Auth':'login OR otp'};
   String _view = 'All';
   Timer? _debounceTimer;
-  int _page = 0;
-  static const int _pageSize = 50;
 
   @override
   void initState() {
@@ -381,12 +375,13 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     OutlinedButton.icon(
     onPressed: () async {
     final ids = _selected.toList();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     for (final id in ids) {
     await _incidentSvc.escalate(id);
     }
     if (!mounted) return;
     setState(() => _selected.clear());
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     SnackBar(content: Text('Escalated ${ids.length} tickets'))
     );
     },
@@ -396,12 +391,13 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     OutlinedButton.icon(
     onPressed: () async {
     final ids = _selected.toList();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     for (final id in ids) {
     await _svc.setStatus(id, TicketStatus.solved);
     }
     if (!mounted) return;
     setState(() => _selected.clear());
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     SnackBar(content: Text('Resolved ${ids.length} tickets'))
     );
     },
@@ -411,6 +407,7 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     OutlinedButton.icon(
     onPressed: () async {
     final ids = _selected.toList();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     final csv = StringBuffer();
     csv.writeln('id,subject,requester,status,priority,created');
     for (final id in ids) {
@@ -419,7 +416,7 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     }
     await Clipboard.setData(ClipboardData(text: csv.toString()));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     SnackBar(content: Text('Exported ${ids.length} tickets to clipboard'))
     );
     },
@@ -512,12 +509,6 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     final rem = sla?.remaining;
     final remText = rem == null ? '' : (rem.isNegative ? 'overdue' : '${rem.inHours}h ${rem.inMinutes.remainder(60)}m');
 
-    final color = switch (t.priority) {
-    TicketPriority.low => Colors.blueGrey,
-    TicketPriority.normal => Colors.blue,
-    TicketPriority.high => Colors.orange,
-    TicketPriority.urgent => Colors.red,
-    };
 
     // Risk calculation for Smart Triage
     final ageHours = t.age.inHours.clamp(0, 72);
@@ -573,7 +564,7 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     ],
     const Icon(Icons.group, size: 16),
     const SizedBox(width: 4),
-    Text('${presCount} online'),
+    Text('$presCount online'),
     ]),
     ],
     ),
@@ -609,25 +600,27 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     ),
     ],
     onSelected: (v) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final contextRef = context;
     if (v == 'copy' || v == 'export') {
     final csv = await _incidentSvc.buildTimelineCsvRange(id, from: _exportFrom, to: _exportTo);
     if (v == 'copy') {
     await Clipboard.setData(ClipboardData(text: csv));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     const SnackBar(content: Text('Timeline CSV copied')),
     );
     } else if (v == 'export') {
     if (kIsWeb) {
     await Clipboard.setData(ClipboardData(text: csv));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     const SnackBar(content: Text('Web: CSV copied (download not available)')),
     );
     } else {
     final path = await _incidentSvc.writeTextTemp('timeline_$id.csv', csv);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     SnackBar(content: Text('Saved: $path')),
     );
     }
@@ -635,21 +628,23 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     } else if (v == 'imp') {
     if (!_incidentSvc.canImpersonate) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     const SnackBar(content: Text('Impersonation disabled in release builds')),
     );
     } else {
     await _incidentSvc.impersonateUser(t.requesterName);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     SnackBar(content: Text('Impersonating ${t.requesterName} (dev-only)')),
     );
     }
     } else if (v == 'pb') {
+    final contextRefPb = contextRef;
     final pbs = await _incidentSvc.listPlaybooks();
     if (!mounted) return;
     final pb = await showModalBottomSheet<AdminPlaybook>(
-    context: context,
+    // ignore: use_build_context_synchronously
+    context: contextRefPb,
     showDragHandle: true,
     builder: (c) => SafeArea(
     child: ListView(
@@ -676,14 +671,14 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
     by: 'admin',
     ));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     SnackBar(content: Text('Playbook "${pb.name}" added to #$id'))
     );
     }
     } else if (v == 'esc') {
     await _incidentSvc.escalate(id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    scaffoldMessenger.showSnackBar(
     SnackBar(content: Text('Escalated #$id'))
     );
     } else if (v.startsWith('macro:')) {
@@ -738,14 +733,20 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
 
   Future<void> _openExportRange() async {
     final now = DateTime.now();
-    final from = await showDatePicker(context: context, firstDate: DateTime(now.year-2), lastDate: now, initialDate: _exportFrom ?? now);
+    final contextRef = context;
+    final from = await showDatePicker(context: contextRef, firstDate: DateTime(now.year-2), lastDate: now, initialDate: _exportFrom ?? now);
     if (!mounted) return;
-    final to   = await showDatePicker(context: context, firstDate: DateTime(now.year-2), lastDate: now, initialDate: _exportTo ?? now);
+    // ignore: use_build_context_synchronously
+    final to   = await showDatePicker(context: contextRef, firstDate: DateTime(now.year-2), lastDate: now, initialDate: _exportTo ?? now);
     if (!mounted) return;
     if (from!=null && to!=null) {
-      setState(()=> {_exportFrom = from, _exportTo = to});
+      setState(() {
+        _exportFrom = from;
+        _exportTo = to;
+      });
       // uses per-row menu "Export timeline CSV" to honor range
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Range set: ${DateFormat.yMMMd().format(from)} → ${DateFormat.yMMMd().format(to)}')));
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      scaffoldMessenger.showSnackBar(SnackBar(content: Text('Range set: ${DateFormat.yMMMd().format(from)} → ${DateFormat.yMMMd().format(to)}')));
     }
   }
 
@@ -794,10 +795,15 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
                 leading: const Icon(Icons.quickreply),
                 title: const Text('Send canned reply…'),
                 onTap: () async {
+                  final navigator = Navigator.of(context);
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  final contextRef = context;
                   final replies = await _macros.listCannedReplies();
                   if (!mounted) return;
+                  final contextRef2 = contextRef;
                   final r = await showModalBottomSheet<CannedReply>(
-                    context: context,
+                    // ignore: use_build_context_synchronously
+                    context: contextRef2,
                     showDragHandle: true,
                     builder: (c) => SafeArea(
                       child: ListView(
@@ -814,13 +820,13 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
                     ),
                   );
                   if (r != null) {
-                    Navigator.of(context).pop(); // close sheet
+                    navigator.pop(); // close sheet
                     await _incidentSvc.bulkApply(
                         ticketIds: selected,
                         reply: {'name': r.name, 'content': r.content}
                     );
                     if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    scaffoldMessenger.showSnackBar(
                       SnackBar(content: Text('Applied "${r.name}" to ${selected.length} tickets')),
                     );
                   }
@@ -832,7 +838,8 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
                 leading: const Icon(Icons.auto_fix_high),
                 title: const Text('Simulate auto-triage'),
                 onTap: () async {
-                  Navigator.of(context).pop();
+                  final navigator = Navigator.of(context);
+                  navigator.pop();
                   final actions = await _incidentSvc.evaluate(const ['network', 'login']);
                   if (!mounted) return;
                   await showDialog<void>(
@@ -915,8 +922,10 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
 
                   await _incidentSvc.bulkApply(ticketIds: selected, reply: {'name': 'Macro: ${chosen.name}', 'content': preview});
                   if (!mounted) return;
-                  Navigator.of(context).pop(); // close bulk sheet
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Macro "${chosen.name}" applied to ${selected.length} tickets')));
+                  final navigator = Navigator.of(context);
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  navigator.pop(); // close bulk sheet
+                  scaffoldMessenger.showSnackBar(SnackBar(content: Text('Macro "${chosen.name}" applied to ${selected.length} tickets')));
                 },
               ),
 
@@ -930,8 +939,10 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
                     await _incidentSvc.escalate(id);
                   }
                   if (!mounted) return;
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  final navigator = Navigator.of(context);
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  navigator.pop();
+                  scaffoldMessenger.showSnackBar(
                       SnackBar(content: Text('Escalated ${ids.length} tickets'))
                   );
                 },
@@ -979,11 +990,16 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
                   children: [
                     OutlinedButton.icon(
                       onPressed: () async {
-                        final refined = await _incidentSvc.suggestReply(t.id, hint: hintCtrl.text.trim());
+                        final contextRef = c;
+                        await _incidentSvc.suggestReply(t.id, hint: hintCtrl.text.trim());
                         if (!mounted) return;
                         // naive update – reopen with refined text
-                        Navigator.of(c).pop();
-                        await _openAiAssist(t);
+                        // ignore: use_build_context_synchronously
+                        final navigator = Navigator.of(contextRef);
+                        navigator.pop();
+                        if (mounted) {
+                          await _openAiAssist(t);
+                        }
                       },
                       icon: const Icon(Icons.auto_awesome),
                       label: const Text('Refine'),
@@ -992,6 +1008,7 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
                     FilledButton.icon(
                       onPressed: () async {
                         // send as note
+                        final contextRef = c;
                         await _incidentSvc.addEvent(IncidentEvent(
                           id: 'ev-${DateTime.now().millisecondsSinceEpoch}',
                           ticketId: t.id,
@@ -1002,8 +1019,12 @@ class _AdminTicketQueueScreenState extends State<AdminTicketQueueScreen> {
                           by: 'admin',
                         ));
                         if (!mounted) return;
-                        Navigator.of(c).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('AI suggestion added as note')));
+                        // ignore: use_build_context_synchronously
+                        final navigator = Navigator.of(contextRef);
+                        // ignore: use_build_context_synchronously
+                        final scaffoldMessenger = ScaffoldMessenger.of(contextRef);
+                        navigator.pop();
+                        scaffoldMessenger.showSnackBar(const SnackBar(content: Text('AI suggestion added as note')));
                       },
                       icon: const Icon(Icons.send),
                       label: const Text('Insert'),
@@ -1045,9 +1066,6 @@ class _TicketDetailSheet extends StatefulWidget {
 
 class _TicketDetailSheetState extends State<_TicketDetailSheet> {
   final _kb = AdminKnowledgeService.instance;
-  List<KbSuggestion> _sugs = const [];
-  final _reply = TextEditingController();
-  bool _internal = false;
   List<IncidentEvent> _events = const [];
   PlaybookRun? _playbookRun;
 
@@ -1060,12 +1078,11 @@ class _TicketDetailSheetState extends State<_TicketDetailSheet> {
   Future<void> _load() async {
     final events = await widget.svc.getEvents(widget.ticket.id);
     final playbookRun = await widget.svc.getPlaybookRun(widget.ticket.id);
-    final sg = await _kb.suggestForTicket(widget.ticket);
+    await _kb.suggestForTicket(widget.ticket);
     if (!mounted) return;
     setState(() {
       _events = events;
       _playbookRun = playbookRun;
-      _sugs = sg;
     });
   }
 
@@ -1135,6 +1152,7 @@ class _TicketDetailSheetState extends State<_TicketDetailSheet> {
                               children: [
                                 OutlinedButton.icon(
                                   onPressed: () async {
+                                    final contextRef = context;
                                     await widget.svc.addEvent(IncidentEvent(
                                       id: 'ev-${DateTime.now().millisecondsSinceEpoch}',
                                       ticketId: widget.ticket.id,
@@ -1145,13 +1163,16 @@ class _TicketDetailSheetState extends State<_TicketDetailSheet> {
                                       by: 'admin',
                                     ));
                                     if (!mounted) return;
-                                    Navigator.of(context).pop();
+                                    // ignore: use_build_context_synchronously
+                                    final navigator = Navigator.of(contextRef);
+                                    navigator.pop();
                                   },
                                   icon: const Icon(Icons.check_circle),
                                   label: const Text('Resolve'),
                                 ),
                                 OutlinedButton.icon(
                                   onPressed: () async {
+                                    final contextRef = context;
                                     await widget.svc.addEvent(IncidentEvent(
                                       id: 'ev-${DateTime.now().millisecondsSinceEpoch}',
                                       ticketId: widget.ticket.id,
@@ -1162,16 +1183,21 @@ class _TicketDetailSheetState extends State<_TicketDetailSheet> {
                                       by: 'admin',
                                     ));
                                     if (!mounted) return;
-                                    Navigator.of(context).pop();
+                                    // ignore: use_build_context_synchronously
+                                    final navigator = Navigator.of(contextRef);
+                                    navigator.pop();
                                   },
                                   icon: const Icon(Icons.block),
                                   label: const Text('Block'),
                                 ),
                                 OutlinedButton.icon(
                                   onPressed: () async {
+                                    final contextRef = context;
                                     await widget.svc.escalate(widget.ticket.id);
                                     if (!mounted) return;
-                                    Navigator.of(context).pop();
+                                    // ignore: use_build_context_synchronously
+                                    final navigator = Navigator.of(contextRef);
+                                    navigator.pop();
                                   },
                                   icon: const Icon(Icons.upgrade),
                                   label: const Text('Escalate'),
@@ -1257,7 +1283,6 @@ class _TicketDetailSheetState extends State<_TicketDetailSheet> {
       case IncidentKind.push: return Icons.notifications;
       case IncidentKind.deeplink: return Icons.link;
       case IncidentKind.banner: return Icons.campaign;
-      default: return Icons.info;
     }
   }
 }

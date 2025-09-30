@@ -1,35 +1,42 @@
 import 'package:flutter/material.dart';
 import 'design_tokens.dart';
 
-/// App theme configuration with VAGUS monochrome design system
+/// App theme configuration with NFT Marketplace design system
 class AppTheme {
-  // New monochrome color constants
-  static const Color primaryBlack = Color(0xFF000000);
+  // Legacy colors (kept for compatibility)
+  static const Color primaryDark = DesignTokens.primaryDark;
   static const Color neutralWhite = Color(0xFFFFFFFF);
-  static const Color steelGrey = Color(0xFF555555);
+  static const Color mediumGrey = DesignTokens.mediumGrey;
   static const Color lightGrey = Color(0xFFE0E0E0);
   static const Color charcoalGrey = Color(0xFF1C1C1C);
-  
-  // Modern design colors
-  static const Color mintAqua = Color(0xFF00D4AA);
-  static const Color softYellow = Color(0xFFFFD700);
-  static const Color cardBackground = Color(0xFF1A1A1A);
+
+  // Updated to use NFT marketplace colors from DesignTokens
+  static const Color accentGreen = DesignTokens.accentGreen;
+  static const Color accentOrange = DesignTokens.accentOrange;
+  static const Color cardBackground = DesignTokens.secondaryDark;
+
+  // Additional color getters for nutrition platform compatibility
+  static const Color backgroundDark = DesignTokens.primaryDark;
+  static const Color cardDark = DesignTokens.cardBackground;
+  static const Color lightBlue = DesignTokens.accentBlue;
+  static const Color lightOrange = DesignTokens.accentOrange;
+  static const Color lightYellow = Color(0xFFFFEB3B); // Material yellow
 
   /// Light theme with VAGUS monochrome palette
   static ThemeData light() {
     return ThemeData.light().copyWith(
       colorScheme: const ColorScheme.light(
         primary: Color(0xFF000000),    // Black
-        secondary: Color(0xFF555555),  // Steel Grey
+        secondary: DesignTokens.mediumGrey,  // Medium Grey
         surface: Color(0xFFFFFFFF),    // White
         onPrimary: Color(0xFFFFFFFF),
         onSecondary: Color(0xFFFFFFFF),
         onSurface: Color(0xFF000000),
         outline: Color(0xFFE0E0E0),
         surfaceContainerHighest: Color(0xFFFFFFFF),
-        onSurfaceVariant: Color(0xFF555555),
+        onSurfaceVariant: DesignTokens.mediumGrey,
       ),
-      scaffoldBackgroundColor: Color(0xFFFFFFFF), // White
+      scaffoldBackgroundColor: const Color(0xFFFFFFFF), // White
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFFFFFFFF), // White
         foregroundColor: Color(0xFF000000), // Black
@@ -43,21 +50,21 @@ class AppTheme {
           borderRadius: BorderRadius.circular(DesignTokens.radius16),
         ),
         color: Colors.white,
-        surfaceTintColor: Color(0xFFE0E0E0),
+        surfaceTintColor: const Color(0xFFE0E0E0),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Color(0xFFE0E0E0),
-        selectedColor: Color(0xFF000000),
+        backgroundColor: const Color(0xFFE0E0E0),
+        selectedColor: const Color(0xFF000000),
         labelStyle: const TextStyle(color: Color(0xFF000000)),
         secondaryLabelStyle: const TextStyle(color: Colors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
         ),
-        side: BorderSide(color: Color(0xFF555555)),
+        side: const BorderSide(color: DesignTokens.mediumGrey),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF000000),
+          backgroundColor: const Color(0xFF000000),
           foregroundColor: Colors.white,
           elevation: 0,
           shadowColor: Colors.transparent,
@@ -72,7 +79,7 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: Color(0xFF000000),
+          foregroundColor: const Color(0xFF000000),
           side: const BorderSide(color: Color(0xFF000000)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
@@ -85,7 +92,7 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: Color(0xFF000000),
+          foregroundColor: const Color(0xFF000000),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
           ),
@@ -115,60 +122,65 @@ class AppTheme {
       dividerColor: const Color(0xFFE0E0E0),
       textTheme: _buildTextTheme(const Color(0xFF000000)).copyWith(
         bodyLarge: const TextStyle(color: Color(0xFF000000)),
-        bodyMedium: const TextStyle(color: Color(0xFF555555)),
+        bodyMedium: const TextStyle(color: DesignTokens.mediumGrey),
         titleLarge: const TextStyle(color: Color(0xFF000000), fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  /// Dark theme with VAGUS modern design palette
+  /// Dark theme with NFT Marketplace design palette
   static ThemeData dark() {
     return ThemeData.dark().copyWith(
       colorScheme: const ColorScheme.dark(
-        primary: mintAqua,              // Teal accent
-        secondary: softYellow,          // Yellow accent
-        surface: primaryBlack,          // Black
-        onPrimary: primaryBlack,        // Black text on teal
-        onSecondary: primaryBlack,      // Black text on yellow
-        onSurface: neutralWhite,        // White text
-        outline: Color(0xFF555555),     // Steel Grey
-        surfaceContainerHighest: cardBackground, // Dark grey cards
-        onSurfaceVariant: Color(0xFFE0E0E0),     // Light grey text
+        primary: DesignTokens.accentGreen,           // Bright green accent
+        secondary: DesignTokens.accentBlue,          // Blue accent
+        tertiary: DesignTokens.accentPink,           // Pink accent
+        surface: DesignTokens.primaryDark,           // Deep navy background
+        onPrimary: DesignTokens.primaryDark,         // Dark text on green
+        onSecondary: DesignTokens.neutralWhite,      // White text on blue
+        onSurface: DesignTokens.neutralWhite,        // White text
+        outline: DesignTokens.lightGrey,             // Grey borders
+        surfaceContainerHighest: DesignTokens.cardBackground, // Semi-transparent cards
+        onSurfaceVariant: DesignTokens.textSecondary,         // 60% white text
       ),
-      scaffoldBackgroundColor: primaryBlack, // Black background
+      scaffoldBackgroundColor: DesignTokens.primaryDark, // Deep navy background
       appBarTheme: const AppBarTheme(
-        backgroundColor: cardBackground, // Dark grey header
-        foregroundColor: neutralWhite,
+        backgroundColor: Colors.transparent, // Transparent for glassmorphic effect
+        foregroundColor: DesignTokens.neutralWhite,
         elevation: 0,
         shadowColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardThemeData(
         elevation: 0,
         shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius16),
+          borderRadius: BorderRadius.circular(DesignTokens.radius20),
         ),
-        color: cardBackground, // Dark grey cards
+        color: DesignTokens.cardBackground, // Semi-transparent glassmorphic
         surfaceTintColor: Colors.transparent,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Color(0xFF555555).withValues(alpha: 0.2),
-        selectedColor: mintAqua,
-        labelStyle: const TextStyle(color: neutralWhite),
-        secondaryLabelStyle: const TextStyle(color: primaryBlack),
+        backgroundColor: DesignTokens.cardBackground,
+        selectedColor: DesignTokens.accentGreen,
+        labelStyle: const TextStyle(color: DesignTokens.neutralWhite),
+        secondaryLabelStyle: const TextStyle(color: DesignTokens.primaryDark),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          borderRadius: BorderRadius.circular(DesignTokens.radius16),
         ),
-        side: BorderSide(color: Color(0xFF555555)),
+        side: const BorderSide(color: DesignTokens.glassBorder),
+        shadowColor: Colors.transparent,
+        elevation: 0,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: mintAqua,
-          foregroundColor: primaryBlack,
+          backgroundColor: DesignTokens.accentGreen,
+          foregroundColor: DesignTokens.primaryDark,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius8),
+            borderRadius: BorderRadius.circular(DesignTokens.radius16),
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: DesignTokens.space24,
@@ -178,10 +190,11 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: neutralWhite,
-          side: const BorderSide(color: Color(0xFF555555)),
+          foregroundColor: DesignTokens.neutralWhite,
+          side: const BorderSide(color: DesignTokens.glassBorder),
+          backgroundColor: DesignTokens.cardBackground,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius8),
+            borderRadius: BorderRadius.circular(DesignTokens.radius16),
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: DesignTokens.space24,
@@ -191,9 +204,9 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: mintAqua,
+          foregroundColor: DesignTokens.accentGreen,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius8),
+            borderRadius: BorderRadius.circular(DesignTokens.radius16),
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: DesignTokens.space16,
@@ -203,26 +216,39 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: Color(0xFF555555)),
+          borderRadius: BorderRadius.circular(DesignTokens.radius16),
+          borderSide: const BorderSide(color: DesignTokens.glassBorder),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: Color(0xFF555555)),
+          borderRadius: BorderRadius.circular(DesignTokens.radius16),
+          borderSide: const BorderSide(color: DesignTokens.glassBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: mintAqua, width: 2),
+          borderRadius: BorderRadius.circular(DesignTokens.radius16),
+          borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(DesignTokens.radius16),
+          borderSide: const BorderSide(color: DesignTokens.accentPink, width: 2),
         ),
         filled: true,
-        fillColor: cardBackground, // Dark grey input background
+        fillColor: DesignTokens.cardBackground, // Semi-transparent glassmorphic
         contentPadding: const EdgeInsets.all(DesignTokens.space16),
+        hintStyle: const TextStyle(color: DesignTokens.textSecondary),
+        labelStyle: const TextStyle(color: DesignTokens.textSecondary),
       ),
-      dividerColor: const Color(0xFF555555),
-      textTheme: _buildTextTheme(neutralWhite).copyWith(
-        bodyLarge: const TextStyle(color: neutralWhite),
-        bodyMedium: const TextStyle(color: Color(0xFFE0E0E0)),
-        titleLarge: const TextStyle(color: neutralWhite, fontWeight: FontWeight.bold),
+      dividerColor: DesignTokens.glassBorder,
+      textTheme: _buildTextTheme(DesignTokens.neutralWhite).copyWith(
+        bodyLarge: const TextStyle(color: DesignTokens.neutralWhite),
+        bodyMedium: const TextStyle(color: DesignTokens.textSecondary),
+        titleLarge: const TextStyle(
+          color: DesignTokens.neutralWhite,
+          fontWeight: FontWeight.w700, // Increased weight for NFT style
+        ),
+        headlineMedium: const TextStyle(
+          color: DesignTokens.neutralWhite,
+          fontWeight: FontWeight.w800, // Bold headings
+        ),
       ),
     );
   }
@@ -247,29 +273,52 @@ class AppTheme {
 
   /// Get category color for consistent visual hierarchy
   static Color getCategoryColor(String category) {
-    return DesignTokens.categoryColors[category.toLowerCase()] ?? DesignTokens.ink500;
+    return DesignTokens.categoryColors[category.toLowerCase()] ?? DesignTokens.mediumGrey;
   }
 
   /// Get category background color
   static Color getCategoryBgColor(String category) {
-    return DesignTokens.categoryBgColors[category.toLowerCase()] ?? DesignTokens.ink50;
+    return DesignTokens.categoryBgColors[category.toLowerCase()] ?? DesignTokens.cardBackground;
   }
 
-  /// Get shadow based on theme mode
-  static List<BoxShadow> getShadow(ThemeMode themeMode, {String type = 'sm'}) {
-    if (themeMode == ThemeMode.dark) {
-      return DesignTokens.shadowDark;
-    }
-    
+  /// Get glow shadow based on category or color type
+  static List<BoxShadow> getGlowShadow({String type = 'sm'}) {
     switch (type) {
       case 'sm':
-        return DesignTokens.shadowSm;
+        return DesignTokens.glowSm;
       case 'md':
-        return DesignTokens.shadowMd;
+        return DesignTokens.glowMd;
       case 'lg':
-        return DesignTokens.shadowLg;
+        return DesignTokens.glowLg;
+      case 'purple':
+        return DesignTokens.glowPurple;
       default:
-        return DesignTokens.shadowSm;
+        return DesignTokens.glowSm;
     }
+  }
+
+  /// Get shadow based on theme mode (updated for NFT theme)
+  static List<BoxShadow> getShadow(ThemeMode themeMode, {String type = 'card'}) {
+    if (themeMode == ThemeMode.dark) {
+      return type == 'card' ? DesignTokens.cardShadow : DesignTokens.shadowDark;
+    }
+
+    // For light mode, use card shadows as well
+    return DesignTokens.cardShadow;
+  }
+
+  /// Create glassmorphic container decoration
+  static BoxDecoration createGlassmorphicDecoration({
+    Color? backgroundColor,
+    double borderRadius = 20.0,
+    Color? borderColor,
+    List<BoxShadow>? boxShadow,
+  }) {
+    return DesignTokens.glassmorphicDecoration(
+      backgroundColor: backgroundColor,
+      borderRadius: borderRadius,
+      borderColor: borderColor,
+      boxShadow: boxShadow,
+    );
   }
 }

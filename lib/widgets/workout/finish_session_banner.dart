@@ -1,5 +1,7 @@
 // lib/widgets/workout/finish_session_banner.dart
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../theme/design_tokens.dart';
 
 class FinishSessionBanner extends StatelessWidget {
   final String exerciseName;
@@ -30,16 +32,30 @@ class FinishSessionBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     
     return Container(
       margin: const EdgeInsets.only(top: 12),
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
-        borderRadius: BorderRadius.circular(14),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentPink.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,6 +144,9 @@ class FinishSessionBanner extends StatelessWidget {
             ],
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

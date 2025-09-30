@@ -69,7 +69,7 @@ class _Logo extends StatelessWidget {
         // If asset missing, show branded fallback (prevents "freeze")
         // Also logs a debug hint.
         // ignore: avoid_print
-        print('VAGUS splash: missing $path. Add PNG to assets and run flutter pub get.');
+        debugPrint('VAGUS splash: missing $path. Add PNG to assets and run flutter pub get.');
         return const Text(
           'VAGUS',
           style: TextStyle(

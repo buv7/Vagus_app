@@ -18,7 +18,7 @@ void main() {
         expect(service.parseOptionSelection('option one works'), 1);
       });
 
-      test('should parse "option 1" variants', () {
+      test('should parse \'option 1\' variants', () {
         expect(service.parseOptionSelection('option 1'), 1);
         expect(service.parseOptionSelection('Option 1'), 1);
         expect(service.parseOptionSelection('I want option 1'), 1);
@@ -33,7 +33,7 @@ void main() {
         expect(service.parseOptionSelection('I prefer the first'), 1);
       });
 
-      test('should parse Arabic/Kurdish "first" variants', () {
+      test('should parse Arabic/Kurdish \'first\' variants', () {
         expect(service.parseOptionSelection('أول'), 1);
         expect(service.parseOptionSelection('الأول'), 1);
         expect(service.parseOptionSelection('أول واحد'), 1);
@@ -46,7 +46,7 @@ void main() {
         expect(service.parseOptionSelection('option two works'), 2);
       });
 
-      test('should parse "option 2" variants', () {
+      test('should parse \'option 2\' variants', () {
         expect(service.parseOptionSelection('option 2'), 2);
         expect(service.parseOptionSelection('Option 2'), 2);
         expect(service.parseOptionSelection('I want option 2'), 2);
@@ -61,7 +61,7 @@ void main() {
         expect(service.parseOptionSelection('I prefer the second'), 2);
       });
 
-      test('should parse Arabic/Kurdish "second" variants', () {
+      test('should parse Arabic/Kurdish \'second\' variants', () {
         expect(service.parseOptionSelection('ثاني'), 2);
         expect(service.parseOptionSelection('الثاني'), 2);
         expect(service.parseOptionSelection('ثاني واحد'), 2);
@@ -95,7 +95,7 @@ void main() {
       });
 
       test('should prioritize first match in ambiguous cases', () {
-        // If both "1" and "2" are present, should return the first one found
+        // If both '1' and '2' are present, should return the first one found
         expect(service.parseOptionSelection('I want 1 or 2'), 1);
         expect(service.parseOptionSelection('option 2 or option 1'), 2);
         expect(service.parseOptionSelection('first and second'), 1);
@@ -147,59 +147,59 @@ void main() {
 
     group('isRescheduleIntent', () {
       test('should detect English reschedule intents', () {
-        expect(service.isRescheduleIntent("can't make it"), true);
-        expect(service.isRescheduleIntent("cant make it"), true);
-        expect(service.isRescheduleIntent("cannot make it"), true);
-        expect(service.isRescheduleIntent("need to move"), true);
-        expect(service.isRescheduleIntent("reschedule"), true);
-        expect(service.isRescheduleIntent("resched"), true);
-        expect(service.isRescheduleIntent("push it back"), true);
-        expect(service.isRescheduleIntent("change time"), true);
-        expect(service.isRescheduleIntent("later time"), true);
-        expect(service.isRescheduleIntent("earlier time"), true);
-        expect(service.isRescheduleIntent("can we move"), true);
-        expect(service.isRescheduleIntent("delay"), true);
-        expect(service.isRescheduleIntent("postpone"), true);
-        expect(service.isRescheduleIntent("move it"), true);
-        expect(service.isRescheduleIntent("shift it"), true);
-        expect(service.isRescheduleIntent("reschedule it"), true);
-        expect(service.isRescheduleIntent("change it"), true);
-        expect(service.isRescheduleIntent("different time"), true);
+        expect(service.isRescheduleIntent('can\'t make it'), true);
+        expect(service.isRescheduleIntent('can\'t make it'), true);
+        expect(service.isRescheduleIntent('cannot make it'), true);
+        expect(service.isRescheduleIntent('need to move'), true);
+        expect(service.isRescheduleIntent('reschedule'), true);
+        expect(service.isRescheduleIntent('resched'), true);
+        expect(service.isRescheduleIntent('push it back'), true);
+        expect(service.isRescheduleIntent('change time'), true);
+        expect(service.isRescheduleIntent('later time'), true);
+        expect(service.isRescheduleIntent('earlier time'), true);
+        expect(service.isRescheduleIntent('can we move'), true);
+        expect(service.isRescheduleIntent('delay'), true);
+        expect(service.isRescheduleIntent('postpone'), true);
+        expect(service.isRescheduleIntent('move it'), true);
+        expect(service.isRescheduleIntent('shift it'), true);
+        expect(service.isRescheduleIntent('reschedule it'), true);
+        expect(service.isRescheduleIntent('change it'), true);
+        expect(service.isRescheduleIntent('different time'), true);
       });
 
       test('should detect Arabic/Kurdish reschedule intents', () {
-        expect(service.isRescheduleIntent("أجل"), true);
-        expect(service.isRescheduleIntent("تأجيل"), true);
-        expect(service.isRescheduleIntent("غير الموعد"), true);
-        expect(service.isRescheduleIntent("مو أگدر"), true);
-        expect(service.isRescheduleIntent("تغيير الموعد"), true);
-        expect(service.isRescheduleIntent("تأخير"), true);
+        expect(service.isRescheduleIntent('أجل'), true);
+        expect(service.isRescheduleIntent('تأجيل'), true);
+        expect(service.isRescheduleIntent('غير الموعد'), true);
+        expect(service.isRescheduleIntent('مو أگدر'), true);
+        expect(service.isRescheduleIntent('تغيير الموعد'), true);
+        expect(service.isRescheduleIntent('تأخير'), true);
       });
 
       test('should handle case insensitive detection', () {
-        expect(service.isRescheduleIntent("CAN'T MAKE IT"), true);
-        expect(service.isRescheduleIntent("Reschedule"), true);
-        expect(service.isRescheduleIntent("RESCHED"), true);
-        expect(service.isRescheduleIntent("أجل"), true);
+        expect(service.isRescheduleIntent('CAN\'T MAKE IT'), true);
+        expect(service.isRescheduleIntent('Reschedule'), true);
+        expect(service.isRescheduleIntent('RESCHED'), true);
+        expect(service.isRescheduleIntent('أجل'), true);
       });
 
       test('should return false for non-reschedule intents', () {
-        expect(service.isRescheduleIntent(""), false);
-        expect(service.isRescheduleIntent("   "), false);
-        expect(service.isRescheduleIntent("I can make it"), false);
-        expect(service.isRescheduleIntent("sounds good"), false);
-        expect(service.isRescheduleIntent("confirmed"), false);
-        expect(service.isRescheduleIntent("yes"), false);
-        expect(service.isRescheduleIntent("no problem"), false);
-        expect(service.isRescheduleIntent("see you then"), false);
+        expect(service.isRescheduleIntent(''), false);
+        expect(service.isRescheduleIntent('   '), false);
+        expect(service.isRescheduleIntent('I can make it'), false);
+        expect(service.isRescheduleIntent('sounds good'), false);
+        expect(service.isRescheduleIntent('confirmed'), false);
+        expect(service.isRescheduleIntent('yes'), false);
+        expect(service.isRescheduleIntent('no problem'), false);
+        expect(service.isRescheduleIntent('see you then'), false);
       });
 
       test('should handle partial matches correctly', () {
-        expect(service.isRescheduleIntent("I can't make it tomorrow"), true);
-        expect(service.isRescheduleIntent("Need to reschedule this"), true);
-        expect(service.isRescheduleIntent("Can we change the time?"), true);
-        expect(service.isRescheduleIntent("I can make it"), false);
-        expect(service.isRescheduleIntent("I can schedule it"), false);
+        expect(service.isRescheduleIntent('I can\'t make it tomorrow'), true);
+        expect(service.isRescheduleIntent('Need to reschedule this'), true);
+        expect(service.isRescheduleIntent('Can we change the time?'), true);
+        expect(service.isRescheduleIntent('I can make it'), false);
+        expect(service.isRescheduleIntent('I can schedule it'), false);
       });
     });
   });

@@ -118,9 +118,9 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -150,7 +150,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               ),
             )
           : SingleChildScrollView(
@@ -180,7 +180,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
                     value: '${_analytics['total_clients'] ?? 0}',
                     growth: _analytics['client_growth'] ?? 0.0,
                     icon: Icons.people,
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                   ),
 
                   const SizedBox(height: DesignTokens.space16),
@@ -200,7 +200,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
                     value: '${_analytics['avg_messages_per_client'] ?? 0}',
                     growth: 12.8,
                     icon: Icons.chat,
-                    color: AppTheme.softYellow,
+                    color: AppTheme.accentOrange,
                   ),
 
                   const SizedBox(height: DesignTokens.space32),
@@ -214,7 +214,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
                     value: '${_analytics['total_sessions'] ?? 0}',
                     growth: _analytics['session_growth'] ?? 0.0,
                     icon: Icons.calendar_today,
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                   ),
 
                   const SizedBox(height: DesignTokens.space16),
@@ -238,7 +238,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
                     value: '${_analytics['total_messages'] ?? 0}',
                     growth: _analytics['message_growth'] ?? 0.0,
                     icon: Icons.message,
-                    color: AppTheme.softYellow,
+                    color: AppTheme.accentOrange,
                   ),
 
                   const SizedBox(height: DesignTokens.space32),
@@ -286,7 +286,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -314,14 +314,14 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: DesignTokens.space8),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.mintAqua : Colors.transparent,
+            color: isSelected ? AppTheme.accentGreen : Colors.transparent,
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
           ),
           child: Text(
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isSelected ? AppTheme.primaryBlack : AppTheme.lightGrey,
+              color: isSelected ? AppTheme.primaryDark : AppTheme.lightGrey,
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
@@ -334,7 +334,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         color: AppTheme.lightGrey,
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -392,7 +392,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -403,7 +403,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
             children: [
               Icon(
                 icon,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
               const Spacer(),
@@ -438,7 +438,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
           ),
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppTheme.lightGrey,
               fontSize: 12,
             ),
@@ -461,7 +461,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -470,7 +470,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
           Container(
             padding: const EdgeInsets.all(DesignTokens.space12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: Icon(
@@ -486,7 +486,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppTheme.lightGrey,
                     fontSize: 14,
                   ),
@@ -524,7 +524,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
                   ),
                 ],
               ),
-              Text(
+              const Text(
                 'vs last period',
                 style: TextStyle(
                   color: AppTheme.lightGrey,
@@ -549,7 +549,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -557,7 +557,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
         contentPadding: const EdgeInsets.all(DesignTokens.space16),
         leading: Icon(
           icon,
-          color: AppTheme.mintAqua,
+          color: AppTheme.accentGreen,
           size: 24,
         ),
         title: Text(
@@ -570,12 +570,12 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
         ),
         subtitle: Text(
           description,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios,
           color: AppTheme.lightGrey,
           size: 16,
@@ -600,7 +600,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Generating $type report...'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }
@@ -609,7 +609,7 @@ class _AnalyticsReportsScreenState extends State<AnalyticsReportsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Exporting report...'),
-        backgroundColor: AppTheme.mintAqua,
+        backgroundColor: AppTheme.accentGreen,
       ),
     );
   }

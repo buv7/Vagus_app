@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -15,29 +16,49 @@ class PlanBuilderHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space20),
-      child: Column(
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space20),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Plan Builder',
                       style: TextStyle(
-                        color: AppTheme.neutralWhite,
+                        color: DesignTokens.neutralWhite,
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: DesignTokens.space8),
-                    const Text(
+                    SizedBox(height: DesignTokens.space8),
+                    Text(
                       'Create and manage workout and nutrition plans for your clients.',
                       style: TextStyle(
-                        color: AppTheme.lightGrey,
+                        color: DesignTokens.textSecondary,
                         fontSize: 16,
                       ),
                     ),
@@ -57,19 +78,19 @@ class PlanBuilderHeader extends StatelessWidget {
                   onPressed: onNewWorkoutPlan,
                   icon: const Icon(
                     Icons.fitness_center,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     size: 20,
                   ),
                   label: const Text(
                     'New Workout Plan',
                     style: TextStyle(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space16,
                     ),
@@ -97,7 +118,7 @@ class PlanBuilderHeader extends StatelessWidget {
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.steelGrey),
+                    side: const BorderSide(color: AppTheme.mediumGrey),
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space16,
                     ),
@@ -110,6 +131,9 @@ class PlanBuilderHeader extends StatelessWidget {
             ],
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

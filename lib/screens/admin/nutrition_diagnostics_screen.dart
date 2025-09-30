@@ -5,8 +5,6 @@ import '../../services/ai/nutrition_ai.dart';
 import '../../services/nutrition/pantry_service.dart';
 import '../../services/nutrition/costing_service.dart';
 import '../../services/nutrition/food_catalog_service.dart';
-import '../../services/nutrition/calendar_bridge.dart';
-import '../../theme/design_tokens.dart';
 import '../../services/nutrition/locale_helper.dart';
 
 class NutritionDiagnosticsScreen extends StatefulWidget {

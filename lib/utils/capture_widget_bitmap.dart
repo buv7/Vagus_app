@@ -16,7 +16,7 @@ class CaptureWidgetBitmap {
       final RenderRepaintBoundary? boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       
       if (boundary == null) {
-        print('CaptureWidgetBitmap: RepaintBoundary not found');
+        debugPrint('CaptureWidgetBitmap: RepaintBoundary not found');
         return null;
       }
 
@@ -32,13 +32,13 @@ class CaptureWidgetBitmap {
       final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       
       if (byteData == null) {
-        print('CaptureWidgetBitmap: Failed to convert image to bytes');
+        debugPrint('CaptureWidgetBitmap: Failed to convert image to bytes');
         return null;
       }
 
       return byteData.buffer.asUint8List();
     } catch (e) {
-      print('CaptureWidgetBitmap: Error capturing widget - $e');
+      debugPrint('CaptureWidgetBitmap: Error capturing widget - $e');
       return null;
     }
   }

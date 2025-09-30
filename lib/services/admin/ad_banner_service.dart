@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/ads/ad_banner.dart';
 
@@ -45,7 +46,7 @@ class AdBannerService {
 
       return ads;
     } catch (e) {
-      print('Error fetching active ads: $e');
+      debugPrint('Error fetching active ads: $e');
       return [];
     }
   }
@@ -60,7 +61,7 @@ class AdBannerService {
         'seen_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('Error tracking impression: $e');
+      debugPrint('Error tracking impression: $e');
       // Don't throw - tracking failures shouldn't break the UI
     }
   }
@@ -75,7 +76,7 @@ class AdBannerService {
         'clicked_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('Error tracking click: $e');
+      debugPrint('Error tracking click: $e');
       // Don't throw - tracking failures shouldn't break the UI
     }
   }
@@ -94,7 +95,7 @@ class AdBannerService {
 
       return response != null;
     } catch (e) {
-      print('Error checking admin status: $e');
+      debugPrint('Error checking admin status: $e');
       return false;
     }
   }
@@ -130,7 +131,7 @@ class AdBannerService {
 
       return response['id'] as String;
     } catch (e) {
-      print('Error creating ad banner: $e');
+      debugPrint('Error creating ad banner: $e');
       rethrow;
     }
   }
@@ -163,7 +164,7 @@ class AdBannerService {
       _cache.clear();
       _cacheTimestamps.clear();
     } catch (e) {
-      print('Error updating ad banner: $e');
+      debugPrint('Error updating ad banner: $e');
       rethrow;
     }
   }
@@ -177,7 +178,7 @@ class AdBannerService {
       _cache.clear();
       _cacheTimestamps.clear();
     } catch (e) {
-      print('Error deleting ad banner: $e');
+      debugPrint('Error deleting ad banner: $e');
       rethrow;
     }
   }
@@ -194,7 +195,7 @@ class AdBannerService {
           .map((json) => AdBanner.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('Error fetching all ad banners: $e');
+      debugPrint('Error fetching all ad banners: $e');
       return [];
     }
   }

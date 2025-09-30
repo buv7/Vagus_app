@@ -1,6 +1,4 @@
 // lib/services/workout/exercise_history_service.dart
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../utils/load_math.dart';
 import 'exercise_local_log_service.dart';
 
 class ExerciseSetLog {
@@ -52,7 +50,6 @@ class ExerciseHistoryService {
   static final ExerciseHistoryService instance = ExerciseHistoryService._();
   ExerciseHistoryService._();
 
-  final _sb = Supabase.instance.client;
 
   /// Fetch last N logs for an exercise name (or id if available).
   Future<List<ExerciseSetLog>> lastLogs({
@@ -103,13 +100,13 @@ class ExerciseHistoryService {
     double? bestE;
     for (final l in logs) {
       if (l.weight != null) {
-        if (bestW == null || l.weight! > bestW!) bestW = l.weight!;
+        if (bestW == null || l.weight! > bestW) bestW = l.weight;
       }
       if (l.reps != null) {
-        if (bestR == null || l.reps! > bestR!) bestR = l.reps!;
+        if (bestR == null || l.reps! > bestR) bestR = l.reps;
       }
       if (l.est1rm != null) {
-        if (bestE == null || l.est1rm! > bestE!) bestE = l.est1rm!;
+        if (bestE == null || l.est1rm! > bestE) bestE = l.est1rm;
       }
     }
     return ExercisePRs(bestWeight: bestW, bestReps: bestR, bestEst1RM: bestE);

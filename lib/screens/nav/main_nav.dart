@@ -1,31 +1,24 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../dashboard/modern_client_dashboard.dart';
-import '../dashboard/coach_home_screen.dart';
 import '../dashboard/modern_coach_dashboard.dart';
 import '../workouts/modern_workout_plan_viewer.dart';
-import '../workout/coach_plan_builder_screen.dart';
 import '../workout/modern_plan_builder_screen.dart';
 import '../calendar/modern_calendar_viewer.dart';
-import '../nutrition/modern_nutrition_plan_viewer.dart';
-import '../nutrition/modern_nutrition_plan_builder.dart';
+import '../nutrition/nutrition_hub_screen.dart';
 import '../messaging/modern_messenger_screen.dart';
-import '../messaging/coach_threads_screen.dart';
-import '../messaging/modern_coach_messenger_screen.dart';
 import '../messaging/modern_client_messages_screen.dart';
 import '../coach/modern_client_management_screen.dart';
-import '../coach/my_coach_screen.dart';
-import '../calling/modern_live_calls_screen.dart';
-import '../progress/modern_progress_tracker.dart';
-import '../menu/modern_coach_menu_screen.dart';
-import '../../components/common/quick_add_sheet.dart';
+import '../admin/admin_hub_screen.dart';
 import '../../widgets/fab/simple_glassmorphism_fab.dart';
 import '../../widgets/fab/camera_glassmorphism_fab.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/messaging/messaging_wrapper.dart';
+import '../../widgets/navigation/vagus_side_menu.dart';
 
 class MainNav extends StatefulWidget {
   const MainNav({super.key});
@@ -52,7 +45,7 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 5, vsync: this); // Will be updated after role is loaded
     _tabController.addListener(_handleTabChange);
     _loadUserRole();
     
@@ -99,6 +92,11 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
         debugPrint('🔧 MainNav: User role detected: $role');
         setState(() {
           _userRole = role;
+          // Update tab controller length based on role
+          final tabs = _buildTabs();
+          _tabController.dispose();
+          _tabController = TabController(length: tabs.length, vsync: this);
+          _tabController.addListener(_handleTabChange);
         });
       }
     } catch (e) {
@@ -106,6 +104,11 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
       // Default to client if role detection fails
       setState(() {
         _userRole = 'client';
+        // Update tab controller for client
+        final tabs = _buildTabs();
+        _tabController.dispose();
+        _tabController = TabController(length: tabs.length, vsync: this);
+        _tabController.addListener(_handleTabChange);
       });
     }
   }
@@ -117,28 +120,39 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
   // Build tabs based on user role
   List<NavTab> _buildTabs() {
     final isCoach = _userRole == 'coach';
-    debugPrint('🔧 MainNav: Building tabs for role: $_userRole, isCoach: $isCoach');
+    final isAdmin = _userRole == 'admin';
+    debugPrint('🔧 MainNav: Building tabs for role: $_userRole, isCoach: $isCoach, isAdmin: $isAdmin');
     
-    if (isCoach) {
+    if (isAdmin) {
+      // Admin navigation - single tab to admin hub
+      return [
+        const NavTab(
+          icon: Icons.admin_panel_settings_outlined,
+          activeIcon: Icons.admin_panel_settings_rounded,
+          label: 'Admin Hub',
+          screen: AdminHubScreen(),
+        ),
+      ];
+    } else if (isCoach) {
       // Coach navigation
       return [
-        NavTab(
+        const NavTab(
           icon: Icons.dashboard_outlined,
           activeIcon: Icons.dashboard_rounded,
           label: 'Dashboard',
-          screen: const ModernCoachDashboard(),
+          screen: ModernCoachDashboard(),
         ),
-        NavTab(
+        const NavTab(
           icon: Icons.people_outline,
           activeIcon: Icons.people_rounded,
           label: 'Clients',
-          screen: const ModernClientManagementScreen(),
+          screen: ModernClientManagementScreen(),
         ),
-        NavTab(
+        const NavTab(
           icon: Icons.fitness_center_outlined,
           activeIcon: Icons.fitness_center_rounded,
           label: 'Plans',
-          screen: const ModernPlanBuilderScreen(),
+          screen: ModernPlanBuilderScreen(),
         ),
         const NavTab(
           icon: Icons.calendar_month_outlined,
@@ -159,17 +173,17 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
     } else {
       // Client navigation - matching the design
       return [
-        NavTab(
+        const NavTab(
           icon: Icons.home_outlined,
           activeIcon: Icons.home_rounded,
           label: 'Home',
-          screen: const ModernClientDashboard(),
+          screen: ModernClientDashboard(),
         ),
-        NavTab(
+        const NavTab(
           icon: Icons.fitness_center_outlined,
           activeIcon: Icons.fitness_center_rounded,
           label: 'Workouts',
-          screen: const ModernWorkoutPlanViewer(),
+          screen: ModernWorkoutPlanViewer(),
         ),
         const NavTab(
           icon: Icons.calendar_month_outlined,
@@ -177,11 +191,11 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
           label: 'Calendar',
           screen: ModernCalendarViewer(),
         ),
-        NavTab(
+        const NavTab(
           icon: Icons.restaurant_outlined,
           activeIcon: Icons.restaurant_rounded,
           label: 'Nutrition',
-          screen: const ModernNutritionPlanViewer(),
+          screen: NutritionHubScreen(mode: NutritionHubMode.auto),
         ),
         NavTab(
           icon: Icons.chat_outlined,
@@ -218,8 +232,17 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
       // Handle navigation bar visibility based on tab changes
       final tabs = _buildTabs();
       
+      // Find the messages tab index dynamically
+      int? messagesTabIndex;
+      for (int i = 0; i < tabs.length; i++) {
+        if (tabs[i].label == 'Messages') {
+          messagesTabIndex = i;
+          break;
+        }
+      }
+      
       // If leaving messages tab, show navigation bar
-      if (previousIndex == 4 && _currentIndex != 4) { // Messages tab is index 4
+      if (messagesTabIndex != null && previousIndex == messagesTabIndex && _currentIndex != messagesTabIndex) {
         showBottomNavigation();
       }
       
@@ -238,6 +261,22 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
     unawaited(_tabAnimationController.forward().then((_) {
       _tabAnimationController.reverse();
     }));
+    
+    final tabs = _buildTabs();
+    
+    // Find the messages tab index dynamically
+    int? messagesTabIndex;
+    for (int i = 0; i < tabs.length; i++) {
+      if (tabs[i].label == 'Messages') {
+        messagesTabIndex = i;
+        break;
+      }
+    }
+    
+    // Show navigation bar when tapping any tab except messages
+    if (messagesTabIndex != null && index != messagesTabIndex) {
+      showBottomNavigation();
+    }
     
     setState(() {
       _currentIndex = index;
@@ -281,16 +320,45 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final isRTL = Directionality.of(context) == TextDirection.rtl;
     final tabs = _buildTabs();
+    final isAdmin = _userRole == 'admin';
 
     return Scaffold(
+      drawer: VagusSideMenu(
+        isClient: _userRole != 'coach',
+        onLogout: () async {
+          try {
+            await Supabase.instance.client.auth.signOut();
+            if (mounted) {
+              unawaited(Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false));
+            }
+          } catch (e) {
+            debugPrint('Logout error: $e');
+          }
+        },
+      ),
+      appBar: isAdmin ? null : AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(
+              Icons.menu,
+              color: Colors.white,
+              size: 24,
+            ),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+      ),
+      extendBodyBehindAppBar: !isAdmin,
       body: Stack(
         children: [
           TabBarView(
             controller: _tabController,
             children: tabs.map((tab) => tab.screen).toList(),
           ),
-          // Camera FAB - positioned in upper half (hidden icon but functional)
-          if (_currentIndex == 0) 
+          // Camera FAB - positioned in upper half (hidden icon but functional) - not for admin
+          if (_currentIndex == 0 && !isAdmin) 
             Positioned(
               right: 0,
               top: 100,
@@ -301,28 +369,46 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
             ),
         ],
       ),
-      floatingActionButton: _currentIndex == 0 ? SimpleGlassmorphismFAB(
+      floatingActionButton: (_currentIndex == 0 && !isAdmin) ? SimpleGlassmorphismFAB(
         isCoach: _userRole == 'coach',
         onOpenCameraFAB: _openCameraFAB,
       ) : null,
-      bottomNavigationBar: _showBottomNav ? AnimatedBuilder(
+      bottomNavigationBar: (_showBottomNav && !isAdmin) ? AnimatedBuilder(
         animation: _bottomNavSlideAnimation,
         builder: (context, child) {
           return Transform.translate(
             offset: Offset(0, (1 - _bottomNavSlideAnimation.value) * 100),
             child: SafeArea(
-              child: Container(
-                height: 80,
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryBlack,
-                  border: Border(
-                    top: BorderSide(
-                      color: AppTheme.steelGrey,
-                      width: 1,
+              child: ClipRRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                  child: Container(
+                    height: 80,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.lerp(DesignTokens.primaryDark, DesignTokens.accentBlue, 0.15)!.withValues(alpha: 0.95),
+                          Color.lerp(DesignTokens.primaryDark, DesignTokens.accentBlue, 0.1)!.withValues(alpha: 0.98),
+                        ],
+                      ),
+                      border: Border(
+                        top: BorderSide(
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.1),
+                          blurRadius: 20,
+                          spreadRadius: 0,
+                          offset: const Offset(0, -4),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                child: Padding(
+                    child: Padding(
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).padding.bottom,
                     top: DesignTokens.space8,
@@ -346,6 +432,8 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
                 ),
               ),
             ),
+          ),
+          ),
           );
         },
       ) : null,
@@ -380,7 +468,7 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
                   Icon(
                     isActive ? tab.activeIcon : tab.icon,
                     color: isActive 
-                        ? AppTheme.mintAqua
+                        ? AppTheme.accentGreen
                         : AppTheme.lightGrey,
                     size: 20,
                   ),

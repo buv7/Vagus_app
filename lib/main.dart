@@ -11,6 +11,7 @@ import 'services/notifications/notification_helper.dart';
 import 'services/settings/settings_controller.dart';
 import 'services/settings/reduce_motion.dart';
 import 'services/motion_service.dart';
+import 'services/deep_link_service.dart';
 import 'theme/app_theme.dart';
 import 'screens/settings/user_settings_screen.dart';
 import 'screens/billing/billing_settings.dart';
@@ -46,23 +47,49 @@ void main() async {
   );
 }
 
-class VagusMainApp extends StatelessWidget {
+class VagusMainApp extends StatefulWidget {
   final SettingsController settings;
 
   const VagusMainApp({super.key, required this.settings});
 
   @override
+  State<VagusMainApp> createState() => _VagusMainAppState();
+}
+
+class _VagusMainAppState extends State<VagusMainApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeDeepLinks();
+    });
+  }
+
+  void _initializeDeepLinks() {
+    final context = navigatorKey.currentContext;
+    if (context != null) {
+      DeepLinkService().initialize(context);
+    }
+  }
+
+  @override
+  void dispose() {
+    DeepLinkService().dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: settings,
+      animation: widget.settings,
       builder: (_, __) {
         return MaterialApp(
           title: 'VAGUS',
           navigatorKey: navigatorKey,
           theme: AppTheme.light(),
           darkTheme: AppTheme.dark(),
-          themeMode: settings.themeMode,
-          locale: settings.locale,
+          themeMode: widget.settings.themeMode,
+          locale: widget.settings.locale,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

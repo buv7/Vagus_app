@@ -1,7 +1,8 @@
 // lib/widgets/workout/set_type_sheet.dart
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../theme/design_tokens.dart';
 import '../../services/workout/exercise_local_log_service.dart';
-import '../../utils/load_math.dart';
 
 class SetTypeSheet extends StatefulWidget {
   final double? currentWeight;
@@ -84,13 +85,25 @@ class _SetTypeSheetState extends State<SetTypeSheet> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: BoxDecoration(
-        color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.95),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        color: DesignTokens.cardBackground,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Column(
         children: [
           // Handle
           Container(
@@ -141,6 +154,8 @@ class _SetTypeSheetState extends State<SetTypeSheet> {
             ),
           ),
         ],
+          ),
+        ),
       ),
     );
   }

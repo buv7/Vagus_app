@@ -74,7 +74,7 @@ class _AdminSupportInboxScreenState extends State<AdminSupportInboxScreen> {
       setState(() => _unreadCounts = counts);
 
       // Subscribe for live updates (Supabase v2 API)
-      _channel?.unsubscribe();
+      unawaited(_channel?.unsubscribe());
       _channel = supabase.channel('inbox_${me.id}');
       _channel!
         .onPostgresChanges(
@@ -345,45 +345,46 @@ class _AdminSupportInboxScreenState extends State<AdminSupportInboxScreen> {
                             )
                           : const Icon(Icons.chevron_right),
                                              onTap: () async {
+                         final navigator = Navigator.of(context);
+                         final scaffoldMessenger = ScaffoldMessenger.of(context);
                          final clientId = client?['id']?.toString();
                          if (clientId == null) return;
-                         
+
                          // If unassigned, claim it first
                          if (isUnassigned) {
                            try {
                              final supabase = Supabase.instance.client;
                              final me = supabase.auth.currentUser;
                              if (me == null) return;
-                             
+
                              await supabase
                                  .from('message_threads')
                                  .update({'coach_id': me.id})
                                  .eq('id', t['id']);
-                                 
+
                              if (mounted) {
-                               ScaffoldMessenger.of(context).showSnackBar(
-                                 SnackBar(content: Text('✅ Claimed support request from ${clientName}')),
+                               scaffoldMessenger.showSnackBar(
+                                 SnackBar(content: Text('✅ Claimed support request from $clientName')),
                                );
                              }
                            } catch (e) {
                              debugPrint('❌ Error claiming thread: $e');
                              if (mounted) {
-                               ScaffoldMessenger.of(context).showSnackBar(
+                               scaffoldMessenger.showSnackBar(
                                  const SnackBar(content: Text('❌ Failed to claim request')),
                                );
                              }
                              return;
                            }
                          }
-                         
-                         Navigator.push(
-                           context,
+
+                         unawaited(navigator.push(
                            MaterialPageRoute(
                              builder: (_) => AdminSupportChatScreen(clientId: clientId),
                            ),
                          ).then((_) {
                            unawaited(_loadInbox());
-                         });
+                         }));
                        },
                     );
                   },

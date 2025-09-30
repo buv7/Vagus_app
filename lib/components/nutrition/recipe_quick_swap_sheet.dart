@@ -8,7 +8,6 @@ import '../../services/nutrition/pantry_service.dart';
 import '../../services/nutrition/recipe_service.dart';
 import '../../services/nutrition/locale_helper.dart';
 import 'recipe_card.dart';
-import 'pantry_match_chip.dart';
 
 /// Bottom sheet for quick recipe swapping
 class RecipeQuickSwapSheet extends StatefulWidget {
@@ -94,16 +93,16 @@ class _RecipeQuickSwapSheetState extends State<RecipeQuickSwapSheet> {
         
         await Future.wait(suggestions.map((r) async {
           final c = await _pantryAdapter.pantryCoverage(
-            recipeId: r.id!, 
+            recipeId: r.id, 
             userId: userId, 
             servings: 1.0
           );
-          coverages[r.id!] = c;
+          coverages[r.id] = c;
         }));
 
         suggestions.sort((a, b) {
-          final ca = coverages[a.id!] ?? 0.0;
-          final cb = coverages[b.id!] ?? 0.0;
+          final ca = coverages[a.id] ?? 0.0;
+          final cb = coverages[b.id] ?? 0.0;
           // Stable sort: if equal, keep prior order
           final diff = cb.compareTo(ca);
           return diff != 0 ? diff : 0;
@@ -295,7 +294,7 @@ class _RecipeQuickSwapSheetState extends State<RecipeQuickSwapSheet> {
                   itemCount: _suggestions.length,
                   itemBuilder: (context, index) {
                     final recipe = _suggestions[index];
-                    final coverage = _coverageMap[recipe.id!] ?? 0.0;
+                    final coverage = _coverageMap[recipe.id] ?? 0.0;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: RecipeCard(

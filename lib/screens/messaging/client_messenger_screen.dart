@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/messages_service.dart';
 import '../../services/messaging/ai_draft_reply_service.dart';
 import '../../widgets/messaging/message_bubble.dart';
-import '../../widgets/messaging/SmartReplyPanel.dart';
+import '../../widgets/messaging/smart_reply_panel.dart';
 import '../../widgets/messaging/attachment_picker.dart';
 import '../../widgets/messaging/voice_recorder.dart';
 import '../../components/messaging/message_search_bar.dart';
@@ -43,7 +43,6 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
   // AI features
   static const bool kEnableSmartReplies = true;
   List<String> _smartReplies = [];
-  bool _loadingSmartReplies = false;
   bool _showSmartReplies = false;
   Timer? _smartRepliesTimer;
 
@@ -268,7 +267,6 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
     if (!isLastMessageFromCoach) return;
     
     setState(() {
-      _loadingSmartReplies = true;
       _showSmartReplies = true;
     });
     
@@ -282,7 +280,6 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
       if (mounted) {
         setState(() {
           _smartReplies = drafts;
-          _loadingSmartReplies = false;
         });
         
         // Auto-hide after 15 seconds
@@ -296,10 +293,9 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
         });
       }
     } catch (e) {
-      print('Error loading smart replies: $e');
+      debugPrint('Error loading smart replies: $e');
       if (mounted) {
         setState(() {
-          _loadingSmartReplies = false;
           _showSmartReplies = false;
         });
       }
@@ -394,9 +390,9 @@ class _ClientMessengerScreenState extends State<ClientMessengerScreen> {
     }
 
     if (_coachId == null) {
-      return Scaffold(
-        appBar: VagusAppBar(title: const Text('Messages')),
-        body: const Center(
+      return const Scaffold(
+        appBar: VagusAppBar(title: Text('Messages')),
+        body: Center(
           child: Text('No coach connected. Please connect with a coach first.'),
         ),
       );

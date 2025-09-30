@@ -64,23 +64,21 @@ class RecipeService {
 
   /// Update an existing recipe
   Future<void> updateRecipe(Recipe recipe) async {
-    if (recipe.id == null) {
-      throw Exception('Cannot update recipe without ID');
-    }
+    // Recipe ID is guaranteed to be non-null
 
     try {
       await _supabase
           .from('nutrition_recipes')
           .update(recipe.toMap())
-          .eq('id', recipe.id!);
+          .eq('id', recipe.id);
 
       // Update steps and ingredients
       if (recipe.steps.isNotEmpty) {
-        await _updateRecipeSteps(recipe.id!, recipe.steps);
+        await _updateRecipeSteps(recipe.id, recipe.steps);
       }
       
       if (recipe.ingredients.isNotEmpty) {
-        await _updateRecipeIngredients(recipe.id!, recipe.ingredients);
+        await _updateRecipeIngredients(recipe.id, recipe.ingredients);
       }
     } catch (e) {
       throw Exception('Failed to update recipe: $e');
@@ -240,15 +238,13 @@ class RecipeService {
 
   /// Update a single recipe step
   Future<void> updateRecipeStep(RecipeStep step) async {
-    if (step.id == null) {
-      throw Exception('Cannot update step without ID');
-    }
+    // Step ID is guaranteed to be non-null
 
     try {
       await _supabase
           .from('nutrition_recipe_steps')
           .update(step.toMap())
-          .eq('id', step.id!);
+          .eq('id', step.id);
     } catch (e) {
       throw Exception('Failed to update recipe step: $e');
     }
@@ -473,7 +469,7 @@ class RecipeService {
       final proteinMin = recipe.protein * 0.85;
       final proteinMax = recipe.protein * 1.15;
 
-      var query = _supabase
+      final query = _supabase
           .from('nutrition_recipes')
           .select()
           .neq('id', recipeId)

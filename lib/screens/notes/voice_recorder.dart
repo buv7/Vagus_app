@@ -49,23 +49,23 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
 
       // Upload to Supabase Storage
       if (kDebugMode) {
-        print('VoiceRecorder: Starting audio upload...');
+        debugPrint('VoiceRecorder: Starting audio upload...');
       }
       final storagePath = await _uploadAudioToStorage(audio);
       if (kDebugMode) {
-        print('VoiceRecorder: Upload successful - path: $storagePath');
+        debugPrint('VoiceRecorder: Upload successful - path: $storagePath');
       }
       
       // Transcribe using AI service
       if (kDebugMode) {
-        print('VoiceRecorder: Starting transcription...');
+        debugPrint('VoiceRecorder: Starting transcription...');
       }
       final transcribedText = await _transcriptionAI.transcribeAudio(
         storagePath: storagePath,
         languageHint: 'en', // Default to English
       );
       if (kDebugMode) {
-        print('VoiceRecorder: Transcription successful - length: ${transcribedText.length} chars');
+        debugPrint('VoiceRecorder: Transcription successful - length: ${transcribedText.length} chars');
       }
 
       // Insert transcribed text into note
@@ -81,7 +81,7 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('VoiceRecorder: Error - $e');
+        debugPrint('VoiceRecorder: Error - $e');
       }
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

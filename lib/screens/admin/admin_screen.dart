@@ -76,7 +76,7 @@ class _AdminScreenState extends State<AdminScreen> {
       
       int urgentCount = 0;
       int attentionCount = 0;
-      Map<String, Map<String, dynamic>> userSupportStatus = {};
+      final Map<String, Map<String, dynamic>> userSupportStatus = {};
       
       for (final thread in supportThreads) {
         final clientId = thread['client_id'] as String;

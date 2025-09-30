@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/hydration_log.dart';
 import 'preferences_service.dart';
@@ -47,7 +48,7 @@ class HydrationService {
         return emptyLog;
       }
     } catch (e) {
-      print('Error fetching hydration log: $e');
+      debugPrint('Error fetching hydration log: $e');
       // Return empty log on error
       return HydrationLog(
         userId: userId,
@@ -79,7 +80,7 @@ class HydrationService {
       _updateCache(log, date);
       return log;
     } catch (e) {
-      print('Error adding water: $e');
+      debugPrint('Error adding water: $e');
       rethrow;
     }
   }
@@ -94,7 +95,7 @@ class HydrationService {
       // Update with new total
       return await addWater(userId, date, newTotal);
     } catch (e) {
-      print('Error incrementing water: $e');
+      debugPrint('Error incrementing water: $e');
       rethrow;
     }
   }
@@ -102,14 +103,10 @@ class HydrationService {
   /// Set daily hydration target for a user (stored in preferences)
   Future<void> setDailyTarget(String userId, int ml) async {
     try {
-      // Get current preferences
-      final preferences = await _preferencesService.getPrefs(userId);
-      
       // Update hydration target  
-      final prefs = await _preferencesService.getPrefs(userId);
-      final target = prefs?.hydrationTargetMl ?? 3000; // getter returns default 3000 when null
+      // final prefs = await _preferencesService.getPrefs(userId);
     } catch (e) {
-      print('Error setting hydration target: $e');
+      debugPrint('Error setting hydration target: $e');
       rethrow;
     }
   }
@@ -120,7 +117,7 @@ class HydrationService {
       final preferences = await _preferencesService.getPrefs(userId);
       return preferences?.hydrationTargetMl ?? 3000; // Default 3L
     } catch (e) {
-      print('Error getting hydration target: $e');
+      debugPrint('Error getting hydration target: $e');
       return 3000; // Default fallback
     }
   }
@@ -141,7 +138,7 @@ class HydrationService {
 
       return response.map((row) => HydrationLog.fromMap(row)).toList();
     } catch (e) {
-      print('Error fetching weekly summary: $e');
+      debugPrint('Error fetching weekly summary: $e');
       return [];
     }
   }
@@ -171,7 +168,7 @@ class HydrationService {
         targetMl: targetMl,
       );
     } catch (e) {
-      print('Error calculating hydration stats: $e');
+      debugPrint('Error calculating hydration stats: $e');
       return HydrationStats.empty();
     }
   }

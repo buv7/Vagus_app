@@ -11,7 +11,7 @@ class InsiderSettingsScreen extends StatefulWidget {
 }
 
 class _InsiderSettingsScreenState extends State<InsiderSettingsScreen> {
-  final FeatureFlagsService _featureFlagsService = FeatureFlagsService();
+  final FeatureFlagsService _featureFlagsService = FeatureFlagsService.instance;
   Map<String, bool> _flags = {};
   bool _loading = true;
   String _error = '';
@@ -80,7 +80,7 @@ class _InsiderSettingsScreenState extends State<InsiderSettingsScreen> {
     if (confirmed == true) {
       try {
         await _featureFlagsService.resetToDefaults();
-        _loadFeatureFlags();
+        await _loadFeatureFlags();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Settings reset to defaults')),
@@ -99,7 +99,7 @@ class _InsiderSettingsScreenState extends State<InsiderSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(title: const Text('Insider Settings')),
+      appBar: const VagusAppBar(title: Text('Insider Settings')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error.isNotEmpty
@@ -138,7 +138,7 @@ class _InsiderSettingsScreenState extends State<InsiderSettingsScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
                       decoration: const BoxDecoration(
-                        color: AppTheme.primaryBlack,
+                        color: AppTheme.primaryDark,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +169,7 @@ class _InsiderSettingsScreenState extends State<InsiderSettingsScreen> {
                                 label: const Text('Reset to Defaults'),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: AppTheme.primaryBlack,
+                                  foregroundColor: AppTheme.primaryDark,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 8,
@@ -229,7 +229,7 @@ class _InsiderSettingsScreenState extends State<InsiderSettingsScreen> {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppTheme.primaryBlack,
+            color: AppTheme.primaryDark,
           ),
         ),
         const SizedBox(height: 12),
@@ -260,7 +260,7 @@ class _InsiderSettingsScreenState extends State<InsiderSettingsScreen> {
         ),
         value: isEnabled,
         onChanged: (value) => _toggleFlag(key, value),
-        activeColor: AppTheme.primaryBlack,
+        activeColor: AppTheme.primaryDark,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 4,

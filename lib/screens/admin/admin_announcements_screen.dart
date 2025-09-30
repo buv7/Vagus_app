@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/announcements/announcement.dart';
 import '../../services/announcements_service.dart';
 import '../../widgets/branding/vagus_appbar.dart';
@@ -14,7 +14,6 @@ class AdminAnnouncementsScreen extends StatefulWidget {
 
 class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
   final AnnouncementsService _announcementsService = AnnouncementsService();
-  final SupabaseClient _supabase = Supabase.instance.client;
   
   List<Announcement> _announcements = [];
   bool _loading = true;
@@ -55,7 +54,7 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
     );
 
     if (result == true) {
-      _loadAnnouncements();
+      unawaited(_loadAnnouncements());
     }
   }
 
@@ -68,7 +67,7 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
     );
 
     if (result == true) {
-      _loadAnnouncements();
+      unawaited(_loadAnnouncements());
     }
   }
 
@@ -95,7 +94,7 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
     if (confirmed == true) {
       try {
         await _announcementsService.deleteAnnouncement(announcement.id);
-        _loadAnnouncements();
+        unawaited(_loadAnnouncements());
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Announcement deleted successfully')),
@@ -115,13 +114,13 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
     try {
       final analytics = await _announcementsService.fetchAnalytics(announcement.id);
       if (mounted) {
-        showDialog(
+        unawaited(showDialog(
           context: context,
           builder: (context) => AnnouncementAnalyticsDialog(
             announcement: announcement,
             analytics: analytics,
           ),
-        );
+        ));
       }
     } catch (e) {
       if (mounted) {
@@ -135,7 +134,7 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(title: const Text('Announcements')),
+      appBar: const VagusAppBar(title: Text('Announcements')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error.isNotEmpty
@@ -197,7 +196,7 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
                     ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createAnnouncement,
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add),
       ),
@@ -271,7 +270,7 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

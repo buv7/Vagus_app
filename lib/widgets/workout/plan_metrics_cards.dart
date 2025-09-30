@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -27,7 +28,7 @@ class PlanMetricsCards extends StatelessWidget {
               icon: Icons.fitness_center,
               label: 'Total Plans',
               value: totalPlans.toString(),
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
             ),
           ),
           const SizedBox(width: DesignTokens.space12),
@@ -45,7 +46,7 @@ class PlanMetricsCards extends StatelessWidget {
               icon: Icons.star_outline,
               label: 'Avg Rating',
               value: avgRating.toString(),
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
             ),
           ),
           const SizedBox(width: DesignTokens.space12),
@@ -69,12 +70,28 @@ class PlanMetricsCards extends StatelessWidget {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(DesignTokens.radius12),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+            blurRadius: 15,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            child: Column(
         children: [
           Icon(
             icon,
@@ -85,7 +102,7 @@ class PlanMetricsCards extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              color: AppTheme.neutralWhite,
+              color: DesignTokens.neutralWhite,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -94,12 +111,15 @@ class PlanMetricsCards extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-              color: AppTheme.lightGrey,
+              color: DesignTokens.textSecondary,
               fontSize: 12,
             ),
             textAlign: TextAlign.center,
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

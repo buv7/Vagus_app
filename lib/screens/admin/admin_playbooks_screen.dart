@@ -153,7 +153,7 @@ class _AdminPlaybooksScreenState extends State<AdminPlaybooksScreen> {
                     tags: tags.text.split(',').map((s)=> s.trim()).where((s)=> s.isNotEmpty).toList(),
                   );
                   await _svc.upsertPlaybook(pb);
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
                 child: const Text('Save'),

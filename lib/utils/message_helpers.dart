@@ -3,7 +3,7 @@ import '../services/messages_service.dart';
 /// Safely extracts and normalizes message text for previews and AI drafting
 /// Avoids accidental whitespace-only previews and normalizes inputs
 String msgText(Message message) {
-  return (message.text ?? '').trim();
+  return message.text.trim();
 }
 
 /// Checks if a message has meaningful content (not just whitespace)

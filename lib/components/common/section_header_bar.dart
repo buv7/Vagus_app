@@ -117,7 +117,7 @@ class SectionHeaderBar extends StatelessWidget {
             horizontal: DesignTokens.space12,
             vertical: dense ? DesignTokens.space8 : DesignTokens.space12,
           ),
-          backgroundColor: DesignTokens.blue600,
+          backgroundColor: DesignTokens.accentBlue,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DesignTokens.radius8),

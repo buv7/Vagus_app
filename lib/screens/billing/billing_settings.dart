@@ -148,7 +148,7 @@ class _BillingSettingsState extends State<BillingSettings> {
         color: const Color(0xFF2C2F33),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.mintAqua.withValues(alpha: 0.2),
+          color: AppTheme.accentGreen.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -160,9 +160,9 @@ class _BillingSettingsState extends State<BillingSettings> {
             children: [
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.credit_card,
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -179,7 +179,7 @@ class _BillingSettingsState extends State<BillingSettings> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: status == 'active' ? AppTheme.mintAqua : AppTheme.softYellow,
+                  color: status == 'active' ? AppTheme.accentGreen : AppTheme.accentOrange,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -207,22 +207,22 @@ class _BillingSettingsState extends State<BillingSettings> {
               margin: const EdgeInsets.only(top: 8),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppTheme.softYellow.withValues(alpha: 0.1),
+                color: AppTheme.accentOrange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppTheme.softYellow.withValues(alpha: 0.3),
+                  color: AppTheme.accentOrange.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(
                     Icons.warning,
-                    color: AppTheme.softYellow,
+                    color: AppTheme.accentOrange,
                     size: 16,
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
+                  SizedBox(width: 8),
+                  Text(
                     'Will cancel at period end',
                     style: TextStyle(
                       color: Colors.white,
@@ -241,7 +241,7 @@ class _BillingSettingsState extends State<BillingSettings> {
                   child: ElevatedButton(
                     onPressed: _resumeSubscription,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.mintAqua,
+                      backgroundColor: AppTheme.accentGreen,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -303,15 +303,15 @@ class _BillingSettingsState extends State<BillingSettings> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              const Row(
                 children: [
                   Icon(
                     Icons.receipt,
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                     size: 20,
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
+                  SizedBox(width: 8),
+                  Text(
                     'Invoices',
                     style: TextStyle(
                       fontSize: 18,
@@ -323,13 +323,13 @@ class _BillingSettingsState extends State<BillingSettings> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextButton(
                   onPressed: _viewInvoices,
                   style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.mintAqua,
+                    foregroundColor: AppTheme.accentGreen,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   ),
                   child: const Text(
@@ -391,9 +391,9 @@ class _BillingSettingsState extends State<BillingSettings> {
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.receipt,
-                      color: AppTheme.mintAqua,
+                      color: AppTheme.accentGreen,
                       size: 16,
                     ),
                     const SizedBox(width: 12),
@@ -422,13 +422,13 @@ class _BillingSettingsState extends State<BillingSettings> {
                     if (externalId != null)
                       Container(
                         decoration: BoxDecoration(
-                          color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                          color: AppTheme.accentGreen.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.open_in_new,
-                            color: AppTheme.mintAqua,
+                            color: AppTheme.accentGreen,
                             size: 16,
                           ),
                           onPressed: () async {
@@ -457,9 +457,9 @@ class _BillingSettingsState extends State<BillingSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -474,13 +474,13 @@ class _BillingSettingsState extends State<BillingSettings> {
           Container(
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
-              color: AppTheme.mintAqua.withValues(alpha: 0.1),
+              color: AppTheme.accentGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.refresh,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
               onPressed: _loadData,
               tooltip: 'Refresh',
@@ -489,9 +489,9 @@ class _BillingSettingsState extends State<BillingSettings> {
         ],
       ),
       body: _loading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
               ),
             )
           : SingleChildScrollView(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -15,22 +16,38 @@ class PerformanceAnalyticsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
           Row(
             children: [
-              Expanded(
-                child: const Text(
+              const Expanded(
+                child: Text(
                   'Performance Analytics',
                   style: TextStyle(
-                    color: AppTheme.neutralWhite,
+                    color: DesignTokens.neutralWhite,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -43,13 +60,20 @@ class PerformanceAnalyticsCard extends StatelessWidget {
                   vertical: DesignTokens.space2,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.softYellow,
-                  borderRadius: BorderRadius.circular(DesignTokens.radius4),
+                  color: DesignTokens.accentOrange,
+                  borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
                 ),
                 child: const Text(
                   'Pro Insights',
                   style: TextStyle(
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                   ),
@@ -62,13 +86,14 @@ class PerformanceAnalyticsCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.steelGrey,
-                  borderRadius: BorderRadius.circular(DesignTokens.radius4),
+                  color: DesignTokens.cardBackground,
+                  borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                  border: Border.all(color: DesignTokens.glassBorder),
                 ),
                 child: const Text(
                   'Last 7 days',
                   style: TextStyle(
-                    color: AppTheme.neutralWhite,
+                    color: DesignTokens.neutralWhite,
                     fontSize: 10,
                   ),
                 ),
@@ -126,6 +151,9 @@ class PerformanceAnalyticsCard extends StatelessWidget {
             ],
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -137,22 +165,34 @@ class PerformanceAnalyticsCard extends StatelessWidget {
     required bool isPositive,
   }) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space8),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlack,
-        borderRadius: BorderRadius.circular(DesignTokens.radius8),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+            blurRadius: 12,
+            spreadRadius: 0,
+          ),
+        ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Icon on the left
           Icon(
             icon,
-            color: AppTheme.mintAqua,
+            color: DesignTokens.accentGreen,
             size: 28,
           ),
           
@@ -160,7 +200,7 @@ class PerformanceAnalyticsCard extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              color: AppTheme.neutralWhite,
+              color: DesignTokens.neutralWhite,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -186,6 +226,9 @@ class PerformanceAnalyticsCard extends StatelessWidget {
             ],
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

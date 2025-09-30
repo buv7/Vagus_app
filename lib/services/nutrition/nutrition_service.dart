@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/nutrition_plan.dart';
 import '../../models/nutrition/recipe.dart';
@@ -579,6 +580,6 @@ class NutritionService {
   Future<void> addItemToMeal({required String mealId, required fi.FoodItem item}) async {
     // Implementation would depend on your meal structure
     // For now, just a placeholder
-    print('Adding item ${item.name} to meal $mealId');
+    debugPrint('Adding item ${item.name} to meal $mealId');
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../theme/design_tokens.dart';
 import 'package:video_player/video_player.dart';
 import 'package:photo_view/photo_view.dart';
 import '../../services/workout/exercise_catalog_service.dart';
@@ -10,12 +11,11 @@ import '../../widgets/workout/tempo_cue_pill.dart';
 import '../../components/workout/rest_timer_inline.dart';
 import '../../services/haptics.dart';
 import '../../utils/load_math.dart';
-import '../../widgets/workout/LoadSuggestionBar.dart';
-import '../../widgets/workout/WarmupPlanCard.dart';
+import '../../widgets/workout/load_suggestion_bar.dart';
+import '../../widgets/workout/warmup_plan_card.dart';
 import '../../services/workout/exercise_history_service.dart';
-import '../../utils/progression_rules.dart';
-import '../../widgets/workout/ExerciseHistoryCard.dart';
-import '../../widgets/workout/AutoProgressionTip.dart';
+import '../../widgets/workout/exercise_history_card.dart';
+import '../../widgets/workout/auto_progression_tip.dart';
 import '../../services/workout/exercise_local_log_service.dart';
 import 'package:flutter/services.dart';
 import '../../widgets/workout/set_row_controls.dart';
@@ -24,7 +24,6 @@ import '../../services/workout/exercise_session_draft_service.dart';
 import '../../widgets/workout/finish_session_banner.dart';
 import '../../services/messaging/thread_resolver_service.dart';
 import '../../services/messages_service.dart';
-import '../../utils/set_type_format.dart';
 import '../../services/settings/user_prefs_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,7 +37,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///   isScrollControlled: true,
 ///   backgroundColor: Colors.transparent,
 ///   builder: (_) => ExerciseDetailSheet(
-///     exercises: groupExercises,        // List<Map<String, dynamic>>
+///     exercises: groupExercises,        // List&lt;Map&lt;String, dynamic&gt;&gt;
 ///     initialIndex: initialIndex,       // int
 ///     roleContext: role,                // 'client' | 'coach'
 ///     onMarkDone: (ex) {},              // optional
@@ -87,8 +86,6 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
   late UserPrefsService _prefsService;
   bool _tempoCuesEnabled = true;
   String _unit = 'kg';
-  bool _showQuickNoteCard = true;
-  bool _showWorkingSetsFirst = true;
 
   // Load calculator state
   LoadUnit _loadUnit = LoadUnit.kg;
@@ -116,8 +113,6 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
   final Map<String /*exerciseKey*/, int /*completed*/> _groupCompleted = {}; // Tracks per-exercise completed set count for the *current session* (local only)
   bool _autoAdvanceGroupTabs = true; // Auto-advance to next exercise in group
   int? _groupRestSecs; // null → hidden
-  bool _groupRestRunning = false;
-  DateTime? _groupRestStartedAt;
 
   Map<String, dynamic> get _exercise => widget.exercises[_index];
 
@@ -143,8 +138,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
     _tempoCuesEnabled = _prefsService.tempoCuesEnabled;
     _autoAdvanceGroupTabs = _prefsService.autoAdvanceSupersets;
     _unit = _prefsService.defaultUnit;
-    _showQuickNoteCard = _prefsService.showQuickNoteCard;
-    _showWorkingSetsFirst = _prefsService.showWorkingSetsFirst;
+    // Reserved user preferences
     
     // Load sticky preferences for this exercise
     final exerciseKey = _exerciseKey(widget.exercises[_index]);
@@ -176,8 +170,12 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
     super.dispose();
   }
 
-  void _setupVideoIfAny() async {
-    _videoController?.dispose();
+  void _setupVideoIfAny() {
+    unawaited(_setupVideoIfAnyAsync());
+  }
+
+  Future<void> _setupVideoIfAnyAsync() async {
+    await _videoController?.dispose();
     _videoController = null;
 
     final media = _pickBestMedia(_exercise);
@@ -189,8 +187,8 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
     if (type == _MediaType.video) {
       final controller = VideoPlayerController.networkUrl(Uri.parse(url));
       await controller.initialize();
-      controller.setLooping(true);
-      await controller.play();
+      await controller.setLooping(true);
+      unawaited(controller.play());
       if (mounted) {
         setState(() {
           _videoController = controller;
@@ -312,12 +310,20 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
         child: Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           decoration: BoxDecoration(
-            color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.7),
+            color: DesignTokens.cardBackground,
             border: Border(
               top: BorderSide(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 1,
               ),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                blurRadius: 20,
+                spreadRadius: 0,
+              ),
+            ],
           ),
           child: SafeArea(
             top: false,
@@ -511,11 +517,29 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
   Widget _glassBox({required bool isDark, required Widget child}) {
     return Container(
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+        color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: child,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            child: child,
+          ),
+        ),
+      ),
     );
   }
 
@@ -709,7 +733,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
   }
 
   Widget _buildRestTimerControls(BuildContext context, bool isDark) {
-    final exKey = (_exercise['id']?.toString() ?? _exercise['name']?.toString() ?? 'exercise_${_index}');
+    final exKey = (_exercise['id']?.toString() ?? _exercise['name']?.toString() ?? 'exercise_$_index');
     _showInlineRestForSet.putIfAbsent(exKey, () => {});
     
     // For demonstration, we'll show a "Start rest" button that toggles the timer
@@ -909,7 +933,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
       ..writeln('Tonnage: $ton')
       ..write(bLine);
     // Optional: list sets with advanced set type info
-    _setScratch.entries.forEach((e) {
+    for (final e in _setScratch.entries) {
       final idx = e.key + 1;
       final w = e.value.w?.toStringAsFixed(0) ?? '-';
       final r = e.value.r?.toString() ?? '-';
@@ -923,7 +947,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
       } else {
         sb.writeln('Set $idx — $w × $r @ RIR $rir');
       }
-    });
+    }
     
     // Add quick note if present
     final note = _quickNoteCtr.text.trim();
@@ -1307,7 +1331,6 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
           Haptics.selection();
           setState(() {
             _groupRestSecs = null;
-            _groupRestRunning = false;
           });
           // Optional: auto-advance to the next exercise in round start
           if (_autoAdvanceGroupTabs) {
@@ -1377,6 +1400,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
                     const SizedBox(width: 8),
                     TextButton(
                       onPressed: () async {
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         await _clearExerciseDoneLocal(exercise);
                         setState(() {
                           _setScratch.clear();
@@ -1385,7 +1409,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
                         });
                         Haptics.warning();
                         if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMessenger.showSnackBar(
                             const SnackBar(content: Text('Reset exercise (local)')),
                           );
                         }
@@ -1480,8 +1504,6 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
                   if (roundFinished) {
                     // Start Group Rest Timer
                     _groupRestSecs = _resolveGroupRest(group);
-                    _groupRestRunning = true;
-                    _groupRestStartedAt = DateTime.now();
                     Haptics.success();
                   } else if (_autoAdvanceGroupTabs && !_isMicroFlowActive()) {
                     // Auto-advance tab: switch to the next exercise with remaining sets
@@ -1567,10 +1589,11 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
               final rir = e.value.rir.toStringAsFixed(1);
               sb.writeln('Set $idx — $w × $r @ RIR $rir');
             }
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
             await Clipboard.setData(ClipboardData(text: sb.toString()));
             Haptics.selection();
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
+              scaffoldMessenger.showSnackBar(
                 const SnackBar(content: Text('Summary copied')),
               );
             }
@@ -1628,7 +1651,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
             controller: _quickNoteCtr,
             maxLength: 200,
             maxLines: 3,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Add a note about this workout...',
               isDense: true,
               counterText: '', // Hide character count

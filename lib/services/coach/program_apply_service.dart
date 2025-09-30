@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/program_ingest/program_ingest_job.dart';
 
@@ -54,7 +55,7 @@ class ProgramApplyService {
 
       return counts;
     } catch (e) {
-      print('Error applying program: $e');
+      debugPrint('Error applying program: $e');
       rethrow;
     }
   }
@@ -74,7 +75,7 @@ class ProgramApplyService {
 
       return 1;
     } catch (e) {
-      print('Error applying notes: $e');
+      debugPrint('Error applying notes: $e');
       return 0;
     }
   }
@@ -95,7 +96,7 @@ class ProgramApplyService {
       await _supabase.from('supplements').insert(supplementData);
       return supplements.length;
     } catch (e) {
-      print('Error applying supplements: $e');
+      debugPrint('Error applying supplements: $e');
       return 0;
     }
   }
@@ -123,7 +124,7 @@ class ProgramApplyService {
       } catch (e) {
         // If nutrition_plans table doesn't exist or has different structure,
         // store as a note instead
-        print('Nutrition plans table not available, storing as note: $e');
+        debugPrint('Nutrition plans table not available, storing as note: $e');
         await _supabase.from('client_notes').insert({
           'client_id': clientId,
           'coach_id': user.id,
@@ -133,7 +134,7 @@ class ProgramApplyService {
         return 1;
       }
     } catch (e) {
-      print('Error applying nutrition plan: $e');
+      debugPrint('Error applying nutrition plan: $e');
       return 0;
     }
   }
@@ -161,7 +162,7 @@ class ProgramApplyService {
       } catch (e) {
         // If workout_plans table doesn't exist or has different structure,
         // store as a note instead
-        print('Workout plans table not available, storing as note: $e');
+        debugPrint('Workout plans table not available, storing as note: $e');
         await _supabase.from('client_notes').insert({
           'client_id': clientId,
           'coach_id': user.id,
@@ -171,7 +172,7 @@ class ProgramApplyService {
         return 1;
       }
     } catch (e) {
-      print('Error applying workout plan: $e');
+      debugPrint('Error applying workout plan: $e');
       return 0;
     }
   }
@@ -187,7 +188,7 @@ class ProgramApplyService {
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      print('Error fetching client notes: $e');
+      debugPrint('Error fetching client notes: $e');
       return [];
     }
   }
@@ -203,7 +204,7 @@ class ProgramApplyService {
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      print('Error fetching client supplements: $e');
+      debugPrint('Error fetching client supplements: $e');
       return [];
     }
   }

@@ -1,0 +1,330 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../models/nutrition/nutrition_plan.dart';
+
+/// Role-based access manager for nutrition features
+/// Features: Smart role detection, permission checking, feature gating
+class NutritionRoleManager {
+  static final _instance = NutritionRoleManager._internal();
+  factory NutritionRoleManager() => _instance;
+  NutritionRoleManager._internal();
+
+  final SupabaseClient _supabase = Supabase.instance.client;
+
+  String? _currentUserRole;
+  String? _currentUserId;
+
+  /// Initialize role manager with current user
+  Future<void> initialize() async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    _currentUserId = user.id;
+
+    // Fetch user role from database
+    try {
+      final profile = await _supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
+
+      _currentUserRole = profile?['role'] as String?;
+    } catch (e) {
+      print('Failed to fetch user role: $e');
+    }
+  }
+
+  /// Detect nutrition mode based on context
+  NutritionMode detectMode({
+    required NutritionPlan plan,
+    bool editMode = false,
+  }) {
+    final isCoach = _currentUserRole == 'coach';
+    final isOwnPlan = _currentUserId == plan.clientId;
+
+    if (isCoach && editMode) {
+      return NutritionMode.coachBuilding;
+    }
+
+    if (isCoach && !isOwnPlan) {
+      return NutritionMode.coachViewing;
+    }
+
+    return NutritionMode.clientViewing;
+  }
+
+  /// Check if user can edit plan
+  bool canEditPlan(NutritionPlan plan) {
+    final mode = detectMode(plan: plan, editMode: true);
+    return mode == NutritionMode.coachBuilding;
+  }
+
+  /// Check if user can view plan
+  bool canViewPlan(NutritionPlan plan) {
+    final isCoach = _currentUserRole == 'coach';
+    final isOwnPlan = _currentUserId == plan.clientId;
+    final isCoachPlan = _currentUserId == plan.coachId;
+
+    return isOwnPlan || isCoachPlan || isCoach;
+  }
+
+  /// Check if user can add meals
+  bool canAddMeals(NutritionMode mode) {
+    return mode == NutritionMode.coachBuilding;
+  }
+
+  /// Check if user can remove meals
+  bool canRemoveMeals(NutritionMode mode) {
+    return mode == NutritionMode.coachBuilding;
+  }
+
+  /// Check if user can edit meal content
+  bool canEditMealContent(NutritionMode mode) {
+    return mode == NutritionMode.coachBuilding;
+  }
+
+  /// Check if user can set macro targets
+  bool canSetMacroTargets(NutritionMode mode) {
+    return mode == NutritionMode.coachBuilding;
+  }
+
+  /// Check if user can add coach notes
+  bool canAddCoachNotes(NutritionMode mode) {
+    return mode == NutritionMode.coachBuilding ||
+           mode == NutritionMode.coachViewing;
+  }
+
+  /// Check if user can check off meals
+  bool canCheckOffMeals(NutritionMode mode) {
+    return mode == NutritionMode.clientViewing;
+  }
+
+  /// Check if user can add client comments
+  bool canAddClientComments(NutritionMode mode) {
+    return mode == NutritionMode.clientViewing;
+  }
+
+  /// Check if user can export plan
+  bool canExportPlan(NutritionMode mode) {
+    return true; // All modes can export
+  }
+
+  /// Check if user can duplicate plan
+  bool canDuplicatePlan(NutritionMode mode) {
+    return mode == NutritionMode.coachBuilding ||
+           mode == NutritionMode.coachViewing;
+  }
+
+  /// Check if user can save as template
+  bool canSaveAsTemplate(NutritionMode mode) {
+    return mode == NutritionMode.coachBuilding;
+  }
+
+  /// Check if user can generate grocery list
+  bool canGenerateGroceryList(NutritionMode mode) {
+    return true; // All modes can generate grocery list
+  }
+
+  /// Check if user can view compliance
+  bool canViewCompliance(NutritionMode mode) {
+    return mode == NutritionMode.coachViewing ||
+           mode == NutritionMode.clientViewing;
+  }
+
+  /// Check if user can request changes
+  bool canRequestChanges(NutritionMode mode) {
+    return mode == NutritionMode.clientViewing;
+  }
+
+  /// Get available actions for current mode
+  List<NutritionAction> getAvailableActions(NutritionMode mode) {
+    final actions = <NutritionAction>[];
+
+    if (canEditMealContent(mode)) {
+      actions.add(NutritionAction.editMeals);
+      actions.add(NutritionAction.addMeals);
+      actions.add(NutritionAction.removeMeals);
+    }
+
+    if (canSetMacroTargets(mode)) {
+      actions.add(NutritionAction.setTargets);
+    }
+
+    if (canAddCoachNotes(mode)) {
+      actions.add(NutritionAction.addCoachNotes);
+    }
+
+    if (canCheckOffMeals(mode)) {
+      actions.add(NutritionAction.checkOffMeals);
+    }
+
+    if (canAddClientComments(mode)) {
+      actions.add(NutritionAction.addClientComments);
+    }
+
+    if (canExportPlan(mode)) {
+      actions.add(NutritionAction.exportPlan);
+    }
+
+    if (canDuplicatePlan(mode)) {
+      actions.add(NutritionAction.duplicatePlan);
+    }
+
+    if (canSaveAsTemplate(mode)) {
+      actions.add(NutritionAction.saveTemplate);
+    }
+
+    if (canGenerateGroceryList(mode)) {
+      actions.add(NutritionAction.generateGroceryList);
+    }
+
+    if (canViewCompliance(mode)) {
+      actions.add(NutritionAction.viewCompliance);
+    }
+
+    if (canRequestChanges(mode)) {
+      actions.add(NutritionAction.requestChanges);
+    }
+
+    return actions;
+  }
+
+  /// Get user display info
+  UserDisplayInfo getUserDisplayInfo() {
+    return UserDisplayInfo(
+      userId: _currentUserId ?? '',
+      role: _currentUserRole ?? 'client',
+      isCoach: _currentUserRole == 'coach',
+      isClient: _currentUserRole == 'client' || _currentUserRole == null,
+    );
+  }
+
+  /// Get mode-specific UI configuration
+  ModeUIConfig getUIConfig(NutritionMode mode) {
+    switch (mode) {
+      case NutritionMode.coachBuilding:
+        return ModeUIConfig(
+          showEditButton: true,
+          showAddMealButton: true,
+          showMacroTargetEditor: true,
+          showCoachNotesInput: true,
+          showClientComments: true,
+          showCheckoffButtons: false,
+          showRequestChangesButton: false,
+          allowMealEditing: true,
+          allowMealReordering: true,
+          showTemplateActions: true,
+          headerTitle: 'Build Nutrition Plan',
+          emptyStateMessage: 'Start building your client\'s nutrition plan',
+        );
+
+      case NutritionMode.coachViewing:
+        return ModeUIConfig(
+          showEditButton: true,
+          showAddMealButton: false,
+          showMacroTargetEditor: false,
+          showCoachNotesInput: true,
+          showClientComments: true,
+          showCheckoffButtons: false,
+          showRequestChangesButton: false,
+          allowMealEditing: false,
+          allowMealReordering: false,
+          showTemplateActions: true,
+          headerTitle: 'Review Nutrition Plan',
+          emptyStateMessage: 'No meals planned for this day',
+        );
+
+      case NutritionMode.clientViewing:
+        return ModeUIConfig(
+          showEditButton: false,
+          showAddMealButton: false,
+          showMacroTargetEditor: false,
+          showCoachNotesInput: false,
+          showClientComments: true,
+          showCheckoffButtons: true,
+          showRequestChangesButton: true,
+          allowMealEditing: false,
+          allowMealReordering: false,
+          showTemplateActions: false,
+          headerTitle: 'Your Nutrition Plan',
+          emptyStateMessage: 'No meals planned for today',
+        );
+    }
+  }
+
+  // Getters
+  bool get isCoach => _currentUserRole == 'coach';
+  bool get isClient => _currentUserRole == 'client' || _currentUserRole == null;
+  String? get currentUserId => _currentUserId;
+  String? get currentUserRole => _currentUserRole;
+}
+
+/// Nutrition mode enum
+enum NutritionMode {
+  coachBuilding,  // Coach creating/editing plan for client
+  coachViewing,   // Coach viewing own or client's plan
+  clientViewing,  // Client viewing assigned plan
+}
+
+/// Available nutrition actions
+enum NutritionAction {
+  editMeals,
+  addMeals,
+  removeMeals,
+  setTargets,
+  addCoachNotes,
+  checkOffMeals,
+  addClientComments,
+  exportPlan,
+  duplicatePlan,
+  saveTemplate,
+  generateGroceryList,
+  viewCompliance,
+  requestChanges,
+}
+
+/// User display information
+class UserDisplayInfo {
+  final String userId;
+  final String role;
+  final bool isCoach;
+  final bool isClient;
+
+  const UserDisplayInfo({
+    required this.userId,
+    required this.role,
+    required this.isCoach,
+    required this.isClient,
+  });
+}
+
+/// Mode-specific UI configuration
+class ModeUIConfig {
+  final bool showEditButton;
+  final bool showAddMealButton;
+  final bool showMacroTargetEditor;
+  final bool showCoachNotesInput;
+  final bool showClientComments;
+  final bool showCheckoffButtons;
+  final bool showRequestChangesButton;
+  final bool allowMealEditing;
+  final bool allowMealReordering;
+  final bool showTemplateActions;
+  final String headerTitle;
+  final String emptyStateMessage;
+
+  const ModeUIConfig({
+    required this.showEditButton,
+    required this.showAddMealButton,
+    required this.showMacroTargetEditor,
+    required this.showCoachNotesInput,
+    required this.showClientComments,
+    required this.showCheckoffButtons,
+    required this.showRequestChangesButton,
+    required this.allowMealEditing,
+    required this.allowMealReordering,
+    required this.showTemplateActions,
+    required this.headerTitle,
+    required this.emptyStateMessage,
+  });
+}

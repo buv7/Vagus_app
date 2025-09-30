@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../models/live_session.dart';
 import '../../services/simple_calling_service.dart';
@@ -6,7 +7,7 @@ import '../../widgets/calling/schedule_call_dialog.dart';
 import 'simple_call_screen.dart';
 
 class CallManagementScreen extends StatefulWidget {
-  const CallManagementScreen({Key? key}) : super(key: key);
+  const CallManagementScreen({super.key});
 
   @override
   State<CallManagementScreen> createState() => _CallManagementScreenState();
@@ -70,7 +71,9 @@ class _CallManagementScreenState extends State<CallManagementScreen>
 
     if (result != null) {
       await _loadSessions();
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!mounted) return;
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      scaffoldMessenger.showSnackBar(
         const SnackBar(
           content: Text('Call scheduled successfully!'),
           backgroundColor: Colors.green,
@@ -82,7 +85,7 @@ class _CallManagementScreenState extends State<CallManagementScreen>
   Future<void> _joinCall(LiveSession session) async {
     try {
       // Navigate to call screen
-      Navigator.push(
+      unawaited(Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => SimpleCallScreen(
@@ -90,7 +93,7 @@ class _CallManagementScreenState extends State<CallManagementScreen>
             isIncoming: false,
           ),
         ),
-      );
+      ));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -102,6 +105,7 @@ class _CallManagementScreenState extends State<CallManagementScreen>
   }
 
   Future<void> _cancelCall(LiveSession session) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -124,14 +128,16 @@ class _CallManagementScreenState extends State<CallManagementScreen>
       try {
         await _callingService.cancelLiveSession(session.id);
         await _loadSessions();
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(
           const SnackBar(
             content: Text('Call cancelled successfully!'),
             backgroundColor: Colors.orange,
           ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text('Failed to cancel call: $e'),
             backgroundColor: Colors.red,

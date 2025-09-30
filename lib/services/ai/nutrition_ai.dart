@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 import '../../models/nutrition/food_item.dart';
 
 /// AI-powered nutrition estimation service
@@ -8,16 +7,13 @@ class NutritionAI {
   factory NutritionAI() => _instance;
   NutritionAI._internal();
 
-  final SupabaseClient _supabase = Supabase.instance.client;
   
   // Cache for estimations
   final Map<String, _CachedEstimation> _estimationCache = {};
-  final int _maxCacheSize = 100;
   
   // Rate limiting
   final Map<String, DateTime> _rateLimitMap = {};
   final Duration _rateLimitWindow = const Duration(minutes: 1);
-  final int _maxRequestsPerWindow = 10;
 
   /// Estimate nutrition from food photo
   Future<FoodItem?> estimateFromPhoto(Uint8List imageBytes, {String? locale}) async {
@@ -44,7 +40,7 @@ class NutritionAI {
         source: 'photo',
       );
     } catch (e) {
-      print('Error estimating nutrition from photo: $e');
+      debugPrint('Error estimating nutrition from photo: $e');
       return null;
     }
   }
@@ -137,6 +133,83 @@ class NutritionAI {
       ],
     };
   }
+
+  /// Generate food suggestions based on context
+  static Future<List<AIFoodSuggestion>> generateFoodSuggestions({
+    String? mealType,
+    Map<String, double>? currentMacros,
+    Map<String, double>? targetMacros,
+    List<String>? recentFoods,
+    List<String>? preferences,
+    bool includeReasoning = true,
+  }) async {
+    // Placeholder implementation - return mock suggestions
+    final suggestions = <AIFoodSuggestion>[];
+
+    // Generate mock suggestions based on meal type
+    final mockFoods = _getMockFoodsForMealType(mealType);
+
+    for (var i = 0; i < mockFoods.length; i++) {
+      suggestions.add(AIFoodSuggestion(
+        food: mockFoods[i],
+        category: _getCategoryForMealType(mealType),
+        matchScore: 0.8 - (i * 0.1),
+        reasoning: includeReasoning ? 'Good match for your $mealType based on nutritional goals' : null,
+        tags: ['suggested', if (mealType != null) mealType],
+      ));
+    }
+
+    return suggestions;
+  }
+
+  static List<FoodItem> _getMockFoodsForMealType(String? mealType) {
+    switch (mealType?.toLowerCase()) {
+      case 'breakfast':
+        return [
+          FoodItem(name: 'Oatmeal', protein: 5.0, carbs: 27.0, fat: 3.0, kcal: 150.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+          FoodItem(name: 'Eggs', protein: 13.0, carbs: 1.0, fat: 11.0, kcal: 155.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+          FoodItem(name: 'Banana', protein: 1.0, carbs: 23.0, fat: 0.3, kcal: 89.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+        ];
+      case 'lunch':
+        return [
+          FoodItem(name: 'Chicken Breast', protein: 31.0, carbs: 0.0, fat: 3.6, kcal: 165.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+          FoodItem(name: 'Brown Rice', protein: 2.6, carbs: 23.0, fat: 0.9, kcal: 111.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+          FoodItem(name: 'Broccoli', protein: 2.8, carbs: 7.0, fat: 0.4, kcal: 34.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+        ];
+      case 'dinner':
+        return [
+          FoodItem(name: 'Salmon', protein: 20.0, carbs: 0.0, fat: 13.0, kcal: 208.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+          FoodItem(name: 'Sweet Potato', protein: 1.6, carbs: 20.0, fat: 0.1, kcal: 86.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+          FoodItem(name: 'Spinach', protein: 2.9, carbs: 3.6, fat: 0.4, kcal: 23.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+        ];
+      default:
+        return [
+          FoodItem(name: 'Chicken Breast', protein: 31.0, carbs: 0.0, fat: 3.6, kcal: 165.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+          FoodItem(name: 'Rice', protein: 2.7, carbs: 28.0, fat: 0.3, kcal: 130.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
+        ];
+    }
+  }
+
+  static String _getCategoryForMealType(String? mealType) {
+    return mealType?.toLowerCase() ?? 'smart';
+  }
+}
+
+/// AI food suggestion model
+class AIFoodSuggestion {
+  final FoodItem food;
+  final String category;
+  final double matchScore;
+  final String? reasoning;
+  final List<String> tags;
+
+  AIFoodSuggestion({
+    required this.food,
+    required this.category,
+    required this.matchScore,
+    this.reasoning,
+    this.tags = const [],
+  });
 }
 
 /// Cached estimation data

@@ -170,7 +170,7 @@ class _AdminIncidentsScreenState extends State<AdminIncidentsScreen> {
                     _ActionItem(
                       icon: Icons.trending_up,
                       title: 'Investigate hot topics',
-                      description: '${hotTags.take(3).map((e) => e.key).join(', ')}',
+                      description: hotTags.take(3).map((e) => e.key).join(', '),
                       action: 'Analyze',
                       onAction: () {
                         // Navigate to root cause trends

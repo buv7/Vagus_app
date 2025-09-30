@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../services/nutrition/barcode_service.dart';
-import '../../services/ai/nutrition_ai.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../widgets/branding/vagus_appbar.dart';
 

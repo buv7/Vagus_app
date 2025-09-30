@@ -51,7 +51,7 @@ class _ClientListViewState extends State<ClientListView> {
             children: [
               const Icon(
                 Icons.people_outline,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
               const SizedBox(width: DesignTokens.space8),
@@ -68,7 +68,7 @@ class _ClientListViewState extends State<ClientListView> {
               if (widget.clients.isNotEmpty)
                 Text(
                   '${_currentPage + 1} / ${widget.clients.length}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppTheme.lightGrey,
                     fontSize: 12,
                   ),
@@ -122,7 +122,7 @@ class _ClientListViewState extends State<ClientListView> {
                             child: Center(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: AppTheme.cardBackground.withOpacity(0.8),
+                                  color: AppTheme.cardBackground.withValues(alpha: 0.8),
                                   shape: BoxShape.circle,
                                 ),
                                 child: IconButton(
@@ -134,7 +134,7 @@ class _ClientListViewState extends State<ClientListView> {
                                   },
                                   icon: const Icon(
                                     Icons.chevron_left,
-                                    color: AppTheme.mintAqua,
+                                    color: AppTheme.accentGreen,
                                     size: 24,
                                   ),
                                 ),
@@ -151,7 +151,7 @@ class _ClientListViewState extends State<ClientListView> {
                             child: Center(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: AppTheme.cardBackground.withOpacity(0.8),
+                                  color: AppTheme.cardBackground.withValues(alpha: 0.8),
                                   shape: BoxShape.circle,
                                 ),
                                 child: IconButton(
@@ -163,7 +163,7 @@ class _ClientListViewState extends State<ClientListView> {
                                   },
                                   icon: const Icon(
                                     Icons.chevron_right,
-                                    color: AppTheme.mintAqua,
+                                    color: AppTheme.accentGreen,
                                     size: 24,
                                   ),
                                 ),
@@ -191,8 +191,8 @@ class _ClientListViewState extends State<ClientListView> {
                     height: 8,
                     decoration: BoxDecoration(
                       color: _currentPage == index
-                          ? AppTheme.mintAqua
-                          : AppTheme.steelGrey,
+                          ? AppTheme.accentGreen
+                          : AppTheme.mediumGrey,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -213,13 +213,13 @@ class _ClientListViewState extends State<ClientListView> {
     
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space12),
-      padding: const EdgeInsets.all(DesignTokens.space16),
+      padding: const EdgeInsets.all(DesignTokens.space14),
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -235,14 +235,14 @@ class _ClientListViewState extends State<ClientListView> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: const Center(
                   child: Text(
                     'V',
                     style: TextStyle(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -304,7 +304,7 @@ class _ClientListViewState extends State<ClientListView> {
                         fontSize: 11,
                       ),
                     ),
-                    const SizedBox(height: DesignTokens.space6),
+                    const SizedBox(height: DesignTokens.space4),
                     
                     // Tags
                     Wrap(
@@ -317,7 +317,7 @@ class _ClientListViewState extends State<ClientListView> {
                             vertical: DesignTokens.space2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.steelGrey,
+                            color: AppTheme.mediumGrey,
                             borderRadius: BorderRadius.circular(DesignTokens.radius8),
                           ),
                           child: Text(
@@ -348,7 +348,7 @@ class _ClientListViewState extends State<ClientListView> {
             ],
           ),
           
-          const SizedBox(height: DesignTokens.space12),
+          const SizedBox(height: DesignTokens.space8),
           
           // Progress and Stats
           Row(
@@ -363,7 +363,7 @@ class _ClientListViewState extends State<ClientListView> {
               Expanded(
                 child: _buildStatItem(
                   label: 'Compliance',
-                  value: '${compliance}%',
+                  value: '$compliance%',
                   color: complianceColor,
                 ),
               ),
@@ -378,13 +378,13 @@ class _ClientListViewState extends State<ClientListView> {
                 child: _buildStatItem(
                   label: 'Next Session',
                   value: client['nextSession'],
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                 ),
               ),
             ],
           ),
           
-          const SizedBox(height: DesignTokens.space12),
+          const SizedBox(height: DesignTokens.space8),
           
           // Action Buttons
           Row(
@@ -392,20 +392,15 @@ class _ClientListViewState extends State<ClientListView> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () => widget.onViewProfile(client), // Fixed Method Calls
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppTheme.mediumGrey),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  ),
                   child: const Text(
                     'View Profile',
                     style: TextStyle(
                       color: AppTheme.neutralWhite,
                       fontSize: 12,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.steelGrey),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: DesignTokens.space8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(DesignTokens.radius8),
                     ),
                   ),
                 ),
@@ -427,9 +422,9 @@ class _ClientListViewState extends State<ClientListView> {
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.steelGrey),
+                    side: const BorderSide(color: AppTheme.mediumGrey),
                     padding: const EdgeInsets.symmetric(
-                      vertical: DesignTokens.space8,
+                      vertical: DesignTokens.space6,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
@@ -454,9 +449,9 @@ class _ClientListViewState extends State<ClientListView> {
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.steelGrey),
+                    side: const BorderSide(color: AppTheme.mediumGrey),
                     padding: const EdgeInsets.symmetric(
-                      vertical: DesignTokens.space8,
+                      vertical: DesignTokens.space6,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
@@ -504,11 +499,11 @@ class _ClientListViewState extends State<ClientListView> {
       case 'active':
         return Colors.green;
       case 'paused':
-        return AppTheme.steelGrey;
+        return AppTheme.mediumGrey;
       case 'inactive':
         return Colors.red;
       default:
-        return AppTheme.steelGrey;
+        return AppTheme.mediumGrey;
     }
   }
 

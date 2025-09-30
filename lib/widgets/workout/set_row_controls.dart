@@ -1,6 +1,7 @@
 // lib/widgets/workout/set_row_controls.dart
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../../theme/design_tokens.dart';
 import '../../services/haptics.dart';
 import '../../services/workout/exercise_local_log_service.dart';
 import '../../widgets/workout/set_type_sheet.dart';
@@ -327,7 +328,7 @@ class _SetRowControlsState extends State<SetRowControls> {
         onApply: (extras) {
           setState(() => _setExtras = extras);
           // Notify parent of set type change for sticky preferences
-          if (widget.onSetTypeChanged != null && extras != null) {
+          if (extras.setType != null) {
             final stickyData = <String, dynamic>{
               'setType': extras.setType?.name,
               'dropWeights': extras.dropWeights,
@@ -338,7 +339,7 @@ class _SetRowControlsState extends State<SetRowControls> {
               'clusterRestSec': extras.clusterRestSec,
               'clusterTotalReps': extras.clusterTotalReps,
             };
-            widget.onSetTypeChanged!(stickyData);
+            widget.onSetTypeChanged?.call(stickyData);
           }
         },
       ),
@@ -397,15 +398,30 @@ class _SetRowControlsState extends State<SetRowControls> {
 
     return Container(
       margin: EdgeInsets.only(top: gap),
-      padding: EdgeInsets.all(widget.dense ? 10 : 12),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
-        borderRadius: BorderRadius.circular(14),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: EdgeInsets.all(widget.dense ? 10 : 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
           // Header
           Row(
             children: [
@@ -536,7 +552,10 @@ class _SetRowControlsState extends State<SetRowControls> {
               Text(_rir.toStringAsFixed(1), style: theme.textTheme.labelMedium),
             ],
           ),
-        ],
+          ],
+        ),
+      ),
+        ),
       ),
     );
   }

@@ -48,11 +48,11 @@ class LoadMath {
     required double topSet,
     required LoadUnit unit,
     double barWeight = defaultKgBar,
-    List<_WU> scheme = const [
-      _WU(0.40, 5),
-      _WU(0.60, 3),
-      _WU(0.75, 2),
-      _WU(0.85, 1),
+    List<WarmupScheme> scheme = const [
+      WarmupScheme(0.40, 5),
+      WarmupScheme(0.60, 3),
+      WarmupScheme(0.75, 2),
+      WarmupScheme(0.85, 1),
     ],
   }) {
     return scheme.map((s) {
@@ -90,11 +90,11 @@ class WarmupSet {
   final double weight; // same unit as selected
   const WarmupSet({required this.percent, required this.reps, required this.weight});
   @override
-  String toString() => '${percent}% × $reps @ ${weight.toStringAsFixed(0)}';
+  String toString() => '$percent% × $reps @ ${weight.toStringAsFixed(0)}';
 }
 
-class _WU {
+class WarmupScheme {
   final double pct;
   final int reps;
-  const _WU(this.pct, this.reps);
+  const WarmupScheme(this.pct, this.reps);
 }

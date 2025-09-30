@@ -59,7 +59,6 @@ String recipeVisibilityToString(RecipeVisibility v) {
     case RecipeVisibility.public:
       return 'public';
     case RecipeVisibility.private:
-    default:
       return 'private';
   }
 }

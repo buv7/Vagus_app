@@ -108,9 +108,9 @@ Future<SupplementEditorResult?> showSupplementEditorSheet(
                   onPressed: () {
                     if (nameCtrl.text.trim().isEmpty) {
                       ScaffoldMessenger.of(ctx).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('Please enter a supplement name'),
-                          backgroundColor: Theme.of(ctx).colorScheme.error,
+                          backgroundColor: Colors.red,
                         ),
                       );
                       return;

@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../services/ai/nutrition_ai.dart';
 import '../../models/nutrition/food_item.dart';
 
 /// Service for managing barcode scanning and product lookup
@@ -52,7 +52,7 @@ class BarcodeService {
       
       return product;
     } catch (e) {
-      print('Barcode lookup failed: $e');
+      debugPrint('Barcode lookup failed: $e');
       return null;
     }
   }
@@ -93,7 +93,7 @@ class BarcodeService {
       
       _updateCache(code, product);
     } catch (e) {
-      print('Failed to save barcode: $e');
+      debugPrint('Failed to save barcode: $e');
       rethrow;
     }
   }
@@ -110,7 +110,7 @@ class BarcodeService {
 
       return response.map<BarcodeProduct>((item) => BarcodeProduct.fromMap(item)).toList();
     } catch (e) {
-      print('Barcode search failed: $e');
+      debugPrint('Barcode search failed: $e');
       return [];
     }
   }
@@ -129,7 +129,7 @@ class BarcodeService {
 
       return response.map<BarcodeProduct>((item) => BarcodeProduct.fromMap(item)).toList();
     } catch (e) {
-      print('Failed to get recent barcodes: $e');
+      debugPrint('Failed to get recent barcodes: $e');
       return [];
     }
   }

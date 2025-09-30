@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/coach/coach_profile.dart';
 import '../../services/coach_portfolio_service.dart';
+import '../../services/coaches/coach_repository.dart';
+import '../../services/qr_service.dart';
 import '../../widgets/branding/vagus_appbar.dart';
 import '../../theme/app_theme.dart';
 
 class CoachProfilePublicScreen extends StatefulWidget {
-  final String coachId;
+  final String? coachId;
+  final String? username;
+  final Map<String, dynamic>? coachData;
 
-  const CoachProfilePublicScreen({super.key, required this.coachId});
+  const CoachProfilePublicScreen({
+    super.key,
+    this.coachId,
+    this.username,
+    this.coachData,
+  }) : assert(coachId != null || username != null, 'Either coachId or username must be provided');
 
   @override
   State<CoachProfilePublicScreen> createState() => _CoachProfilePublicScreenState();
@@ -16,6 +25,7 @@ class CoachProfilePublicScreen extends StatefulWidget {
 
 class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
   final CoachPortfolioService _portfolioService = CoachPortfolioService();
+  final CoachRepository _coachRepository = CoachRepository();
   final SupabaseClient _supabase = Supabase.instance.client;
   
   CoachProfile? _profile;
@@ -39,12 +49,26 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
       final user = _supabase.auth.currentUser;
       final clientId = user?.id;
 
+      // Resolve coachId if we only have username
+      String? coachId = widget.coachId;
+      if (coachId == null && widget.username != null) {
+        final coachVm = await _coachRepository.byUsername(widget.username!);
+        if (coachVm == null) {
+          throw Exception('Coach not found');
+        }
+        coachId = coachVm.coachId;
+      }
+
+      if (coachId == null) {
+        throw Exception('Coach ID not found');
+      }
+
       // Load profile
-      final profile = await _portfolioService.getCoachProfile(widget.coachId);
-      
+      final profile = await _portfolioService.getCoachProfile(coachId);
+
       // Load approved media (including clients_only if current user is a connected client)
       final media = await _portfolioService.getApprovedMedia(
-        widget.coachId,
+        coachId,
         clientId: clientId,
       );
 
@@ -61,10 +85,42 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
     }
   }
 
+  void _showQrShareSheet() {
+    if (_profile?.username == null) return;
+    
+    final currentUser = _supabase.auth.currentUser;
+    if (currentUser == null) return;
+    
+    QRService().showQRBottomSheet(
+      context,
+      coachId: currentUser.id,
+      coachName: _profile!.displayName ?? 'Coach',
+      username: _profile!.username!,
+    );
+  }
+
+  bool _isOwnProfile() {
+    final currentUser = _supabase.auth.currentUser;
+    return currentUser != null &&
+           (currentUser.id == widget.coachId ||
+            (widget.coachId == null && _profile?.coachId == currentUser.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(title: const Text('Coach Profile')),
+      appBar: VagusAppBar(
+        title: const Text('Coach Profile'),
+        actions: _isOwnProfile() && _profile != null
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.qr_code),
+                  onPressed: _showQrShareSheet,
+                  tooltip: 'Share QR Code',
+                ),
+              ]
+            : null,
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -146,7 +202,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
-        color: AppTheme.primaryBlack,
+        color: AppTheme.primaryDark,
       ),
       child: Column(
         children: [
@@ -162,7 +218,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
             child: const Icon(
               Icons.person,
               size: 60,
-              color: AppTheme.primaryBlack,
+              color: AppTheme.primaryDark,
             ),
           ),
           
@@ -206,7 +262,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppTheme.primaryBlack,
+              color: AppTheme.primaryDark,
             ),
           ),
           const SizedBox(height: 12),
@@ -230,13 +286,13 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
                         Icon(
                           Icons.play_circle_outline,
                           size: 64,
-                          color: AppTheme.primaryBlack,
+                          color: AppTheme.primaryDark,
                         ),
                         SizedBox(height: 8),
                         Text(
                           'Intro Video',
                           style: TextStyle(
-                            color: AppTheme.primaryBlack,
+                            color: AppTheme.primaryDark,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -252,7 +308,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.7),
+                          color: Colors.black.withValues(alpha: 0.7),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
@@ -284,7 +340,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppTheme.primaryBlack,
+              color: AppTheme.primaryDark,
             ),
           ),
           const SizedBox(height: 12),
@@ -301,7 +357,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
               style: const TextStyle(
                 fontSize: 14,
                 height: 1.5,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
               ),
             ),
           ),
@@ -321,7 +377,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppTheme.primaryBlack,
+              color: AppTheme.primaryDark,
             ),
           ),
           const SizedBox(height: 12),
@@ -332,7 +388,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
@@ -362,7 +418,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppTheme.primaryBlack,
+              color: AppTheme.primaryDark,
             ),
           ),
           const SizedBox(height: 12),
@@ -380,7 +436,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -388,7 +444,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
                 const SizedBox(height: 16),
               ],
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -417,12 +473,12 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlack.withOpacity(0.1),
+                color: AppTheme.primaryDark.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 media.mediaType == 'video' ? Icons.play_circle_outline : Icons.school,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 size: 24,
               ),
             ),
@@ -438,7 +494,7 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
                     media.title,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                     ),
                   ),
                   if (media.description != null && media.description!.isNotEmpty) ...[
@@ -460,8 +516,8 @@ class _CoachProfilePublicScreenState extends State<CoachProfilePublicScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: media.visibility == 'public' 
-                              ? Colors.green.withOpacity(0.1)
-                              : Colors.blue.withOpacity(0.1),
+                              ? Colors.green.withValues(alpha: 0.1)
+                              : Colors.blue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(

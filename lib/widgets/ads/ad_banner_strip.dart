@@ -24,6 +24,20 @@ class _AdBannerStripState extends State<AdBannerStrip> {
   bool _loading = true;
   final Set<String> _seenAdIds = {};
 
+  bool _isValidHttpUrl(String? url) {
+    if (url == null) return false;
+    try {
+      final uri = Uri.parse(url.trim());
+      if (!(uri.scheme == 'http' || uri.scheme == 'https')) return false;
+      if ((uri.host).isEmpty) return false;
+      // Avoid known placeholder host that often fails on emulators/offline
+      if (uri.host.contains('via.placeholder.com')) return false;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -64,7 +78,7 @@ class _AdBannerStripState extends State<AdBannerStrip> {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       } catch (e) {
-        print('Error launching URL: $e');
+        debugPrint('Error launching URL: $e');
       }
     }
   }
@@ -106,7 +120,7 @@ class _AdBannerStripState extends State<AdBannerStrip> {
             color: AppTheme.cardBackground.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(DesignTokens.radius12),
             border: Border.all(
-              color: AppTheme.steelGrey.withValues(alpha: 0.3),
+              color: AppTheme.mediumGrey.withValues(alpha: 0.3),
               width: 1,
             ),
             boxShadow: [
@@ -123,34 +137,45 @@ class _AdBannerStripState extends State<AdBannerStrip> {
               children: [
                 // Ad Image
                 Positioned.fill(
-                  child: Image.network(
-                    ad.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: AppTheme.steelGrey,
-                        child: const Center(
-                          child: Icon(
-                            Icons.image_not_supported,
-                            color: AppTheme.lightGrey,
-                            size: 32,
+                  child: _isValidHttpUrl(ad.imageUrl)
+                      ? Image.network(
+                          ad.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppTheme.mediumGrey,
+                              child: const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: AppTheme.lightGrey,
+                                  size: 32,
+                                ),
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: AppTheme.mediumGrey,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: AppTheme.mediumGrey,
+                          child: const Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: AppTheme.lightGrey,
+                              size: 32,
+                            ),
                           ),
                         ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: AppTheme.steelGrey,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                 ),
                 
                 // Gradient overlay for better text readability
@@ -194,12 +219,12 @@ class _AdBannerStripState extends State<AdBannerStrip> {
                     child: Container(
                       padding: const EdgeInsets.all(DesignTokens.space4),
                       decoration: BoxDecoration(
-                        color: AppTheme.mintAqua.withValues(alpha: 0.9),
+                        color: AppTheme.accentGreen.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(DesignTokens.radius4),
                       ),
                       child: const Icon(
                         Icons.open_in_new,
-                        color: AppTheme.primaryBlack,
+                        color: AppTheme.primaryDark,
                         size: 12,
                       ),
                     ),

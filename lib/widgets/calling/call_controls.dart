@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../theme/design_tokens.dart';
 
 class CallControls extends StatelessWidget {
   final bool isMuted;
@@ -15,7 +17,7 @@ class CallControls extends StatelessWidget {
   final VoidCallback onToggleControls;
 
   const CallControls({
-    Key? key,
+    super.key,
     required this.isMuted,
     required this.isVideoEnabled,
     required this.isScreenSharing,
@@ -27,24 +29,39 @@ class CallControls extends StatelessWidget {
     required this.onToggleChat,
     required this.onEndCall,
     required this.onToggleControls,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Colors.black.withOpacity(0.7),
-            Colors.black.withOpacity(0.9),
-          ],
+        color: DesignTokens.cardBackground,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: SafeArea(
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -59,7 +76,7 @@ class CallControls extends StatelessWidget {
                 // Mute button
                 _buildControlButton(
                   icon: isMuted ? Icons.mic_off : Icons.mic,
-                  backgroundColor: isMuted ? Colors.red : Colors.white.withOpacity(0.2),
+                  backgroundColor: isMuted ? Colors.red : Colors.white.withValues(alpha: 0.2),
                   iconColor: isMuted ? Colors.white : Colors.white,
                   onPressed: onToggleMute,
                   tooltip: isMuted ? 'Unmute' : 'Mute',
@@ -68,7 +85,7 @@ class CallControls extends StatelessWidget {
                 // Video button
                 _buildControlButton(
                   icon: isVideoEnabled ? Icons.videocam : Icons.videocam_off,
-                  backgroundColor: isVideoEnabled ? Colors.white.withOpacity(0.2) : Colors.red,
+                  backgroundColor: isVideoEnabled ? Colors.white.withValues(alpha: 0.2) : Colors.red,
                   iconColor: Colors.white,
                   onPressed: onToggleVideo,
                   tooltip: isVideoEnabled ? 'Turn off camera' : 'Turn on camera',
@@ -77,7 +94,7 @@ class CallControls extends StatelessWidget {
                 // Screen share button
                 _buildControlButton(
                   icon: isScreenSharing ? Icons.stop_screen_share : Icons.screen_share,
-                  backgroundColor: isScreenSharing ? Colors.blue : Colors.white.withOpacity(0.2),
+                  backgroundColor: isScreenSharing ? Colors.blue : Colors.white.withValues(alpha: 0.2),
                   iconColor: Colors.white,
                   onPressed: onToggleScreenShare,
                   tooltip: isScreenSharing ? 'Stop sharing' : 'Share screen',
@@ -86,7 +103,7 @@ class CallControls extends StatelessWidget {
                 // Chat button
                 _buildControlButton(
                   icon: Icons.chat,
-                  backgroundColor: Colors.white.withOpacity(0.2),
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
                   iconColor: Colors.white,
                   onPressed: onToggleChat,
                   tooltip: 'Open chat',
@@ -109,9 +126,12 @@ class CallControls extends StatelessWidget {
             // Additional controls
             _buildAdditionalControls(),
           ],
+            ),
+          ),
         ),
       ),
-    );
+        ),
+      );
   }
 
   Widget _buildCallInfo() {
@@ -165,7 +185,7 @@ class CallControls extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -231,7 +251,7 @@ class CallControls extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(

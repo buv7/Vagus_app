@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dart analyze:*)",
+      "Bash(tree:*)",
+      "Bash(grep:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(find:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(powershell:*)",
+      "Bash(npx @supabase/mcp-server-supabase@latest:*)",
+      "Bash(psql:*)",
+      "Bash(npm install:*)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter build:*)",
+      "Bash(pkill:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(dart fix:*)",
+      "Bash(supabase:*)",
+      "Bash(where psql)",
+      "Bash(findstr:*)",
+      "Bash(for file in barcode_scan_screen food_snap_screen grocery_list_screen meal_editor modern_nutrition_plan_builder modern_nutrition_plan_viewer nutrition_hub_screen nutrition_plan_builder nutrition_plan_viewer pantry_screen recipe_editor_screen recipe_library_screen)",
+      "Bash(do echo -n \"$file: \")",
+      "Bash(done)",
+      "Bash(flutter test:*)",
+      "Bash(timeout 15 flutter analyze lib/screens/nutrition/nutrition_plan_builder.dart)",
+      "Bash(dart format:*)",
+      "Bash(timeout:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

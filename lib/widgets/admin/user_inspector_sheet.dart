@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../services/admin/admin_tools.dart';
+import '../../theme/design_tokens.dart';
 
 class UserInspectorSheet extends StatelessWidget {
   final String userId;
@@ -12,16 +14,36 @@ class UserInspectorSheet extends StatelessWidget {
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.92,
-      builder: (_, c) => Material(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-        child: ListView(
-          controller: c,
-          padding: const EdgeInsets.all(16),
+      builder: (_, c) => Container(
+        decoration: BoxDecoration(
+          color: DesignTokens.cardBackground,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Material(
+              color: Colors.transparent,
+              child: ListView(
+                controller: c,
+                padding: const EdgeInsets.all(16),
           children: [
             Row(children: [
               const Icon(Icons.person_outline),
               const SizedBox(width: 8),
-              Expanded(child: Text(email, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
+              Expanded(child: Text(email, style: DesignTokens.displaySmall)),
               IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
             ]),
             const SizedBox(height: 8),
@@ -39,16 +61,19 @@ class UserInspectorSheet extends StatelessWidget {
             _section('Connections', const Text('Health (Fit/HealthKit), Music, Google Drive…')),
             _section('Intake & Supplements', const Text('Intake status, current supplements…')),
             _section('Audit', const Text('Recent actions & notes…')),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
-    );
+        ),
+      );
   }
 
   Widget _section(String title, Widget child) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+      Text(title, style: DesignTokens.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
       const SizedBox(height: 8),
       child,
       const SizedBox(height: 16),

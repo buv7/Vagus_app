@@ -173,7 +173,8 @@ class AdminService {
           .from('coach_applications')
           .select('''
             *,
-            user:profiles(id, email, name)
+            user:profiles!coach_applications_user_id_fkey(id, email, name),
+            reviewer:profiles!coach_applications_reviewed_by_fkey(id, email, name)
           ''');
 
       if (status != null) {
@@ -254,7 +255,7 @@ class AdminService {
             'status': 'rejected',
             'reviewed_at': DateTime.now().toIso8601String(),
             'reviewed_by': currentUser.id,
-            'review_notes': reason ?? 'Application declined',
+            'rejection_reason': reason ?? 'Application declined',
           })
           .eq('id', requestId);
 

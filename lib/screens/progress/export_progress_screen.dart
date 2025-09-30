@@ -15,8 +15,8 @@ class ExportProgressScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: const [
+              const Row(
+                children: [
                   Icon(Icons.download, size: 22),
                   SizedBox(width: 8),
                   Text(
@@ -108,11 +108,11 @@ class ExportProgressScreen extends StatelessWidget {
               // Summary card
               Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text('Summary:',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
                       SizedBox(height: 12),

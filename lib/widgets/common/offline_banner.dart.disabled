@@ -1,0 +1,496 @@
+import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
+import '../../services/network/connectivity_service.dart';
+import '../../services/offline/offline_operation_queue.dart';
+
+/// Offline banner that appears when the user is offline or has pending sync operations
+/// Features: Connection status, sync progress, retry actions, dismissible
+class OfflineBanner extends StatefulWidget {
+  final bool showWhenOnline;
+  final VoidCallback? onRetry;
+  final VoidCallback? onDismiss;
+
+  const OfflineBanner({
+    super.key,
+    this.showWhenOnline = false,
+    this.onRetry,
+    this.onDismiss,
+  });
+
+  @override
+  State<OfflineBanner> createState() => _OfflineBannerState();
+}
+
+class _OfflineBannerState extends State<OfflineBanner>
+    with TickerProviderStateMixin {
+  late AnimationController _slideController;
+  late AnimationController _pulseController;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _pulseAnimation;
+
+  ConnectivityService? _connectivity;
+  OfflineOperationQueue? _offlineQueue;
+  bool _isDismissed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupAnimations();
+    _initializeServices();
+  }
+
+  void _setupAnimations() {
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _pulseAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+
+    _pulseController.repeat(reverse: true);
+  }
+
+  void _initializeServices() {
+    _connectivity = ConnectivityService();
+    _offlineQueue = OfflineOperationQueue();
+
+    _connectivity?.addListener(_onConnectivityChanged);
+    _offlineQueue?.addListener(_onOfflineQueueChanged);
+
+    _updateVisibility();
+  }
+
+  void _onConnectivityChanged() {
+    _updateVisibility();
+  }
+
+  void _onOfflineQueueChanged() {
+    _updateVisibility();
+  }
+
+  void _updateVisibility() {
+    if (!mounted || _isDismissed) return;
+
+    final shouldShow = _shouldShowBanner();
+
+    if (shouldShow && !_slideController.isCompleted) {
+      _slideController.forward();
+    } else if (!shouldShow && _slideController.isCompleted) {
+      _slideController.reverse();
+    }
+  }
+
+  bool _shouldShowBanner() {
+    if (_connectivity == null || _offlineQueue == null) return false;
+
+    final isOffline = _connectivity!.isOffline;
+    final hasPendingOps = _offlineQueue!.hasPendingOperations;
+    final isSyncing = _offlineQueue!.isSyncing;
+
+    if (isOffline) return true;
+    if (hasPendingOps || isSyncing) return true;
+    if (widget.showWhenOnline && _connectivity!.hasSlowConnection) return true;
+
+    return false;
+  }
+
+  @override
+  void dispose() {
+    _connectivity?.removeListener(_onConnectivityChanged);
+    _offlineQueue?.removeListener(_onOfflineQueueChanged);
+    _slideController.dispose();
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_connectivity == null || _offlineQueue == null) {
+      return const SizedBox.shrink();
+    }
+
+    return SlideTransition(
+      position: _slideAnimation,
+      child: _buildBannerContent(),
+    );
+  }
+
+  Widget _buildBannerContent() {
+    final isOffline = _connectivity!.isOffline;
+    final isSyncing = _offlineQueue!.isSyncing;
+    final pendingCount = _offlineQueue!.pendingCount;
+    final hasSlowConnection = _connectivity!.hasSlowConnection;
+
+    Color backgroundColor;
+    Color textColor;
+    IconData icon;
+    String title;
+    String? subtitle;
+
+    if (isOffline) {
+      backgroundColor = Colors.red.withOpacity(0.9);
+      textColor = Colors.white;
+      icon = Icons.wifi_off;
+      title = 'You\'re offline';
+      subtitle = pendingCount > 0
+        ? '$pendingCount change${pendingCount != 1 ? 's' : ''} will sync when connected'
+        : 'Changes will be saved locally';
+    } else if (isSyncing) {
+      backgroundColor = AppTheme.lightOrange.withOpacity(0.9);
+      textColor = Colors.white;
+      icon = Icons.sync;
+      title = 'Syncing changes...';
+      subtitle = '$pendingCount operation${pendingCount != 1 ? 's' : ''} remaining';
+    } else if (pendingCount > 0) {
+      backgroundColor = AppTheme.lightBlue.withOpacity(0.9);
+      textColor = Colors.white;
+      icon = Icons.cloud_upload;
+      title = 'Changes pending';
+      subtitle = '$pendingCount operation${pendingCount != 1 ? 's' : ''} waiting to sync';
+    } else if (hasSlowConnection) {
+      backgroundColor = AppTheme.lightYellow.withOpacity(0.9);
+      textColor = AppTheme.backgroundDark;
+      icon = Icons.network_check;
+      title = 'Slow connection';
+      subtitle = 'Some features may be limited';
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      width: double.infinity,
+      color: backgroundColor,
+      padding: const EdgeInsets.symmetric(
+        horizontal: DesignTokens.space16,
+        vertical: DesignTokens.space12,
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            // Status icon
+            AnimatedBuilder(
+              animation: _pulseAnimation,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: isSyncing ? _pulseAnimation.value : 1.0,
+                  child: Icon(
+                    icon,
+                    color: textColor,
+                    size: 20,
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(width: DesignTokens.space12),
+
+            // Status text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: textColor.withOpacity(0.9),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            // Action buttons
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Retry button
+                if ((isOffline || pendingCount > 0) && !isSyncing) ...[
+                  GestureDetector(
+                    onTap: _handleRetry,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: textColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.refresh,
+                            color: textColor,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Retry',
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: DesignTokens.space8),
+                ],
+
+                // Dismiss button
+                if (widget.onDismiss != null || !isOffline)
+                  GestureDetector(
+                    onTap: _handleDismiss,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: textColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: textColor,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleRetry() {
+    if (widget.onRetry != null) {
+      widget.onRetry!();
+    } else {
+      // Default retry action
+      _offlineQueue?.forcSync();
+    }
+  }
+
+  void _handleDismiss() {
+    if (widget.onDismiss != null) {
+      widget.onDismiss!();
+    } else {
+      // Default dismiss action
+      setState(() => _isDismissed = true);
+      _slideController.reverse();
+
+      // Auto-show again after some time if still offline
+      if (_connectivity!.isOffline) {
+        Future.delayed(const Duration(minutes: 2), () {
+          if (mounted && _connectivity!.isOffline) {
+            setState(() => _isDismissed = false);
+            _updateVisibility();
+          }
+        });
+      }
+    }
+  }
+}
+
+/// Compact connectivity indicator for status bars
+class ConnectivityIndicator extends StatefulWidget {
+  final bool showOnlyWhenOffline;
+
+  const ConnectivityIndicator({
+    super.key,
+    this.showOnlyWhenOffline = true,
+  });
+
+  @override
+  State<ConnectivityIndicator> createState() => _ConnectivityIndicatorState();
+}
+
+class _ConnectivityIndicatorState extends State<ConnectivityIndicator>
+    with TickerProviderStateMixin {
+  late AnimationController _blinkController;
+  ConnectivityService? _connectivity;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _blinkController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _connectivity = ConnectivityService();
+    _connectivity?.addListener(_onConnectivityChanged);
+
+    _updateAnimation();
+  }
+
+  void _onConnectivityChanged() {
+    _updateAnimation();
+  }
+
+  void _updateAnimation() {
+    if (!mounted) return;
+
+    if (_connectivity?.isOffline ?? false) {
+      _blinkController.repeat(reverse: true);
+    } else {
+      _blinkController.stop();
+      _blinkController.reset();
+    }
+  }
+
+  @override
+  void dispose() {
+    _connectivity?.removeListener(_onConnectivityChanged);
+    _blinkController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_connectivity == null) return const SizedBox.shrink();
+
+    final isOffline = _connectivity!.isOffline;
+    final hasSlowConnection = _connectivity!.hasSlowConnection;
+
+    if (widget.showOnlyWhenOffline && !isOffline) {
+      return const SizedBox.shrink();
+    }
+
+    IconData icon;
+    Color color;
+
+    if (isOffline) {
+      icon = Icons.wifi_off;
+      color = Colors.red;
+    } else if (hasSlowConnection) {
+      icon = Icons.network_check;
+      color = AppTheme.lightOrange;
+    } else {
+      icon = Icons.wifi;
+      color = AppTheme.accentGreen;
+    }
+
+    return AnimatedBuilder(
+      animation: _blinkController,
+      builder: (context, child) {
+        return Opacity(
+          opacity: isOffline ? (0.5 + 0.5 * _blinkController.value) : 1.0,
+          child: Icon(
+            icon,
+            color: color,
+            size: 16,
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Sync status chip for showing pending operations
+class SyncStatusChip extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const SyncStatusChip({
+    super.key,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<OfflineOperationQueue>(
+      valueListenable: OfflineOperationQueue(),
+      builder: (context, queue, child) {
+        if (!queue.hasPendingOperations && !queue.isSyncing) {
+          return const SizedBox.shrink();
+        }
+
+        Color backgroundColor;
+        Color textColor;
+        IconData icon;
+        String text;
+
+        if (queue.isSyncing) {
+          backgroundColor = AppTheme.lightOrange.withOpacity(0.2);
+          textColor = AppTheme.lightOrange;
+          icon = Icons.sync;
+          text = 'Syncing...';
+        } else {
+          backgroundColor = AppTheme.lightBlue.withOpacity(0.2);
+          textColor = AppTheme.lightBlue;
+          icon = Icons.cloud_upload;
+          text = '${queue.pendingCount} pending';
+        }
+
+        return GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 4,
+            ),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: textColor.withOpacity(0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: textColor, size: 12),
+                const SizedBox(width: 4),
+                Text(
+                  text,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/intake/intake_form.dart';
 
@@ -62,7 +63,7 @@ class IntakeFormsService {
   IntakeForm _createDefaultForm(String coachId) {
     final questions = [
       // Mandatory allergy questions
-      FormQuestion(
+      const FormQuestion(
         id: 'food_allergies',
         type: 'textarea',
         title: 'Do you have any food allergies? List them.',
@@ -71,7 +72,7 @@ class IntakeFormsService {
         options: {},
         order: 1,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'substance_allergies',
         type: 'textarea',
         title: 'Do you have any drug or supplement allergies? List them.',
@@ -81,7 +82,7 @@ class IntakeFormsService {
         order: 2,
       ),
       // Basic health questions
-      FormQuestion(
+      const FormQuestion(
         id: 'medical_conditions',
         type: 'textarea',
         title: 'Do you have any medical conditions?',
@@ -90,7 +91,7 @@ class IntakeFormsService {
         options: {},
         order: 3,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'medications',
         type: 'textarea',
         title: 'Are you currently taking any medications?',
@@ -99,7 +100,7 @@ class IntakeFormsService {
         options: {},
         order: 4,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'fitness_goals',
         type: 'textarea',
         title: 'What are your fitness goals?',
@@ -108,7 +109,7 @@ class IntakeFormsService {
         options: {},
         order: 5,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'experience_level',
         type: 'select',
         title: 'What is your fitness experience level?',
@@ -119,7 +120,7 @@ class IntakeFormsService {
         },
         order: 6,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'workout_frequency',
         type: 'select',
         title: 'How often do you want to work out?',
@@ -130,7 +131,7 @@ class IntakeFormsService {
         },
         order: 7,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'available_equipment',
         type: 'checkbox',
         title: 'What equipment do you have access to?',
@@ -150,7 +151,7 @@ class IntakeFormsService {
         },
         order: 8,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'dietary_preferences',
         type: 'select',
         title: 'Do you follow any specific dietary preferences?',
@@ -170,7 +171,7 @@ class IntakeFormsService {
         },
         order: 9,
       ),
-      FormQuestion(
+      const FormQuestion(
         id: 'additional_info',
         type: 'textarea',
         title: 'Any additional information?',
@@ -233,7 +234,7 @@ class IntakeFormsService {
           });
     } catch (e) {
       // Don't throw - allergy update is not critical
-      print('Failed to update client allergies: $e');
+      debugPrint('Failed to update client allergies: $e');
     }
   }
 
@@ -349,7 +350,7 @@ class IntakeFormsService {
           });
     } catch (e) {
       // Don't throw - violation recording is not critical
-      print('Failed to record allergy violation: $e');
+      debugPrint('Failed to record allergy violation: $e');
     }
   }
 

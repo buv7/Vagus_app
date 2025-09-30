@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final _sb = Supabase.instance.client;
@@ -37,7 +38,7 @@ class AIDraftReplyService {
       try {
         drafts = await _generateAIDrafts(lastMessage, context, role);
       } catch (e) {
-        print('AIDraftReplyService: AI generation failed, using heuristics - $e');
+        debugPrint('AIDraftReplyService: AI generation failed, using heuristics - $e');
         drafts = _generateHeuristicDrafts(lastMessage, role);
       }
 
@@ -49,7 +50,7 @@ class AIDraftReplyService {
 
       return drafts;
     } catch (e) {
-      print('AIDraftReplyService: Error generating drafts - $e');
+      debugPrint('AIDraftReplyService: Error generating drafts - $e');
       return _generateHeuristicDrafts(lastMessage, role);
     }
   }
@@ -66,7 +67,7 @@ class AIDraftReplyService {
 
       return (response as List<dynamic>).cast<Map<String, dynamic>>();
     } catch (e) {
-      print('AIDraftReplyService: Error fetching conversation context - $e');
+      debugPrint('AIDraftReplyService: Error fetching conversation context - $e');
       return [];
     }
   }
@@ -87,86 +88,86 @@ class AIDraftReplyService {
     if (messageLower.contains('workout') || messageLower.contains('training')) {
       if (role == 'coach') {
         drafts.addAll([
-          "Great work on your training! How are you feeling?",
-          "Let's adjust your next session based on your progress.",
-          "Keep up the consistency - you're doing amazing!",
+          'Great work on your training! How are you feeling?',
+          'Let\'s adjust your next session based on your progress.',
+          'Keep up the consistency - you\'re doing amazing!',
         ]);
       } else {
         drafts.addAll([
-          "Thanks! I'm feeling strong today.",
-          "The workout was challenging but I pushed through.",
-          "I have some questions about my form.",
+          'Thanks! I\'m feeling strong today.',
+          'The workout was challenging but I pushed through.',
+          'I have some questions about my form.',
         ]);
       }
     } else if (messageLower.contains('nutrition') || messageLower.contains('diet') || messageLower.contains('food')) {
       if (role == 'coach') {
         drafts.addAll([
-          "How's your nutrition tracking going?",
-          "Remember to stay hydrated throughout the day.",
-          "Let's review your meal plan for this week.",
+          'How\'s your nutrition tracking going?',
+          'Remember to stay hydrated throughout the day.',
+          'Let\'s review your meal plan for this week.',
         ]);
       } else {
         drafts.addAll([
-          "I've been tracking my meals consistently.",
-          "I'm struggling with meal prep this week.",
-          "My energy levels have been great!",
+          'I\'ve been tracking my meals consistently.',
+          'I\'m struggling with meal prep this week.',
+          'My energy levels have been great!',
         ]);
       }
     } else if (messageLower.contains('sleep') || messageLower.contains('rest')) {
       if (role == 'coach') {
         drafts.addAll([
-          "Sleep is crucial for recovery. How many hours did you get?",
-          "Let's work on improving your sleep routine.",
-          "Quality rest will help your performance.",
+          'Sleep is crucial for recovery. How many hours did you get?',
+          'Let\'s work on improving your sleep routine.',
+          'Quality rest will help your performance.',
         ]);
       } else {
         drafts.addAll([
-          "I got 7 hours last night.",
-          "I've been having trouble sleeping lately.",
-          "My sleep has been much better this week.",
+          'I got 7 hours last night.',
+          'I\'ve been having trouble sleeping lately.',
+          'My sleep has been much better this week.',
         ]);
       }
     } else if (messageLower.contains('pain') || messageLower.contains('hurt') || messageLower.contains('injury')) {
       if (role == 'coach') {
         drafts.addAll([
-          "I'm concerned about that. Let's take it easy today.",
-          "Please rest and let me know how you feel tomorrow.",
-          "We should modify your training until this improves.",
+          'I\'m concerned about that. Let\'s take it easy today.',
+          'Please rest and let me know how you feel tomorrow.',
+          'We should modify your training until this improves.',
         ]);
       } else {
         drafts.addAll([
-          "I'll take it easy and rest today.",
-          "It's not too bad, just a little sore.",
-          "I think I need to see a doctor.",
+          'I\'ll take it easy and rest today.',
+          'It\'s not too bad, just a little sore.',
+          'I think I need to see a doctor.',
         ]);
       }
     } else if (messageLower.contains('progress') || messageLower.contains('results')) {
       if (role == 'coach') {
         drafts.addAll([
-          "Your progress has been incredible! Keep it up!",
-          "I'm proud of your dedication and consistency.",
-          "Let's celebrate this milestone together!",
+          'Your progress has been incredible! Keep it up!',
+          'I\'m proud of your dedication and consistency.',
+          'Let\'s celebrate this milestone together!',
         ]);
       } else {
         drafts.addAll([
-          "Thank you! I'm really seeing the results.",
-          "I'm excited to see what's next.",
-          "I couldn't have done it without your guidance.",
+          'Thank you! I\'m really seeing the results.',
+          'I\'m excited to see what\'s next.',
+          'I couldn\'t have done it without your guidance.',
         ]);
       }
     } else {
       // Generic responses based on role
       if (role == 'coach') {
         drafts.addAll([
-          "Thanks for the update! How can I help?",
-          "I appreciate you keeping me in the loop.",
-          "Let's discuss this in more detail.",
+          'Thanks for the update! How can I help?',
+          'I appreciate you keeping me in the loop.',
+          'Let\'s discuss this in more detail.',
         ]);
       } else {
         drafts.addAll([
-          "Thanks for your support!",
-          "I'll keep you updated on my progress.",
-          "I have a question about my program.",
+          'Thanks for your support!',
+          'I\'ll keep you updated on my progress.',
+          'I have a question about my program.',
         ]);
       }
     }
@@ -179,15 +180,15 @@ class AIDraftReplyService {
   List<String> _generateHeuristicDrafts(String lastMessage, String role) {
     if (role == 'coach') {
       return [
-        "Thanks for the update! How can I help?",
-        "Great job this week! Keep up the consistency.",
-        "Let's adjust your next session based on your progress.",
+        'Thanks for the update! How can I help?',
+        'Great job this week! Keep up the consistency.',
+        'Let\'s adjust your next session based on your progress.',
       ];
     } else {
       return [
-        "Thanks for your support!",
-        "I'll keep you updated on my progress.",
-        "I have a question about my program.",
+        'Thanks for your support!',
+        'I\'ll keep you updated on my progress.',
+        'I have a question about my program.',
       ];
     }
   }

@@ -8,7 +8,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/navigation/vagus_side_menu.dart';
-import '../../services/progress/progress_service.dart';
 
 class ModernWorkoutPlanViewer extends StatefulWidget {
   const ModernWorkoutPlanViewer({super.key});
@@ -19,8 +18,6 @@ class ModernWorkoutPlanViewer extends StatefulWidget {
 
 class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   String _selectedPlan = 'strength-building';
-  int _selectedWeek = 1;
-  String _searchQuery = '';
   
   // Real data from Supabase
   List<Map<String, dynamic>> _workoutPlans = [];
@@ -30,14 +27,13 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   String _role = 'client';
   
   // Progress tracking
-  int _currentProgress = 45;
-  int _targetProgress = 60;
-  int _currentWeek = 1;
+  final int _currentProgress = 45;
+  final int _targetProgress = 60;
+  final int _currentWeek = 1;
   int _totalWeeks = 8;
-  double _completionPercentage = 0.75;
+  final double _completionPercentage = 0.75;
   
   // Services
-  final ProgressService _progressService = ProgressService();
 
   @override
   void initState() {
@@ -134,7 +130,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                 ),
               ),
               trailing: _selectedPlan == plan['id']?.toString()
-                  ? const Icon(Icons.check, color: AppTheme.mintAqua)
+                  ? const Icon(Icons.check, color: AppTheme.accentGreen)
                   : null,
               onTap: () {
                 setState(() {
@@ -154,14 +150,14 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       drawerEdgeDragWidth: 24,
       drawer: const VagusSideMenu(isClient: true),
       body: SafeArea(
         child: _isLoading 
             ? const Center(
                 child: CircularProgressIndicator(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                 ),
               )
             : _error != null
@@ -169,22 +165,25 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.error_outline,
                           color: Colors.red,
                           size: 48,
                         ),
                         const SizedBox(height: DesignTokens.space16),
-                        Text(
+                        const Text(
                           'Error loading workout plans',
-                          style: DesignTokens.titleMedium.copyWith(
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: DesignTokens.space8),
                         Text(
                           _error!,
-                          style: DesignTokens.bodyMedium.copyWith(
+                          style: const TextStyle(
+                            fontSize: 14,
                             color: Colors.white70,
                           ),
                           textAlign: TextAlign.center,
@@ -193,8 +192,8 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                         ElevatedButton(
                           onPressed: _loadWorkoutPlans,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.mintAqua,
-                            foregroundColor: AppTheme.primaryBlack,
+                            backgroundColor: AppTheme.accentGreen,
+                            foregroundColor: AppTheme.primaryDark,
                           ),
                           child: const Text('Retry'),
                         ),
@@ -202,7 +201,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                     ),
                   )
                 : _workoutPlans.isEmpty
-                    ? Center(
+                    ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -211,17 +210,20 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                               color: Colors.white70,
                               size: 48,
                             ),
-                            const SizedBox(height: DesignTokens.space16),
+                            SizedBox(height: DesignTokens.space16),
                             Text(
                               'No workout plans found',
-                              style: DesignTokens.titleMedium.copyWith(
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(height: DesignTokens.space8),
+                            SizedBox(height: DesignTokens.space8),
                             Text(
                               'Your coach will create workout plans for you',
-                              style: DesignTokens.bodyMedium.copyWith(
+                              style: TextStyle(
+                                fontSize: 14,
                                 color: Colors.white70,
                               ),
                               textAlign: TextAlign.center,
@@ -298,7 +300,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             decoration: BoxDecoration(
               color: AppTheme.cardBackground,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
@@ -333,7 +335,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
           decoration: BoxDecoration(
             color: AppTheme.cardBackground,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -387,7 +389,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -421,10 +423,10 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                 vertical: DesignTokens.space8,
               ),
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlack.withOpacity(0.3),
+                color: AppTheme.primaryDark.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
               ),
               child: Row(
@@ -463,7 +465,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         width: 8,
                       ),
                     ),
@@ -476,7 +478,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                       value: _completionPercentage,
                       strokeWidth: 8,
                       backgroundColor: Colors.transparent,
-                      valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                      valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                     ),
                   ),
                   // Center text
@@ -590,13 +592,13 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                 vertical: 4,
               ),
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.mintAqua : Colors.transparent,
+                color: isSelected ? AppTheme.accentGreen : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 'W$weekNumber',
                 style: DesignTokens.bodySmall.copyWith(
-                  color: isSelected ? AppTheme.primaryBlack : Colors.white70,
+                  color: isSelected ? AppTheme.primaryDark : Colors.white70,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
@@ -622,10 +624,10 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
           vertical: DesignTokens.space8,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.primaryBlack.withOpacity(0.3),
+          color: AppTheme.primaryDark.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -796,12 +798,12 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                 width: 40,
                 height: 40,
                 decoration: const BoxDecoration(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.add,
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   size: 20,
                 ),
               ),
@@ -831,7 +833,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('$action feature coming soon!'),
-            backgroundColor: AppTheme.mintAqua,
+            backgroundColor: AppTheme.accentGreen,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -864,7 +866,9 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
         subject: 'My Workout Plan - ${_currentPlan!['name'] ?? 'Workout Plan'}',
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!mounted) return;
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      scaffoldMessenger.showSnackBar(
         SnackBar(
           content: Text('Failed to share workout plan: $e'),
           backgroundColor: Colors.red,
@@ -903,7 +907,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
 
     try {
       // Show loading dialog
-      showDialog(
+      unawaited(showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const AlertDialog(
@@ -915,7 +919,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             ],
           ),
         ),
-      );
+      ));
 
       // Generate PDF
       final pdf = pw.Document();

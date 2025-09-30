@@ -19,7 +19,7 @@ class Tempo {
     // Extract if present inside notes as "tempo: 3-1-1-0" (or similar)
     final tempoLine = RegExp(r'tempo\s*:\s*([0-9:\- ]{3,})').firstMatch(s)?.group(1) ?? s;
 
-    String digitsOnly = tempoLine.replaceAll(RegExp(r'[^0-9]'), '');
+    final String digitsOnly = tempoLine.replaceAll(RegExp(r'[^0-9]'), '');
     // Accept "3110" form
     if (digitsOnly.length == 4) {
       final a = int.tryParse(digitsOnly[0]);

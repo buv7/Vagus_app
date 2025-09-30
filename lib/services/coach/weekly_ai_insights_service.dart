@@ -56,7 +56,7 @@ class WeeklyAIInsightsService {
     final df = DateFormat('yyyy-MM-dd');
     String series(String label, List<DailyPoint> xs, {int decimals = 0}) {
       final values = xs.map((p) => p.value.toStringAsFixed(decimals)).join(',');
-      return '$label=[${values}]';
+      return '$label=[$values]';
     }
 
     return [
@@ -135,8 +135,6 @@ class WeeklyAIInsightsService {
     final avgSleep = _avg(d.trends.sleepHours);
     final totalSteps = d.trends.steps.fold<double>(0, (s, p) => s + p.value);
     final avgSteps = totalSteps / max(1, d.trends.steps.length);
-    final avgIn = _avg(d.trends.caloriesIn);
-    final avgOut = _avg(d.trends.caloriesOut);
     final net = d.energyBalance.net;
     final comp = d.summary.compliancePercent;
 

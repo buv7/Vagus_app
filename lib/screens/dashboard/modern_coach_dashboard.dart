@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/coach/coach_dashboard_header.dart';
 import '../../widgets/coach/performance_analytics_card.dart';
 import '../../widgets/coach/coach_inbox_card.dart';
 import '../../widgets/coach/connected_clients_card.dart';
@@ -11,10 +10,6 @@ import '../../widgets/coach/pending_requests_card.dart';
 import '../../widgets/coach/recent_checkins_card.dart';
 import '../../widgets/coach/upcoming_sessions_card.dart';
 import '../../widgets/coach/quick_actions_grid.dart';
-import '../../services/coach/coach_analytics_service.dart';
-import '../../services/coach/coach_inbox_service.dart';
-import '../../services/coach/coach_client_management_service.dart';
-import '../menu/modern_coach_menu_screen.dart';
 import '../../widgets/ads/ad_banner_strip.dart';
 import '../coach/program_ingest_upload_sheet.dart';
 
@@ -27,11 +22,10 @@ class ModernCoachDashboard extends StatefulWidget {
 
 class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
   final supabase = Supabase.instance.client;
-  final CoachAnalyticsService _analyticsService = CoachAnalyticsService();
-  final CoachInboxService _inboxService = CoachInboxService();
-  final CoachClientManagementService _clientService = CoachClientManagementService();
+  // final CoachAnalyticsService _analyticsService = CoachAnalyticsService();
+  // final CoachInboxService _inboxService = CoachInboxService();
+  // final CoachClientManagementService _clientService = CoachClientManagementService();
   
-  Map<String, dynamic>? _profile;
   List<Map<String, dynamic>> _clients = [];
   List<Map<String, dynamic>> _requests = [];
   List<Map<String, dynamic>> _recentCheckins = [];
@@ -51,16 +45,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
     if (user == null) return;
 
     try {
-      // Load profile data
-      final profileData = await supabase
-          .from('profiles')
-          .select()
-          .eq('id', user.id)
-          .single();
 
-      setState(() {
-        _profile = profileData;
-      });
 
       // Load connected clients
       final links = await supabase
@@ -91,7 +76,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
             .eq('status', 'pending')
             .not('client_id', 'in', clientIds);
 
-        List<Map<String, dynamic>> requests = [];
+        final List<Map<String, dynamic>> requests = [];
         if (requestLinks.isNotEmpty) {
           final requestClientIds = requestLinks.map((row) => row['client_id'] as String).toList();
           
@@ -156,7 +141,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
           .order('created_at', ascending: false)
           .limit(3);
 
-      List<Map<String, dynamic>> checkinsData = [];
+      final List<Map<String, dynamic>> checkinsData = [];
       if (checkinsLinks.isNotEmpty) {
         final checkinClientIds = checkinsLinks.map((row) => row['client_id'] as String).toList();
         
@@ -285,17 +270,17 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         body: Center(
           child: CircularProgressIndicator(
-            color: AppTheme.mintAqua,
+            color: AppTheme.accentGreen,
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(DesignTokens.space16),
@@ -415,36 +400,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
               
               // Quick Actions
               QuickActionsGrid(
-                onNewWorkoutPlan: () {
-                  // Navigate to workout plan builder
-                },
-                onNewNutritionPlan: () {
-                  // Navigate to nutrition plan builder
-                },
-                onAddCoachNote: () {
-                  // Navigate to coach notes
-                },
-                onOpenMessages: () {
-                  // Navigate to messages
-                },
-                onAddSupplement: () {
-                  // Navigate to supplement editor
-                },
-                onTemplates: () {
-                  // Navigate to templates
-                },
-                onIntakeForms: () {
-                  // Navigate to intake forms
-                },
-                onPublishAvailability: () {
-                  // Navigate to availability publisher
-                },
-                onViewAnalytics: () {
-                  // Navigate to analytics
-                },
-                onImportProgram: () {
-                  _showImportProgramSheet();
-                },
+                onImportProgram: _showImportProgramSheet,
               ),
               
               const SizedBox(height: DesignTokens.space32),
@@ -456,53 +412,29 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
   }
 
   Widget _buildModernHeader() {
-    return Row(
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Menu Icon
-        IconButton(
-          onPressed: () => _openMenu(),
-          icon: const Icon(
-            Icons.menu,
+        Text(
+          'Dashboard',
+          style: TextStyle(
             color: AppTheme.neutralWhite,
-            size: 28,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        
-        // Title and Description
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Dashboard', // Menu Icon Added
-                style: const TextStyle(
-                  color: AppTheme.neutralWhite,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: DesignTokens.space8),
-              Text(
-                'Monitor your coaching performance and client progress',
-                style: TextStyle(
-                  color: AppTheme.lightGrey,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+        SizedBox(height: DesignTokens.space8),
+        Text(
+          'Monitor your coaching performance and client progress',
+          style: TextStyle(
+            color: AppTheme.lightGrey,
+            fontSize: 16,
           ),
         ),
       ],
     );
   }
 
-  void _openMenu() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ModernCoachMenuScreen(),
-      ),
-    );
-  }
 
   void _showImportProgramSheet() {
     showModalBottomSheet(

@@ -1,6 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../components/common/section_header_bar.dart';
 import '../../services/progress/progress_service.dart';
+import '../../theme/design_tokens.dart';
 import 'package:intl/intl.dart';
 
 class CheckinsCard extends StatefulWidget {
@@ -291,22 +293,43 @@ class _CheckinsCardState extends State<CheckinsCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
             SectionHeaderBar(
               title: 'Weekly Check-ins',
-              leadingIcon: const Icon(Icons.chat_bubble_outline, color: Colors.purple),
+              leadingIcon: const Icon(Icons.chat_bubble_outline, color: DesignTokens.accentGreen),
               actionLabel: 'New Check-in',
               onAction: _showCreateCheckinDialog,
               actionIcon: Icons.add,
             ),
             const SizedBox(height: 16),
             _buildCheckinsList(),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

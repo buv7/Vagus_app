@@ -1,8 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/ai/nutrition_ai.dart';
 import '../../models/nutrition/food_item.dart';
 import '../../services/nutrition/locale_helper.dart';
@@ -334,7 +332,7 @@ class _FoodSnapScreenState extends State<FoodSnapScreen> {
                 Expanded(
                   child: _buildNutritionChip(
                     LocaleHelper.t('calories', language),
-                    '${item.kcal.toStringAsFixed(0)}',
+                    item.kcal.toStringAsFixed(0),
                     Colors.orange,
                   ),
                 ),
@@ -547,7 +545,8 @@ class _FoodSnapScreenState extends State<FoodSnapScreen> {
     
     try {
       final bytes = await _selectedImage!.readAsBytes();
-      final user = Supabase.instance.client.auth.currentUser;
+      // final user = Supabase.instance.client.auth.currentUser;
+      if (!mounted) return;
       final locale = Localizations.localeOf(context).languageCode;
       
       final foodItem = await _nutritionAI.estimateFromPhoto(

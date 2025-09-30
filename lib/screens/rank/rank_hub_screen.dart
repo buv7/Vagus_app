@@ -128,7 +128,7 @@ class _RankHubScreenState extends State<RankHubScreen>
                 Text(
                   'Progress: 75%',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                   ),
                 ),
               ],
@@ -165,7 +165,7 @@ class _RankHubScreenState extends State<RankHubScreen>
       children: [
         // Your position
         Card(
-          color: AppTheme.primaryBlack.withValues(alpha: 0.1),
+          color: AppTheme.primaryDark.withValues(alpha: 0.1),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -174,7 +174,7 @@ class _RankHubScreenState extends State<RankHubScreen>
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Icon(
@@ -195,7 +195,7 @@ class _RankHubScreenState extends State<RankHubScreen>
                         '#${leaderboard.firstWhere((item) => item['isYou'] == true)['position']}',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryBlack,
+                          color: AppTheme.primaryDark,
                         ),
                       ),
                     ],
@@ -354,7 +354,7 @@ class _BadgeCard extends StatelessWidget {
                 icon,
                 size: 48,
                 color: isUnlocked 
-                    ? (isPro ? AppTheme.steelGrey : AppTheme.primaryBlack)
+                    ? (isPro ? AppTheme.mediumGrey : AppTheme.primaryDark)
                     : Colors.grey,
               ),
               const SizedBox(height: 12),
@@ -391,13 +391,13 @@ class _BadgeCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppTheme.steelGrey.withValues(alpha: 0.2),
+                    color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'PRO',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.steelGrey,
+                      color: AppTheme.mediumGrey,
                       fontWeight: FontWeight.bold,
                       fontSize: 10,
                     ),
@@ -432,7 +432,7 @@ class _SeasonRewardItem extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: isUnlocked ? AppTheme.primaryBlack : Colors.grey,
+            color: isUnlocked ? AppTheme.primaryDark : Colors.grey,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Icon(
@@ -456,7 +456,7 @@ class _SeasonRewardItem extends StatelessWidget {
           ),
         ),
         trailing: isUnlocked 
-            ? const Icon(Icons.check_circle, color: AppTheme.primaryBlack)
+            ? const Icon(Icons.check_circle, color: AppTheme.primaryDark)
             : null,
       ),
     );
@@ -480,7 +480,7 @@ class _LeaderboardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      color: isYou ? AppTheme.primaryBlack.withValues(alpha: 0.1) : null,
+      color: isYou ? AppTheme.primaryDark.withValues(alpha: 0.1) : null,
       child: ListTile(
         leading: Container(
           width: 32,
@@ -504,14 +504,14 @@ class _LeaderboardItem extends StatelessWidget {
           name,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontWeight: isYou ? FontWeight.bold : FontWeight.normal,
-            color: isYou ? AppTheme.primaryBlack : null,
+            color: isYou ? AppTheme.primaryDark : null,
           ),
         ),
         trailing: Text(
           '$points pts',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: isYou ? AppTheme.primaryBlack : null,
+            color: isYou ? AppTheme.primaryDark : null,
           ),
         ),
       ),
@@ -527,7 +527,7 @@ class _LeaderboardItem extends StatelessWidget {
       case 3:
         return Colors.brown.shade300;
       default:
-        return AppTheme.primaryBlack;
+        return AppTheme.primaryDark;
     }
   }
 }

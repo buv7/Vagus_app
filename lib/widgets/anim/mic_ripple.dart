@@ -30,7 +30,7 @@ class MicRipple extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: RiveAnimation.asset(
+      child: const RiveAnimation.asset(
         AnimPaths.riveMicRipple,
         fit: BoxFit.contain,
       ),

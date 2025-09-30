@@ -1,9 +1,8 @@
-import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/app_theme.dart';
-import '../../screens/nutrition/meal_editor.dart';
+import '../../theme/design_tokens.dart';
 import '../../screens/progress/progress_gallery.dart';
 import '../../screens/files/upload_photos_screen.dart';
 import '../../services/ocr/ocr_cardio_service.dart';
@@ -26,11 +25,9 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
   bool _isOpen = false;
   late AnimationController _animationController;
   late AnimationController _pulseController;
-  late Animation<double> _rotationAnimation;
-  late Animation<double> _pulseAnimation;
 
   // Camera action items configuration
-  final List<CameraFABAction> _actions = [
+  final List<CameraFABAction> _actions = const [
     CameraFABAction(
       icon: Icons.favorite,
       label: 'OCR Cardio',
@@ -64,21 +61,6 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
       vsync: this,
     );
 
-    _rotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 0.125, // 45 degrees
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
 
     // Start pulse animation
     _pulseController.repeat(reverse: true);
@@ -132,6 +114,7 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
   void _handleOCRCardio() async {
     try {
       // Show loading indicator
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Row(
@@ -148,7 +131,7 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
               Text('Processing cardio workout...'),
             ],
           ),
-          backgroundColor: AppTheme.mintAqua,
+          backgroundColor: AppTheme.accentGreen,
           duration: Duration(seconds: 3),
         ),
       );
@@ -158,10 +141,12 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
       
       // Process the workout image
       final workoutData = await ocrService.processWorkoutImage();
+      if (!mounted) return;
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
       
       if (workoutData != null) {
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text('✅ Cardio workout logged successfully! ${workoutData.sport} - ${workoutData.distance}${workoutData.distanceUnit}'),
             backgroundColor: Colors.green,
@@ -169,7 +154,7 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
         );
       } else {
         // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(
             content: Text('❌ Failed to process workout image. Please try again.'),
             backgroundColor: Colors.red,
@@ -178,6 +163,7 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
       }
     } catch (e) {
       // Show error message
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('❌ Error processing cardio: $e'),
@@ -217,16 +203,19 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
     return Positioned.fill(
       child: GestureDetector(
         onTap: _toggleFAB, // Dismiss when tapping outside
+        behavior: HitTestBehavior.translucent, // Allow taps to reach this detector
         child: Container(
-          color: Colors.black.withValues(alpha: 0.3), // Semi-transparent backdrop
-          child: Center(
-            child: GestureDetector(
-              onTap: () {}, // Prevent dismissal when tapping on the boxes
-              child: Column(
+          color: Colors.transparent, // Completely transparent backdrop
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.25), // Push down more from top
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: _buildActionBoxes(),
               ),
-            ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.10), // Smaller bottom spacing
+            ],
           ),
         ),
       ),
@@ -235,7 +224,7 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
 
   List<Widget> _buildActionBoxes() {
     return _actions.asMap().entries.map((entry) {
-      final index = entry.key;
+      // final index = entry.key;
       final action = entry.value;
       
       return AnimatedBuilder(
@@ -253,24 +242,53 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
                 opacity: _animationController.value,
                 child: GestureDetector(
                   onTap: () => _onActionTap(action),
-                  child: Container(
-                    width: 320,
-                    height: 80,
+                  behavior: HitTestBehavior.opaque, // Prevent tap from bubbling up
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 280,
+                      maxWidth: 360,
+                      minHeight: 80,
+                      maxHeight: 80,
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.85, // 85% of screen width
+                      height: 80,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16), // Rounded corners
-                      color: AppTheme.mintAqua, // Solid teal background like in the image
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          DesignTokens.accentBlue.withValues(alpha: 0.3),
+                          DesignTokens.accentBlue.withValues(alpha: 0.15),
+                        ],
+                      ),
+                      border: Border.all(
+                        color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                        width: 1,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.mintAqua.withValues(alpha: 0.3),
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.3),
                           blurRadius: 20,
-                          spreadRadius: 2,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 8),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
+                          spreadRadius: 0,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                      child: Row(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          child: Row(
                         children: [
                           // Icon container with circular background
                           Container(
@@ -313,8 +331,11 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
                             ),
                           ),
                         ],
+                          ),
+                        ),
                       ),
                     ),
+                  ),
                   ),
                 ),
               ),

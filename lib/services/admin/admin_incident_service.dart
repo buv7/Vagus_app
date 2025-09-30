@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/admin/incident_models.dart';
 import '../../models/admin/ticket_models.dart';
-import '../../models/admin/support_models.dart'; // Added for CannedReply
+ // Added for CannedReply
 
 // ---- ADMIN V18: Enhanced features ----
 
@@ -292,9 +292,9 @@ class AdminIncidentService {
   }
 
   // ---- MACROS (with variables) ------------------------------------------------
-  final List<AdminMacro> _macros = [
-    AdminMacro(id: 'm1', name: 'Welcome + next steps', body: 'Hello {{name}}, thanks for reaching out. For case {{id}}, do {{step}}.'),
-    AdminMacro(id: 'm2', name: 'Escalation notice',  body: 'Hi {{name}}, we escalated case {{id}} to tier {{tier}}. ETA {{eta}}.'),
+  final List<AdminMacro> _macros = const [
+    AdminMacro(id: 'm1', name: 'Welcome + next steps', body: 'Hello {{name}}, thanks for reaching out. For case {{id}}, do {{step}}.'), 
+    AdminMacro(id: 'm2', name: 'Escalation notice',  body: 'Hi {{name}}, we escalated case {{id}} to tier {{tier}}. ETA {{eta}}.'), 
   ];
 
   Future<List<AdminMacro>> listMacros() async => _macros;
@@ -360,13 +360,21 @@ class AdminIncidentService {
     int n=0,i=0,b=0,r=0;
     for (final t in all) {
       final s = t.status.name; // Use the actual status enum
-      if (s=='open') n++; else if (s=='pending') i++; else if (s=='solved') r++; else if (s=='archived') b++;
+      if (s=='open') {
+        n++;
+      } else if (s=='pending') {
+        i++;
+      } else if (s=='solved') {
+        r++;
+      } else if (s=='archived') {
+        b++;
+      }
     }
     return AdminStats(all.length,n,i,b,r);
   }
 
   // Playbooks (checklist templates)
-  final List<AdminPlaybook> _playbooks = [
+  final List<AdminPlaybook> _playbooks = const [
     AdminPlaybook('pb1','Authentication lockout',['Verify identity','Reset sign-in methods','Force token refresh','Notify user']),
     AdminPlaybook('pb2','Payment failure',['Check recent invoices','Retry charge','Offer alt method','Create support note']),
   ];

@@ -21,7 +21,6 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
   List<SupplementDueToday> _supplements = [];
   bool _loading = true;
   String? _error;
-  bool _isProUser = false;
 
   @override
   void initState() {
@@ -122,8 +121,8 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
 
   Future<void> _checkProStatus() async {
     try {
-      final isPro = await _planAccessManager.isProUser();
-      setState(() => _isProUser = isPro);
+      await _planAccessManager.isProUser();
+      setState(() {});
     } catch (e) {
       // Ignore pro status errors
     }
@@ -236,9 +235,9 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         title: const Text(
           'Supplements Today',
@@ -256,7 +255,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
             ),
             child: IconButton(
               onPressed: _loadSupplements,
-              icon: const Icon(Icons.refresh, color: AppTheme.mintAqua),
+              icon: const Icon(Icons.refresh, color: AppTheme.accentGreen),
               tooltip: 'Refresh',
             ),
           ),
@@ -278,7 +277,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
           ),
           SizedBox(height: 16),
           Text(
@@ -346,7 +345,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.mintAqua,
+                backgroundColor: AppTheme.accentGreen,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
@@ -369,7 +368,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
           color: const Color(0xFF2C2F33),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppTheme.mintAqua.withValues(alpha: 0.2),
+            color: AppTheme.accentGreen.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -380,12 +379,12 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                color: AppTheme.accentGreen.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.medication,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 32,
               ),
             ),
@@ -415,7 +414,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
               icon: const Icon(Icons.arrow_back),
               label: const Text('Back to Dashboard'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.mintAqua,
+                backgroundColor: AppTheme.accentGreen,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
@@ -447,22 +446,22 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
               color: const Color(0xFF2C2F33),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppTheme.mintAqua.withValues(alpha: 0.2),
+                color: AppTheme.accentGreen.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.trending_up,
-                      color: AppTheme.mintAqua,
+                      color: AppTheme.accentGreen,
                       size: 24,
                     ),
-                    const SizedBox(width: 12),
-                    const Text(
+                    SizedBox(width: 12),
+                    Text(
                       'Today\'s Progress',
                       style: TextStyle(
                         color: Colors.white,
@@ -479,7 +478,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
                       child: LinearProgressIndicator(
                         value: progress,
                         backgroundColor: Colors.white.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                        valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                         minHeight: 8,
                       ),
                     ),
@@ -634,7 +633,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
                     label: const Text('Skip'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white70,
-                      side: BorderSide(color: Colors.white70),
+                      side: const BorderSide(color: Colors.white70),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),

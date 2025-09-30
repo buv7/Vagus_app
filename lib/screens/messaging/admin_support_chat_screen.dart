@@ -263,7 +263,7 @@ class _AdminSupportChatScreenState extends State<AdminSupportChatScreen> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: hasAvatar ? NetworkImage(adminAvatar as String) : null,
+              backgroundImage: hasAvatar ? NetworkImage(adminAvatar) : null,
               child: !hasAvatar ? const Icon(Icons.support_agent) : null,
             ),
             const SizedBox(width: 12),

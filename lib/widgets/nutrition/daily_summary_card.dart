@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../models/nutrition/nutrition_plan.dart';
 import '../../services/nutrition/locale_helper.dart';
@@ -48,93 +49,113 @@ class DailySummaryCard extends StatelessWidget {
 
     return GestureDetector(
       onLongPress: () => _showShareOptions(context),
-      child: Card(
-        color: DesignTokens.blue50,
-        child: Padding(
-          padding: const EdgeInsets.all(DesignTokens.space16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      child: Container(
+        decoration: BoxDecoration(
+          color: DesignTokens.cardBackground,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              padding: const EdgeInsets.all(DesignTokens.space16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.calculate, color: DesignTokens.blue600),
-                  const SizedBox(width: DesignTokens.space8),
-                  Text(
-                    LocaleHelper.t('daily_totals', language),
-                    style: DesignTokens.titleMedium.copyWith(
-                      color: DesignTokens.blue600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: DesignTokens.space12),
-
-              // Macros row
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildMacroItem(
-                      LocaleHelper.t('protein', language),
-                      '${summary.totalProtein.toStringAsFixed(1)} g',
-                      Colors.red.shade600,
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildMacroItem(
-                      LocaleHelper.t('carbs', language),
-                      '${summary.totalCarbs.toStringAsFixed(1)} g',
-                      Colors.orange.shade600,
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildMacroItem(
-                      LocaleHelper.t('fat', language),
-                      '${summary.totalFat.toStringAsFixed(1)} g',
-                      Colors.yellow.shade700,
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildMacroItem(
-                      LocaleHelper.t('calories', language),
-                      '${summary.totalKcal.toStringAsFixed(0)} kcal',
-                      Colors.green.shade600,
-                    ),
-                  ),
-                ],
-              ),
-
-              if (!isCompact) ...[
-                const SizedBox(height: DesignTokens.space12),
-
-                // Minerals row
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMineralItem(
-                        LocaleHelper.t('sodium', language),
-                        '${summary.totalSodium.toStringAsFixed(0)} mg',
-                        summary.totalSodium,
-                        isSodium: true,
+                  Row(
+                    children: [
+                      const Icon(Icons.calculate, color: DesignTokens.blue600),
+                      const SizedBox(width: DesignTokens.space8),
+                      Text(
+                        LocaleHelper.t('daily_totals', language),
+                        style: DesignTokens.titleMedium.copyWith(
+                          color: DesignTokens.blue600,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: _buildMineralItem(
-                        LocaleHelper.t('potassium', language),
-                        '${summary.totalPotassium.toStringAsFixed(0)} mg',
-                        summary.totalPotassium,
-                        isSodium: false,
-                      ),
-                    ),
-                  ],
-                ),
-
-                // Warnings
-                if (_hasWarnings()) ...[
+                    ],
+                  ),
                   const SizedBox(height: DesignTokens.space12),
-                  _buildWarnings(language),
+
+                  // Macros row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildMacroItem(
+                          LocaleHelper.t('protein', language),
+                          '${summary.totalProtein.toStringAsFixed(1)} g',
+                          Colors.red.shade600,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildMacroItem(
+                          LocaleHelper.t('carbs', language),
+                          '${summary.totalCarbs.toStringAsFixed(1)} g',
+                          Colors.orange.shade600,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildMacroItem(
+                          LocaleHelper.t('fat', language),
+                          '${summary.totalFat.toStringAsFixed(1)} g',
+                          Colors.yellow.shade700,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildMacroItem(
+                          LocaleHelper.t('calories', language),
+                          '${summary.totalKcal.toStringAsFixed(0)} kcal',
+                          Colors.green.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  if (!isCompact) ...[
+                    const SizedBox(height: DesignTokens.space12),
+
+                    // Minerals row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMineralItem(
+                            LocaleHelper.t('sodium', language),
+                            '${summary.totalSodium.toStringAsFixed(0)} mg',
+                            summary.totalSodium,
+                            isSodium: true,
+                          ),
+                        ),
+                        Expanded(
+                          child: _buildMineralItem(
+                            LocaleHelper.t('potassium', language),
+                            '${summary.totalPotassium.toStringAsFixed(0)} mg',
+                            summary.totalPotassium,
+                            isSodium: false,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Warnings
+                    if (_hasWarnings()) ...[
+                      const SizedBox(height: DesignTokens.space12),
+                      _buildWarnings(language),
+                    ],
+                  ],
                 ],
-              ],
-            ],
+              ),
+            ),
           ),
         ),
       ),

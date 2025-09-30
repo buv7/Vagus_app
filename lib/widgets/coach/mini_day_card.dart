@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../services/coach/weekly_review_service.dart';
 
 class MiniDayCard extends StatelessWidget {
   final DateTime day;
@@ -22,7 +21,7 @@ class MiniDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    String dow = ['M','T','W','T','F','S','S'][day.weekday - 1];
+    final String dow = ['M','T','W','T','F','S','S'][day.weekday - 1];
 
     Color compColor() {
       if (compliancePct >= 85) return Colors.greenAccent.shade400;
@@ -34,9 +33,9 @@ class MiniDayCard extends StatelessWidget {
       width: 120,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +46,7 @@ class MiniDayCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: compColor().withOpacity(0.2),
+                color: compColor().withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text('${compliancePct.toStringAsFixed(0)}%', style: TextStyle(fontWeight: FontWeight.w800, color: compColor())),
@@ -69,7 +68,7 @@ class MiniDayCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Text(k, style: TextStyle(color: (isDark ? Colors.white : Colors.black).withOpacity(0.7))),
+          Text(k, style: TextStyle(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7))),
           const Spacer(),
           Text(v, style: const TextStyle(fontWeight: FontWeight.w700)),
         ],

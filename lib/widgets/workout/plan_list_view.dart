@@ -64,7 +64,7 @@ class PlanListView extends StatelessWidget {
             children: [
               Icon(
                 type == 'workout' ? Icons.fitness_center : Icons.restaurant,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
               const SizedBox(width: DesignTokens.space8),
@@ -91,7 +91,7 @@ class PlanListView extends StatelessWidget {
                 children: [
                   const Icon(
                     Icons.star,
-                    color: AppTheme.softYellow,
+                    color: AppTheme.accentOrange,
                     size: 16,
                   ),
                   const SizedBox(width: DesignTokens.space4),
@@ -140,7 +140,7 @@ class PlanListView extends StatelessWidget {
           // Stats
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.schedule,
                 color: AppTheme.lightGrey,
                 size: 14,
@@ -154,7 +154,7 @@ class PlanListView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: DesignTokens.space12),
-              Icon(
+              const Icon(
                 Icons.people_outline,
                 color: AppTheme.lightGrey,
                 size: 14,
@@ -183,7 +183,7 @@ class PlanListView extends StatelessWidget {
                   vertical: DesignTokens.space2,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.steelGrey,
+                  color: AppTheme.mediumGrey,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: Text(
@@ -205,21 +205,21 @@ class PlanListView extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () => onEditPlan(plan),
-                  child: const Text(
-                    'Edit Plan',
-                    style: TextStyle(
-                      color: AppTheme.primaryBlack,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space8,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Edit Plan',
+                    style: TextStyle(
+                      color: AppTheme.primaryDark,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -228,20 +228,20 @@ class PlanListView extends StatelessWidget {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () => onAssignPlan(plan),
-                  child: const Text(
-                    'Assign',
-                    style: TextStyle(
-                      color: AppTheme.neutralWhite,
-                      fontSize: 12,
-                    ),
-                  ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.steelGrey),
+                    side: const BorderSide(color: AppTheme.mediumGrey),
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space8,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Assign',
+                    style: TextStyle(
+                      color: AppTheme.neutralWhite,
+                      fontSize: 12,
                     ),
                   ),
                 ),
@@ -258,11 +258,11 @@ class PlanListView extends StatelessWidget {
       case 'beginner':
         return Colors.green;
       case 'intermediate':
-        return AppTheme.softYellow;
+        return AppTheme.accentOrange;
       case 'advanced':
         return Colors.red;
       default:
-        return AppTheme.steelGrey;
+        return AppTheme.mediumGrey;
     }
   }
 }

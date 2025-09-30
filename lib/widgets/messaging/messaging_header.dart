@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -23,24 +24,35 @@ class MessagingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space16),
-      decoration: const BoxDecoration(
-        color: AppTheme.cardBackground,
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
         border: Border(
           bottom: BorderSide(
-            color: AppTheme.steelGrey,
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Row(
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            child: Row(
         children: [
           // Back Button
           IconButton(
             onPressed: onBack,
             icon: const Icon(
               Icons.arrow_back,
-              color: AppTheme.neutralWhite,
+              color: DesignTokens.neutralWhite,
             ),
           ),
           
@@ -49,14 +61,14 @@ class MessagingHeader extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: const Center(
               child: Text(
                 'V',
                 style: TextStyle(
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -74,7 +86,7 @@ class MessagingHeader extends StatelessWidget {
                 Text(
                   client['name'] ?? 'Unknown',
                   style: const TextStyle(
-                    color: AppTheme.neutralWhite,
+                    color: DesignTokens.neutralWhite,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -94,7 +106,7 @@ class MessagingHeader extends StatelessWidget {
                     const Text(
                       'Online',
                       style: TextStyle(
-                        color: AppTheme.lightGrey,
+                        color: DesignTokens.textSecondary,
                         fontSize: 12,
                       ),
                     ),
@@ -109,31 +121,34 @@ class MessagingHeader extends StatelessWidget {
             onPressed: onSearch,
             icon: const Icon(
               Icons.search,
-              color: AppTheme.neutralWhite,
+              color: DesignTokens.neutralWhite,
             ),
           ),
           IconButton(
             onPressed: onCall,
             icon: const Icon(
               Icons.phone,
-              color: AppTheme.neutralWhite,
+              color: DesignTokens.neutralWhite,
             ),
           ),
           IconButton(
             onPressed: onVideoCall,
             icon: const Icon(
               Icons.videocam,
-              color: AppTheme.neutralWhite,
+              color: DesignTokens.neutralWhite,
             ),
           ),
           IconButton(
             onPressed: onMoreOptions,
             icon: const Icon(
               Icons.more_vert,
-              color: AppTheme.neutralWhite,
+              color: DesignTokens.neutralWhite,
             ),
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/money.dart';
 import '../../models/nutrition/recipe.dart';
@@ -5,7 +6,6 @@ import '../../models/nutrition/nutrition_plan.dart';
 import '../../models/nutrition/nutrition_plan_compat.dart';
 import '../../models/nutrition/food_item.dart' as fi;
 import '../../models/nutrition/grocery_list.dart';
-import '../../models/nutrition/preferences.dart';
 import 'preferences_service.dart';
 
 extension _FoodItemCompat on fi.FoodItem {
@@ -48,7 +48,7 @@ class CostingService {
         } else {
           // Different currency - convert or use primary
           // For now, just use the primary currency and log a warning
-          print('Warning: Mixed currencies in recipe ${recipe.id}: $primaryCurrency and ${ingredientCost.currency}');
+          debugPrint('Warning: Mixed currencies in recipe ${recipe.id}: $primaryCurrency and ${ingredientCost.currency}');
         }
       }
     }
@@ -74,7 +74,7 @@ class CostingService {
         } else if (itemCost.currency == primaryCurrency) {
           totalCost = totalCost + itemCost;
         } else {
-          print('Warning: Mixed currencies in meal: $primaryCurrency and ${itemCost.currency}');
+          debugPrint('Warning: Mixed currencies in meal: $primaryCurrency and ${itemCost.currency}');
         }
       }
     }
@@ -101,7 +101,7 @@ class CostingService {
         } else if (mealCost.currency == primaryCurrency) {
           totalCost = totalCost + mealCost;
         } else {
-          print('Warning: Mixed currencies in day $dayIndex: $primaryCurrency and ${mealCost.currency}');
+          debugPrint('Warning: Mixed currencies in day $dayIndex: $primaryCurrency and ${mealCost.currency}');
         }
       }
     }
@@ -126,7 +126,7 @@ class CostingService {
         } else if (dayCost.currency == primaryCurrency) {
           totalCost = totalCost + dayCost;
         } else {
-          print('Warning: Mixed currencies in week $weekIndex: $primaryCurrency and ${dayCost.currency}');
+          debugPrint('Warning: Mixed currencies in week $weekIndex: $primaryCurrency and ${dayCost.currency}');
         }
       }
     }
@@ -141,7 +141,7 @@ class CostingService {
       final response = await _supabase
           .from('nutrition_grocery_items')
           .select('*')
-          .eq('list_id', list.id!);
+          .eq('list_id', list.id);
 
       if (response.isEmpty) {
         return Money.zero(_getDefaultCurrency());
@@ -169,7 +169,7 @@ class CostingService {
             } else if (price.currency == primaryCurrency) {
               totalCost = totalCost + itemCost;
             } else {
-              print('Warning: Mixed currencies in grocery list: $primaryCurrency and ${price.currency}');
+              debugPrint('Warning: Mixed currencies in grocery list: $primaryCurrency and ${price.currency}');
             }
           }
         }
@@ -177,7 +177,7 @@ class CostingService {
 
       return totalCost;
     } catch (e) {
-      print('Error estimating grocery list cost: $e');
+      debugPrint('Error estimating grocery list cost: $e');
       return Money.zero(_getDefaultCurrency());
     }
   }
@@ -254,7 +254,7 @@ class CostingService {
         return cost;
       }
     } catch (e) {
-      print('Error fetching price for key $key: $e');
+      debugPrint('Error fetching price for key $key: $e');
     }
 
     return null;
@@ -299,7 +299,7 @@ class CostingService {
       
       return costPerServing.amount <= thresholds;
     } catch (e) {
-      print('Error checking budget friendliness: $e');
+      debugPrint('Error checking budget friendliness: $e');
       return true; // Default to friendly if error
     }
   }
@@ -344,7 +344,7 @@ class CostingService {
       }
     }
     
-    final hitRate = _priceCache.length > 0 ? validEntries / _priceCache.length : 0.0;
+    final hitRate = _priceCache.isNotEmpty ? validEntries / _priceCache.length : 0.0;
     
     return {
       'cacheSize': stats['cacheSize'],
@@ -366,7 +366,7 @@ class CostingService {
       _priceCache[key] = price;
       _cacheTimestamps[key] = DateTime.now();
     } catch (e) {
-      print('Error setting price for key $key: $e');
+      debugPrint('Error setting price for key $key: $e');
       rethrow;
     }
   }
@@ -390,7 +390,7 @@ class CostingService {
 
       return prices;
     } catch (e) {
-      print('Error fetching all prices: $e');
+      debugPrint('Error fetching all prices: $e');
       return {};
     }
   }

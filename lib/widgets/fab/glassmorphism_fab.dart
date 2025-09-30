@@ -2,14 +2,10 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../screens/notes/coach_note_screen.dart';
-import '../../screens/progress/progress_entry_form.dart';
 import '../../screens/files/upload_photos_screen.dart';
-import '../../screens/calendar/event_editor.dart';
 import '../../screens/nutrition/meal_editor.dart';
-import '../../screens/calling/calling_demo_screen.dart';
 import '../../models/nutrition/nutrition_plan.dart';
 
 class GlassmorphismFAB extends StatefulWidget {
@@ -27,13 +23,12 @@ class GlassmorphismFAB extends StatefulWidget {
 class _GlassmorphismFABState extends State<GlassmorphismFAB>
     with TickerProviderStateMixin {
   bool _isOpen = false;
-  bool _isScheduleCallOpen = false;
   late AnimationController _animationController;
   late Animation<double> _rotationAnimation;
   late Animation<double> _scaleAnimation;
 
   // Action items configuration
-  final List<FABAction> _actions = [
+  final List<FABAction> _actions = const [
     FABAction(
       icon: Icons.fitness_center,
       label: 'Add Workout',
@@ -206,7 +201,6 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
 
   void _showScheduleCallModal() {
     setState(() {
-      _isScheduleCallOpen = true;
     });
     
     showDialog(
@@ -220,7 +214,6 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
             onPressed: () {
               Navigator.of(context).pop();
               setState(() {
-                _isScheduleCallOpen = false;
               });
             },
             child: const Text('OK'),
@@ -229,7 +222,6 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
       ),
     ).then((_) {
       setState(() {
-        _isScheduleCallOpen = false;
       });
     });
   }
@@ -258,7 +250,7 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
           Positioned(
             bottom: 0,
             right: 0,
-            child: Container(
+            child: SizedBox(
               width: 300, // Large enough to contain all action buttons
               height: 300,
               child: Stack(
@@ -269,7 +261,7 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
                     final index = entry.key;
                     final action = entry.value;
                     return _buildActionButton(index, action, isMobile);
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -296,9 +288,9 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
             height: isMobile ? 56 : 64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppTheme.mintAqua.withValues(alpha: 0.9),
+              color: AppTheme.accentGreen.withValues(alpha: 0.9),
               border: Border.all(
-                color: AppTheme.mintAqua.withValues(alpha: 0.5),
+                color: AppTheme.accentGreen.withValues(alpha: 0.5),
                 width: 2,
               ),
               boxShadow: [
@@ -321,7 +313,7 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
                       child: Icon(
                         Icons.add,
                         size: isMobile ? 24 : 28,
-                        color: AppTheme.primaryBlack,
+                        color: AppTheme.primaryDark,
                       ),
                     ),
                   ),
@@ -358,7 +350,7 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
                   shape: BoxShape.circle,
                   color: AppTheme.cardBackground.withValues(alpha: 0.85),
                   border: Border.all(
-                    color: AppTheme.mintAqua.withValues(alpha: 0.3),
+                    color: AppTheme.accentGreen.withValues(alpha: 0.3),
                     width: 2,
                   ),
                   boxShadow: [
@@ -381,7 +373,7 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
                           child: Icon(
                             action.icon,
                             size: isMobile ? 20 : 24,
-                            color: AppTheme.mintAqua,
+                            color: AppTheme.accentGreen,
                           ),
                         ),
                       ),

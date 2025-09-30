@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/coach/coach_profile.dart';
 import '../../services/coach_portfolio_service.dart';
+import '../../services/coaches/coach_repository.dart';
 import '../../widgets/branding/vagus_appbar.dart';
 import '../../theme/app_theme.dart';
 
@@ -17,11 +18,13 @@ class PortfolioEditScreen extends StatefulWidget {
 class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final _displayNameController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _headlineController = TextEditingController();
   final _bioController = TextEditingController();
   final _introVideoUrlController = TextEditingController();
   
   final CoachPortfolioService _portfolioService = CoachPortfolioService();
+  final CoachRepository _coachRepository = CoachRepository();
   final SupabaseClient _supabase = Supabase.instance.client;
   
   List<String> _specialties = [];
@@ -60,6 +63,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   void _loadExistingProfile() {
     if (widget.existingProfile != null) {
       _displayNameController.text = widget.existingProfile!.displayName ?? '';
+      _usernameController.text = widget.existingProfile!.username ?? '';
       _headlineController.text = widget.existingProfile!.headline ?? '';
       _bioController.text = widget.existingProfile!.bio ?? '';
       _introVideoUrlController.text = widget.existingProfile!.introVideoUrl ?? '';
@@ -70,6 +74,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   @override
   void dispose() {
     _displayNameController.dispose();
+    _usernameController.dispose();
     _headlineController.dispose();
     _bioController.dispose();
     _introVideoUrlController.dispose();
@@ -91,16 +96,24 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
       final profile = CoachProfile(
         coachId: user.id,
         displayName: _displayNameController.text.trim(),
+        username: _usernameController.text.trim().isEmpty
+            ? null
+            : _usernameController.text.trim(),
         headline: _headlineController.text.trim(),
         bio: _bioController.text.trim(),
         specialties: _specialties,
-        introVideoUrl: _introVideoUrlController.text.trim().isEmpty 
-            ? null 
+        introVideoUrl: _introVideoUrlController.text.trim().isEmpty
+            ? null
             : _introVideoUrlController.text.trim(),
         updatedAt: DateTime.now(),
       );
 
       await _portfolioService.createOrUpdateProfile(profile);
+
+      // Update username in profiles table if provided
+      if (_usernameController.text.trim().isNotEmpty) {
+        await _coachRepository.updateUsername(_usernameController.text.trim());
+      }
 
       if (mounted) {
         Navigator.pop(context, true);
@@ -119,7 +132,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: VagusAppBar(title: const Text('Edit Portfolio')),
+      appBar: const VagusAppBar(title: Text('Edit Portfolio')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -165,7 +178,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(20),
                         decoration: const BoxDecoration(
-                          color: AppTheme.primaryBlack,
+                          color: AppTheme.primaryDark,
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
                         child: const Column(
@@ -207,6 +220,40 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                             return 'Display name is required';
                           }
                           return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Username
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Username (optional)',
+                          hintText: 'e.g., johndoe (3-24 characters, a-z, 0-9, ., _)',
+                          border: OutlineInputBorder(),
+                          prefixText: '@',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return null; // Username is optional
+                          }
+                          final username = value.trim().toLowerCase();
+                          if (username.length < 3 || username.length > 24) {
+                            return 'Username must be 3-24 characters';
+                          }
+                          if (!RegExp(r'^[a-z0-9._]+$').hasMatch(username)) {
+                            return 'Username can only contain letters, numbers, dots, and underscores';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          // Convert to lowercase automatically
+                          final cursorPos = _usernameController.selection;
+                          _usernameController.value = _usernameController.value.copyWith(
+                            text: value.toLowerCase(),
+                            selection: cursorPos,
+                          );
                         },
                       ),
 
@@ -286,7 +333,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
                         child: ElevatedButton(
                           onPressed: _saveProfile,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryBlack,
+                            backgroundColor: AppTheme.primaryDark,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -319,7 +366,7 @@ class _PortfolioEditScreenState extends State<PortfolioEditScreen> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: AppTheme.primaryBlack,
+            color: AppTheme.primaryDark,
           ),
         ),
         const SizedBox(height: 8),

@@ -21,9 +21,9 @@ class ComplianceDonut extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,7 +46,7 @@ class ComplianceDonut extends StatelessWidget {
                   PieChartSectionData(
                     value: 100 - compliance.percent.clamp(0, 100),
                     showTitle: false,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
                     radius: 56,
                   ),
                 ],

@@ -2,14 +2,13 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'text_normalizer.dart';
 
 /// Internal model for prep alarms
-class _PrepAlarm {
+class PrepAlarm {
   final String title;
   final int minutesBefore;
   
-  const _PrepAlarm({
+  const PrepAlarm({
     required this.title,
     required this.minutesBefore,
   });
@@ -23,7 +22,7 @@ class NutritionCalendarBridge {
     required DateTime dateLocal,
     required String title,
     required List<String> lines,
-    List<_PrepAlarm> alarms = const [],
+    List<PrepAlarm> alarms = const [],
   }) {
     final buffer = StringBuffer();
     
@@ -66,8 +65,7 @@ class NutritionCalendarBridge {
   }
   
   /// Write a prep alarm event
-  static void _writePrepAlarmEvent(StringBuffer buffer, DateTime date, _PrepAlarm alarm) {
-    final dateStr = _formatDate(date);
+  static void _writePrepAlarmEvent(StringBuffer buffer, DateTime date, PrepAlarm alarm) {
     final timestamp = _formatTimestamp(DateTime.now());
     
     // Calculate alarm time (before the meal)
@@ -147,11 +145,11 @@ class NutritionCalendarBridge {
   }
   
   /// Generate prep alarms from recipe data
-  static List<_PrepAlarm> generatePrepAlarms({
+  static List<PrepAlarm> generatePrepAlarms({
     required Map<String, List<Map<String, dynamic>>> meals,
     required String language,
   }) {
-    final alarms = <_PrepAlarm>[];
+    final alarms = <PrepAlarm>[];
     final mealNames = _getMealNames(language);
     
     for (final mealType in meals.keys) {
@@ -162,7 +160,7 @@ class NutritionCalendarBridge {
         final prepMinutes = item['prep_minutes'] as int? ?? 0;
         if (prepMinutes > 0) {
           final recipeName = item['name'] ?? 'Unknown Recipe';
-          alarms.add(_PrepAlarm(
+          alarms.add(PrepAlarm(
             title: 'Prep $recipeName for $mealName',
             minutesBefore: prepMinutes,
           ));
@@ -251,7 +249,7 @@ class NutritionCalendarBridge {
     // Generate prep alarms if requested
     final alarms = includePrepReminders 
         ? generatePrepAlarms(meals: meals, language: language)
-        : <_PrepAlarm>[];
+        : <PrepAlarm>[];
     
     // Build ICS content
     final icsContent = buildIcsForDay(

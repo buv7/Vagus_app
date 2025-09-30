@@ -6,13 +6,9 @@ import '../../services/nutrition/recipe_service.dart';
 import '../../services/nutrition/preferences_service.dart';
 import '../../services/nutrition/costing_service.dart';
 import '../../services/nutrition/integrations/pantry_recipe_adapter.dart';
-import '../../services/nutrition/integrations/pantry_integration_helper.dart';
 import '../../services/nutrition/pantry_service.dart';
 import '../../components/nutrition/recipe_card.dart';
-import '../../components/nutrition/pantry_match_chip.dart';
-import '../../components/nutrition/cost_chip.dart';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
 import '../../services/nutrition/locale_helper.dart';
 import 'pantry_screen.dart';
 
@@ -50,9 +46,9 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
   bool _preferencesLoaded = false;
   
   // Filter states
-  List<String> _selectedCuisineTags = [];
-  List<String> _selectedDietTags = [];
-  List<String> _selectedAllergens = [];
+  final List<String> _selectedCuisineTags = [];
+  final List<String> _selectedDietTags = [];
+  final List<String> _selectedAllergens = [];
   bool? _halalFilter;
   bool _quickFilter = false;
   bool _budgetFilter = false;
@@ -65,7 +61,6 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
   
   // Pantry integration
   PantryRecipeAdapter? _pantryAdapter;
-  PantryIntegrationHelper? _pantryHelper;
   final Map<String, double> _coverageCache = <String, double>{}; // recipeId -> ratio 0..1
   
   // Cost caching
@@ -80,7 +75,6 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
     
     // Initialize pantry adapters
     _pantryAdapter = PantryRecipeAdapter(PantryService(), _recipeService);
-    _pantryHelper = PantryIntegrationHelper();
   }
 
   @override
@@ -151,9 +145,9 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
   }
 
   Future<Money> _costFor(Recipe recipe) async {
-    if (_costCache.containsKey(recipe.id!)) return _costCache[recipe.id!]!;
+    if (_costCache.containsKey(recipe.id)) return _costCache[recipe.id]!;
     final cost = await _costing.estimateRecipeCost(recipe, servings: 1.0);
-    _costCache[recipe.id!] = cost;
+    _costCache[recipe.id] = cost;
     return cost;
   }
 
@@ -639,7 +633,7 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
           final recipe = _filteredRecipes[index];
           return FutureBuilder<Map<String, dynamic>>(
             future: Future.wait([
-              _coverageFor(recipe.id!, 'current_user_id'), // TODO: Get actual user ID
+              _coverageFor(recipe.id, 'current_user_id'), // TODO: Get actual user ID
               _costFor(recipe),
             ]).then((results) => {
               'coverage': results[0] as double,
@@ -673,7 +667,7 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
           padding: const EdgeInsets.only(bottom: DesignTokens.space16),
           child: FutureBuilder<Map<String, dynamic>>(
             future: Future.wait([
-              _coverageFor(recipe.id!, 'current_user_id'), // TODO: Get actual user ID
+              _coverageFor(recipe.id, 'current_user_id'), // TODO: Get actual user ID
               _costFor(recipe),
             ]).then((results) => {
               'coverage': results[0] as double,

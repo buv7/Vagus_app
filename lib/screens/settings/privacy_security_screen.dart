@@ -207,7 +207,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         await supabase.auth.admin.deleteUser(supabase.auth.currentUser!.id);
         
         if (mounted) {
-          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+          await Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
         }
       } catch (e) {
         if (mounted) {
@@ -225,9 +225,9 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -241,7 +241,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               ),
             )
           : SingleChildScrollView(
@@ -288,8 +288,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     child: ElevatedButton(
                       onPressed: _changingPassword ? null : _changePassword,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.mintAqua,
-                        foregroundColor: AppTheme.primaryBlack,
+                        backgroundColor: AppTheme.accentGreen,
+                        foregroundColor: AppTheme.primaryDark,
                         padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(DesignTokens.radius12),
@@ -301,7 +301,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryBlack),
+                                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryDark),
                               ),
                             )
                           : const Text(
@@ -367,8 +367,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     child: ElevatedButton(
                       onPressed: _savePrivacySettings,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.mintAqua,
-                        foregroundColor: AppTheme.primaryBlack,
+                        backgroundColor: AppTheme.accentGreen,
+                        foregroundColor: AppTheme.primaryDark,
                         padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(DesignTokens.radius12),
@@ -398,7 +398,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Data download initiated'),
-                          backgroundColor: AppTheme.mintAqua,
+                          backgroundColor: AppTheme.accentGreen,
                         ),
                       );
                     },
@@ -422,7 +422,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         color: AppTheme.lightGrey,
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -455,7 +455,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
             color: AppTheme.cardBackground,
             borderRadius: BorderRadius.circular(DesignTokens.radius12),
             border: Border.all(
-              color: AppTheme.steelGrey,
+              color: AppTheme.mediumGrey,
               width: 1,
             ),
           ),
@@ -470,7 +470,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
               contentPadding: const EdgeInsets.all(DesignTokens.space16),
               prefixIcon: const Icon(
                 Icons.lock,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
               suffixIcon: IconButton(
@@ -501,7 +501,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -512,7 +512,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         ),
         leading: Icon(
           icon,
-          color: AppTheme.mintAqua,
+          color: AppTheme.accentGreen,
           size: 24,
         ),
         title: Text(
@@ -525,7 +525,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
@@ -533,10 +533,10 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         trailing: Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: AppTheme.mintAqua,
-          activeTrackColor: AppTheme.mintAqua.withOpacity(0.3),
+          activeColor: AppTheme.accentGreen,
+          activeTrackColor: AppTheme.accentGreen.withValues(alpha: 0.3),
           inactiveThumbColor: AppTheme.lightGrey,
-          inactiveTrackColor: AppTheme.steelGrey,
+          inactiveTrackColor: AppTheme.mediumGrey,
         ),
       ),
     );
@@ -555,7 +555,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -566,7 +566,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         ),
         leading: Icon(
           icon,
-          color: isDestructive ? DesignTokens.danger : AppTheme.mintAqua,
+          color: isDestructive ? DesignTokens.danger : AppTheme.accentGreen,
           size: 24,
         ),
         title: Text(
@@ -579,12 +579,12 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 12,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios,
           color: AppTheme.lightGrey,
           size: 16,

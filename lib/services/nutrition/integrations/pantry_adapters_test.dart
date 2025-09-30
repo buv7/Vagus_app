@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'pantry_grocery_adapter.dart';
 import 'pantry_recipe_adapter.dart';
 import '../pantry_service.dart';
@@ -22,7 +23,7 @@ class PantryAdaptersTest {
   /// Test pantry-aware grocery generation
   Future<void> testGroceryGeneration() async {
     try {
-      print('Testing pantry-aware grocery generation...');
+      debugPrint('Testing pantry-aware grocery generation...');
       
       final result = await _groceryAdapter.generateWithPantry(
         planId: 'test_plan_id',
@@ -33,20 +34,20 @@ class PantryAdaptersTest {
       
       final (groceryList, pantrySummary) = result;
       
-      print('Generated grocery list: ${groceryList.id}');
-      print('Pantry coverage: ${pantrySummary?.coveragePercent.toStringAsFixed(1)}%');
-      print('Items covered: ${pantrySummary?.itemsCovered}');
-      print('Covered ingredients: ${pantrySummary?.coveredIngredients}');
+      debugPrint('Generated grocery list: ${groceryList.id}');
+      debugPrint('Pantry coverage: ${pantrySummary?.coveragePercent.toStringAsFixed(1)}%');
+      debugPrint('Items covered: ${pantrySummary?.itemsCovered}');
+      debugPrint('Covered ingredients: ${pantrySummary?.coveredIngredients}');
       
     } catch (e) {
-      print('Grocery generation test failed: $e');
+      debugPrint('Grocery generation test failed: $e');
     }
   }
 
   /// Test recipe pantry coverage
   Future<void> testRecipeCoverage() async {
     try {
-      print('Testing recipe pantry coverage...');
+      debugPrint('Testing recipe pantry coverage...');
       
       final coverage = await _recipeAdapter.pantryCoverage(
         recipeId: 'test_recipe_id',
@@ -54,7 +55,7 @@ class PantryAdaptersTest {
         servings: 2.0,
       );
       
-      print('Recipe coverage: ${(coverage * 100).toStringAsFixed(1)}%');
+      debugPrint('Recipe coverage: ${(coverage * 100).toStringAsFixed(1)}%');
       
       // Test detailed coverage
       final detailedCoverage = await _recipeAdapter.getDetailedCoverage(
@@ -63,22 +64,22 @@ class PantryAdaptersTest {
         servings: 2.0,
       );
       
-      print('Detailed coverage ratio: ${detailedCoverage.ratio}');
-      print('Coverage rows: ${detailedCoverage.rows.length}');
+      debugPrint('Detailed coverage ratio: ${detailedCoverage.ratio}');
+      debugPrint('Coverage rows: ${detailedCoverage.rows.length}');
       
       for (final row in detailedCoverage.rows) {
-        print('  ${row.ingredientName}: ${row.used}/${row.need} ${row.unit} (${(row.coverageRatio * 100).toStringAsFixed(1)}%)');
+        debugPrint('  ${row.ingredientName}: ${row.used}/${row.need} ${row.unit} (${(row.coverageRatio * 100).toStringAsFixed(1)}%)');
       }
       
     } catch (e) {
-      print('Recipe coverage test failed: $e');
+      debugPrint('Recipe coverage test failed: $e');
     }
   }
 
   /// Test bulk coverage for multiple recipes
   Future<void> testBulkCoverage() async {
     try {
-      print('Testing bulk recipe coverage...');
+      debugPrint('Testing bulk recipe coverage...');
       
       final recipeIds = ['recipe_1', 'recipe_2', 'recipe_3'];
       final coverageMap = await _recipeAdapter.getBulkCoverage(
@@ -87,20 +88,20 @@ class PantryAdaptersTest {
         servings: 1.0,
       );
       
-      print('Bulk coverage results:');
+      debugPrint('Bulk coverage results:');
       for (final entry in coverageMap.entries) {
-        print('  ${entry.key}: ${(entry.value * 100).toStringAsFixed(1)}%');
+        debugPrint('  ${entry.key}: ${(entry.value * 100).toStringAsFixed(1)}%');
       }
       
     } catch (e) {
-      print('Bulk coverage test failed: $e');
+      debugPrint('Bulk coverage test failed: $e');
     }
   }
 
   /// Test consumption planning and application
   Future<void> testConsumption() async {
     try {
-      print('Testing consumption planning...');
+      debugPrint('Testing consumption planning...');
       
       // Plan consumption (no DB writes)
       final deltas = await _recipeAdapter.planConsumption(
@@ -109,9 +110,9 @@ class PantryAdaptersTest {
         servings: 1.0,
       );
       
-      print('Consumption plan: ${deltas.length} items to consume');
+      debugPrint('Consumption plan: ${deltas.length} items to consume');
       for (final delta in deltas) {
-        print('  ${delta.name}: ${delta.qty} ${delta.unit}');
+        debugPrint('  ${delta.name}: ${delta.qty} ${delta.unit}');
       }
       
       // Note: Uncomment to actually apply consumption
@@ -120,30 +121,30 @@ class PantryAdaptersTest {
       //   userId: 'test_user_id',
       //   servings: 1.0,
       // );
-      // print('Consumption applied successfully');
+      // debugPrint('Consumption applied successfully');
       
     } catch (e) {
-      print('Consumption test failed: $e');
+      debugPrint('Consumption test failed: $e');
     }
   }
 
   /// Run all tests
   Future<void> runAllTests() async {
-    print('=== Pantry Adapters Test Suite ===');
+    debugPrint('=== Pantry Adapters Test Suite ===');
     
     await testGroceryGeneration();
-    print('');
+    debugPrint('');
     
     await testRecipeCoverage();
-    print('');
+    debugPrint('');
     
     await testBulkCoverage();
-    print('');
+    debugPrint('');
     
     await testConsumption();
-    print('');
+    debugPrint('');
     
-    print('=== Test Suite Complete ===');
+    debugPrint('=== Test Suite Complete ===');
   }
 }
 

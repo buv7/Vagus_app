@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../messages_service.dart';
 
@@ -87,7 +87,7 @@ class CalendarQuickBookService {
       
       return QuickBookResult.success('Hold created for ${_formatDateTime(slot.start)}');
     } catch (e) {
-      print('CalendarQuickBookService: Error creating hold event - $e');
+      debugPrint('CalendarQuickBookService: Error creating hold event - $e');
       return QuickBookResult.failure('Failed to create hold: $e');
     }
   }
@@ -122,7 +122,7 @@ class CalendarQuickBookService {
 
       return QuickBookResult.success('Proposal sent');
     } catch (e) {
-      print('CalendarQuickBookService: Error sending proposal - $e');
+      debugPrint('CalendarQuickBookService: Error sending proposal - $e');
       return QuickBookResult.failure('Failed to send proposal: $e');
     }
   }
@@ -189,7 +189,7 @@ class CalendarQuickBookService {
 
       return QuickBookResult.success('Multi-option proposal sent');
     } catch (e) {
-      print('CalendarQuickBookService: Error sending multi-option proposal - $e');
+      debugPrint('CalendarQuickBookService: Error sending multi-option proposal - $e');
       return QuickBookResult.failure('Failed to send proposal: $e');
     }
   }

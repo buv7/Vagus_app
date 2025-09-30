@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../services/admin/admin_incident_service.dart';
-import '../../models/admin/incident_models.dart';
 import '../../models/admin/ticket_models.dart';
 
 class AdminTicketBoardScreen extends StatefulWidget {
@@ -104,8 +103,9 @@ class _AdminTicketBoardScreenState extends State<AdminTicketBoardScreen> {
                 if (_collapsed[k] != true)
                   Expanded(
                     child: DragTarget<TicketSummary>(
-                    onWillAccept: (t) => true,
-                    onAccept: (ticket) async {
+                    onWillAcceptWithDetails: (details) => true,
+                    onAcceptWithDetails: (details) async {
+                      final ticket = details.data;
                       // remove from old column
                       for (final e in _columns.entries) { 
                         e.value.removeWhere((x)=> x.id==ticket.id); 

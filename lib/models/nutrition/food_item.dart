@@ -14,6 +14,8 @@ class FoodItem extends Equatable {
   final String? unit;
   final bool estimated;
   final String? source; // 'photo', 'barcode', 'manual', etc.
+  final String? imageUrl;
+  final String? brand;
 
   const FoodItem({
     this.id,
@@ -28,7 +30,12 @@ class FoodItem extends Equatable {
     this.unit,
     this.estimated = false,
     this.source,
+    this.imageUrl,
+    this.brand,
   });
+
+  /// Getter for calories (alias for kcal)
+  double get calories => kcal;
 
   factory FoodItem.fromMap(Map<String, dynamic> map) {
     return FoodItem(
@@ -44,6 +51,8 @@ class FoodItem extends Equatable {
       unit: map['unit']?.toString(),
       estimated: map['estimated'] == true,
       source: map['source']?.toString(),
+      imageUrl: map['image_url']?.toString(),
+      brand: map['brand']?.toString(),
     );
   }
 
@@ -61,8 +70,16 @@ class FoodItem extends Equatable {
       'unit': unit,
       'estimated': estimated,
       'source': source,
+      'image_url': imageUrl,
+      'brand': brand,
     };
   }
+
+  /// Alias for toMap (for compatibility)
+  Map<String, dynamic> toJson() => toMap();
+
+  /// Alias for fromMap (for compatibility)
+  factory FoodItem.fromJson(Map<String, dynamic> json) => FoodItem.fromMap(json);
 
   FoodItem copyWith({
     String? id,
@@ -77,6 +94,8 @@ class FoodItem extends Equatable {
     String? unit,
     bool? estimated,
     String? source,
+    String? imageUrl,
+    String? brand,
   }) {
     return FoodItem(
       id: id ?? this.id,
@@ -91,6 +110,8 @@ class FoodItem extends Equatable {
       unit: unit ?? this.unit,
       estimated: estimated ?? this.estimated,
       source: source ?? this.source,
+      imageUrl: imageUrl ?? this.imageUrl,
+      brand: brand ?? this.brand,
     );
   }
 
@@ -108,5 +129,7 @@ class FoodItem extends Equatable {
         unit,
         estimated,
         source,
+        imageUrl,
+        brand,
       ];
 }

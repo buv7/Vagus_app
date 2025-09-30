@@ -111,7 +111,7 @@ class WeeklyReviewService {
     final (weekStart, weekEnd) = _normalizeWeek(start);
 
     // Build daily x-axis (7 days)
-    List<DateTime> days = List.generate(7, (i) => DateTime(weekStart.year, weekStart.month, weekStart.day).add(Duration(days: i)));
+    final List<DateTime> days = List.generate(7, (i) => DateTime(weekStart.year, weekStart.month, weekStart.day).add(Duration(days: i)));
 
     // Parallel queries
     final futures = await Future.wait([
@@ -188,9 +188,6 @@ class WeeklyReviewService {
     return days.map((day) {
       // For now, we'll infer compliance based on whether there was any activity that day
       // This is a simple heuristic - in a real implementation, you'd check actual workout logs
-      final dayStart = DateTime(day.year, day.month, day.day);
-      final dayEnd = dayStart.add(const Duration(days: 1));
-      
       // Check if there was any workout activity on this day
       // This is a placeholder - you'd query your actual workout logs here
       // For now, we'll use a simple random-ish pattern based on the day

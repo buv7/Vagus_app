@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/navigation/vagus_side_menu.dart';
-import '../../services/progress/progress_service.dart';
 
 class ModernProgressTracker extends StatefulWidget {
   const ModernProgressTracker({super.key});
@@ -22,9 +21,6 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   List<Map<String, dynamic>> _measurements = [];
   bool _isLoading = true;
   String? _error;
-  String _role = 'client';
-  
-  final ProgressService _progressService = ProgressService();
 
   // Mock data as fallback
   final List<Map<String, dynamic>> _mockProgressPhotos = [
@@ -66,56 +62,6 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
     },
   ];
 
-  final List<Map<String, dynamic>> _mockMeasurements = [
-    {
-      'metric': 'Weight',
-      'current': 75.5,
-      'previous': 76.2,
-      'unit': 'kg',
-      'trend': 'down',
-      'change': -0.7,
-    },
-    {
-      'metric': 'Body Fat',
-      'current': 12.5,
-      'previous': 13.1,
-      'unit': '%',
-      'trend': 'down',
-      'change': -0.6,
-    },
-    {
-      'metric': 'Muscle Mass',
-      'current': 68.2,
-      'previous': 67.8,
-      'unit': 'kg',
-      'trend': 'up',
-      'change': 0.4,
-    },
-    {
-      'metric': 'Chest',
-      'current': 102.5,
-      'previous': 101.8,
-      'unit': 'cm',
-      'trend': 'up',
-      'change': 0.7,
-    },
-    {
-      'metric': 'Waist',
-      'current': 78.2,
-      'previous': 79.1,
-      'unit': 'cm',
-      'trend': 'down',
-      'change': -0.9,
-    },
-    {
-      'metric': 'Arms',
-      'current': 35.8,
-      'previous': 35.2,
-      'unit': 'cm',
-      'trend': 'up',
-      'change': 0.6,
-    },
-  ];
 
   final List<Map<String, dynamic>> _goals = [
     {
@@ -157,15 +103,6 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
 
-      // Get user role
-      final profile = await Supabase.instance.client
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-      _role = (profile['role'] ?? 'client').toString();
-
       // Load progress photos from progress_photos table
       final photosResponse = await Supabase.instance.client
           .from('progress_photos')
@@ -204,14 +141,14 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       drawerEdgeDragWidth: 24,
       drawer: const VagusSideMenu(isClient: true),
       body: SafeArea(
         child: _isLoading 
             ? const Center(
                 child: CircularProgressIndicator(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                 ),
               )
             : _error != null
@@ -219,7 +156,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.error_outline,
                           color: Colors.red,
                           size: 48,
@@ -243,8 +180,8 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                         ElevatedButton(
                           onPressed: _loadProgressData,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.mintAqua,
-                            foregroundColor: AppTheme.primaryBlack,
+                            backgroundColor: AppTheme.accentGreen,
+                            foregroundColor: AppTheme.primaryDark,
                           ),
                           child: const Text('Retry'),
                         ),
@@ -279,7 +216,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
         color: AppTheme.cardBackground,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -309,7 +246,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
             onPressed: () {
               _showAddProgressDialog();
             },
-            icon: const Icon(Icons.add, color: AppTheme.mintAqua),
+            icon: const Icon(Icons.add, color: AppTheme.accentGreen),
           ),
         ],
       ),
@@ -350,7 +287,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                 backgroundColor: WidgetStateProperty.resolveWith<Color>(
                   (Set<WidgetState> states) {
                     if (states.contains(WidgetState.selected)) {
-                      return AppTheme.mintAqua;
+                      return AppTheme.accentGreen;
                     }
                     return AppTheme.cardBackground;
                   },
@@ -358,7 +295,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                 foregroundColor: WidgetStateProperty.resolveWith<Color>(
                   (Set<WidgetState> states) {
                     if (states.contains(WidgetState.selected)) {
-                      return AppTheme.primaryBlack;
+                      return AppTheme.primaryDark;
                     }
                     return Colors.white;
                   },
@@ -400,7 +337,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                 backgroundColor: WidgetStateProperty.resolveWith<Color>(
                   (Set<WidgetState> states) {
                     if (states.contains(WidgetState.selected)) {
-                      return AppTheme.mintAqua.withOpacity(0.3);
+                      return AppTheme.accentGreen.withValues(alpha: 0.3);
                     }
                     return Colors.transparent;
                   },
@@ -408,7 +345,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                 foregroundColor: WidgetStateProperty.resolveWith<Color>(
                   (Set<WidgetState> states) {
                     if (states.contains(WidgetState.selected)) {
-                      return AppTheme.mintAqua;
+                      return AppTheme.accentGreen;
                     }
                     return Colors.white70;
                   },
@@ -522,17 +459,17 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlack.withOpacity(0.3),
+                  color: AppTheme.primaryDark.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                     width: 2,
                   ),
                 ),
                 child: const Center(
                   child: Icon(
                     Icons.person,
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                     size: 32,
                   ),
                 ),
@@ -543,7 +480,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
               if (previousPhoto != null) ...[
                 const Icon(
                   Icons.arrow_forward,
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   size: 24,
                 ),
                 const SizedBox(width: DesignTokens.space16),
@@ -553,10 +490,10 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryBlack.withOpacity(0.3),
+                    color: AppTheme.primaryDark.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       width: 2,
                     ),
                   ),
@@ -576,8 +513,8 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildStatItem('Weight', '${latestPhoto['weight']} kg', AppTheme.mintAqua),
-                  _buildStatItem('Body Fat', '${latestPhoto['bodyFat']}%', AppTheme.softYellow),
+                  _buildStatItem('Weight', '${latestPhoto['weight']} kg', AppTheme.accentGreen),
+                  _buildStatItem('Body Fat', '${latestPhoto['bodyFat']}%', AppTheme.accentOrange),
                   _buildStatItem('Muscle', '${latestPhoto['muscle']} kg', const Color(0xFFD4A574)),
                 ],
               ),
@@ -641,16 +578,16 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.mintAqua.withOpacity(0.2),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppTheme.mintAqua.withOpacity(0.3),
+                    color: AppTheme.accentGreen.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   '${photo['weight']} kg',
                   style: DesignTokens.bodySmall.copyWith(
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -664,16 +601,16 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              color: AppTheme.primaryBlack.withOpacity(0.3),
+              color: AppTheme.primaryDark.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
               ),
             ),
             child: const Center(
               child: Icon(
                 Icons.person,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 64,
               ),
             ),
@@ -684,7 +621,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
           Row(
             children: [
               Expanded(
-                child: _buildMetricCard('Body Fat', '${photo['bodyFat']}%', AppTheme.softYellow),
+                child: _buildMetricCard('Body Fat', '${photo['bodyFat']}%', AppTheme.accentOrange),
               ),
               const SizedBox(width: DesignTokens.space8),
               Expanded(
@@ -720,10 +657,10 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -771,7 +708,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
 
   Widget _buildMeasurementCard(Map<String, dynamic> measurement) {
     final isPositive = measurement['trend'] == 'up';
-    final changeColor = isPositive ? AppTheme.mintAqua : AppTheme.softYellow;
+    final changeColor = isPositive ? AppTheme.accentGreen : AppTheme.accentOrange;
     final changeIcon = isPositive ? Icons.trending_up : Icons.trending_down;
     
     return Container(
@@ -788,7 +725,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: changeColor.withOpacity(0.2),
+              color: changeColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Icon(
@@ -828,7 +765,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: changeColor.withOpacity(0.2),
+                        color: changeColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -909,26 +846,26 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                 ),
                 decoration: BoxDecoration(
                   color: daysLeft > 30 
-                    ? AppTheme.mintAqua.withOpacity(0.2)
+                    ? AppTheme.accentGreen.withValues(alpha: 0.2)
                     : daysLeft > 7
-                      ? AppTheme.softYellow.withOpacity(0.2)
-                      : const Color(0xFFD4A574).withOpacity(0.2),
+                      ? AppTheme.accentOrange.withValues(alpha: 0.2)
+                      : const Color(0xFFD4A574).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: daysLeft > 30 
-                      ? AppTheme.mintAqua.withOpacity(0.3)
+                      ? AppTheme.accentGreen.withValues(alpha: 0.3)
                       : daysLeft > 7
-                        ? AppTheme.softYellow.withOpacity(0.3)
-                        : const Color(0xFFD4A574).withOpacity(0.3),
+                        ? AppTheme.accentOrange.withValues(alpha: 0.3)
+                        : const Color(0xFFD4A574).withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   '$daysLeft days left',
                   style: DesignTokens.bodySmall.copyWith(
                     color: daysLeft > 30 
-                      ? AppTheme.mintAqua
+                      ? AppTheme.accentGreen
                       : daysLeft > 7
-                        ? AppTheme.softYellow
+                        ? AppTheme.accentOrange
                         : const Color(0xFFD4A574),
                     fontWeight: FontWeight.w600,
                   ),
@@ -955,7 +892,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                   Text(
                     '${(progress * 100).toInt()}%',
                     style: DesignTokens.bodyMedium.copyWith(
-                      color: AppTheme.mintAqua,
+                      color: AppTheme.accentGreen,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -965,7 +902,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
               Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: FractionallySizedBox(
@@ -973,7 +910,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
                   widthFactor: progress.clamp(0.0, 1.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppTheme.mintAqua,
+                      color: AppTheme.accentGreen,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -1024,8 +961,8 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.mintAqua,
-              foregroundColor: AppTheme.primaryBlack,
+              backgroundColor: AppTheme.accentGreen,
+              foregroundColor: AppTheme.primaryDark,
             ),
             child: const Text('Add'),
           ),

@@ -21,7 +21,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   final TextEditingController _specializationController = TextEditingController();
   final TextEditingController _experienceController = TextEditingController();
   
-  Map<String, dynamic>? _profile;
   bool _loading = true;
   bool _saving = false;
 
@@ -54,7 +53,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           .single();
 
       setState(() {
-        _profile = response;
         _loading = false;
       });
 
@@ -121,9 +119,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -142,7 +140,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                 ),
               ),
             )
@@ -152,7 +150,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               child: const Text(
                 'Save',
                 style: TextStyle(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -162,7 +160,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               ),
             )
           : SingleChildScrollView(
@@ -180,13 +178,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             children: [
                               CircleAvatar(
                                 radius: 50,
-                                backgroundColor: AppTheme.mintAqua,
+                                backgroundColor: AppTheme.accentGreen,
                                 child: Text(
                                   _fullNameController.text.isNotEmpty
                                       ? _fullNameController.text.substring(0, 1).toUpperCase()
                                       : 'C',
                                   style: const TextStyle(
-                                    color: AppTheme.primaryBlack,
+                                    color: AppTheme.primaryDark,
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -197,10 +195,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                                 right: 0,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: AppTheme.mintAqua,
+                                    color: AppTheme.accentGreen,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: AppTheme.primaryBlack,
+                                      color: AppTheme.primaryDark,
                                       width: 2,
                                     ),
                                   ),
@@ -210,13 +208,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
                                           content: Text('Image picker coming soon'),
-                                          backgroundColor: AppTheme.mintAqua,
+                                          backgroundColor: AppTheme.accentGreen,
                                         ),
                                       );
                                     },
                                     icon: const Icon(
                                       Icons.camera_alt,
-                                      color: AppTheme.primaryBlack,
+                                      color: AppTheme.primaryDark,
                                       size: 20,
                                     ),
                                   ),
@@ -225,7 +223,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             ],
                           ),
                           const SizedBox(height: DesignTokens.space16),
-                          Text(
+                          const Text(
                             'Tap to change profile picture',
                             style: TextStyle(
                               color: AppTheme.lightGrey,
@@ -334,7 +332,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         color: AppTheme.lightGrey,
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -367,10 +365,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         const SizedBox(height: DesignTokens.space8),
         Container(
           decoration: BoxDecoration(
-            color: enabled ? AppTheme.cardBackground : AppTheme.steelGrey,
+            color: enabled ? const Color(0xFF3A3445) : AppTheme.mediumGrey,
             borderRadius: BorderRadius.circular(DesignTokens.radius12),
             border: Border.all(
-              color: AppTheme.steelGrey,
+              color: AppTheme.accentGreen.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -388,7 +386,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               contentPadding: const EdgeInsets.all(DesignTokens.space16),
               prefixIcon: Icon(
                 icon,
-                color: enabled ? AppTheme.mintAqua : AppTheme.lightGrey,
+                color: enabled ? AppTheme.accentGreen : AppTheme.lightGrey,
                 size: 20,
               ),
             ),

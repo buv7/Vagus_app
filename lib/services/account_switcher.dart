@@ -163,7 +163,7 @@ class AccountSwitcher {
       } catch (e) {
         if (kDebugMode) {
           // do not log tokens; message only
-          // print('Switch failed: $e');
+          // debugPrint('Switch failed: $e');
         }
         rethrow;
       }

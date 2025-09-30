@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/anim/vagus_loader.dart';
+import '../../theme/design_tokens.dart';
 import 'signup_screen.dart';
 import 'password_reset_screen.dart';
 import '../nav/main_nav.dart';
@@ -142,9 +141,9 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
         
         // Navigate to main app
         if (mounted) {
-          Navigator.of(context).pushReplacement(
+          unawaited(Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const MainNav()),
-          );
+          ));
         }
       }
     } catch (e) {
@@ -186,9 +185,9 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
           );
 
           if (response.user != null && mounted) {
-            Navigator.of(context).pushReplacement(
+            unawaited(Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (_) => const MainNav()),
-            );
+            ));
           }
         }
       }
@@ -238,27 +237,27 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
   Widget _buildLoginCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2F33).withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(16.0),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppTheme.mintAqua.withValues(alpha: 0.3),
-          width: 2,
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.mintAqua.withValues(alpha: 0.2),
-            blurRadius: 30,
-            offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
             blurRadius: 20,
-            offset: const Offset(0, 10),
+            spreadRadius: 0,
           ),
         ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(32.0),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -270,10 +269,10 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                             height: 80,
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
-                              color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                              color: DesignTokens.accentGreen.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: AppTheme.mintAqua.withValues(alpha: 0.3),
+                                color: DesignTokens.accentGreen.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -289,12 +288,10 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                           ),
                           
                           // Title
-                          const Text(
+                          Text(
                             'Welcome to VAGUS',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFF5F7FA), // Off white
+                            style: DesignTokens.titleLarge.copyWith(
+                              color: DesignTokens.neutralWhite,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -302,11 +299,11 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                           const SizedBox(height: 8),
                           
                           // Subtitle
-                          Text(
+                          const Text(
                             'Sign in to your client portal',
                             style: TextStyle(
                               fontSize: 16,
-                              color: const Color(0xFF8A8D91), // Ash gray
+                              color: DesignTokens.textSecondary, // Ash gray
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -329,11 +326,11 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                               TextFormField(
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
-                                style: const TextStyle(color: Color(0xFFF5F7FA)),
+                                style: const TextStyle(color: DesignTokens.neutralWhite),
                                 decoration: InputDecoration(
                                   hintText: 'Enter your email',
                                   hintStyle: TextStyle(
-                                    color: const Color(0xFF8A8D91).withValues(alpha: 0.7),
+                                    color: DesignTokens.textSecondary.withValues(alpha: 0.7),
                                   ),
                                   filled: true,
                                   fillColor: const Color(0xFF1A1C1E).withValues(alpha: 0.5),
@@ -352,7 +349,7 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                     borderSide: const BorderSide(
-                                      color: AppTheme.mintAqua,
+                                      color: DesignTokens.accentGreen,
                                       width: 2,
                                     ),
                                   ),
@@ -392,11 +389,11 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                               TextFormField(
                                 controller: _passwordController,
                                 obscureText: !_showPassword,
-                                style: const TextStyle(color: Color(0xFFF5F7FA)),
+                                style: const TextStyle(color: DesignTokens.neutralWhite),
                                 decoration: InputDecoration(
                                   hintText: 'Enter your password',
                                   hintStyle: TextStyle(
-                                    color: const Color(0xFF8A8D91).withValues(alpha: 0.7),
+                                    color: DesignTokens.textSecondary.withValues(alpha: 0.7),
                                   ),
                                   filled: true,
                                   fillColor: const Color(0xFF1A1C1E).withValues(alpha: 0.5),
@@ -415,7 +412,7 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                     borderSide: const BorderSide(
-                                      color: AppTheme.mintAqua,
+                                      color: DesignTokens.accentGreen,
                                       width: 2,
                                     ),
                                   ),
@@ -427,7 +424,7 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                                     onPressed: _togglePasswordVisibility,
                                     icon: Icon(
                                       _showPassword ? Icons.visibility_off : Icons.visibility,
-                                      color: const Color(0xFF8A8D91),
+                                      color: DesignTokens.textSecondary,
                                       size: 20,
                                     ),
                                   ),
@@ -477,7 +474,7 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _handleSignIn,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.mintAqua,
+                                backgroundColor: DesignTokens.accentGreen,
                                 foregroundColor: Colors.white,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
@@ -546,12 +543,12 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                                   thickness: 1,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
                                   'OR CONTINUE WITH',
                                   style: TextStyle(
-                                    color: const Color(0xFF8A8D91),
+                                    color: DesignTokens.textSecondary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 0.5,
@@ -581,7 +578,7 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                             child: const Text(
                               'Forgot Password?',
                               style: TextStyle(
-                                color: AppTheme.mintAqua,
+                                color: DesignTokens.accentGreen,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -594,10 +591,10 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
+                              const Text(
                                 'Don\'t have an account? ',
                                 style: TextStyle(
-                                  color: const Color(0xFF8A8D91),
+                                  color: DesignTokens.textSecondary,
                                   fontSize: 14,
                                 ),
                               ),
@@ -612,7 +609,7 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                                 child: const Text(
                                   'Sign Up',
                                   style: TextStyle(
-                                    color: AppTheme.mintAqua,
+                                    color: DesignTokens.accentGreen,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -623,14 +620,21 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
                         ],
                       ),
                     ),
+          ),
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1C1E),
-      body: Stack(
+      backgroundColor: DesignTokens.primaryDark,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DesignTokens.darkGradient,
+        ),
+        child: Stack(
         children: [
           // Animated Background
           _buildAnimatedBackground(),
@@ -654,6 +658,7 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -701,11 +706,11 @@ class AnimatedBackgroundPainter extends CustomPainter {
 
   void _drawFloatingCircles(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppTheme.mintAqua.withValues(alpha: 0.1)
+      ..color = DesignTokens.accentGreen.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
     
     final strokePaint = Paint()
-      ..color = AppTheme.mintAqua.withValues(alpha: 0.2)
+      ..color = DesignTokens.accentGreen.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     
@@ -754,7 +759,7 @@ class AnimatedBackgroundPainter extends CustomPainter {
 
   void _drawNeonWaves(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppTheme.mintAqua.withValues(alpha: 0.1 + neonAnimation * 0.1)
+      ..color = DesignTokens.accentGreen.withValues(alpha: 0.1 + neonAnimation * 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     
@@ -779,7 +784,7 @@ class AnimatedBackgroundPainter extends CustomPainter {
       
       // Set wave opacity and color
       final opacity = 0.1 + math.sin(animation * 2 * math.pi + waveLayer * 0.5) * 0.05;
-      paint.color = AppTheme.mintAqua.withValues(alpha: opacity);
+      paint.color = DesignTokens.accentGreen.withValues(alpha: opacity);
       
       // Draw the wave
       canvas.drawPath(path, paint);
@@ -796,7 +801,7 @@ class AnimatedBackgroundPainter extends CustomPainter {
       }
       
       final opacity2 = 0.05 + math.cos(animation * 2 * math.pi + waveLayer * 0.7) * 0.03;
-      paint.color = AppTheme.mintAqua.withValues(alpha: opacity2);
+      paint.color = DesignTokens.accentGreen.withValues(alpha: opacity2);
       canvas.drawPath(path2, paint);
     }
     
@@ -805,7 +810,7 @@ class AnimatedBackgroundPainter extends CustomPainter {
       final path = Path();
       final startX = -100.0 + i * 200.0;
       final startY = size.height * 0.1 + i * size.height * 0.3;
-      final waveLength = 150.0 + i * 50.0;
+      // final waveLength = 150.0 + i * 50.0;
       
       path.moveTo(startX, startY);
       
@@ -818,14 +823,14 @@ class AnimatedBackgroundPainter extends CustomPainter {
       }
       
       final opacity = 0.08 + math.sin(animation * 2 * math.pi + i * 1.2) * 0.04;
-      paint.color = AppTheme.mintAqua.withValues(alpha: opacity);
+      paint.color = DesignTokens.accentGreen.withValues(alpha: opacity);
       canvas.drawPath(path, paint);
     }
   }
 
   void _drawParticles(Canvas canvas, Size canvasSize) {
     final paint = Paint()
-      ..color = AppTheme.mintAqua.withValues(alpha: 0.6)
+      ..color = DesignTokens.accentGreen.withValues(alpha: 0.6)
       ..style = PaintingStyle.fill;
     
     for (int i = 0; i < 20; i++) {

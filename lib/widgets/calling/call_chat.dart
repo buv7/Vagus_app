@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../models/call_message.dart';
+import '../../theme/design_tokens.dart';
 
 class CallChat extends StatefulWidget {
   final List<CallMessage> messages;
@@ -7,11 +9,11 @@ class CallChat extends StatefulWidget {
   final VoidCallback onClose;
 
   const CallChat({
-    Key? key,
+    super.key,
     required this.messages,
     required this.onSendMessage,
     required this.onClose,
-  }) : super(key: key);
+  });
 
   @override
   State<CallChat> createState() => _CallChatState();
@@ -69,14 +71,36 @@ class _CallChatState extends State<CallChat> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.9),
+        color: DesignTokens.cardBackground,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
-        children: [
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.9),
+            ),
+            child: Column(
+              children: [
           // Header
           _buildHeader(),
           
@@ -85,9 +109,12 @@ class _CallChatState extends State<CallChat> {
             child: _buildMessagesList(),
           ),
           
-          // Message input
-          _buildMessageInput(),
-        ],
+              // Message input
+              _buildMessageInput(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -98,7 +125,7 @@ class _CallChatState extends State<CallChat> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -125,7 +152,7 @@ class _CallChatState extends State<CallChat> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Icon(
@@ -211,7 +238,7 @@ class _CallChatState extends State<CallChat> {
                   decoration: BoxDecoration(
                     color: isCurrentUser 
                         ? Colors.blue 
-                        : Colors.white.withOpacity(0.1),
+                        : Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: _buildMessageContent(message),
@@ -246,7 +273,7 @@ class _CallChatState extends State<CallChat> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -338,7 +365,7 @@ class _CallChatState extends State<CallChat> {
       radius: 12,
       backgroundColor: message.isCurrentUser 
           ? Colors.blue 
-          : Colors.white.withOpacity(0.2),
+          : Colors.white.withValues(alpha: 0.2),
       child: Text(
         message.initials,
         style: const TextStyle(
@@ -356,7 +383,7 @@ class _CallChatState extends State<CallChat> {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -371,7 +398,7 @@ class _CallChatState extends State<CallChat> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -388,7 +415,7 @@ class _CallChatState extends State<CallChat> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: TextField(

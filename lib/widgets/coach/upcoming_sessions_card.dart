@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -21,12 +22,28 @@ class UpcomingSessionsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space20),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space20),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
@@ -34,14 +51,14 @@ class UpcomingSessionsCard extends StatelessWidget {
             children: [
               const Icon(
                 Icons.calendar_today_outlined,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: 20,
               ),
               const SizedBox(width: DesignTokens.space8),
               const Text(
                 'Upcoming Sessions',
                 style: TextStyle(
-                  color: AppTheme.neutralWhite,
+                  color: DesignTokens.neutralWhite,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -53,13 +70,14 @@ class UpcomingSessionsCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.steelGrey,
+                  color: DesignTokens.cardBackground,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                  border: Border.all(color: DesignTokens.glassBorder),
                 ),
                 child: Text(
                   '${sessions.length}',
                   style: const TextStyle(
-                    color: AppTheme.neutralWhite,
+                    color: DesignTokens.neutralWhite,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -71,7 +89,7 @@ class UpcomingSessionsCard extends StatelessWidget {
                 child: const Text(
                   'View Calendar',
                   style: TextStyle(
-                    color: AppTheme.mintAqua,
+                    color: AppTheme.accentGreen,
                     fontSize: 14,
                   ),
                 ),
@@ -84,6 +102,9 @@ class UpcomingSessionsCard extends StatelessWidget {
           // Sessions List
           ...sessions.map((session) => _buildSessionItem(session)),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -94,18 +115,36 @@ class UpcomingSessionsCard extends StatelessWidget {
     
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space16),
-      padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlack,
-        borderRadius: BorderRadius.circular(DesignTokens.radius12),
-        border: Border(
-          left: BorderSide(
-            color: AppTheme.mintAqua,
-            width: 4,
-          ),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.2),
+            blurRadius: 15,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            decoration: const BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: AppTheme.accentGreen,
+                  width: 4,
+                ),
+              ),
+            ),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -227,19 +266,19 @@ class UpcomingSessionsCard extends StatelessWidget {
                   onPressed: () => onStartSession(session),
                   icon: const Icon(
                     Icons.play_arrow,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     size: 16,
                   ),
                   label: Text(
                     session['location']?.contains('Zoom') == true ? 'Join Meeting' : 'Start Session',
                     style: const TextStyle(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.mintAqua,
+                    backgroundColor: AppTheme.accentGreen,
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space12,
                     ),
@@ -252,21 +291,21 @@ class UpcomingSessionsCard extends StatelessWidget {
               const SizedBox(width: DesignTokens.space8),
               OutlinedButton(
                 onPressed: () => onReschedule(session),
-                child: const Text(
-                  'Reschedule',
-                  style: TextStyle(
-                    color: AppTheme.neutralWhite,
-                    fontSize: 14,
-                  ),
-                ),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppTheme.steelGrey),
+                  side: const BorderSide(color: AppTheme.mediumGrey),
                   padding: const EdgeInsets.symmetric(
                     vertical: DesignTokens.space12,
                     horizontal: DesignTokens.space16,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                  ),
+                ),
+                child: const Text(
+                  'Reschedule',
+                  style: TextStyle(
+                    color: AppTheme.neutralWhite,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -284,6 +323,9 @@ class UpcomingSessionsCard extends StatelessWidget {
             ],
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -291,13 +333,13 @@ class UpcomingSessionsCard extends StatelessWidget {
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'confirmed':
-        return AppTheme.mintAqua;
+        return AppTheme.accentGreen;
       case 'pending':
-        return AppTheme.steelGrey;
+        return AppTheme.mediumGrey;
       case 'cancelled':
         return Colors.red;
       default:
-        return AppTheme.steelGrey;
+        return AppTheme.mediumGrey;
     }
   }
 }

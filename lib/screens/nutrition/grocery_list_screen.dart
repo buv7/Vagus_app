@@ -9,7 +9,6 @@ import '../../services/nutrition/integrations/pantry_integration_helper.dart';
 import '../../services/nutrition/integrations/pantry_grocery_adapter.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../widgets/branding/vagus_appbar.dart';
-import 'pantry_screen.dart';
 
 class GroceryListScreen extends StatefulWidget {
   final GroceryList groceryList;
@@ -47,7 +46,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
         _error = null;
       });
 
-      final items = await _groceryService.getItems(widget.groceryList.id!);
+      final items = await _groceryService.getItems(widget.groceryList.id);
       
       setState(() {
         _items = items;
@@ -55,7 +54,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
       });
       
       // Calculate estimated total cost
-      _calculateTotalCost();
+      await _calculateTotalCost();
     } catch (e) {
       setState(() {
         _error = e.toString();
@@ -67,7 +66,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
   Future<void> _toggleItemChecked(GroceryItem item) async {
     try {
       await _groceryService.toggleChecked(
-        itemId: item.id!,
+        itemId: item.id,
         value: !item.isChecked,
       );
       
@@ -88,7 +87,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
 
   Future<void> _exportCsv() async {
     try {
-      final filePath = await _groceryService.exportCsv(widget.groceryList.id!);
+      final filePath = await _groceryService.exportCsv(widget.groceryList.id);
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -109,7 +108,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
 
   Future<void> _exportPdf() async {
     try {
-      final filePath = await _groceryService.exportPdf(widget.groceryList.id!);
+      final filePath = await _groceryService.exportPdf(widget.groceryList.id);
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -186,7 +185,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
                   color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -390,7 +389,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),
@@ -404,7 +403,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -499,10 +498,10 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
                     color: item.isChecked ? Colors.grey.shade600 : null,
                   ),
                 ),
-                if (item.amount != null && item.unit != null) ...[
+                ...[
                   const SizedBox(height: 2),
                   Text(
-                    '${item.amount!.toStringAsFixed(1)} ${item.unit}',
+                    '${item.amount.toStringAsFixed(1)} ${item.unit}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey.shade600,
                     ),

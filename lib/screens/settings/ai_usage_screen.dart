@@ -13,14 +13,14 @@ class AiUsageScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
+            const Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: const [
+                      children: [
                         Icon(Icons.psychology, size: 22),
                         SizedBox(width: 8),
                         Text(
@@ -29,7 +29,7 @@ class AiUsageScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
 
                     _QuotaItem(
                       featureLabel: 'Notes AI',
@@ -37,14 +37,14 @@ class AiUsageScreen extends StatelessWidget {
                       current: 45,
                       total: 100,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     _QuotaItem(
                       featureLabel: 'Nutrition AI',
                       icon: Icons.restaurant,
                       current: 23,
                       total: 50,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     _QuotaItem(
                       featureLabel: 'Workout AI',
                       icon: Icons.fitness_center,
@@ -52,14 +52,14 @@ class AiUsageScreen extends StatelessWidget {
                       total: 75,
                       showLimitWarning: true,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     _QuotaItem(
                       featureLabel: 'Messaging AI',
                       icon: Icons.chat,
                       current: 12,
                       total: 200,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     _QuotaItem(
                       featureLabel: 'Transcription',
                       icon: Icons.mic,
@@ -146,7 +146,7 @@ class _QuotaItem extends StatelessWidget {
         LinearProgressIndicator(
           value: percentage,
           minHeight: 4,
-          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
           valueColor: AlwaysStoppedAnimation<Color>(progressColor),
         ),
         if (isWarning || showLimitWarning) ...[

@@ -16,9 +16,9 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         foregroundColor: Colors.white,
         title: const Text(
           'Cardio Log',
@@ -41,22 +41,22 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
                 color: const Color(0xFF2C2F33),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppTheme.mintAqua.withValues(alpha: 0.2),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.directions_run,
-                        color: AppTheme.mintAqua,
+                        color: AppTheme.accentGreen,
                         size: 24,
                       ),
-                      const SizedBox(width: 12),
-                      const Text(
+                      SizedBox(width: 12),
+                      Text(
                         'Quick Cardio Log',
                         style: TextStyle(
                           color: Colors.white,
@@ -88,7 +88,7 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
                 color: const Color(0xFF2C2F33),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppTheme.mintAqua.withValues(alpha: 0.2),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -98,12 +98,12 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: AppTheme.mintAqua.withValues(alpha: 0.1),
+                      color: AppTheme.accentGreen.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.camera_alt,
-                      color: AppTheme.mintAqua,
+                      color: AppTheme.accentGreen,
                       size: 40,
                     ),
                   ),
@@ -142,7 +142,7 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
                         : const Icon(Icons.camera_alt),
                       label: Text(_isLoading ? 'Processing...' : 'Capture Cardio'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.mintAqua,
+                        backgroundColor: AppTheme.accentGreen,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -202,7 +202,7 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Manual entry coming soon!'),
-                            backgroundColor: AppTheme.mintAqua,
+                            backgroundColor: AppTheme.accentGreen,
                           ),
                         );
                       },
@@ -210,7 +210,7 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
                       label: const Text('Enter Manually'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white70,
-                        side: BorderSide(color: Colors.white70),
+                        side: const BorderSide(color: Colors.white70),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

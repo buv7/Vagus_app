@@ -27,52 +27,78 @@ class _SavedViewsBarState extends State<SavedViewsBar> {
   Future<void> _load() async {
     final v = await _svc.listSavedViews();
     if (!mounted) return;
-    setState(() => _views = v..sort((a,b)=>a.order.compareTo(b.order)));
+    final sortedViews = List<SavedView>.from(v);
+    sortedViews.sort((a,b)=>a.order.compareTo(b.order));
+    setState(() => _views = sortedViews);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(children: [
-              ..._views.map((v) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(v.name),
-                  selected: v.id == _activeId,
-                  onSelected: (_) {
-                    setState(()=>_activeId = v.id);
-                    widget.onSelect(v);
-                  },
-                ),
-              )),
-            ]),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.grey.withValues(alpha: 0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
           ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(children: [
+                  ..._views.map((v) => Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(v.name),
+                      selected: v.id == _activeId,
+                      onSelected: (_) {
+                        setState(()=>_activeId = v.id);
+                        widget.onSelect(v);
+                      },
+                    ),
+                  )),
+                ]),
+              ),
+            ),
+            IconButton(
+              tooltip: 'Save current view',
+              icon: const Icon(Icons.bookmark_add_outlined),
+              onPressed: () async {
+                final name = await _askName(context);
+                if (name == null || name.trim().isEmpty) return;
+                final v = await _svc.createSavedView(name.trim(), widget.currentFilters);
+                if (!mounted) return;
+                final newViews = [..._views, v];
+                newViews.sort((a,b)=>a.order.compareTo(b.order));
+                setState(() {
+                  _views = newViews;
+                });
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('View saved')));
+                }
+              },
+            ),
+            IconButton(
+              tooltip: 'Manage views',
+              icon: const Icon(Icons.tune),
+              onPressed: () => _manageViews(context),
+            ),
+          ],
         ),
-        IconButton(
-          tooltip: 'Save current view',
-          icon: const Icon(Icons.bookmark_add_outlined),
-          onPressed: () async {
-            final name = await _askName(context);
-            if (name == null || name.trim().isEmpty) return;
-            final v = await _svc.createSavedView(name.trim(), widget.currentFilters);
-            if (!mounted) return;
-            setState(() {
-              _views = [..._views, v]..sort((a,b)=>a.order.compareTo(b.order));
-            });
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('View saved')));
-          },
-        ),
-        IconButton(
-          tooltip: 'Manage views',
-          icon: const Icon(Icons.tune),
-          onPressed: () => _manageViews(context),
-        ),
-      ],
+      ),
     );
   }
 
@@ -103,7 +129,7 @@ class _SavedViewsBarState extends State<SavedViewsBar> {
             child: FutureBuilder(
               future: _svc.listSavedViews(),
               builder: (_, snap) {
-                final vs = (snap.data as List<SavedView>?) ?? _views;
+                final vs = snap.data ?? _views;
                 return ReorderableListView.builder(
                   shrinkWrap: true,
                   buildDefaultDragHandles: true,

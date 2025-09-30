@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../../services/coach/calendar_quick_book_service.dart';
 import '../../services/messages_service.dart';
 
@@ -116,7 +117,7 @@ class QuickBookAutoConfirmService {
 
       return AutoConfirmResult.success('Auto-confirmed.');
     } catch (e) {
-      print('QuickBookAutoConfirmService: Error confirming proposal - $e');
+      debugPrint('QuickBookAutoConfirmService: Error confirming proposal - $e');
       return AutoConfirmResult.failure('Failed to confirm: $e');
     }
   }
@@ -145,7 +146,7 @@ class QuickBookAutoConfirmService {
         text: message,
       );
     } catch (e) {
-      print('QuickBookAutoConfirmService: Error sending confirmation message - $e');
+      debugPrint('QuickBookAutoConfirmService: Error sending confirmation message - $e');
       // Don't throw - confirmation should still succeed even if message fails
     }
   }

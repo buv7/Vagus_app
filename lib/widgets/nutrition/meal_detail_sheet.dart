@@ -47,7 +47,7 @@ class MealDetailSheet extends StatelessWidget {
             child: Material(
               color: Theme.of(context).scaffoldBackgroundColor,
               elevation: 8,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(DesignTokens.radius12)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(DesignTokens.radius12)),
               child: SafeArea(
                 top: false,
                 child: Padding(

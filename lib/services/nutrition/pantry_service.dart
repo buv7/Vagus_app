@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/pantry_item.dart';
 import '../../models/nutrition/recipe.dart';
 import '../../models/nutrition/food_item.dart' as fi;
-import '../nutrition/text_normalizer.dart';
+import 'text_normalizer.dart';
 
 /// Service for managing pantry items and recipe matching
 class PantryService {
@@ -46,7 +47,7 @@ class PantryService {
       
       return items;
     } catch (e) {
-      print('Failed to fetch pantry items: $e');
+      debugPrint('Failed to fetch pantry items: $e');
       return [];
     }
   }
@@ -61,7 +62,7 @@ class PantryService {
       // Invalidate cache
       _cache.remove(item.userId);
     } catch (e) {
-      print('Failed to upsert pantry item: $e');
+      debugPrint('Failed to upsert pantry item: $e');
       rethrow;
     }
   }
@@ -78,7 +79,7 @@ class PantryService {
       // Invalidate cache
       _cache.remove(userId);
     } catch (e) {
-      print('Failed to delete pantry item: $e');
+      debugPrint('Failed to delete pantry item: $e');
       rethrow;
     }
   }
@@ -97,7 +98,7 @@ class PantryService {
       );
       return coverage.ratio;
     } catch (e) {
-      print('Failed to match recipe: $e');
+      debugPrint('Failed to match recipe: $e');
       return 0.0;
     }
   }
@@ -150,8 +151,8 @@ class PantryService {
       final ratio = totalNeed > 0 ? totalAvailable / totalNeed : 0.0;
       return PantryCoverage(ratio, coverageRows);
     } catch (e) {
-      print('Failed to compute coverage: $e');
-      return PantryCoverage(0.0, []);
+      debugPrint('Failed to compute coverage: $e');
+      return const PantryCoverage(0.0, []);
     }
   }
 
@@ -208,7 +209,7 @@ class PantryService {
 
       return deltas;
     } catch (e) {
-      print('Failed to plan consumption: $e');
+      debugPrint('Failed to plan consumption: $e');
       return [];
     }
   }
@@ -267,7 +268,7 @@ class PantryService {
         rethrow;
       }
     } catch (e) {
-      print('Failed to apply consumption: $e');
+      debugPrint('Failed to apply consumption: $e');
       rethrow;
     }
   }
@@ -371,7 +372,7 @@ class PantryService {
       }
     }
     
-    final hitRate = _cache.length > 0 ? validEntries / _cache.length : 0.0;
+    final hitRate = _cache.isNotEmpty ? validEntries / _cache.length : 0.0;
     
     return {
       'cacheSize': stats['cacheSize'],
@@ -382,7 +383,7 @@ class PantryService {
   /// Save a meal item as a pantry leftover
   Future<void> saveLeftoverFromFoodItem(fi.FoodItem item, {required String userId}) async {
     final key = TextNormalizer.canonicalKey(item.name);
-    final qtyBase = (item.amount ?? 0).toDouble();
+    final qtyBase = item.amount.toDouble();
     final unit = (item.unit ?? 'g');
     final normalized = _normalizeToBase(qtyBase, unit);
     

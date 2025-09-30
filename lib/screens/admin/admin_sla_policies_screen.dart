@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:vagus_app/services/admin/admin_support_service.dart';
 
@@ -264,7 +265,7 @@ class _AdminSlaPoliciesScreenState extends State<AdminSlaPoliciesScreen> {
         responseTime: Duration(minutes: int.parse(_responseTimeController.text)),
         resolutionTime: Duration(minutes: int.parse(_resolutionTimeController.text)),
         isActive: _isActive,
-        businessHours: _editingPolicy?.businessHours ?? BusinessHours(),
+        businessHours: _editingPolicy?.businessHours ?? const BusinessHours(),
         escalationRules: _editingPolicy?.escalationRules ?? [],
         createdAt: _editingPolicy?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),
@@ -275,7 +276,7 @@ class _AdminSlaPoliciesScreenState extends State<AdminSlaPoliciesScreen> {
       if (!mounted) return;
       
       Navigator.pop(context);
-      _loadPolicies();
+      unawaited(_loadPolicies());
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -322,7 +323,7 @@ class _AdminSlaPoliciesScreenState extends State<AdminSlaPoliciesScreen> {
     
     try {
       await _service.deletePolicy(policy.id);
-      _loadPolicies();
+      unawaited(_loadPolicies());
       
       if (!mounted) return;
       
@@ -423,7 +424,7 @@ class _AdminSlaPoliciesScreenState extends State<AdminSlaPoliciesScreen> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: priorityColor,
-          child: Icon(
+          child: const Icon(
             Icons.policy,
             color: Colors.white,
           ),
@@ -520,7 +521,7 @@ class _AdminSlaPoliciesScreenState extends State<AdminSlaPoliciesScreen> {
               child: Row(
                 children: [
                   Icon(policy.isActive ? Icons.pause : Icons.play_arrow),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(policy.isActive ? 'Deactivate' : 'Activate'),
                 ],
               ),
@@ -605,7 +606,7 @@ class _AdminSlaPoliciesScreenState extends State<AdminSlaPoliciesScreen> {
       );
       
       await _service.upsertPolicy(updatedPolicy);
-      _loadPolicies();
+      unawaited(_loadPolicies());
       
       if (!mounted) return;
       

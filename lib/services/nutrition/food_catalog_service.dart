@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'locale_helper.dart';
 import 'text_normalizer.dart';
+import '../../models/nutrition/food_item.dart' as food;
 
 class CatalogFoodItem {
   final String id;
@@ -293,7 +294,7 @@ class FoodCatalogService {
 
     } catch (e) {
       // Handle error silently - seed is optional
-      print('Failed to append MENA seed: $e');
+      debugPrint('Failed to append MENA seed: $e');
     }
   }
 
@@ -352,123 +353,13 @@ class FoodCatalogService {
 
       } catch (e) {
         // Continue with next item if one fails
-        print('Failed to insert seed item ${item['key']}: $e');
+        debugPrint('Failed to insert seed item ${item['key']}: $e');
       }
     }
   }
 
-  /// Enhanced search with MENA seed support
-  Future<List<CatalogFoodItem>> _searchDatabaseV2(String query, String lang, int limit) async {
-    try {
-      String nameColumn = 'name_en';
-      switch (lang) {
-        case 'ar':
-          nameColumn = 'name_ar';
-          break;
-        case 'ku':
-          nameColumn = 'name_ku';
-          break;
-      }
 
-      // Search with normalized query across all name columns
-      final response = await _supabase
-          .from('food_items')
-          .select()
-          .or('name_en.ilike.%$query%,name_ar.ilike.%$query%,name_ku.ilike.%$query%')
-          .limit(limit)
-          .order(nameColumn);
 
-      return response.map<CatalogFoodItem>((item) => CatalogFoodItem.fromJson(item, source: 'database')).toList();
-    } catch (e) {
-      return [];
-    }
-  }
-
-  /// Enhanced asset search with MENA seed support
-  Future<List<CatalogFoodItem>> _searchAssetV2(String query, String lang, int limit) async {
-    try {
-      // Try MENA seed first
-      final menaResults = await _searchMenaSeed(query, lang, limit);
-      if (menaResults.isNotEmpty) {
-        return menaResults;
-      }
-
-      // Fallback to original asset search
-      final jsonString = await rootBundle.loadString('assets/foods/arabic_kurdish_foods.json');
-      final jsonData = json.decode(jsonString);
-      final items = jsonData['items'] as List;
-
-      final results = <CatalogFoodItem>[];
-      
-      for (final item in items) {
-        final foodItem = CatalogFoodItem.fromJson(item, source: 'asset');
-        final itemName = foodItem.getName(lang).toLowerCase();
-        
-        if (itemName.contains(query) || 
-            foodItem.nameEn.toLowerCase().contains(query) ||
-            (foodItem.nameAr?.toLowerCase().contains(query) ?? false) ||
-            (foodItem.nameKu?.toLowerCase().contains(query) ?? false)) {
-          results.add(foodItem);
-          if (results.length >= limit) break;
-        }
-      }
-      
-      return results;
-    } catch (e) {
-      return [];
-    }
-  }
-
-  /// Search MENA seed data
-  Future<List<CatalogFoodItem>> _searchMenaSeed(String query, String lang, int limit) async {
-    try {
-      final seedData = await _loadMenaSeedData();
-      final results = <CatalogFoodItem>[];
-      
-      for (final item in seedData) {
-        final names = item['names'] as Map<String, dynamic>;
-        final nameEn = names['en'] ?? '';
-        final nameAr = names['ar'] ?? '';
-        final nameKu = names['ku'] ?? '';
-        
-        // Check if any name matches the query
-        final normalizedQuery = TextNormalizer.normalizeForSearch(query);
-        final matches = [
-          TextNormalizer.normalizeForSearch(nameEn),
-          TextNormalizer.normalizeForSearch(nameAr),
-          TextNormalizer.normalizeForSearch(nameKu),
-        ].any((name) => name.contains(normalizedQuery));
-        
-        if (matches) {
-          final nutrition = item['per_100g'] ?? item['per_100ml'] ?? {};
-          final tags = List<String>.from(item['tags'] ?? []);
-          
-          final catalogItem = CatalogFoodItem(
-            id: item['key'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
-            nameEn: nameEn,
-            nameAr: nameAr.isNotEmpty ? nameAr : null,
-            nameKu: nameKu.isNotEmpty ? nameKu : null,
-            portionGrams: 100.0,
-            kcal: (nutrition['kcal'] ?? 0.0).toDouble(),
-            proteinG: (nutrition['protein_g'] ?? 0.0).toDouble(),
-            carbsG: (nutrition['carbs_g'] ?? 0.0).toDouble(),
-            fatG: (nutrition['fat_g'] ?? 0.0).toDouble(),
-            sodiumMg: nutrition['sodium_mg'],
-            potassiumMg: nutrition['potassium_mg'],
-            tags: tags,
-            source: 'mena_seed',
-          );
-          
-          results.add(catalogItem);
-          if (results.length >= limit) break;
-        }
-      }
-      
-      return results;
-    } catch (e) {
-      return [];
-    }
-  }
 
   /// Initialize MENA seed on first app launch
   Future<void> initializeMenaSeed() async {
@@ -490,7 +381,140 @@ class FoodCatalogService {
     try {
       await appendMenaSeedIfNeeded();
     } catch (e) {
-      print('Error seeding MENA foods: $e');
+      debugPrint('Error seeding MENA foods: $e');
+    }
+  }
+
+  /// Search foods with pagination support
+  Future<List<CatalogFoodItem>> searchFoods(String query, {String lang = 'en', int limit = 20}) async {
+    return search(query, lang: lang, limit: limit);
+  }
+
+  /// Get recently used foods for a user
+  Future<List<CatalogFoodItem>> getRecentFoods({String lang = 'en', int limit = 10}) async {
+    // TODO: Implement user-specific recent foods tracking
+    // For now, return popular/common foods as a placeholder
+    try {
+      final commonFoods = ['chicken breast', 'rice', 'egg', 'potato', 'apple'];
+      final results = <CatalogFoodItem>[];
+
+      for (final food in commonFoods) {
+        final searchResults = await search(food, lang: lang, limit: 1);
+        if (searchResults.isNotEmpty) {
+          results.add(searchResults.first);
+        }
+        if (results.length >= limit) break;
+      }
+
+      return results;
+    } catch (e) {
+      debugPrint('Error getting recent foods: $e');
+      return [];
+    }
+  }
+
+  /// Get user's custom foods
+  static Future<List<dynamic>> getUserCustomFoods() async {
+    try {
+      // TODO: Query user_custom_foods table from Supabase
+      // For now, return empty list as placeholder
+      return [];
+    } catch (e) {
+      debugPrint('Error getting custom foods: $e');
+      return [];
+    }
+  }
+
+  /// Delete a custom food
+  static Future<void> deleteCustomFood(String foodId) async {
+    try {
+      // TODO: Delete from user_custom_foods table
+      final supabase = Supabase.instance.client;
+      await supabase
+          .from('user_custom_foods')
+          .delete()
+          .eq('id', foodId);
+    } catch (e) {
+      debugPrint('Error deleting custom food: $e');
+      rethrow;
+    }
+  }
+
+  /// Create a custom food
+  static Future<dynamic> createCustomFood(dynamic food) async {
+    try {
+      // TODO: Insert into user_custom_foods table
+      return food;
+    } catch (e) {
+      debugPrint('Error creating custom food: $e');
+      rethrow;
+    }
+  }
+
+  /// Update a custom food
+  static Future<dynamic> updateCustomFood(dynamic food) async {
+    try {
+      // TODO: Update user_custom_foods table
+      return food;
+    } catch (e) {
+      debugPrint('Error updating custom food: $e');
+      rethrow;
+    }
+  }
+
+  /// Get favorite foods
+  static Future<List<food.FoodItem>> getFavoriteFoods() async {
+    try {
+      // TODO: Query user favorite foods from Supabase
+      // For now, return empty list as placeholder
+      return [];
+    } catch (e) {
+      debugPrint('Error getting favorite foods: $e');
+      return [];
+    }
+  }
+
+  /// Get suggested foods based on user preferences and meal context
+  Future<List<CatalogFoodItem>> getSuggestedFoods({String lang = 'en', int limit = 10, String? mealType}) async {
+    // TODO: Implement AI-powered food suggestions based on:
+    // - User's dietary preferences
+    // - Meal type (breakfast, lunch, dinner, snack)
+    // - Nutritional goals
+    // - Past food selections
+
+    // For now, return category-appropriate foods as a placeholder
+    try {
+      List<String> suggestions;
+      switch (mealType?.toLowerCase()) {
+        case 'breakfast':
+          suggestions = ['oatmeal', 'egg', 'banana', 'yogurt', 'toast'];
+          break;
+        case 'lunch':
+          suggestions = ['chicken breast', 'rice', 'salad', 'fish', 'pasta'];
+          break;
+        case 'dinner':
+          suggestions = ['salmon', 'broccoli', 'quinoa', 'beef', 'vegetables'];
+          break;
+        case 'snack':
+          suggestions = ['apple', 'nuts', 'protein bar', 'cheese', 'hummus'];
+          break;
+        default:
+          suggestions = ['chicken', 'rice', 'vegetables', 'fruit', 'fish'];
+      }
+
+      final results = <CatalogFoodItem>[];
+      for (final food in suggestions) {
+        final searchResults = await search(food, lang: lang, limit: 1);
+        if (searchResults.isNotEmpty) {
+          results.add(searchResults.first);
+        }
+        if (results.length >= limit) break;
+      }
+
+      return results;
+    } catch (e) {
+      debugPrint('Error getting suggested foods: $e');
+      return [];
     }
   }
 }

@@ -21,7 +21,6 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   bool _showSearch = false;
   bool _showSmartReplies = true;
   bool _showPinnedMessages = false;
-  String _searchQuery = '';
 
   // Real data from Supabase
   List<Message> _messages = [];
@@ -156,13 +155,13 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           _isLoading = false;
           // Use mock data as fallback
           _messages = _mockMessages.map((mock) => Message(
-            id: mock['id'],
+            id: mock['id'] ?? 'mock_${DateTime.now().millisecondsSinceEpoch}',
             threadId: 'mock_thread',
             senderId: mock['sender'] == 'user' ? 'user_id' : 'coach_id',
-            text: mock['content'],
+            text: mock['content'] ?? '',
             attachments: [],
             reactions: Map<String, String>.from(mock['reactions'] ?? {}),
-            createdAt: mock['timestamp'],
+            createdAt: mock['timestamp'] ?? DateTime.now(),
           )).toList();
           _pinnedMessages = _messages.where((msg) => msg.reactions.containsKey('pinned')).toList();
         });
@@ -173,7 +172,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   Future<String?> _getCoachId(String clientId) async {
     try {
       // Try coach_clients table first
-      var links = await Supabase.instance.client
+      final links = await Supabase.instance.client
           .from('coach_clients')
           .select('coach_id')
           .eq('client_id', clientId);
@@ -183,7 +182,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
       }
 
       // Try coach_client_links table
-      var response = await Supabase.instance.client
+      final response = await Supabase.instance.client
           .from('coach_client_links')
           .select('coach_id')
           .eq('client_id', clientId);
@@ -296,14 +295,18 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: DesignTokens.primaryDark,
       drawerEdgeDragWidth: 24,
       drawer: const VagusSideMenu(isClient: true),
-      body: SafeArea(
-        child: _isLoading 
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DesignTokens.darkGradient,
+        ),
+        child: SafeArea(
+          child: _isLoading 
             ? const Center(
                 child: CircularProgressIndicator(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                 ),
               )
             : _error != null
@@ -311,7 +314,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.error_outline,
                           color: Colors.red,
                           size: 48,
@@ -335,8 +338,8 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                         ElevatedButton(
                           onPressed: _loadMessages,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.mintAqua,
-                            foregroundColor: AppTheme.primaryBlack,
+                            backgroundColor: AppTheme.accentGreen,
+                            foregroundColor: AppTheme.primaryDark,
                           ),
                           child: const Text('Retry'),
                         ),
@@ -377,6 +380,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             // Message Composer
             _buildMessageComposer(),
           ],
+          ),
         ),
       ),
     );
@@ -389,7 +393,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         color: AppTheme.cardBackground,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -404,13 +408,13 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           ),
           
           // Coach Avatar
-          CircleAvatar(
+          const CircleAvatar(
             radius: 20,
-            backgroundColor: AppTheme.mintAqua,
-            child: const Text(
+            backgroundColor: AppTheme.accentGreen,
+            child: Text(
               'JD',
               style: TextStyle(
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -464,13 +468,13 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                 onPressed: () {
                   // Schedule call functionality
                 },
-                icon: const Icon(Icons.phone, color: AppTheme.mintAqua),
+                icon: const Icon(Icons.phone, color: AppTheme.accentGreen),
               ),
               IconButton(
                 onPressed: () {
                   // Video call functionality
                 },
-                icon: const Icon(Icons.videocam, color: AppTheme.mintAqua),
+                icon: const Icon(Icons.videocam, color: AppTheme.accentGreen),
               ),
               IconButton(
                 onPressed: () {
@@ -480,7 +484,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                 },
                 icon: Icon(
                   Icons.search,
-                  color: _showSearch ? AppTheme.mintAqua : Colors.white70,
+                  color: _showSearch ? AppTheme.accentGreen : Colors.white70,
                 ),
               ),
               IconButton(
@@ -491,7 +495,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                 },
                 icon: Icon(
                   Icons.push_pin,
-                  color: _showPinnedMessages ? AppTheme.mintAqua : Colors.white70,
+                  color: _showPinnedMessages ? AppTheme.accentGreen : Colors.white70,
                 ),
               ),
             ],
@@ -508,7 +512,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         color: AppTheme.cardBackground,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -516,36 +520,35 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           hintText: 'Search messages...',
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
           prefixIcon: Icon(
             Icons.search,
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(
-              color: AppTheme.mintAqua,
+              color: AppTheme.accentGreen,
               width: 2,
             ),
           ),
           filled: true,
-          fillColor: AppTheme.primaryBlack.withOpacity(0.3),
+          fillColor: AppTheme.primaryDark.withValues(alpha: 0.3),
         ),
         onChanged: (value) {
           setState(() {
-            _searchQuery = value;
           });
         },
       ),
@@ -559,7 +562,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         color: AppTheme.cardBackground,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -573,7 +576,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                 children: [
                   const Icon(
                     Icons.push_pin,
-                    color: AppTheme.softYellow,
+                    color: AppTheme.accentOrange,
                     size: 16,
                   ),
                   const SizedBox(width: 4),
@@ -608,17 +611,17 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
       margin: const EdgeInsets.only(bottom: DesignTokens.space8),
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlack.withOpacity(0.3),
+        color: AppTheme.primaryDark.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.softYellow.withOpacity(0.3),
+          color: AppTheme.accentOrange.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
           const Icon(
             Icons.push_pin,
-            color: AppTheme.softYellow,
+            color: AppTheme.accentOrange,
             size: 16,
           ),
           const SizedBox(width: 8),
@@ -644,7 +647,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         color: AppTheme.cardBackground,
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -655,7 +658,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             onPressed: () {
               _showAttachmentMenu();
             },
-            icon: const Icon(Icons.attach_file, color: AppTheme.mintAqua),
+            icon: const Icon(Icons.attach_file, color: AppTheme.accentGreen),
           ),
           
           // Voice Message Button
@@ -663,17 +666,17 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             onPressed: () {
               // Voice message functionality
             },
-            icon: const Icon(Icons.mic, color: AppTheme.mintAqua),
+            icon: const Icon(Icons.mic, color: AppTheme.accentGreen),
           ),
           
           // Message Input
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlack.withOpacity(0.3),
+                color: AppTheme.primaryDark.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                 ),
               ),
               child: TextField(
@@ -681,7 +684,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'Type a message...',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: DesignTokens.space16,
@@ -698,7 +701,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           // Send Button
           IconButton(
             onPressed: _sendMessage,
-            icon: const Icon(Icons.send, color: AppTheme.mintAqua),
+            icon: const Icon(Icons.send, color: AppTheme.accentGreen),
           ),
         ],
       ),
@@ -711,7 +714,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
       width: 4,
       height: 4,
       decoration: const BoxDecoration(
-        color: AppTheme.mintAqua,
+        color: AppTheme.accentGreen,
         shape: BoxShape.circle,
       ),
     );
@@ -722,13 +725,13 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
       padding: const EdgeInsets.only(bottom: DesignTokens.space16),
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 16,
-            backgroundColor: AppTheme.mintAqua,
-            child: const Text(
+            backgroundColor: AppTheme.accentGreen,
+            child: Text(
               'JD',
               style: TextStyle(
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -772,13 +775,13 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
-            CircleAvatar(
+            const CircleAvatar(
               radius: 16,
-              backgroundColor: AppTheme.mintAqua,
-              child: const Text(
+              backgroundColor: AppTheme.accentGreen,
+              child: Text(
                 'JD',
                 style: TextStyle(
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -800,13 +803,13 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                     vertical: DesignTokens.space12,
                   ),
                   decoration: BoxDecoration(
-                    color: isUser ? AppTheme.mintAqua : AppTheme.cardBackground,
+                    color: isUser ? AppTheme.accentGreen : AppTheme.cardBackground,
                     borderRadius: BorderRadius.circular(18).copyWith(
                       bottomLeft: isUser ? const Radius.circular(18) : const Radius.circular(4),
                       bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(18),
                     ),
                     border: isPinned
-                        ? Border.all(color: AppTheme.softYellow, width: 2)
+                        ? Border.all(color: AppTheme.accentOrange, width: 2)
                         : null,
                   ),
                   child: Column(
@@ -815,7 +818,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                       Text(
                         message.text,
                         style: DesignTokens.bodyMedium.copyWith(
-                          color: isUser ? AppTheme.primaryBlack : Colors.white,
+                          color: isUser ? AppTheme.primaryDark : Colors.white,
                         ),
                       ),
                       if (message.attachments.isNotEmpty) ...[
@@ -824,12 +827,12 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                           width: 100,
                           height: 100,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
                             Icons.image,
-                            color: AppTheme.mintAqua,
+                            color: AppTheme.accentGreen,
                             size: 32,
                           ),
                         ),
@@ -852,7 +855,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryBlack.withOpacity(0.3),
+                            color: AppTheme.primaryDark.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -871,14 +874,14 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                     Text(
                       _formatTime(message.createdAt),
                       style: DesignTokens.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                       ),
                     ),
                     if (isPinned) ...[
                       const SizedBox(width: 4),
                       const Icon(
                         Icons.push_pin,
-                        color: AppTheme.softYellow,
+                        color: AppTheme.accentOrange,
                         size: 12,
                       ),
                     ],
@@ -886,7 +889,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                     PopupMenuButton<String>(
                       icon: Icon(
                         Icons.more_vert,
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         size: 16,
                       ),
                       onSelected: (value) {
@@ -925,10 +928,10 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           
           if (isUser) ...[
             const SizedBox(width: DesignTokens.space8),
-            CircleAvatar(
+            const CircleAvatar(
               radius: 16,
-              backgroundColor: AppTheme.primaryBlack,
-              child: const Text(
+              backgroundColor: AppTheme.primaryDark,
+              child: Text(
                 'A',
                 style: TextStyle(
                   color: Colors.white,
@@ -950,7 +953,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         color: AppTheme.cardBackground,
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -990,10 +993,10 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                   vertical: DesignTokens.space8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlack.withOpacity(0.3),
+                  color: AppTheme.primaryDark.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -1052,12 +1055,12 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: AppTheme.primaryBlack.withOpacity(0.3),
+            color: AppTheme.primaryDark.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(30),
           ),
           child: Icon(
             icon,
-            color: AppTheme.mintAqua,
+            color: AppTheme.accentGreen,
             size: 24,
           ),
         ),
@@ -1087,18 +1090,4 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
     }
   }
 
-  // Helper method for getting coach profile
-  Future<Map<String, dynamic>?> _getCoachProfile(String coachId) async {
-    try {
-      final response = await Supabase.instance.client
-          .from('profiles')
-          .select('name, email, avatar_url')
-          .eq('id', coachId)
-          .single();
-      
-      return response;
-    } catch (e) {
-      return null;
-    }
-  }
 }

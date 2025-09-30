@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../theme/app_theme.dart';
@@ -114,7 +115,7 @@ class _AnimatedFeedbackState extends State<AnimatedFeedback>
     await _scaleController.forward();
     
     if (widget.type == FeedbackType.milestone || widget.type == FeedbackType.success) {
-      _particleController.forward();
+      unawaited(_particleController.forward());
     }
 
     // Auto dismiss after duration
@@ -149,7 +150,7 @@ class _AnimatedFeedbackState extends State<AnimatedFeedback>
         return Opacity(
           opacity: _fadeAnimation.value,
           child: Container(
-            color: Colors.black.withOpacity(0.6),
+            color: Colors.black.withValues(alpha: 0.6),
             child: Center(
               child: AnimatedBuilder(
                 animation: _scaleAnimation,
@@ -178,7 +179,7 @@ class _AnimatedFeedbackState extends State<AnimatedFeedback>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -198,7 +199,7 @@ class _AnimatedFeedbackState extends State<AnimatedFeedback>
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -225,7 +226,7 @@ class _AnimatedFeedbackState extends State<AnimatedFeedback>
               child: const Text(
                 'Got it',
                 style: TextStyle(
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -259,7 +260,7 @@ class _AnimatedFeedbackState extends State<AnimatedFeedback>
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -275,7 +276,7 @@ class _AnimatedFeedbackState extends State<AnimatedFeedback>
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -338,7 +339,7 @@ class ParticlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.amber.withOpacity(0.8)
+      ..color = Colors.amber.withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
 
     final center = Offset(size.width / 2, size.height / 2);

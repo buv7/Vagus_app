@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
 
 final _sb = Supabase.instance.client;
 
@@ -205,7 +205,7 @@ class CoachPlanBuilderService {
 
       return plans.skip(offset).take(limit).toList();
     } catch (e) {
-      print('CoachPlanBuilderService: Error getting workout plans - $e');
+      debugPrint('CoachPlanBuilderService: Error getting workout plans - $e');
       return [];
     }
   }
@@ -274,7 +274,7 @@ class CoachPlanBuilderService {
 
       return plans.skip(offset).take(limit).toList();
     } catch (e) {
-      print('CoachPlanBuilderService: Error getting nutrition plans - $e');
+      debugPrint('CoachPlanBuilderService: Error getting nutrition plans - $e');
       return [];
     }
   }
@@ -318,7 +318,7 @@ class CoachPlanBuilderService {
         'usage_count': usageCount,
       };
     } catch (e) {
-      print('CoachPlanBuilderService: Error getting workout plan details - $e');
+      debugPrint('CoachPlanBuilderService: Error getting workout plan details - $e');
       return {
         'total_exercises': 0,
         'avg_rating': 0.0,
@@ -366,7 +366,7 @@ class CoachPlanBuilderService {
         'usage_count': usageCount,
       };
     } catch (e) {
-      print('CoachPlanBuilderService: Error getting nutrition plan details - $e');
+      debugPrint('CoachPlanBuilderService: Error getting nutrition plan details - $e');
       return {
         'total_meals': 0,
         'avg_rating': 0.0,
@@ -399,7 +399,7 @@ class CoachPlanBuilderService {
 
       return response['id'] as String;
     } catch (e) {
-      print('CoachPlanBuilderService: Error creating workout plan - $e');
+      debugPrint('CoachPlanBuilderService: Error creating workout plan - $e');
       return null;
     }
   }
@@ -428,7 +428,7 @@ class CoachPlanBuilderService {
 
       return response['id'] as String;
     } catch (e) {
-      print('CoachPlanBuilderService: Error creating nutrition plan - $e');
+      debugPrint('CoachPlanBuilderService: Error creating nutrition plan - $e');
       return null;
     }
   }
@@ -462,7 +462,7 @@ class CoachPlanBuilderService {
 
       return true;
     } catch (e) {
-      print('CoachPlanBuilderService: Error updating workout plan - $e');
+      debugPrint('CoachPlanBuilderService: Error updating workout plan - $e');
       return false;
     }
   }
@@ -496,7 +496,7 @@ class CoachPlanBuilderService {
 
       return true;
     } catch (e) {
-      print('CoachPlanBuilderService: Error updating nutrition plan - $e');
+      debugPrint('CoachPlanBuilderService: Error updating nutrition plan - $e');
       return false;
     }
   }
@@ -518,7 +518,7 @@ class CoachPlanBuilderService {
 
       return true;
     } catch (e) {
-      print('CoachPlanBuilderService: Error deleting workout plan - $e');
+      debugPrint('CoachPlanBuilderService: Error deleting workout plan - $e');
       return false;
     }
   }
@@ -540,7 +540,7 @@ class CoachPlanBuilderService {
 
       return true;
     } catch (e) {
-      print('CoachPlanBuilderService: Error deleting nutrition plan - $e');
+      debugPrint('CoachPlanBuilderService: Error deleting nutrition plan - $e');
       return false;
     }
   }
@@ -615,7 +615,7 @@ class CoachPlanBuilderService {
         activeAssignments: activeAssignments,
       );
     } catch (e) {
-      print('CoachPlanBuilderService: Error getting plan metrics - $e');
+      debugPrint('CoachPlanBuilderService: Error getting plan metrics - $e');
       return PlanMetrics.empty();
     }
   }

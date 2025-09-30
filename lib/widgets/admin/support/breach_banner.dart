@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../services/admin/admin_support_service.dart';
+import '../../../theme/design_tokens.dart';
 
 class BreachBanner extends StatelessWidget {
   final String ticketId;
@@ -13,19 +15,37 @@ class BreachBanner extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha:.08),
+        color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withValues(alpha:.35)),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.red.withValues(alpha:.08),
+            ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
             const Icon(Icons.warning_amber_rounded, color: Colors.red),
             const SizedBox(width: 8),
-            const Expanded(child: Text('SLA breached — take action', style: TextStyle(fontWeight: FontWeight.w800))),
+            Expanded(child: Text('SLA breached — take action', style: DesignTokens.bodyLarge.copyWith(fontWeight: FontWeight.bold))),
             Text(snap.policyName, style: TextStyle(color: Colors.black.withValues(alpha:.6))),
           ]),
           const SizedBox(height: 10),
@@ -59,6 +79,9 @@ class BreachBanner extends StatelessWidget {
             ),
           ]),
         ],
+        ),
+      ),
+        ),
       ),
     );
   }

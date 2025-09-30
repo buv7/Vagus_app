@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/messaging/messaging_header.dart';
 import '../../widgets/messaging/message_list_view.dart';
 import '../../widgets/messaging/smart_replies_panel.dart';
 import '../../widgets/messaging/message_input_bar.dart';
-import '../../services/coach/coach_messaging_service.dart';
 import '../coach/program_ingest_upload_sheet.dart';
 
 class ModernCoachMessengerScreen extends StatefulWidget {
@@ -25,7 +23,6 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   List<Map<String, dynamic>> _messages = [];
-  bool _isTyping = false;
   bool _showSearch = false;
 
   @override
@@ -180,7 +177,7 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
               },
             ),
             ListTile(
-              leading: const Icon(Icons.upload_outlined, color: AppTheme.mintAqua),
+              leading: const Icon(Icons.upload_outlined, color: AppTheme.accentGreen),
               title: const Text('Import Program', style: TextStyle(color: AppTheme.neutralWhite)),
               onTap: () {
                 Navigator.pop(context);
@@ -215,7 +212,7 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       body: SafeArea(
         child: Column(
           children: [

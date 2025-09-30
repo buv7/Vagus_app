@@ -7,7 +7,6 @@ import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import '../../models/nutrition/nutrition_plan.dart';
-import '../../models/nutrition/recipe.dart';
 import '../../models/nutrition/money.dart';
 import '../../models/nutrition/supplement.dart';
 import '../../services/nutrition/nutrition_service.dart';
@@ -15,7 +14,6 @@ import '../../services/nutrition/grocery_service.dart';
 import '../../services/nutrition/costing_service.dart';
 import '../../services/nutrition/supplements_service.dart';
 import '../../services/nutrition/integrations/pantry_grocery_adapter.dart';
-import '../../services/nutrition/integrations/pantry_integration_helper.dart';
 import '../../services/nutrition/pantry_service.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../services/nutrition/calendar_bridge.dart';
@@ -29,11 +27,9 @@ import '../../components/nutrition/cost_summary.dart';
 import '../../components/nutrition/supplement_chip.dart';
 import '../../components/nutrition/supplement_editor_sheet.dart';
 import '../../components/nutrition/insights/day_insights_panel.dart';
-import '../../services/nutrition/pdf_capture_helper.dart';
 import '../../services/haptics.dart';
 import '../../services/ui/snackbar_throttle.dart';
 import '../supplements/supplement_list_screen.dart';
-import 'recipe_editor_screen.dart';
 import 'grocery_list_screen.dart';
 
 
@@ -84,7 +80,6 @@ class NutritionPlanViewer extends StatefulWidget {
 
 class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
   final NutritionService _nutritionService = NutritionService();
-  final GroceryService _groceryService = GroceryService();
   final CostingService _costing = CostingService();
   final SupplementsService _supplementsService = SupplementsService();
   final PantryGroceryAdapter _pantryAdapter = PantryGroceryAdapter(PantryService(), GroceryService());
@@ -354,12 +349,13 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
         );
         await _supplementsService.add(supplement);
         Haptics.success();
+        if (!mounted) return;
         SnackbarThrottle.showSnack(
           context,
           LocaleHelper.t('supplement_added', Localizations.localeOf(context).languageCode),
           backgroundColor: Colors.green,
         );
-        _loadSupplements();
+        await _loadSupplements();
       } catch (e) {
         debugPrint('❌ Error adding supplement: $e');
       }
@@ -385,57 +381,19 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
         );
         await _supplementsService.update(updatedSupplement);
         Haptics.success();
+        if (!mounted) return;
         SnackbarThrottle.showSnack(
           context,
           LocaleHelper.t('supplement_updated', Localizations.localeOf(context).languageCode),
           backgroundColor: Colors.green,
         );
-        _loadSupplements();
+        await _loadSupplements();
       } catch (e) {
         debugPrint('❌ Error updating supplement: $e');
       }
     }
   }
 
-  Future<void> _deleteSupplement(Supplement supplement, int dayIndex) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(LocaleHelper.t('delete_supplement', Localizations.localeOf(context).languageCode)),
-        content: Text(LocaleHelper.t('confirm_delete_supplement', Localizations.localeOf(context).languageCode)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(LocaleHelper.t('cancel', Localizations.localeOf(context).languageCode)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(LocaleHelper.t('delete', Localizations.localeOf(context).languageCode)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      try {
-        await _supplementsService.delete(supplement.id!);
-        Haptics.warning();
-        SnackbarThrottle.showSnack(
-          context,
-          LocaleHelper.t('supplement_deleted', Localizations.localeOf(context).languageCode),
-          backgroundColor: Colors.orange,
-        );
-        _loadSupplements();
-      } catch (e) {
-        SnackbarThrottle.showSnack(
-          context,
-          'Failed to delete supplement: $e',
-          backgroundColor: Colors.red,
-        );
-      }
-    }
-  }
 
 
 
@@ -1640,8 +1598,8 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
                   if (_role == 'coach')
                     FloatingActionButton.small(
                       onPressed: () => _showSupplementEditor(0),
-                      child: const Icon(Icons.add),
                       tooltip: LocaleHelper.t('add_supplement', language),
+                      child: const Icon(Icons.add),
                     ),
                 ],
               ),
@@ -1914,8 +1872,10 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
       final weekIndex = await _showWeekSelectionDialog();
       if (weekIndex == null) return;
 
+      if (!mounted) return;
+
       // Show loading dialog
-      showDialog(
+      await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const AlertDialog(
@@ -1944,7 +1904,7 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
 
       // Navigate to grocery list screen
       if (mounted) {
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => GroceryListScreen(
@@ -2011,7 +1971,7 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
       final language = locale.languageCode;
       
       // Show loading dialog
-      showDialog(
+      await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
@@ -2068,9 +2028,10 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
       }
 
       if (mounted) {
+        final locale = Localizations.localeOf(context).languageCode;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${LocaleHelper.t('failed_to_export_calendar', Localizations.localeOf(context).languageCode)}: $e'),
+            content: Text('${LocaleHelper.t('failed_to_export_calendar', locale)}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -2131,8 +2092,10 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
         return;
       }
 
+      if (!mounted) return;
+
       // Show loading dialog
-      showDialog(
+      await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
@@ -2179,9 +2142,10 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
       }
 
       if (mounted) {
+        final locale = Localizations.localeOf(context).languageCode;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${LocaleHelper.t('failed_to_export_prep_reminders', Localizations.localeOf(context).languageCode)}: $e'),
+            content: Text('${LocaleHelper.t('failed_to_export_prep_reminders', locale)}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -2195,6 +2159,7 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
     try {
       final recipe = await _nutritionService.getRecipeForFoodItem(item);
       if (recipe == null) return;
+      if (!mounted) return;
 
       await showModalBottomSheet(
         context: context,

@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../theme/design_tokens.dart';
 
 class ClientNutritionCommentBox extends StatefulWidget {
   final String comment;
@@ -58,14 +60,27 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: widget.isClientView ? Colors.blue.shade50 : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(8),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: widget.isClientView ? Colors.blue.shade200 : Colors.grey.shade300,
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -116,6 +131,9 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
             ),
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }

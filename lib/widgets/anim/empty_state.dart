@@ -8,6 +8,9 @@ class EmptyState extends StatelessWidget {
   final Widget? action;
   final double animationSize;
   final Color? color;
+  final IconData? icon;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   const EmptyState({
     super.key,
@@ -16,6 +19,9 @@ class EmptyState extends StatelessWidget {
     this.action,
     this.animationSize = 120,
     this.color,
+    this.icon,
+    this.actionLabel,
+    this.onAction,
   });
 
   @override
@@ -26,21 +32,29 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: animationSize,
-              height: animationSize,
-              child: Lottie.asset(
-                AnimPaths.lottieEmpty,
+            // Show custom icon if provided, otherwise show animation
+            if (icon != null)
+              Icon(
+                icon,
+                size: animationSize * 0.6,
+                color: color ?? Theme.of(context).colorScheme.outline,
+              )
+            else
+              SizedBox(
                 width: animationSize,
                 height: animationSize,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => Icon(
-                  Icons.inbox_outlined,
-                  size: animationSize * 0.6,
-                  color: color ?? Theme.of(context).colorScheme.outline,
+                child: Lottie.asset(
+                  AnimPaths.lottieEmpty,
+                  width: animationSize,
+                  height: animationSize,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.inbox_outlined,
+                    size: animationSize * 0.6,
+                    color: color ?? Theme.of(context).colorScheme.outline,
+                  ),
                 ),
               ),
-            ),
             const SizedBox(height: 24),
             Text(
               title,
@@ -63,6 +77,14 @@ class EmptyState extends StatelessWidget {
             if (action != null) ...[
               const SizedBox(height: 24),
               action!,
+            ],
+            // Add action button from actionLabel/onAction parameters
+            if (actionLabel != null && onAction != null) ...[
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: onAction,
+                child: Text(actionLabel!),
+              ),
             ],
           ],
         ),

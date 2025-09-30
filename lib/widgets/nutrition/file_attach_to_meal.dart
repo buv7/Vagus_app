@@ -1,7 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:io';
+import '../../theme/design_tokens.dart';
 
 class FileAttachToMeal extends StatefulWidget {
   final List<String> attachments;
@@ -157,19 +158,39 @@ class _FileAttachToMealState extends State<FileAttachToMeal> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
         Row(
           children: [
-            Icon(Icons.attach_file, color: Colors.grey.shade600, size: 20),
+            const Icon(Icons.attach_file, color: DesignTokens.textSecondary, size: 20),
             const SizedBox(width: 8),
             Text(
               'Attachments',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey.shade700,
+              style: DesignTokens.titleSmall.copyWith(
+                color: DesignTokens.neutralWhite,
               ),
             ),
             const Spacer(),
@@ -257,7 +278,11 @@ class _FileAttachToMealState extends State<FileAttachToMeal> {
             }).toList(),
           ),
         ],
-      ],
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

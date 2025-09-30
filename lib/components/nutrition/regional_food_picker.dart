@@ -89,36 +89,19 @@ class _RegionalFoodPickerState extends State<RegionalFoodPicker> {
 
       setState(() {
         _aiSuggestions = suggestions.map((item) {
-          if (item is String) {
-            return CatalogFoodItem(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              nameEn: item,
-              portionGrams: 100.0,
-              kcal: 0.0,
-              proteinG: 0.0,
-              carbsG: 0.0,
-              fatG: 0.0,
-              sodiumMg: 0,
-              potassiumMg: 0,
-              tags: ['ai_suggestion'],
-              source: 'ai',
-            );
-          } else {
-            // Treat as FoodItem-like object
-            return CatalogFoodItem(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              nameEn: (item as dynamic).name ?? item.toString(),
-              portionGrams: (item as dynamic).amount ?? 100.0,
-              kcal: (item as dynamic).kcal ?? 0.0,
-              proteinG: (item as dynamic).protein ?? 0.0,
-              carbsG: (item as dynamic).carbs ?? 0.0,
-              fatG: (item as dynamic).fat ?? 0.0,
-              sodiumMg: ((item as dynamic).sodium ?? 0.0).toInt(),
-              potassiumMg: ((item as dynamic).potassium ?? 0.0).toInt(),
-              tags: ['ai_suggestion'],
-              source: 'ai',
-            );
-          }
+          return CatalogFoodItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            nameEn: item,
+            portionGrams: 100.0,
+            kcal: 0.0,
+            proteinG: 0.0,
+            carbsG: 0.0,
+            fatG: 0.0,
+            sodiumMg: 0,
+            potassiumMg: 0,
+            tags: ['ai_suggestion'],
+            source: 'ai',
+          );
         }).toList();
         _isSearchingAi = false;
       });

@@ -1,0 +1,847 @@
+// =====================================================
+// RESTAURANT & EATING OUT MODE SERVICE
+// =====================================================
+// Revolutionary service for handling restaurant dining and social eating scenarios.
+//
+// FEATURES:
+// - Restaurant database with verified nutrition data
+// - AI-powered macro estimation from photos
+// - Quick logging for estimated meals
+// - Coach dining tips and guidance
+// - Geofence-based pre-meal reminders
+// - Social event planning with macro adjustments
+// - Flexible meal swapping for event days
+// =====================================================
+
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import '../ai/ai_client.dart';
+
+// =====================================================
+// MODELS
+// =====================================================
+
+/// Restaurant chain in database
+class Restaurant {
+  final String id;
+  final String name;
+  final String chain;
+  final String cuisine;
+  final String? logoUrl;
+  final List<String> locations;
+
+  Restaurant({
+    required this.id,
+    required this.name,
+    required this.chain,
+    required this.cuisine,
+    this.logoUrl,
+    required this.locations,
+  });
+
+  factory Restaurant.fromJson(Map<String, dynamic> json) {
+    return Restaurant(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      chain: json['chain'] as String,
+      cuisine: json['cuisine'] as String,
+      logoUrl: json['logo_url'] as String?,
+      locations: List<String>.from(json['locations'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'chain': chain,
+      'cuisine': cuisine,
+      'logo_url': logoUrl,
+      'locations': locations,
+    };
+  }
+}
+
+/// Menu item with verified nutrition
+class RestaurantMenuItem {
+  final String id;
+  final String restaurantId;
+  final String name;
+  final String description;
+  final String? imageUrl;
+  final double calories;
+  final double protein;
+  final double carbs;
+  final double fat;
+  final double? fiber;
+  final double? sodium;
+  final double servingSize;
+  final String servingUnit;
+  final bool isVerified;
+  final DateTime? lastVerified;
+
+  RestaurantMenuItem({
+    required this.id,
+    required this.restaurantId,
+    required this.name,
+    required this.description,
+    this.imageUrl,
+    required this.calories,
+    required this.protein,
+    required this.carbs,
+    required this.fat,
+    this.fiber,
+    this.sodium,
+    required this.servingSize,
+    required this.servingUnit,
+    this.isVerified = false,
+    this.lastVerified,
+  });
+
+  factory RestaurantMenuItem.fromJson(Map<String, dynamic> json) {
+    return RestaurantMenuItem(
+      id: json['id'] as String,
+      restaurantId: json['restaurant_id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String? ?? '',
+      imageUrl: json['image_url'] as String?,
+      calories: (json['calories'] as num).toDouble(),
+      protein: (json['protein'] as num).toDouble(),
+      carbs: (json['carbs'] as num).toDouble(),
+      fat: (json['fat'] as num).toDouble(),
+      fiber: json['fiber'] != null ? (json['fiber'] as num).toDouble() : null,
+      sodium: json['sodium'] != null ? (json['sodium'] as num).toDouble() : null,
+      servingSize: (json['serving_size'] as num).toDouble(),
+      servingUnit: json['serving_unit'] as String,
+      isVerified: json['is_verified'] as bool? ?? false,
+      lastVerified: json['last_verified'] != null
+        ? DateTime.parse(json['last_verified'] as String)
+        : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'restaurant_id': restaurantId,
+      'name': name,
+      'description': description,
+      'image_url': imageUrl,
+      'calories': calories,
+      'protein': protein,
+      'carbs': carbs,
+      'fat': fat,
+      'fiber': fiber,
+      'sodium': sodium,
+      'serving_size': servingSize,
+      'serving_unit': servingUnit,
+      'is_verified': isVerified,
+      'last_verified': lastVerified?.toIso8601String(),
+    };
+  }
+}
+
+/// AI estimation from photo
+class RestaurantMealEstimation {
+  final String id;
+  final String userId;
+  final String? photoUrl;
+  final String description;
+  final double estimatedCalories;
+  final double estimatedProtein;
+  final double estimatedCarbs;
+  final double estimatedFat;
+  final double confidenceScore; // 0.0 to 1.0
+  final List<String> detectedItems;
+  final String? restaurantName;
+  final DateTime createdAt;
+
+  RestaurantMealEstimation({
+    required this.id,
+    required this.userId,
+    this.photoUrl,
+    required this.description,
+    required this.estimatedCalories,
+    required this.estimatedProtein,
+    required this.estimatedCarbs,
+    required this.estimatedFat,
+    required this.confidenceScore,
+    required this.detectedItems,
+    this.restaurantName,
+    required this.createdAt,
+  });
+
+  factory RestaurantMealEstimation.fromJson(Map<String, dynamic> json) {
+    return RestaurantMealEstimation(
+      id: json['id'] as String,
+      userId: json['user_id'] as String,
+      photoUrl: json['photo_url'] as String?,
+      description: json['description'] as String,
+      estimatedCalories: (json['estimated_calories'] as num).toDouble(),
+      estimatedProtein: (json['estimated_protein'] as num).toDouble(),
+      estimatedCarbs: (json['estimated_carbs'] as num).toDouble(),
+      estimatedFat: (json['estimated_fat'] as num).toDouble(),
+      confidenceScore: (json['confidence_score'] as num).toDouble(),
+      detectedItems: List<String>.from(json['detected_items'] ?? []),
+      restaurantName: json['restaurant_name'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'photo_url': photoUrl,
+      'description': description,
+      'estimated_calories': estimatedCalories,
+      'estimated_protein': estimatedProtein,
+      'estimated_carbs': estimatedCarbs,
+      'estimated_fat': estimatedFat,
+      'confidence_score': confidenceScore,
+      'detected_items': detectedItems,
+      'restaurant_name': restaurantName,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+}
+
+/// Coach's dining tip
+class DiningTip {
+  final String id;
+  final String coachId;
+  final String clientId;
+  final String? restaurantId;
+  final String? cuisine;
+  final String tip;
+  final String category; // 'ordering', 'portion', 'macro', 'general'
+  final DateTime createdAt;
+
+  DiningTip({
+    required this.id,
+    required this.coachId,
+    required this.clientId,
+    this.restaurantId,
+    this.cuisine,
+    required this.tip,
+    required this.category,
+    required this.createdAt,
+  });
+
+  factory DiningTip.fromJson(Map<String, dynamic> json) {
+    return DiningTip(
+      id: json['id'] as String,
+      coachId: json['coach_id'] as String,
+      clientId: json['client_id'] as String,
+      restaurantId: json['restaurant_id'] as String?,
+      cuisine: json['cuisine'] as String?,
+      tip: json['tip'] as String,
+      category: json['category'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'coach_id': coachId,
+      'client_id': clientId,
+      'restaurant_id': restaurantId,
+      'cuisine': cuisine,
+      'tip': tip,
+      'category': category,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+}
+
+/// Social event with meal planning
+class SocialEvent {
+  final String id;
+  final String userId;
+  final String name;
+  final DateTime eventDate;
+  final String? restaurantId;
+  final String? restaurantName;
+  final String? location;
+  final bool adjustMacros;
+  final double? macroAdjustmentPercent; // +20% for indulgence
+  final String? mealSwapFrom; // Which meal to swap from
+  final String? mealSwapTo; // Which meal to swap to
+  final String? notes;
+  final bool reminderEnabled;
+  final int? reminderMinutesBefore;
+
+  SocialEvent({
+    required this.id,
+    required this.userId,
+    required this.name,
+    required this.eventDate,
+    this.restaurantId,
+    this.restaurantName,
+    this.location,
+    this.adjustMacros = true,
+    this.macroAdjustmentPercent,
+    this.mealSwapFrom,
+    this.mealSwapTo,
+    this.notes,
+    this.reminderEnabled = true,
+    this.reminderMinutesBefore,
+  });
+
+  factory SocialEvent.fromJson(Map<String, dynamic> json) {
+    return SocialEvent(
+      id: json['id'] as String,
+      userId: json['user_id'] as String,
+      name: json['name'] as String,
+      eventDate: DateTime.parse(json['event_date'] as String),
+      restaurantId: json['restaurant_id'] as String?,
+      restaurantName: json['restaurant_name'] as String?,
+      location: json['location'] as String?,
+      adjustMacros: json['adjust_macros'] as bool? ?? true,
+      macroAdjustmentPercent: json['macro_adjustment_percent'] != null
+          ? (json['macro_adjustment_percent'] as num).toDouble()
+          : null,
+      mealSwapFrom: json['meal_swap_from'] as String?,
+      mealSwapTo: json['meal_swap_to'] as String?,
+      notes: json['notes'] as String?,
+      reminderEnabled: json['reminder_enabled'] as bool? ?? true,
+      reminderMinutesBefore: json['reminder_minutes_before'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'name': name,
+      'event_date': eventDate.toIso8601String(),
+      'restaurant_id': restaurantId,
+      'restaurant_name': restaurantName,
+      'location': location,
+      'adjust_macros': adjustMacros,
+      'macro_adjustment_percent': macroAdjustmentPercent,
+      'meal_swap_from': mealSwapFrom,
+      'meal_swap_to': mealSwapTo,
+      'notes': notes,
+      'reminder_enabled': reminderEnabled,
+      'reminder_minutes_before': reminderMinutesBefore,
+    };
+  }
+}
+
+/// Geofence reminder
+class GeofenceReminder {
+  final String id;
+  final String userId;
+  final String restaurantId;
+  final double latitude;
+  final double longitude;
+  final double radiusMeters;
+  final String message;
+  final bool enabled;
+
+  GeofenceReminder({
+    required this.id,
+    required this.userId,
+    required this.restaurantId,
+    required this.latitude,
+    required this.longitude,
+    this.radiusMeters = 200.0,
+    required this.message,
+    this.enabled = true,
+  });
+
+  factory GeofenceReminder.fromJson(Map<String, dynamic> json) {
+    return GeofenceReminder(
+      id: json['id'] as String,
+      userId: json['user_id'] as String,
+      restaurantId: json['restaurant_id'] as String,
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
+      radiusMeters: json['radius_meters'] != null
+          ? (json['radius_meters'] as num).toDouble()
+          : 200.0,
+      message: json['message'] as String,
+      enabled: json['enabled'] as bool? ?? true,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'restaurant_id': restaurantId,
+      'latitude': latitude,
+      'longitude': longitude,
+      'radius_meters': radiusMeters,
+      'message': message,
+      'enabled': enabled,
+    };
+  }
+}
+
+// =====================================================
+// SERVICE
+// =====================================================
+
+class RestaurantService extends ChangeNotifier {
+  final SupabaseClient _supabase = Supabase.instance.client;
+  final AIClient _aiClient = AIClient();
+
+  // Cache
+  final Map<String, Restaurant> _restaurantCache = {};
+  final Map<String, List<RestaurantMenuItem>> _menuCache = {};
+  final Map<String, List<DiningTip>> _tipsCache = {};
+
+  // =====================================================
+  // RESTAURANT DATABASE
+  // =====================================================
+
+  /// Search restaurants by name or chain
+  Future<List<Restaurant>> searchRestaurants(String query) async {
+    try {
+      final response = await _supabase
+          .from('restaurants')
+          .select()
+          .or('name.ilike.%$query%,chain.ilike.%$query%,cuisine.ilike.%$query%')
+          .limit(20);
+
+      if (response == null) return [];
+
+      final restaurants = (response as List)
+          .map((json) => Restaurant.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      // Cache results
+      for (final restaurant in restaurants) {
+        _restaurantCache[restaurant.id] = restaurant;
+      }
+
+      return restaurants;
+    } catch (e) {
+      debugPrint('Error searching restaurants: $e');
+      return [];
+    }
+  }
+
+  /// Get restaurant by ID
+  Future<Restaurant?> getRestaurant(String restaurantId) async {
+    // Check cache first
+    if (_restaurantCache.containsKey(restaurantId)) {
+      return _restaurantCache[restaurantId];
+    }
+
+    try {
+      final response = await _supabase
+          .from('restaurants')
+          .select()
+          .eq('id', restaurantId)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      final restaurant = Restaurant.fromJson(response as Map<String, dynamic>);
+      _restaurantCache[restaurantId] = restaurant;
+      return restaurant;
+    } catch (e) {
+      debugPrint('Error fetching restaurant: $e');
+      return null;
+    }
+  }
+
+  /// Search menu items for a restaurant
+  Future<List<RestaurantMenuItem>> searchMenuItems({
+    required String restaurantId,
+    String? query,
+  }) async {
+    try {
+      var queryBuilder = _supabase
+          .from('restaurant_menu_items')
+          .select()
+          .eq('restaurant_id', restaurantId);
+
+      if (query != null && query.isNotEmpty) {
+        queryBuilder = queryBuilder.or('name.ilike.%$query%,description.ilike.%$query%');
+      }
+
+      final response = await queryBuilder.limit(50);
+
+      if (response == null) return [];
+
+      final items = (response as List)
+          .map((json) => RestaurantMenuItem.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      // Cache results
+      if (query == null) {
+        _menuCache[restaurantId] = items;
+      }
+
+      return items;
+    } catch (e) {
+      debugPrint('Error searching menu items: $e');
+      return [];
+    }
+  }
+
+  /// Get menu item by ID
+  Future<RestaurantMenuItem?> getMenuItem(String itemId) async {
+    try {
+      final response = await _supabase
+          .from('restaurant_menu_items')
+          .select()
+          .eq('id', itemId)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      return RestaurantMenuItem.fromJson(response as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error fetching menu item: $e');
+      return null;
+    }
+  }
+
+  // =====================================================
+  // AI ESTIMATION
+  // =====================================================
+
+  /// Estimate macros from restaurant meal photo
+  Future<RestaurantMealEstimation?> estimateFromPhoto({
+    required String userId,
+    required File photo,
+    String? restaurantName,
+    String? description,
+  }) async {
+    try {
+      // 1. Upload photo to storage
+      final fileName = 'restaurant_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final photoPath = await _supabase.storage
+          .from('meal-photos')
+          .upload('$userId/$fileName', photo);
+
+      final photoUrl = _supabase.storage
+          .from('meal-photos')
+          .getPublicUrl('$userId/$fileName');
+
+      // 2. Call AI to estimate macros
+      final aiResponse = await _aiClient.estimateRestaurantMeal(
+        photoUrl: photoUrl,
+        restaurantName: restaurantName,
+        description: description,
+      );
+
+      // 3. Save estimation to database
+      final estimationData = {
+        'user_id': userId,
+        'photo_url': photoUrl,
+        'description': description ?? aiResponse['description'] ?? 'Restaurant meal',
+        'estimated_calories': aiResponse['calories'],
+        'estimated_protein': aiResponse['protein'],
+        'estimated_carbs': aiResponse['carbs'],
+        'estimated_fat': aiResponse['fat'],
+        'confidence_score': aiResponse['confidence'] ?? 0.75,
+        'detected_items': aiResponse['items'] ?? [],
+        'restaurant_name': restaurantName,
+        'created_at': DateTime.now().toIso8601String(),
+      };
+
+      final response = await _supabase
+          .from('restaurant_meal_estimations')
+          .insert(estimationData)
+          .select()
+          .single();
+
+      return RestaurantMealEstimation.fromJson(response as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error estimating from photo: $e');
+      return null;
+    }
+  }
+
+  /// Quick log with estimated calories
+  Future<RestaurantMealEstimation?> quickLog({
+    required String userId,
+    required double estimatedCalories,
+    String? restaurantName,
+    String? description,
+  }) async {
+    try {
+      // Use standard macro ratios: 40% carbs, 30% protein, 30% fat
+      final estimatedProtein = (estimatedCalories * 0.30) / 4; // 4 cal/g
+      final estimatedCarbs = (estimatedCalories * 0.40) / 4; // 4 cal/g
+      final estimatedFat = (estimatedCalories * 0.30) / 9; // 9 cal/g
+
+      final estimationData = {
+        'user_id': userId,
+        'description': description ?? 'Quick log: Restaurant meal',
+        'estimated_calories': estimatedCalories,
+        'estimated_protein': estimatedProtein,
+        'estimated_carbs': estimatedCarbs,
+        'estimated_fat': estimatedFat,
+        'confidence_score': 0.5, // Lower confidence for quick logs
+        'detected_items': [],
+        'restaurant_name': restaurantName,
+        'created_at': DateTime.now().toIso8601String(),
+      };
+
+      final response = await _supabase
+          .from('restaurant_meal_estimations')
+          .insert(estimationData)
+          .select()
+          .single();
+
+      return RestaurantMealEstimation.fromJson(response as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error quick logging: $e');
+      return null;
+    }
+  }
+
+  // =====================================================
+  // DINING TIPS
+  // =====================================================
+
+  /// Get dining tips for client
+  Future<List<DiningTip>> getDiningTips({
+    required String clientId,
+    String? restaurantId,
+    String? cuisine,
+  }) async {
+    final cacheKey = '${clientId}_${restaurantId}_$cuisine';
+    if (_tipsCache.containsKey(cacheKey)) {
+      return _tipsCache[cacheKey]!;
+    }
+
+    try {
+      var queryBuilder = _supabase
+          .from('dining_tips')
+          .select()
+          .eq('client_id', clientId);
+
+      if (restaurantId != null) {
+        queryBuilder = queryBuilder.eq('restaurant_id', restaurantId);
+      }
+
+      if (cuisine != null) {
+        queryBuilder = queryBuilder.eq('cuisine', cuisine);
+      }
+
+      final response = await queryBuilder.order('created_at', ascending: false);
+
+      if (response == null) return [];
+
+      final tips = (response as List)
+          .map((json) => DiningTip.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      _tipsCache[cacheKey] = tips;
+      return tips;
+    } catch (e) {
+      debugPrint('Error fetching dining tips: $e');
+      return [];
+    }
+  }
+
+  /// Coach adds dining tip
+  Future<DiningTip?> addDiningTip({
+    required String coachId,
+    required String clientId,
+    String? restaurantId,
+    String? cuisine,
+    required String tip,
+    required String category,
+  }) async {
+    try {
+      final tipData = {
+        'coach_id': coachId,
+        'client_id': clientId,
+        'restaurant_id': restaurantId,
+        'cuisine': cuisine,
+        'tip': tip,
+        'category': category,
+        'created_at': DateTime.now().toIso8601String(),
+      };
+
+      final response = await _supabase
+          .from('dining_tips')
+          .insert(tipData)
+          .select()
+          .single();
+
+      // Clear cache
+      _tipsCache.clear();
+      notifyListeners();
+
+      return DiningTip.fromJson(response as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error adding dining tip: $e');
+      return null;
+    }
+  }
+
+  // =====================================================
+  // SOCIAL EVENT PLANNING
+  // =====================================================
+
+  /// Create social event
+  Future<SocialEvent?> createSocialEvent({
+    required String userId,
+    required String name,
+    required DateTime eventDate,
+    String? restaurantId,
+    String? restaurantName,
+    String? location,
+    bool adjustMacros = true,
+    double? macroAdjustmentPercent,
+    String? mealSwapFrom,
+    String? mealSwapTo,
+    String? notes,
+    bool reminderEnabled = true,
+    int? reminderMinutesBefore,
+  }) async {
+    try {
+      final eventData = {
+        'user_id': userId,
+        'name': name,
+        'event_date': eventDate.toIso8601String(),
+        'restaurant_id': restaurantId,
+        'restaurant_name': restaurantName,
+        'location': location,
+        'adjust_macros': adjustMacros,
+        'macro_adjustment_percent': macroAdjustmentPercent,
+        'meal_swap_from': mealSwapFrom,
+        'meal_swap_to': mealSwapTo,
+        'notes': notes,
+        'reminder_enabled': reminderEnabled,
+        'reminder_minutes_before': reminderMinutesBefore ?? 60,
+      };
+
+      final response = await _supabase
+          .from('social_events')
+          .insert(eventData)
+          .select()
+          .single();
+
+      notifyListeners();
+      return SocialEvent.fromJson(response as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error creating social event: $e');
+      return null;
+    }
+  }
+
+  /// Get upcoming social events
+  Future<List<SocialEvent>> getUpcomingSocialEvents(String userId) async {
+    try {
+      final response = await _supabase
+          .from('social_events')
+          .select()
+          .eq('user_id', userId)
+          .gte('event_date', DateTime.now().toIso8601String())
+          .order('event_date', ascending: true);
+
+      if (response == null) return [];
+
+      return (response as List)
+          .map((json) => SocialEvent.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('Error fetching social events: $e');
+      return [];
+    }
+  }
+
+  // =====================================================
+  // GEOFENCE REMINDERS
+  // =====================================================
+
+  /// Setup geofence reminder
+  Future<GeofenceReminder?> setupGeofenceReminder({
+    required String userId,
+    required String restaurantId,
+    required double latitude,
+    required double longitude,
+    double radiusMeters = 200.0,
+    required String message,
+  }) async {
+    try {
+      final reminderData = {
+        'user_id': userId,
+        'restaurant_id': restaurantId,
+        'latitude': latitude,
+        'longitude': longitude,
+        'radius_meters': radiusMeters,
+        'message': message,
+        'enabled': true,
+      };
+
+      final response = await _supabase
+          .from('geofence_reminders')
+          .insert(reminderData)
+          .select()
+          .single();
+
+      return GeofenceReminder.fromJson(response as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error setting up geofence: $e');
+      return null;
+    }
+  }
+
+  /// Check if user is near any reminder locations
+  Future<List<GeofenceReminder>> checkNearbyReminders(String userId) async {
+    try {
+      // Get current location
+      final position = await Geolocator.getCurrentPosition();
+
+      // Fetch all enabled reminders
+      final response = await _supabase
+          .from('geofence_reminders')
+          .select()
+          .eq('user_id', userId)
+          .eq('enabled', true);
+
+      if (response == null) return [];
+
+      final reminders = (response as List)
+          .map((json) => GeofenceReminder.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      // Filter by distance
+      final nearbyReminders = <GeofenceReminder>[];
+      for (final reminder in reminders) {
+        final distance = Geolocator.distanceBetween(
+          position.latitude,
+          position.longitude,
+          reminder.latitude,
+          reminder.longitude,
+        );
+
+        if (distance <= reminder.radiusMeters) {
+          nearbyReminders.add(reminder);
+        }
+      }
+
+      return nearbyReminders;
+    } catch (e) {
+      debugPrint('Error checking nearby reminders: $e');
+      return [];
+    }
+  }
+
+  // =====================================================
+  // UTILITY
+  // =====================================================
+
+  /// Clear all caches
+  void clearCache() {
+    _restaurantCache.clear();
+    _menuCache.clear();
+    _tipsCache.clear();
+    notifyListeners();
+  }
+}

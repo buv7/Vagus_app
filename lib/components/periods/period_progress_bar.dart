@@ -26,7 +26,7 @@ class PeriodProgressBar extends StatelessWidget {
           border: Border.all(color: AppTheme.lightGrey),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -40,23 +40,23 @@ class PeriodProgressBar extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.schedule,
-                  color: AppTheme.primaryBlack,
+                  color: AppTheme.primaryDark,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
-                Text(
+                const Text(
                   'Coaching Period',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                   ),
                 ),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getStatusColor().withOpacity(0.1),
+                    color: _getStatusColor().withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -86,7 +86,7 @@ class PeriodProgressBar extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: AppTheme.primaryBlack,
+                          color: AppTheme.primaryDark,
                         ),
                       ),
                       Text(
@@ -94,7 +94,7 @@ class PeriodProgressBar extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.primaryBlack,
+                          color: AppTheme.primaryDark,
                         ),
                       ),
                     ],
@@ -152,7 +152,7 @@ class PeriodProgressBar extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: AppTheme.primaryBlack,
+          color: AppTheme.primaryDark,
           size: 16,
         ),
         const SizedBox(height: 4),
@@ -170,7 +170,7 @@ class PeriodProgressBar extends StatelessWidget {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: AppTheme.primaryBlack,
+            color: AppTheme.primaryDark,
           ),
           textAlign: TextAlign.center,
         ),
@@ -180,7 +180,7 @@ class PeriodProgressBar extends StatelessWidget {
 
   Color _getStatusColor() {
     if (period.hasEnded) return Colors.green;
-    if (period.isActive) return AppTheme.primaryBlack;
+    if (period.isActive) return AppTheme.primaryDark;
     return Colors.orange;
   }
 
@@ -214,7 +214,7 @@ class CompactPeriodProgressBar extends StatelessWidget {
           children: [
             const Icon(
               Icons.schedule,
-              color: AppTheme.primaryBlack,
+              color: AppTheme.primaryDark,
               size: 16,
             ),
             const SizedBox(width: 8),
@@ -227,7 +227,7 @@ class CompactPeriodProgressBar extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -249,7 +249,7 @@ class CompactPeriodProgressBar extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
               ),
             ),
           ],
@@ -260,7 +260,7 @@ class CompactPeriodProgressBar extends StatelessWidget {
 
   Color _getStatusColor() {
     if (period.hasEnded) return Colors.green;
-    if (period.isActive) return AppTheme.primaryBlack;
+    if (period.isActive) return AppTheme.primaryDark;
     return Colors.orange;
   }
 }

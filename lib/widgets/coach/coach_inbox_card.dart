@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 
@@ -21,12 +22,28 @@ class CoachInboxCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(DesignTokens.space20),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space20),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
@@ -41,7 +58,7 @@ class CoachInboxCard extends StatelessWidget {
               const Text(
                 'Coach Inbox',
                 style: TextStyle(
-                  color: AppTheme.neutralWhite,
+                  color: DesignTokens.neutralWhite,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -59,7 +76,7 @@ class CoachInboxCard extends StatelessWidget {
                 child: Text(
                   '${inboxItems.length}',
                   style: const TextStyle(
-                    color: AppTheme.neutralWhite,
+                    color: DesignTokens.neutralWhite,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -84,6 +101,9 @@ class CoachInboxCard extends StatelessWidget {
           // Inbox Items
           ...inboxItems.map((item) => _buildInboxItem(item)),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -94,18 +114,36 @@ class CoachInboxCard extends StatelessWidget {
     
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space12),
-      padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlack,
-        borderRadius: BorderRadius.circular(DesignTokens.radius12),
-        border: Border(
-          left: BorderSide(
-            color: statusColor,
-            width: 4,
-          ),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentGreen.withValues(alpha: 0.2),
+            blurRadius: 15,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(DesignTokens.space16),
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: statusColor,
+                  width: 4,
+                ),
+              ),
+            ),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -115,14 +153,14 @@ class CoachInboxCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.mintAqua,
+                  color: AppTheme.accentGreen,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: const Center(
                   child: Text(
                     'V',
                     style: TextStyle(
-                      color: AppTheme.primaryBlack,
+                      color: AppTheme.primaryDark,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -238,6 +276,9 @@ class CoachInboxCard extends StatelessWidget {
             ],
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -262,7 +303,7 @@ class CoachInboxCard extends StatelessWidget {
         ),
       ),
       style: TextButton.styleFrom(
-        backgroundColor: AppTheme.steelGrey,
+        backgroundColor: AppTheme.mediumGrey,
         padding: const EdgeInsets.symmetric(
           horizontal: DesignTokens.space8,
           vertical: DesignTokens.space4,
@@ -281,9 +322,9 @@ class CoachInboxCard extends StatelessWidget {
       case 'warning':
         return Colors.orange;
       case 'info':
-        return AppTheme.mintAqua;
+        return AppTheme.accentGreen;
       default:
-        return AppTheme.steelGrey;
+        return AppTheme.mediumGrey;
     }
   }
 }

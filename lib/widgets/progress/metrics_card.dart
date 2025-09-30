@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -590,12 +591,31 @@ class _MetricsCardState extends State<MetricsCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: _showShareOptions,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(DesignTokens.space16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+      child: Container(
+        decoration: BoxDecoration(
+          color: DesignTokens.cardBackground,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              padding: const EdgeInsets.all(DesignTokens.space16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
             SectionHeaderBar(
               title: 'Progress Metrics',
               leadingIcon: const Icon(
@@ -649,7 +669,9 @@ class _MetricsCardState extends State<MetricsCard> {
             ),
             const SizedBox(height: DesignTokens.space8),
             _buildMetricsList(),
-            ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

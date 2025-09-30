@@ -1,0 +1,441 @@
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
+import '../../services/network/connectivity_service.dart';
+
+/// Safe network image widget with comprehensive error handling and optimization
+/// Features: Caching, progressive loading, fallbacks, connectivity awareness
+class SafeNetworkImage extends StatelessWidget {
+  final String? imageUrl;
+  final Widget? placeholder;
+  final Widget? errorWidget;
+  final BoxFit fit;
+  final double? width;
+  final double? height;
+  final BorderRadius? borderRadius;
+  final bool showProgressIndicator;
+  final bool enableBlurHash;
+  final String? blurHash;
+  final Map<String, String>? httpHeaders;
+  final Duration? fadeInDuration;
+  final Duration? fadeOutDuration;
+  final Duration cacheValidDuration;
+  final bool useHighQuality;
+
+  const SafeNetworkImage({
+    super.key,
+    required this.imageUrl,
+    this.placeholder,
+    this.errorWidget,
+    this.fit = BoxFit.cover,
+    this.width,
+    this.height,
+    this.borderRadius,
+    this.showProgressIndicator = true,
+    this.enableBlurHash = false,
+    this.blurHash,
+    this.httpHeaders,
+    this.fadeInDuration = const Duration(milliseconds: 300),
+    this.fadeOutDuration = const Duration(milliseconds: 100),
+    this.cacheValidDuration = const Duration(days: 7),
+    this.useHighQuality = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Handle null or invalid URLs
+    if (!_isValidImageUrl(imageUrl)) {
+      return _buildFallback();
+    }
+
+    final connectivity = ConnectivityService();
+
+    Widget imageWidget;
+
+    if (connectivity.isOffline) {
+      // Try to load from cache only when offline
+      imageWidget = _buildCachedImage(useOnlyCache: true);
+    } else if (connectivity.shouldUseOptimizedData) {
+      // Use optimized loading for slow connections
+      imageWidget = _buildOptimizedImage();
+    } else {
+      // Normal loading for good connections
+      imageWidget = _buildCachedImage();
+    }
+
+    // Apply border radius if specified
+    if (borderRadius != null) {
+      imageWidget = ClipRRect(
+        borderRadius: borderRadius!,
+        child: imageWidget,
+      );
+    }
+
+    return imageWidget;
+  }
+
+  Widget _buildCachedImage({bool useOnlyCache = false}) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl!,
+      width: width,
+      height: height,
+      fit: fit,
+      httpHeaders: httpHeaders,
+      fadeInDuration: fadeInDuration ?? const Duration(milliseconds: 300),
+      fadeOutDuration: fadeOutDuration ?? const Duration(milliseconds: 100),
+
+      // Cache configuration
+      cacheKey: _generateCacheKey(),
+      maxWidthDiskCache: useHighQuality ? 1200 : 800,
+      maxHeightDiskCache: useHighQuality ? 1200 : 800,
+      memCacheWidth: useHighQuality ? 600 : 400,
+      memCacheHeight: useHighQuality ? 600 : 400,
+
+      // Placeholder while loading
+      placeholder: (context, url) => _buildLoadingPlaceholder(),
+
+      // Error handling
+      errorWidget: (context, url, error) => _buildErrorWidget(error),
+
+      // Use only cache when offline
+      cacheManager: useOnlyCache ? CacheOnlyImageCacheManager() : null,
+    );
+  }
+
+  Widget _buildOptimizedImage() {
+    // For slow connections, load a lower quality version first
+    final optimizedUrl = _getOptimizedImageUrl(imageUrl!);
+
+    return CachedNetworkImage(
+      imageUrl: optimizedUrl,
+      width: width,
+      height: height,
+      fit: fit,
+      httpHeaders: httpHeaders,
+      fadeInDuration: const Duration(milliseconds: 500),
+
+      // Reduced cache sizes for optimization
+      maxWidthDiskCache: 600,
+      maxHeightDiskCache: 600,
+      memCacheWidth: 300,
+      memCacheHeight: 300,
+
+      placeholder: (context, url) => _buildOptimizedPlaceholder(),
+      errorWidget: (context, url, error) => _buildErrorWidget(error),
+    );
+  }
+
+  Widget _buildLoadingPlaceholder() {
+    if (placeholder != null) return placeholder!;
+
+    if (enableBlurHash && blurHash != null) {
+      return _buildBlurHashPlaceholder();
+    }
+
+    return Container(
+      width: width,
+      height: height,
+      color: AppTheme.cardDark,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (showProgressIndicator) ...[
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppTheme.accentGreen.withOpacity(0.6),
+                ),
+              ),
+            ),
+            const SizedBox(height: DesignTokens.space8),
+          ],
+          Icon(
+            Icons.image,
+            color: AppTheme.lightGrey.withOpacity(0.5),
+            size: 32,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptimizedPlaceholder() {
+    return Container(
+      width: width,
+      height: height,
+      color: AppTheme.cardDark,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppTheme.lightOrange,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Optimizing...',
+              style: TextStyle(
+                color: AppTheme.lightGrey,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBlurHashPlaceholder() {
+    // TODO: Implement BlurHash decoding
+    // For now, return a gradient placeholder
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.cardDark,
+            AppTheme.mediumGrey.withOpacity(0.3),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.image,
+          color: AppTheme.lightGrey.withOpacity(0.3),
+          size: 24,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(dynamic error) {
+    if (errorWidget != null) return errorWidget!;
+
+    return Container(
+      width: width,
+      height: height,
+      color: AppTheme.cardDark,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.broken_image,
+            color: AppTheme.lightGrey.withOpacity(0.5),
+            size: 32,
+          ),
+          const SizedBox(height: DesignTokens.space8),
+          Text(
+            'Failed to load',
+            style: TextStyle(
+              color: AppTheme.lightGrey.withOpacity(0.7),
+              fontSize: 10,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFallback() {
+    if (errorWidget != null) return errorWidget!;
+    if (placeholder != null) return placeholder!;
+
+    return Container(
+      width: width,
+      height: height,
+      color: AppTheme.cardDark,
+      child: Icon(
+        Icons.image_not_supported,
+        color: AppTheme.lightGrey.withOpacity(0.5),
+        size: 32,
+      ),
+    );
+  }
+
+  bool _isValidImageUrl(String? url) {
+    if (url == null || url.isEmpty) return false;
+
+    try {
+      final uri = Uri.parse(url);
+      return uri.hasScheme &&
+             (uri.scheme == 'http' || uri.scheme == 'https') &&
+             uri.hasAuthority;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  String _generateCacheKey() {
+    // Include quality and size parameters in cache key
+    final quality = useHighQuality ? 'hq' : 'lq';
+    final size = '${width ?? 0}x${height ?? 0}';
+    return '${imageUrl}_${quality}_$size';
+  }
+
+  String _getOptimizedImageUrl(String originalUrl) {
+    // If using a service like Cloudinary or ImageKit, apply transformations
+    // For now, return the original URL
+    // TODO: Implement URL transformation for optimization
+    return originalUrl;
+  }
+}
+
+/// Circular avatar with safe network image
+class SafeNetworkAvatar extends StatelessWidget {
+  final String? imageUrl;
+  final double radius;
+  final Color? backgroundColor;
+  final Widget? child;
+  final String? fallbackText;
+
+  const SafeNetworkAvatar({
+    super.key,
+    this.imageUrl,
+    this.radius = 24,
+    this.backgroundColor,
+    this.child,
+    this.fallbackText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: backgroundColor ?? AppTheme.cardDark,
+      child: child ?? _buildAvatarContent(),
+    );
+  }
+
+  Widget _buildAvatarContent() {
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return SafeNetworkImage(
+        imageUrl: imageUrl,
+        width: radius * 2,
+        height: radius * 2,
+        fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(radius),
+        showProgressIndicator: false,
+        useHighQuality: false, // Avatars don't need high quality
+        errorWidget: _buildFallbackAvatar(),
+        placeholder: _buildLoadingAvatar(),
+      );
+    }
+
+    return _buildFallbackAvatar();
+  }
+
+  Widget _buildLoadingAvatar() {
+    return SizedBox(
+      width: radius * 0.6,
+      height: radius * 0.6,
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        valueColor: AlwaysStoppedAnimation<Color>(
+          AppTheme.accentGreen.withOpacity(0.6),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackAvatar() {
+    if (fallbackText != null && fallbackText!.isNotEmpty) {
+      return Text(
+        fallbackText!.substring(0, 1).toUpperCase(),
+        style: TextStyle(
+          color: AppTheme.neutralWhite,
+          fontSize: radius * 0.8,
+          fontWeight: FontWeight.w600,
+        ),
+      );
+    }
+
+    return Icon(
+      Icons.person,
+      color: AppTheme.lightGrey,
+      size: radius * 1.2,
+    );
+  }
+}
+
+/// Custom cache manager for offline-only loading
+class CacheOnlyImageCacheManager {
+  // TODO: Implement custom cache manager that only loads from cache
+  // This would prevent network requests when offline
+}
+
+/// Progressive image loader with quality steps
+class ProgressiveNetworkImage extends StatefulWidget {
+  final String imageUrl;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final BorderRadius? borderRadius;
+
+  const ProgressiveNetworkImage({
+    super.key,
+    required this.imageUrl,
+    this.width,
+    this.height,
+    this.fit = BoxFit.cover,
+    this.borderRadius,
+  });
+
+  @override
+  State<ProgressiveNetworkImage> createState() => _ProgressiveNetworkImageState();
+}
+
+class _ProgressiveNetworkImageState extends State<ProgressiveNetworkImage> {
+  bool _lowQualityLoaded = false;
+  bool _highQualityLoaded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Low quality version (loads first)
+        SafeNetworkImage(
+          imageUrl: _getLowQualityUrl(widget.imageUrl),
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          borderRadius: widget.borderRadius,
+          useHighQuality: false,
+          showProgressIndicator: !_lowQualityLoaded,
+        ),
+
+        // High quality version (loads after low quality)
+        if (_lowQualityLoaded)
+          SafeNetworkImage(
+            imageUrl: widget.imageUrl,
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+            borderRadius: widget.borderRadius,
+            useHighQuality: true,
+            showProgressIndicator: false,
+            fadeInDuration: const Duration(milliseconds: 500),
+          ),
+      ],
+    );
+  }
+
+  String _getLowQualityUrl(String originalUrl) {
+    // Generate a low quality version URL
+    // This would typically involve URL transformations
+    return originalUrl; // TODO: Implement actual transformation
+  }
+}

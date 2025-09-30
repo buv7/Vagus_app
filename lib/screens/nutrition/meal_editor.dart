@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/nutrition_plan.dart';
@@ -13,8 +14,6 @@ import '../../services/nutrition/locale_helper.dart';
 import '../../services/nutrition/nutrition_service.dart';
 import '../../services/nutrition/preferences_service.dart';
 import '../../services/nutrition/pantry_service.dart';
-import '../../services/nutrition/barcode_service.dart';
-import '../../services/ai/nutrition_ai.dart';
 import 'recipe_library_screen.dart';
 import 'barcode_scan_screen.dart';
 import 'food_snap_screen.dart';
@@ -44,14 +43,33 @@ class _MealEditorState extends State<MealEditor> {
   late TextEditingController _labelController;
   final NutritionService _nutritionService = NutritionService();
   final PreferencesService _preferencesService = PreferencesService();
-  final BarcodeService _barcodeService = BarcodeService();
   
   // Preferences and allergies for warnings
   Preferences? _userPreferences;
-  List<String> _userAllergies = [];
   
   // Pantry integration
   bool _usePantryFirst = false;
+
+  // Advanced picker helpers
+  final Set<String> _favoriteFoodNames = {};
+
+  FoodItem _scaleFood(FoodItem base, double multiplier) {
+    return FoodItem(
+      name: base.name,
+      amount: base.amount * multiplier,
+      protein: base.protein * multiplier,
+      carbs: base.carbs * multiplier,
+      fat: base.fat * multiplier,
+      kcal: base.kcal * multiplier,
+      sodium: base.sodium * multiplier,
+      potassium: base.potassium * multiplier,
+      recipeId: base.recipeId,
+      servings: base.servings * multiplier,
+      costPerUnit: base.costPerUnit,
+      currency: base.currency,
+      estimated: base.estimated,
+    );
+  }
 
 
   @override
@@ -67,11 +85,10 @@ class _MealEditorState extends State<MealEditor> {
       final userId = 'current_user_id'; // Replace with actual user ID
       
       final preferences = await _preferencesService.getPrefs(userId);
-      final allergies = await _preferencesService.getAllergies(userId);
+      await _preferencesService.getAllergies(userId);
       
       setState(() {
         _userPreferences = preferences;
-        _userAllergies = allergies;
       });
     } catch (e) {
       // Handle error silently - preferences are optional
@@ -110,6 +127,252 @@ class _MealEditorState extends State<MealEditor> {
     widget.onMealChanged(updatedMeal);
   }
 
+  Future<void> _addFoodAdvanced() async {
+    if (widget.isReadOnly) return;
+    // Local catalog (can be replaced by FoodCatalogService later)
+    final defaults = [
+      FoodItem(name: 'Chicken Breast 100g', protein: 31, carbs: 0, fat: 3.6, kcal: 165, sodium: 74, potassium: 256),
+      FoodItem(name: 'White Rice 100g (cooked)', protein: 2.7, carbs: 28, fat: 0.3, kcal: 130, sodium: 1, potassium: 35),
+      FoodItem(name: 'Salmon 100g', protein: 20, carbs: 0, fat: 13, kcal: 208, sodium: 59, potassium: 363),
+    ];
+    String query = '';
+    String activeFilter = 'All';
+    final Map<String, Map<String, dynamic>> selected = {}; // name -> {food, quantity, unit}
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        builder: (context, controller) => StatefulBuilder(
+          builder: (context, setSheet) {
+            final items = defaults.where((f) {
+              final mt = f.name.toLowerCase().contains(query.toLowerCase());
+              if (!mt) return false;
+              if (activeFilter == 'All') return true;
+              if (activeFilter == 'High Protein') return f.protein >= 15;
+              if (activeFilter == 'Low Carb') return f.carbs <= 10;
+              if (activeFilter == 'Low Fat') return f.fat <= 5;
+              if (activeFilter == 'Under 200 kcal') return f.kcal <= 200;
+              return true;
+            }).toList();
+            return Container(
+              decoration: BoxDecoration(color: Colors.black, borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
+              padding: const EdgeInsets.all(16),
+              child: Column(children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(hintText: 'Search foods', prefixIcon: Icon(Icons.search)),
+                        onChanged: (v) => setSheet(() => query = v.trim()),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        final c = await _showCreateCustomFoodDialog();
+                        if (c != null) {
+                          setSheet(() { selected[c.name] = {'food': c, 'quantity': 1.0, 'unit': 'serv'}; });
+                        }
+                      },
+                      icon: const Icon(Icons.add_circle_outline),
+                      label: const Text('Custom'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (final f in const ['All','High Protein','Low Carb','Low Fat','Under 200 kcal'])
+                        Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: ChoiceChip(
+                            label: Text(f),
+                            selected: activeFilter == f,
+                            onSelected: (_) => setSheet(() => activeFilter = f),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView.builder(
+                    controller: controller,
+                    itemCount: items.length,
+                    itemBuilder: (context, i) {
+                      final f = items[i];
+                      final isSel = selected.containsKey(f.name);
+                      return Card(
+                        color: Colors.grey.shade900,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: ListTile(
+                          title: Text(f.name, style: const TextStyle(color: Colors.white)),
+                          subtitle: Text('P ${f.protein}g • C ${f.carbs}g • F ${f.fat}g • ${f.kcal.toStringAsFixed(0)} kcal', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                tooltip: 'Favorite',
+                                icon: Icon(_favoriteFoodNames.contains(f.name) ? Icons.favorite : Icons.favorite_border, color: Colors.greenAccent),
+                                onPressed: () => setSheet(() { if (_favoriteFoodNames.contains(f.name)) _favoriteFoodNames.remove(f.name); else _favoriteFoodNames.add(f.name); }),
+                              ),
+                              IconButton(
+                                icon: Icon(isSel ? Icons.check_circle : Icons.add_circle_outline, color: Colors.greenAccent),
+                                onPressed: () => setSheet(() { if (isSel) selected.remove(f.name); else selected[f.name] = {'food': f, 'quantity': 100.0, 'unit': 'g'}; }),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                if (selected.isNotEmpty) ...[
+                  const Divider(),
+                  SizedBox(
+                    height: 120,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: selected.entries.map((e) {
+                        final base = e.value['food'] as FoodItem;
+                        final qty = e.value['quantity'] as double;
+                        final unit = e.value['unit'] as String;
+                        return Container(
+                          width: 220,
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular(12)),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Row(children: [
+                              Expanded(child: Text(base.name, style: const TextStyle(color: Colors.white, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                              IconButton(icon: const Icon(Icons.close, size: 16, color: Colors.white54), onPressed: () => setSheet((){ selected.remove(e.key); })),
+                            ]),
+                            Row(children: [
+                              SizedBox(
+                                width: 80,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(isDense: true, hintText: 'Qty'),
+                                  onChanged: (v) => setSheet((){ selected[e.key]!['quantity'] = double.tryParse(v) ?? qty; }),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              DropdownButton<String>(
+                                value: unit,
+                                items: const [DropdownMenuItem(value: 'g', child: Text('g')), DropdownMenuItem(value: 'serv', child: Text('serv'))],
+                                onChanged: (val){ if (val!=null) setSheet((){ selected[e.key]!['unit'] = val; }); },
+                              ),
+                            ]),
+                          ]),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        var updated = List<FoodItem>.from(widget.meal.items);
+                        selected.forEach((_, v) {
+                          final base = v['food'] as FoodItem;
+                          final qty = v['quantity'] as double;
+                          final unit = v['unit'] as String;
+                          double mult;
+                          if (unit == 'serv') {
+                            mult = qty;
+                          } else {
+                            final isPer100g = base.name.contains('100g');
+                            mult = isPer100g ? qty/100.0 : (qty / (base.amount == 0 ? 100 : base.amount));
+                          }
+                          updated.add(_scaleFood(base, mult));
+                        });
+                        final updatedMeal = widget.meal.copyWith(
+                          items: updated,
+                          mealSummary: NutritionPlan.recalcMealSummary(widget.meal.copyWith(items: updated)),
+                        );
+                        widget.onMealChanged(updatedMeal);
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.check),
+                      label: const Text('Add to meal'),
+                    ),
+                  ),
+                ],
+              ]),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<FoodItem?> _showCreateCustomFoodDialog() async {
+    final nameController = TextEditingController();
+    final proteinController = TextEditingController(text: '0');
+    final carbsController = TextEditingController(text: '0');
+    final fatController = TextEditingController(text: '0');
+    final kcalController = TextEditingController(text: '0');
+    final sodiumController = TextEditingController(text: '0');
+    final potassiumController = TextEditingController(text: '0');
+    final servingsController = TextEditingController(text: '1');
+
+    return showDialog<FoodItem>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Create custom food'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Name')),
+              Row(children: [
+                Expanded(child: TextField(controller: proteinController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Protein (g)'))),
+                const SizedBox(width: 8),
+                Expanded(child: TextField(controller: carbsController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Carbs (g)'))),
+              ]),
+              Row(children: [
+                Expanded(child: TextField(controller: fatController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Fat (g)'))),
+                const SizedBox(width: 8),
+                Expanded(child: TextField(controller: kcalController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Kcal'))),
+              ]),
+              Row(children: [
+                Expanded(child: TextField(controller: sodiumController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Sodium (mg)'))),
+                const SizedBox(width: 8),
+                Expanded(child: TextField(controller: potassiumController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Potassium (mg)'))),
+              ]),
+              TextField(controller: servingsController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Servings (default 1)')),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final name = nameController.text.trim();
+              if (name.isEmpty) return;
+              final p = double.tryParse(proteinController.text) ?? 0;
+              final c = double.tryParse(carbsController.text) ?? 0;
+              final f = double.tryParse(fatController.text) ?? 0;
+              final kcal = double.tryParse(kcalController.text) ?? (p*4 + c*4 + f*9);
+              final s = double.tryParse(sodiumController.text) ?? 0;
+              final k = double.tryParse(potassiumController.text) ?? 0;
+              final serv = double.tryParse(servingsController.text) ?? 1;
+              Navigator.pop(context, FoodItem(name: name, protein: p, carbs: c, fat: f, kcal: kcal, sodium: s, potassium: k, servings: serv, amount: 0, estimated: true));
+            },
+            child: const Text('Create'),
+          )
+        ],
+      ),
+    );
+  }
+
   Future<void> _addRecipe() async {
     if (widget.isReadOnly) return;
 
@@ -117,7 +380,7 @@ class _MealEditorState extends State<MealEditor> {
       final selectedRecipe = await Navigator.push<Recipe>(
         context,
         MaterialPageRoute(
-          builder: (context) => RecipeLibraryScreen(
+          builder: (context) => const RecipeLibraryScreen(
             isPickerMode: true,
           ),
         ),
@@ -126,7 +389,7 @@ class _MealEditorState extends State<MealEditor> {
       if (selectedRecipe != null) {
         // Create FoodItem from recipe with default 1 serving
         final recipeItem = await _nutritionService.createFoodItemFromRecipe(
-          selectedRecipe.id!,
+          selectedRecipe.id,
           1.0,
         );
 
@@ -236,7 +499,7 @@ class _MealEditorState extends State<MealEditor> {
         // Create new FoodItem from selected recipe with same servings
         final currentItem = widget.meal.items[itemIndex];
         final newRecipeItem = await _nutritionService.createFoodItemFromRecipe(
-          selectedRecipe.id!,
+          selectedRecipe.id,
           currentItem.servings,
         );
 
@@ -401,11 +664,13 @@ class _MealEditorState extends State<MealEditor> {
         final updatedMeal = widget.meal.copyWith(items: updatedItems);
         widget.onMealChanged(updatedMeal);
         
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(LocaleHelper.t('high_sodium_items_replaced', Localizations.localeOf(context).languageCode))),
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to replace items: $e')),
       );
@@ -456,6 +721,9 @@ class _MealEditorState extends State<MealEditor> {
                         case 'recipe':
                           _addRecipe();
                           break;
+                        case 'advanced_food':
+                          unawaited(_addFoodAdvanced());
+                          break;
                       }
                     },
                     itemBuilder: (context) => [
@@ -466,6 +734,16 @@ class _MealEditorState extends State<MealEditor> {
                             const Icon(Icons.fastfood, size: 16),
                             const SizedBox(width: 8),
                             Text(LocaleHelper.t('add_food', language)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'advanced_food',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.add_circle_outline, size: 16),
+                            const SizedBox(width: 8),
+                            Text('Add Food (Advanced)'),
                           ],
                         ),
                       ),
@@ -550,159 +828,50 @@ class _MealEditorState extends State<MealEditor> {
               ),
             
             const SizedBox(height: 16),
-            
-            // Macro table header
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
+
+            // Direct food item cards (no table wrapper)
+            if (widget.meal.items.isEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                alignment: Alignment.center,
+                child: Text(
+                  'No food items added yet',
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
+              )
+            else
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: widget.meal.items.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final item = entry.value;
+
+                  // Show recipe items with special tile
+                  if (item.recipeId != null) {
+                    return RecipeItemTile(
+                      key: ValueKey('recipe_tile_${item.hashCode}_$index'),
+                      item: item,
+                      onItemChanged: (updatedItem) => _updateItem(index, updatedItem),
+                      onRemove: () => _removeItem(index),
+                      onQuickSwap: (recipe) => _quickSwapRecipe(recipe, index),
+                      isReadOnly: widget.isReadOnly,
+                    );
+                  }
+
+                  // Show regular food items with table row
+                  return MacroTableRow(
+                    key: ValueKey('macro_row_${item.hashCode}_$index'),
+                    item: item,
+                    onChanged: (updatedItem) => _updateItem(index, updatedItem),
+                    onDelete: () => _removeItem(index),
+                    isReadOnly: widget.isReadOnly,
+                    parentMeal: widget.meal,
+                  );
+                }).toList(),
               ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 120, // Fixed width for food item
-                      child: Text(
-                        LocaleHelper.t('food_item', language),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 60,
-                      child: Text(
-                        LocaleHelper.t('protein', language),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 60,
-                      child: Text(
-                        LocaleHelper.t('carbs', language),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 60,
-                      child: Text(
-                        LocaleHelper.t('fat', language),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 70,
-                      child: Text(
-                        LocaleHelper.t('kcal', language),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 60,
-                      child: Text(
-                        LocaleHelper.t('sodium', language),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 60,
-                      child: Text(
-                        LocaleHelper.t('potassium', language),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            // Table data
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
-                ),
-              ),
-              child: widget.meal.items.isEmpty
-                  ? Container(
-                      height: 50,
-                      alignment: Alignment.center,
-                      child: Text(
-                        'No food items added yet',
-                        style: TextStyle(
-                          color: Colors.grey.shade500,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    )
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: widget.meal.items.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final item = entry.value;
-                        
-                        // Show recipe items with special tile
-                        if (item.recipeId != null) {
-                          return RecipeItemTile(
-                            key: ValueKey('recipe_tile_${item.hashCode}_$index'),
-                            item: item,
-                            onItemChanged: (updatedItem) => _updateItem(index, updatedItem),
-                            onRemove: () => _removeItem(index),
-                            onQuickSwap: (recipe) => _quickSwapRecipe(recipe, index),
-                            isReadOnly: widget.isReadOnly,
-                          );
-                        }
-                        
-                        // Show regular food items with table row
-                        return MacroTableRow(
-                          key: ValueKey('macro_row_${item.hashCode}_$index'),
-                          item: item,
-                          onChanged: (updatedItem) => _updateItem(index, updatedItem),
-                          onDelete: () => _removeItem(index),
-                          isReadOnly: widget.isReadOnly,
-                        );
-                      }).toList(),
-                    ),
-            ),
             
             // Add item buttons
             if (!widget.isReadOnly) ...[

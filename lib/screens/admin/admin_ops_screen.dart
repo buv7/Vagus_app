@@ -103,13 +103,14 @@ class _AdminOpsScreenState extends State<AdminOpsScreen>
                 ['frt_p90_minutes', p.p90.inMinutes],
                 ['frt_p99_minutes', p.p99.inMinutes],
               ];
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
               final ok = await _google.exportKpisToSheets(
                 title: 'LiveOps KPIs',
                 sheetName: 'kpis',
                 rows: rows,
               );
               if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Exported to Sheets' : 'Export failed')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text(ok ? 'Exported to Sheets' : 'Export failed')));
             },
           ),
           _buildLookbackSelector(),
@@ -225,7 +226,7 @@ class _AdminOpsScreenState extends State<AdminOpsScreen>
         ),
         _buildKpiCard(
           'Agent Productivity',
-          '${_kpis!.avgTicketsPerAgent.toStringAsFixed(1)}',
+          _kpis!.avgTicketsPerAgent.toStringAsFixed(1),
           Icons.person,
           Colors.teal,
         ),
@@ -308,7 +309,7 @@ class _AdminOpsScreenState extends State<AdminOpsScreen>
           Expanded(
             child: LinearProgressIndicator(
               value: duration.inMinutes / (24 * 60), // Normalize to 24 hours
-              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getPercentileColor(duration),
               ),
@@ -462,7 +463,7 @@ class _AdminOpsScreenState extends State<AdminOpsScreen>
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: severityColor,
-          child: Icon(
+          child: const Icon(
             Icons.warning,
             color: Colors.white,
           ),

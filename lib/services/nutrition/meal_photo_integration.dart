@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../services/ai/nutrition_ai.dart';
 import '../../screens/nutrition/food_snap_screen.dart';
 import '../../models/nutrition/nutrition_plan.dart';
 import '../../models/nutrition/food_item.dart' as fi;

@@ -25,9 +25,9 @@ class TrendChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,10 +38,10 @@ class TrendChart extends StatelessWidget {
             height: 180,
             child: type == TrendType.line
                 ? LineChart(LineChartData(
-                    gridData: FlGridData(show: true, drawVerticalLine: false),
+                    gridData: const FlGridData(show: true, drawVerticalLine: false),
                     borderData: FlBorderData(show: false),
                     titlesData: FlTitlesData(
-                      leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 36)),
+                      leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 36)),
                       bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (x, _) {
                         final i = x.toInt();
                         if (i < 0 || i >= xs.length) return const SizedBox.shrink();
@@ -65,10 +65,10 @@ class TrendChart extends StatelessWidget {
                     ],
                   ))
                 : BarChart(BarChartData(
-                    gridData: FlGridData(show: true, drawVerticalLine: false),
+                    gridData: const FlGridData(show: true, drawVerticalLine: false),
                     borderData: FlBorderData(show: false),
                     titlesData: FlTitlesData(
-                      leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 36)),
+                      leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 36)),
                       bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (x, _) {
                         final i = x.toInt();
                         if (i < 0 || i >= xs.length) return const SizedBox.shrink();

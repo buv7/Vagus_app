@@ -65,7 +65,7 @@ class _IncidentTimelineState extends State<IncidentTimeline> {
           ],
         ),
         const SizedBox(height: 8),
-        ...filtered.map(_tile).toList(),
+        ...filtered.map(_tile),
         const SizedBox(height: 12),
         Align(
           alignment: Alignment.centerLeft,

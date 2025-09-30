@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/live_session.dart';
 
 class ScheduleCallDialog extends StatefulWidget {
-  const ScheduleCallDialog({Key? key}) : super(key: key);
+  const ScheduleCallDialog({super.key});
 
   @override
   State<ScheduleCallDialog> createState() => _ScheduleCallDialogState();
@@ -18,7 +18,6 @@ class _ScheduleCallDialogState extends State<ScheduleCallDialog> {
   TimeOfDay _selectedTime = TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1)));
   int _maxParticipants = 2;
   bool _isRecordingEnabled = false;
-  String? _selectedClientId;
 
   @override
   void dispose() {
@@ -39,9 +38,9 @@ class _ScheduleCallDialogState extends State<ScheduleCallDialog> {
             // Header
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.blue,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(8),
                   topRight: Radius.circular(8),
                 ),

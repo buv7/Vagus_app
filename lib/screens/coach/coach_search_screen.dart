@@ -65,7 +65,7 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
           .from('profiles')
           .select()
           .eq('role', 'coach')
-          .or('username.ilike.%$query%,name.ilike.%$query%');
+          .or('name.ilike.%$query%,email.ilike.%$query%');
 
       setState(() {
         _results = List<Map<String, dynamic>>.from(response);
@@ -116,7 +116,7 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
               : null,
         ),
         title: Text(coach['name'] ?? 'No name'),
-        subtitle: Text(coach['username'] ?? coach['email'] ?? ''),
+        subtitle: Text(coach['email'] ?? ''),
         trailing: ElevatedButton(
           onPressed: () => _sendRequest(coach['id']),
           child: const Text('Connect'),
@@ -146,7 +146,7 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search by name or username',
+                hintText: 'Search by name or email',
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: _search,

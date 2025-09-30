@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -60,9 +61,9 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
   Widget build(BuildContext context) {
     if (!_isAdmin) {
       return Scaffold(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         appBar: AppBar(
-          backgroundColor: AppTheme.primaryBlack,
+          backgroundColor: AppTheme.primaryDark,
           title: const Text(
             'Ad Management',
             style: TextStyle(color: AppTheme.neutralWhite),
@@ -82,9 +83,9 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.primaryBlack,
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryBlack,
+        backgroundColor: AppTheme.primaryDark,
         title: const Text(
           'Ad Management',
           style: TextStyle(color: AppTheme.neutralWhite),
@@ -97,29 +98,29 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
               ),
             )
           : _ads.isEmpty
-              ? Center(
+              ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.campaign,
                         color: AppTheme.lightGrey,
                         size: 64,
                       ),
-                      const SizedBox(height: DesignTokens.space16),
-                      const Text(
+                      SizedBox(height: DesignTokens.space16),
+                      Text(
                         'No ads created yet',
                         style: TextStyle(
                           color: AppTheme.lightGrey,
                           fontSize: 18,
                         ),
                       ),
-                      const SizedBox(height: DesignTokens.space8),
-                      const Text(
+                      SizedBox(height: DesignTokens.space8),
+                      Text(
                         'Create your first ad to get started',
                         style: TextStyle(
                           color: AppTheme.lightGrey,
@@ -140,10 +141,10 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
       floatingActionButton: _isAdmin
           ? FloatingActionButton(
               onPressed: _showCreateAdSheet,
-              backgroundColor: AppTheme.mintAqua,
+              backgroundColor: AppTheme.accentGreen,
               child: const Icon(
                 Icons.add,
-                color: AppTheme.primaryBlack,
+                color: AppTheme.primaryDark,
               ),
             )
           : null,
@@ -157,7 +158,7 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius16),
         border: Border.all(
-          color: AppTheme.steelGrey,
+          color: AppTheme.mediumGrey,
           width: 1,
         ),
       ),
@@ -170,7 +171,7 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
               topLeft: Radius.circular(DesignTokens.radius16),
               topRight: Radius.circular(DesignTokens.radius16),
             ),
-            child: Container(
+            child: SizedBox(
               height: 120,
               width: double.infinity,
               child: Image.network(
@@ -178,7 +179,7 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: AppTheme.steelGrey,
+                    color: AppTheme.mediumGrey,
                     child: const Center(
                       child: Icon(
                         Icons.image_not_supported,
@@ -218,7 +219,7 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
                       decoration: BoxDecoration(
                         color: ad.isCurrentlyActive 
                             ? DesignTokens.success 
-                            : AppTheme.steelGrey,
+                            : AppTheme.mediumGrey,
                         borderRadius: BorderRadius.circular(DesignTokens.radius8),
                       ),
                       child: Text(
@@ -267,7 +268,7 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
                         child: Text(
                           ad.linkUrl!,
                           style: const TextStyle(
-                            color: AppTheme.mintAqua,
+                            color: AppTheme.accentGreen,
                             fontSize: 12,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -287,15 +288,15 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
                         onPressed: () => _editAd(ad),
                         icon: const Icon(
                           Icons.edit,
-                          color: AppTheme.mintAqua,
+                          color: AppTheme.accentGreen,
                           size: 16,
                         ),
                         label: const Text(
                           'Edit',
-                          style: TextStyle(color: AppTheme.mintAqua),
+                          style: TextStyle(color: AppTheme.accentGreen),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: AppTheme.mintAqua),
+                          side: const BorderSide(color: AppTheme.accentGreen),
                         ),
                       ),
                     ),
@@ -359,12 +360,14 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop();
+              final currentContext = context;
+              Navigator.of(currentContext).pop();
+              final scaffoldMessenger = ScaffoldMessenger.of(currentContext);
               try {
                 await _adService.deleteAdBanner(ad.id);
-                _loadAds();
+                unawaited(_loadAds());
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     const SnackBar(
                       content: Text('Ad deleted successfully'),
                       backgroundColor: DesignTokens.success,
@@ -373,7 +376,7 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
                 }
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(
                       content: Text('Error deleting ad: $e'),
                       backgroundColor: DesignTokens.danger,
@@ -604,10 +607,10 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                         labelStyle: TextStyle(color: AppTheme.lightGrey),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: AppTheme.steelGrey),
+                          borderSide: BorderSide(color: AppTheme.mediumGrey),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: AppTheme.mintAqua),
+                          borderSide: BorderSide(color: AppTheme.accentGreen),
                         ),
                       ),
                       style: const TextStyle(color: AppTheme.neutralWhite),
@@ -622,9 +625,9 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                     const SizedBox(height: DesignTokens.space16),
                     
                     // Image Upload
-                    Text(
+                    const Text(
                       'Ad Image',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppTheme.neutralWhite,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -638,7 +641,7 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                         height: 120,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: AppTheme.steelGrey,
+                          color: AppTheme.mediumGrey,
                           borderRadius: BorderRadius.circular(DesignTokens.radius12),
                           border: Border.all(
                             color: AppTheme.lightGrey,
@@ -657,7 +660,7 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                             : _uploading
                                 ? const Center(
                                     child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+                                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                                     ),
                                   )
                                 : const Center(
@@ -690,10 +693,10 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                         labelStyle: TextStyle(color: AppTheme.lightGrey),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: AppTheme.steelGrey),
+                          borderSide: BorderSide(color: AppTheme.mediumGrey),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: AppTheme.mintAqua),
+                          borderSide: BorderSide(color: AppTheme.accentGreen),
                         ),
                       ),
                       style: const TextStyle(color: AppTheme.neutralWhite),
@@ -702,9 +705,9 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                     const SizedBox(height: DesignTokens.space16),
                     
                     // Audience
-                    Text(
+                    const Text(
                       'Audience',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppTheme.neutralWhite,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -716,10 +719,10 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: AppTheme.steelGrey),
+                          borderSide: BorderSide(color: AppTheme.mediumGrey),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: AppTheme.mintAqua),
+                          borderSide: BorderSide(color: AppTheme.accentGreen),
                         ),
                       ),
                       dropdownColor: AppTheme.cardBackground,
@@ -766,7 +769,7 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                               _isActive = value;
                             });
                           },
-                          activeColor: AppTheme.mintAqua,
+                          activeColor: AppTheme.accentGreen,
                         ),
                       ],
                     ),
@@ -779,13 +782,13 @@ class _CreateAdSheetState extends State<CreateAdSheet> {
                       child: ElevatedButton(
                         onPressed: _saveAd,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.mintAqua,
+                          backgroundColor: AppTheme.accentGreen,
                           padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
                         ),
                         child: Text(
                           widget.editingAd != null ? 'Update Ad' : 'Create Ad',
                           style: const TextStyle(
-                            color: AppTheme.primaryBlack,
+                            color: AppTheme.primaryDark,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

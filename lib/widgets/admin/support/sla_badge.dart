@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../services/admin/admin_support_service.dart';
+import '../../../theme/design_tokens.dart';
 
 class SlaBadge extends StatefulWidget {
   final String ticketId;
@@ -86,22 +88,43 @@ class _SlaBadgeState extends State<SlaBadge> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: tint.withValues(alpha: s.breached ? .14 + .2*pulse : .12),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: tint.withValues(alpha: .45)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(s.breached ? Icons.timer_off : Icons.timer, size: 16, color: tint),
-          const SizedBox(width: 6),
-          Text(
-            s.breached ? 'Breached' : '${mins.toString().padLeft(2,'0')}:${sec.toString().padLeft(2,'0')}',
-            style: TextStyle(fontWeight: FontWeight.w800, color: tint),
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 0,
           ),
-          const SizedBox(width: 6),
-          Text(s.policyName, style: TextStyle(fontSize: 12, color: Colors.black.withValues(alpha:.6))),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: tint.withValues(alpha: s.breached ? .14 + .2*pulse : .12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(s.breached ? Icons.timer_off : Icons.timer, size: 16, color: tint),
+                const SizedBox(width: 6),
+                Text(
+                  s.breached ? 'Breached' : '${mins.toString().padLeft(2,'0')}:${sec.toString().padLeft(2,'0')}',
+                  style: TextStyle(fontWeight: FontWeight.w800, color: tint),
+                ),
+                const SizedBox(width: 6),
+                Text(s.policyName, style: TextStyle(fontSize: 12, color: Colors.black.withValues(alpha:.6))),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

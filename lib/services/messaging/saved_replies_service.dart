@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Saved reply model
@@ -56,7 +57,7 @@ class SavedRepliesService {
       
       return _cachedReplies!;
     } catch (e) {
-      print('SavedRepliesService: Error loading replies - $e');
+      debugPrint('SavedRepliesService: Error loading replies - $e');
       // Fallback to default replies
       _cachedReplies = _getDefaultReplies();
       return _cachedReplies!;
@@ -96,42 +97,42 @@ class SavedRepliesService {
       SavedReply(
         id: 'sleep_nudge',
         title: 'Sleep Nudge',
-        content: "Quick nudge on sleep — let's aim for 7–8h tonight. Short evening wind-down and screens off 60m before bed. How does that sound?",
+        content: 'Quick nudge on sleep - let\'s aim for 7-8h tonight. Short evening wind-down and screens off 60m before bed. How does that sound?',
       ),
       SavedReply(
         id: 'steps_nudge',
         title: 'Steps Nudge',
-        content: "Let's add two 10–15 min walks today to hit your step goal. Can you fit one after lunch and one this evening?",
+        content: 'Let\'s add two 10-15 min walks today to hit your step goal. Can you fit one after lunch and one this evening?',
       ),
       SavedReply(
         id: 'missed_session',
         title: 'Missed Session',
-        content: "Missed a session happens. Want a 15-min check-in to re-plan this week or prefer a light at-home session I can send?",
+        content: 'Missed a session happens. Want a 15-min check-in to re-plan this week or prefer a light at-home session I can send?',
       ),
       SavedReply(
         id: 'checkin_reminder',
         title: 'Check-in Reminder',
-        content: "Haven't seen a check-in this week — want to send quick photos + notes now, or book a 15-min catch-up?",
+        content: 'Haven\'t seen a check-in this week - want to send quick photos + notes now, or book a 15-min catch-up?',
       ),
       SavedReply(
         id: 'positive_reinforcement',
         title: 'Positive Reinforcement',
-        content: "Great work this week! Your consistency is really paying off. Keep up the amazing progress!",
+        content: 'Great work this week! Your consistency is really paying off. Keep up the amazing progress!',
       ),
       SavedReply(
         id: 'energy_balance',
         title: 'Energy Balance',
-        content: "Energy deficit looks high recently. Any fatigue or appetite changes? We can add a refeed or adjust training.",
+        content: 'Energy deficit looks high recently. Any fatigue or appetite changes? We can add a refeed or adjust training.',
       ),
       SavedReply(
         id: 'quick_checkin',
         title: 'Quick Check-in',
-        content: "Quick check-in — how are things going? Let me know if you need any adjustments to your plan.",
+        content: 'Quick check-in - how are things going? Let me know if you need any adjustments to your plan.',
       ),
       SavedReply(
         id: 'form_focus',
         title: 'Form Focus',
-        content: "Let's focus on form in your next session. Quality over quantity — I'll send some technique tips.",
+        content: 'Let\'s focus on form in your next session. Quality over quantity - I\'ll send some technique tips.',
       ),
     ];
   }
@@ -143,7 +144,7 @@ class SavedRepliesService {
       final jsonString = json.encode(_cachedReplies!.map((reply) => reply.toJson()).toList());
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
-      print('SavedRepliesService: Error saving replies - $e');
+      debugPrint('SavedRepliesService: Error saving replies - $e');
     }
   }
 

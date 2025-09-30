@@ -146,7 +146,7 @@ class RecipeStepTile extends StatelessWidget {
   Widget _buildStepPhoto(BuildContext context, ThemeData theme) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(DesignTokens.radius8),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         height: 200,
         child: Image.network(
@@ -282,7 +282,7 @@ class ReorderableRecipeStepsList extends StatelessWidget {
       itemBuilder: (context, index) {
         final step = steps[index];
         return RecipeStepTile(
-          key: ValueKey(step.id ?? index),
+          key: ValueKey(step.id),
           step: step,
           index: index,
           isEditable: isEditable,

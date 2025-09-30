@@ -43,14 +43,14 @@ class MessageListView extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
               ),
               child: const Center(
                 child: Text(
                   'V',
                   style: TextStyle(
-                    color: AppTheme.primaryBlack,
+                    color: AppTheme.primaryDark,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -71,7 +71,7 @@ class MessageListView extends StatelessWidget {
                 vertical: DesignTokens.space12,
               ),
               decoration: BoxDecoration(
-                color: isFromClient ? AppTheme.cardBackground : AppTheme.mintAqua,
+                color: isFromClient ? AppTheme.cardBackground : AppTheme.accentGreen,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(DesignTokens.radius12),
                   topRight: const Radius.circular(DesignTokens.radius12),
@@ -85,7 +85,7 @@ class MessageListView extends StatelessWidget {
                   Text(
                     content,
                     style: TextStyle(
-                      color: isFromClient ? AppTheme.neutralWhite : AppTheme.primaryBlack,
+                      color: isFromClient ? AppTheme.neutralWhite : AppTheme.primaryDark,
                       fontSize: 14,
                     ),
                   ),
@@ -93,7 +93,7 @@ class MessageListView extends StatelessWidget {
                   Text(
                     DateFormat('HH:mm').format(timestamp),
                     style: TextStyle(
-                      color: isFromClient ? AppTheme.lightGrey : AppTheme.primaryBlack.withValues(alpha: 0.7),
+                      color: isFromClient ? AppTheme.lightGrey : AppTheme.primaryDark.withValues(alpha: 0.7),
                       fontSize: 10,
                     ),
                   ),
@@ -109,7 +109,7 @@ class MessageListView extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppTheme.steelGrey,
+                color: AppTheme.mediumGrey,
                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
               ),
               child: const Center(

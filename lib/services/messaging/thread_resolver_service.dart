@@ -1,4 +1,5 @@
 // lib/services/messaging/thread_resolver_service.dart
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ThreadResolverService {
@@ -30,7 +31,7 @@ class ThreadResolverService {
       return null;
     } catch (e) {
       // Log error but don't throw - graceful fallback
-      print('ThreadResolverService: Failed to resolve thread: $e');
+      debugPrint('ThreadResolverService: Failed to resolve thread: $e');
       return null;
     }
   }
@@ -46,7 +47,7 @@ class ThreadResolverService {
 
       return response?['coach_id'] as String?;
     } catch (e) {
-      print('ThreadResolverService: Failed to get coach for client: $e');
+      debugPrint('ThreadResolverService: Failed to get coach for client: $e');
       return null;
     }
   }

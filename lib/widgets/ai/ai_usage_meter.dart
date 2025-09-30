@@ -137,7 +137,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
             height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.mintAqua),
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
             ),
           ),
           const SizedBox(width: DesignTokens.space12),
@@ -159,11 +159,11 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius16),
-        border: Border.all(color: DesignTokens.danger.withOpacity(0.3)),
+        border: Border.all(color: DesignTokens.danger.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline, color: DesignTokens.danger, size: 20),
+          const Icon(Icons.error_outline, color: DesignTokens.danger, size: 20),
           const SizedBox(width: DesignTokens.space12),
           Expanded(
             child: Text(
@@ -190,17 +190,17 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius16),
-        border: Border.all(color: AppTheme.mintAqua.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.accentGreen.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline, color: AppTheme.mintAqua, size: 20),
+          const Icon(Icons.info_outline, color: AppTheme.accentGreen, size: 20),
           const SizedBox(width: DesignTokens.space12),
           Expanded(
             child: Text(
               'No AI usage data available',
               style: TextStyle(
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 fontSize: widget.isCompact ? 14 : 16,
               ),
             ),
@@ -228,8 +228,8 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
 
     Color getUsageColor() {
       if (usagePercentage >= 0.9) return DesignTokens.danger;
-      if (usagePercentage >= 0.7) return AppTheme.softYellow;
-      if (usagePercentage >= 0.5) return AppTheme.softYellow;
+      if (usagePercentage >= 0.7) return AppTheme.accentOrange;
+      if (usagePercentage >= 0.5) return AppTheme.accentOrange;
       return DesignTokens.success;
     }
 
@@ -246,7 +246,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
             children: [
               Icon(
                 Icons.psychology,
-                color: AppTheme.mintAqua,
+                color: AppTheme.accentGreen,
                 size: widget.isCompact ? 18 : 20,
               ),
               const SizedBox(width: DesignTokens.space8),
@@ -298,7 +298,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: usagePercentage.clamp(0.0, 1.0),
-                      backgroundColor: AppTheme.steelGrey,
+                      backgroundColor: AppTheme.mediumGrey,
                       valueColor: AlwaysStoppedAnimation<Color>(getUsageColor()),
                       minHeight: 6,
                     ),
@@ -324,7 +324,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                     style: TextStyle(
                       fontSize: widget.isCompact ? 10 : 12,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.softYellow,
+                      color: AppTheme.accentOrange,
                     ),
                   ),
                 ),
@@ -343,7 +343,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                     'Total Requests',
                     '$totalRequests',
                     Icons.history,
-                    AppTheme.mintAqua,
+                    AppTheme.accentGreen,
                   ),
                 ),
                 Expanded(
@@ -367,7 +367,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                     'Total Tokens',
                     '${_usageData!['total_tokens'] ?? 0}',
                     Icons.token,
-                    AppTheme.mintAqua,
+                    AppTheme.accentGreen,
                   ),
                 ),
                 Expanded(
@@ -375,7 +375,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                     'This Month',
                     '${_usageData!['tokens_this_month'] ?? 0}',
                     Icons.calendar_month,
-                    AppTheme.softYellow,
+                    AppTheme.accentOrange,
                   ),
                 ),
               ],
@@ -385,7 +385,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
               const SizedBox(height: DesignTokens.space8),
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.access_time,
                     size: 16,
                     color: AppTheme.lightGrey,
@@ -393,7 +393,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
                   const SizedBox(width: DesignTokens.space6),
                   Text(
                     'Last used: ${_formatDate(lastUsed)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppTheme.lightGrey,
                     ),
@@ -418,7 +418,7 @@ class _AIUsageMeterState extends State<AIUsageMeter> {
             children: [
               Text(
                 label,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: AppTheme.lightGrey,
                 ),

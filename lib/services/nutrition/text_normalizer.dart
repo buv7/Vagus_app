@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 /// Text normalization utilities for Arabic, Kurdish, and English food names
 /// Handles diacritics, letter variants, and transliteration
@@ -110,8 +109,8 @@ class TextNormalizer {
     if (text.isEmpty) return text;
     
     // Auto-detect direction based on script
-    bool isArabic = _containsArabic(text);
-    bool isLatin = _containsLatin(text);
+    final bool isArabic = _containsArabic(text);
+    final bool isLatin = _containsLatin(text);
     
     if (to == 'auto') {
       if (isArabic && !isLatin) {
@@ -168,7 +167,7 @@ class TextNormalizer {
     String result = text.toLowerCase();
     
     // Sort by length (longest first) to avoid partial replacements
-    List<String> keys = mapping.keys.toList()
+    final List<String> keys = mapping.keys.toList()
       ..sort((a, b) => b.length.compareTo(a.length));
     
     for (String key in keys) {
@@ -195,18 +194,18 @@ class TextNormalizer {
 
   /// Get all possible search variations for a text (including transliterations)
   static List<String> getSearchVariations(String text) {
-    Set<String> variations = {};
+    final Set<String> variations = {};
     
     // Original normalized
     variations.add(normalizeForSearch(text));
     
     // Transliterated versions
-    String arabic = latinArabicTransliterate(text, to: 'arabic');
+    final String arabic = latinArabicTransliterate(text, to: 'arabic');
     if (arabic != text) {
       variations.add(normalizeForSearch(arabic));
     }
     
-    String latin = latinArabicTransliterate(text, to: 'latin');
+    final String latin = latinArabicTransliterate(text, to: 'latin');
     if (latin != text) {
       variations.add(normalizeForSearch(latin));
     }

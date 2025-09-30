@@ -2,11 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/messages_service.dart';
-import '../../services/ai/messaging_ai.dart';
 import '../../services/messaging/ai_draft_reply_service.dart';
 import '../../widgets/messaging/message_bubble.dart';
-import '../../widgets/messaging/SmartReplyPanel.dart';
-import '../../widgets/coach/QuickBookSheet.dart';
+import '../../widgets/messaging/smart_reply_panel.dart';
+import '../../widgets/coach/quick_book_sheet.dart';
 import '../../services/coach/quickbook_autoconfirm_service.dart';
 import '../../services/coach/quickbook_reschedule_service.dart';
 import '../../services/coach/calendar_quick_book_service.dart';
@@ -55,7 +54,6 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
   // AI features
   static const bool kEnableSmartReplies = true;
   List<String> _smartReplies = [];
-  bool _loadingSmartReplies = false;
   bool _showSmartReplies = false;
   Timer? _smartRepliesTimer;
   
@@ -232,7 +230,6 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
     if (!isLastMessageFromClient) return;
     
     setState(() {
-      _loadingSmartReplies = true;
       _showSmartReplies = true;
     });
     
@@ -246,7 +243,6 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
       if (mounted) {
         setState(() {
           _smartReplies = drafts;
-          _loadingSmartReplies = false;
         });
         
         // Auto-hide after 15 seconds
@@ -260,10 +256,9 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
         });
       }
     } catch (e) {
-      print('Error loading smart replies: $e');
+      debugPrint('Error loading smart replies: $e');
       if (mounted) {
         setState(() {
-          _loadingSmartReplies = false;
           _showSmartReplies = false;
         });
       }
@@ -323,7 +318,7 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
           }
         }
       } catch (e) {
-        print('CoachMessenger: Error handling auto-confirmation - $e');
+        debugPrint('CoachMessenger: Error handling auto-confirmation - $e');
         // Don't show error to user - auto-confirmation is background feature
       }
       
@@ -403,9 +398,9 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
         final slot = QuickBookSlot(parsed.start, parsed.duration);
         
         // Get timezone information
-        final coachTz = await CalendarQuickBookService().coachTimeZone(user.id);
-        final clientTz = await CalendarQuickBookService().clientTimeZone(widget.client['id']);
-        final tzNote = NaturalTimeParser.getTimezoneNote(clientTz, coachTz);
+        // final coachTz = await CalendarQuickBookService().coachTimeZone(user.id);
+        // final clientTz = await CalendarQuickBookService().clientTimeZone(widget.client['id']);
+        // final tzNote = NaturalTimeParser.getTimezoneNote(clientTz, coachTz);
         
         // Send proposal message
         await CalendarQuickBookService().sendProposalMessage(
@@ -432,7 +427,7 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
         return;
       }
     } catch (e) {
-      print('CoachMessenger: Error handling scheduling - $e');
+      debugPrint('CoachMessenger: Error handling scheduling - $e');
       // Don't show error to user - scheduling is background feature
     }
   }
@@ -452,11 +447,11 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
         mode: null, // Regular quick book mode
         onProposed: (slot) {
           // Optional: analytics/log
-          print('Quick book proposed: ${slot.start}');
+          debugPrint('Quick book proposed: ${slot.start}');
         },
         onBooked: (slot) {
           // Optional: refresh calendar
-          print('Quick book confirmed: ${slot.start}');
+          debugPrint('Quick book confirmed: ${slot.start}');
         },
       ),
     );

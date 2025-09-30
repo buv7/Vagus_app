@@ -7,13 +7,14 @@ Future<T> runWithBlockingLoader<T>(
   Future<T> future, {
   bool showSuccess = false,
 }) async {
+  final overlayManager = Overlay.of(context, rootOverlay: true);
   final overlay = OverlayEntry(
     builder: (_) => Container(
       color: Colors.black.withValues(alpha: 0.35),
       child: const Center(child: VagusLoader(size: 72)),
     ),
   );
-  Overlay.of(context, rootOverlay: true).insert(overlay);
+  overlayManager.insert(overlay);
   try {
     final result = await future;
     if (showSuccess) {
@@ -24,12 +25,22 @@ Future<T> runWithBlockingLoader<T>(
           child: const Center(child: VagusSuccess(size: 84)),
         ),
       );
-      Overlay.of(context, rootOverlay: true).insert(ok);
-      await Future.delayed(const Duration(milliseconds: 700));
-      ok.remove();
+      try {
+        overlayManager.insert(ok);
+        await Future.delayed(const Duration(milliseconds: 700));
+        if (ok.mounted) {
+          ok.remove();
+        }
+      } catch (_) {
+        // Widget disposed, ignore
+      }
     }
     return result;
   } finally {
-    if (overlay.mounted) overlay.remove();
+    try {
+      if (overlay.mounted) overlay.remove();
+    } catch (_) {
+      // Already removed or overlay disposed
+    }
   }
 }
