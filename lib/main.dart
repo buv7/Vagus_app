@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
+import 'config/env_config.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/workout/client_workout_dashboard_screen.dart'; // ✅ import workout screen
 import 'screens/splash/animated_splash_screen.dart';
@@ -21,12 +22,16 @@ import 'screens/workout/cardio_log_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Load environment variables from .env file
+  await EnvConfig.init();
+
+  // Initialize Supabase with credentials from environment
   await Supabase.initialize(
-    url: 'https://kydrpnrmqbedjflklgue.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZHJwbnJtcWJlZGpmbGtsZ3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUxODAsImV4cCI6MjA2OTgwMTE4MH0.qlpGUiy17IbDsfgOf3-F2XBjOajjwxfy2NLMlUZWaqo',
+    url: EnvConfig.supabaseUrl,
+    anonKey: EnvConfig.supabaseAnonKey,
   );
 
-  // NEW: Initialize OneSignal notifications
+  // Initialize OneSignal notifications
   await OneSignalService.instance.init();
 
   // Initialize local notifications for calendar reminders

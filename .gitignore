@@ -51,3 +51,6 @@ app.*.map.json
 *.env
 supabase_connection.env
 node_modules/
+
+# Archived code - exclude from analysis
+ARCHIVE/

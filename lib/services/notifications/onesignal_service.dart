@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 // TODO: Add onesignal_flutter package to pubspec.yaml
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
+import '../../config/env_config.dart';
 import '../../models/notifications/workout_notification_types.dart';
 
 // Stub classes until OneSignal is added
@@ -47,17 +48,26 @@ class OneSignalService {
   String? _currentPlayerId;
   final supabase = Supabase.instance.client;
 
-  // OneSignal App ID - Replace with your actual app ID
-  static const String _appId = 'YOUR_ONESIGNAL_APP_ID';
-
   /// Initialize OneSignal service
   /// Call this once in main() after Supabase initialization
   Future<void> init() async {
     if (_initialized) return;
 
+    // Get OneSignal App ID from environment
+    final appId = EnvConfig.oneSignalAppId;
+
+    // Skip initialization if OneSignal is not configured
+    if (appId.isEmpty) {
+      if (kDebugMode) {
+        debugPrint('⚠️  OneSignal App ID not configured in .env file');
+        debugPrint('   Push notifications will be disabled');
+      }
+      return;
+    }
+
     try {
       // Initialize OneSignal
-      OneSignal.initialize(_appId);
+      OneSignal.initialize(appId);
 
       // Request notification permissions
       await OneSignal.Notifications.requestPermission(true);

@@ -1,0 +1,938 @@
+Analyzing vagus_app...                                          
+
+   info - Dangling library doc comment - lib\models\notifications\workout_notification_types.dart:4:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\models\workout\analytics_models.dart:3:1 - dangling_library_doc_comments
+   info - Unnecessary braces in a string interpolation - lib\models\workout\exercise.dart:235:18 - unnecessary_brace_in_string_interps
+   info - Dangling library doc comment - lib\models\workout\exercise_library_models.dart:3:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\models\workout\progression_models.dart:3:1 - dangling_library_doc_comments
+   info - Local variables should be final - lib\models\workout\workout_summary.dart:62:5 - prefer_final_locals
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\coach_portfolio_marketplace_screen.dart:91:15 - prefer_const_constructors
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\coach\coach_portfolio_marketplace_screen.dart:405:19 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\coach\coach_portfolio_marketplace_screen.dart:683:19 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\coach\coach_portfolio_marketplace_screen.dart:809:31 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\coach\coach_portfolio_marketplace_screen.dart:822:31 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\coach\coach_portfolio_marketplace_screen.dart:840:31 - unawaited_futures
+   info - Dangling library doc comment - lib\screens\coach\unified_coach_profile_example.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\widgets\bio_section_widget.dart:227:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\widgets\media_gallery_widget.dart:605:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\widgets\media_gallery_widget.dart:647:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\widgets\profile_completeness_widget.dart:243:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\widgets\profile_completeness_widget.dart:427:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\widgets\profile_header_widget.dart:212:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\widgets\profile_header_widget.dart:214:19 - prefer_const_constructors
+   info - Unnecessary use of double quotes - lib\screens\dashboard\home_screen.dart:207:37 - prefer_single_quotes
+   info - Unnecessary use of double quotes - lib\screens\dashboard\home_screen.dart:213:21 - prefer_single_quotes
+   info - Unnecessary use of double quotes - lib\screens\dashboard\home_screen.dart:232:21 - prefer_single_quotes
+   info - Unnecessary use of double quotes - lib\screens\dashboard\home_screen.dart:252:37 - prefer_single_quotes
+   info - Unnecessary use of double quotes - lib\screens\dashboard\home_screen.dart:258:21 - prefer_single_quotes
+   info - Unnecessary use of double quotes - lib\screens\dashboard\home_screen.dart:277:21 - prefer_single_quotes
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\nav\main_nav.dart:332:38 - use_build_context_synchronously
+warning - The value of the field '_activeTabIndex' isn't used - lib\screens\nutrition\coach_nutrition_dashboard.dart:28:7 - unused_field
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\coach_nutrition_dashboard.dart:58:36 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\coach_nutrition_dashboard.dart:59:33 - unnecessary_non_null_assertion
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:121:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:123:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:132:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:208:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:291:20 - prefer_const_constructors
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\coach_nutrition_dashboard.dart:319:38 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\coach_nutrition_dashboard.dart:320:37 - unnecessary_non_null_assertion
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:363:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:375:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:383:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:398:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:400:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:445:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:453:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:460:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:468:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\coach_nutrition_dashboard.dart:509:20 - prefer_const_constructors
+warning - Unused import: '../../widgets/shared/nutrition_card.dart' - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:9:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:229:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:358:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:381:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:394:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:422:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:470:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:484:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:535:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:549:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\attachments_gallery.dart:574:57 - deprecated_member_use
+warning - Unused import: '../../widgets/shared/empty_state_widget.dart' - lib\screens\nutrition\components\meal_detail\comments_thread.dart:8:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\meal_detail\comments_thread.dart:207:17 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\comments_thread.dart:223:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\comments_thread.dart:322:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\comments_thread.dart:325:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\comments_thread.dart:342:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\comments_thread.dart:345:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\comments_thread.dart:434:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\comments_thread.dart:448:41 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\components\meal_detail\food_list_panel.dart:260:62 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\food_list_panel.dart:320:26 - deprecated_member_use
+warning - Unused import: '../../widgets/shared/macro_ring_chart.dart' - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:6:8 - unused_import
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:85:9 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:119:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:124:49 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:134:29 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:279:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:280:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:284:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:285:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:299:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:336:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:339:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\macro_breakdown_chart.dart:437:33 - deprecated_member_use
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'dart:ui' - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:3:8 - unnecessary_import
+warning - Unused import: '../../widgets/shared/macro_ring_chart.dart' - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:10:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:50:34 - deprecated_member_use
+   info - The private field _isEditing could be 'final' - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:91:8 - prefer_final_fields
+warning - The value of the field '_isEditing' isn't used - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:91:8 - unused_field
+warning - The declaration '_saveComment' isn't referenced - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:131:8 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:153:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:165:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:168:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:172:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:223:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:226:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:230:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:246:72 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:291:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:342:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:345:24 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:362:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\meal_detail\meal_detail_modal.dart:375:37 - deprecated_member_use
+   info - The private field _insights could be 'final' - lib\screens\nutrition\components\plan_viewer\daily_insights_panel.dart:29:22 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\daily_insights_panel.dart:279:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\daily_insights_panel.dart:317:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\daily_insights_panel.dart:372:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\daily_insights_panel.dart:375:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\daily_insights_panel.dart:385:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:98:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:200:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:203:24 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:229:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:265:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:268:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:277:43 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:305:23 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:324:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\macro_progress_rings.dart:366:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:49:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:142:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:150:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:179:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:197:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:266:45 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:270:17 - unnecessary_string_interpolations
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:315:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:330:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:346:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:354:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:373:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\meal_timeline_card.dart:389:28 - deprecated_member_use
+warning - Unused import: '../../widgets/shared/macro_ring_chart.dart' - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:7:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:154:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:208:59 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:211:61 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:214:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:217:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:223:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:225:42 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:249:59 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:294:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:456:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\components\plan_viewer\viewer_view.dart:466:26 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:162:27 - prefer_const_constructors
+   info - Statements in an if should be enclosed in a block - lib\screens\nutrition\meal_editor.dart:223:105 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\nutrition\meal_editor.dart:223:145 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\nutrition\meal_editor.dart:227:75 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\nutrition\meal_editor.dart:227:105 - curly_braces_in_flow_control_structures
+   info - Local variables should be final - lib\screens\nutrition\meal_editor.dart:282:25 - prefer_final_locals
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:740:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:742:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:746:29 - prefer_const_constructors
+warning - The value of the field '_selectedPlanId' isn't used - lib\screens\nutrition\nutrition_hub_screen.dart:50:11 - unused_field
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\nutrition_hub_screen.dart:316:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\nutrition_hub_screen.dart:372:46 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\screens\nutrition\nutrition_plan_builder.dart:582:47 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\nutrition\nutrition_plan_builder.dart:621:35 - curly_braces_in_flow_control_structures
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:3:8 - unnecessary_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:266:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:296:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:312:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:337:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:338:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:352:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:357:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:368:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:424:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:429:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:430:39 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:544:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:602:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:617:49 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:627:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:635:23 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:662:55 - deprecated_member_use
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:680:48 - unnecessary_null_comparison
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:692:38 - unnecessary_null_comparison
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:694:36 - unnecessary_null_comparison
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:696:34 - unnecessary_null_comparison
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:715:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:750:39 - deprecated_member_use
+warning - Unused import: '../../../../widgets/anim/vagus_loader.dart' - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:8:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:145:41 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:148:18 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:171:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:183:42 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:186:20 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:228:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:233:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:234:37 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:288:26 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:380:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:384:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:417:41 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:426:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:434:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:460:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:472:41 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:475:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:478:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:509:11 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:519:43 - deprecated_member_use
+warning - The operand can't be 'null', so the condition is always 'false' - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:531:23 - unnecessary_null_comparison
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:542:26 - unnecessary_null_comparison
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:549:24 - unnecessary_null_comparison
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:556:22 - unnecessary_null_comparison
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:571:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:589:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\ai_food_suggestions_panel.dart:627:42 - deprecated_member_use
+warning - Unused import: '../../../../theme/design_tokens.dart' - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:4:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:245:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:251:56 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:285:11 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:297:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:312:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:334:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:414:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:442:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\animated_circular_progress_rings.dart:470:23 - deprecated_member_use
+warning - Unused import: 'enhanced_food_card.dart' - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:8:8 - unused_import
+warning - The value of the field '_pulseAnimation' isn't used - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:35:26 - unused_field
+warning - The value of the field '_lastScannedFood' isn't used - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:41:13 - unused_field
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:135:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:161:50 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:164:26 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:184:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:189:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:190:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:221:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:231:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:259:38 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:282:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:283:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:286:21 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:364:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:474:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:526:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:536:43 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:539:20 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:565:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:572:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:587:45 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:590:22 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:678:28 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:702:18 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:766:58 - deprecated_member_use
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:3:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:92:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:94:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:213:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:216:45 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:219:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:222:19 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:255:51 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:258:28 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:275:41 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:369:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:377:28 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:499:40 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:505:11 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:530:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:605:44 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:617:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:620:21 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:809:42 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:814:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:898:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:905:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:968:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:975:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:1027:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:1063:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:1074:61 - deprecated_member_use
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:1120:5 - unawaited_futures
+warning - Unused import: 'animated_circular_progress_rings.dart' - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:8:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:212:46 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:226:13 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:250:42 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:300:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:301:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:365:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:366:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:430:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:431:24 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:491:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:534:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:556:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:559:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:574:42 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:580:17 - prefer_const_constructors
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:593:13 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:617:41 - deprecated_member_use
+warning - The value of the local variable 'progress' isn't used - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:628:11 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:640:35 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:654:13 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:710:36 - deprecated_member_use
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:724:13 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\daily_nutrition_dashboard.dart:829:23 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:87:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:100:43 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:109:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:117:17 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:146:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:158:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:184:44 - deprecated_member_use
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:245:43 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:246:30 - unnecessary_non_null_assertion
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:254:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:255:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:262:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:271:43 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:274:20 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:304:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:318:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:358:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:376:51 - deprecated_member_use
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:429:41 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:430:29 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:432:37 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:433:27 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:435:33 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:436:25 - unnecessary_non_null_assertion
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:556:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:598:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:613:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:53:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:117:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:128:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:131:48 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:139:25 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:173:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:191:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:209:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:227:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:245:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:263:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:281:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:299:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:409:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\empty_state_widget.dart:442:44 - deprecated_member_use
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:2:8 - unnecessary_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:102:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:103:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:108:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:114:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:192:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:215:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:216:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:236:48 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:239:26 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:259:37 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:277:12 - prefer_const_constructors
+warning - The operand can't be 'null', so the condition is always 'false' - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:285:61 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:289:43 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:290:41 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:291:29 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:293:37 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:294:27 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:296:33 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:297:25 - unnecessary_non_null_assertion
+   info - Unnecessary braces in a string interpolation - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:304:26 - unnecessary_brace_in_string_interps
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:319:22 - deprecated_member_use
+warning - The operand can't be 'null', so the condition is always 'false' - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:342:61 - unnecessary_null_comparison
+warning - The left operand can't be null, so the right operand is never executed - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:346:44 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:347:40 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:348:36 - dead_null_aware_expression
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:364:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:413:48 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:425:27 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:460:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:493:53 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:522:22 - prefer_const_constructors
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\favorites_tab.dart:93:20 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\favorites_tab.dart:93:43 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\favorites_tab.dart:95:18 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\favorites_tab.dart:95:39 - unnecessary_non_null_assertion
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\favorites_tab.dart:95:55 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\favorites_tab.dart:97:21 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\favorites_tab.dart:97:45 - unnecessary_non_null_assertion
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\favorites_tab.dart:195:11 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:227:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:228:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:252:47 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\favorites_tab.dart:255:24 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:279:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:291:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:296:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:304:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:379:21 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:384:23 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:385:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\favorites_tab.dart:412:64 - deprecated_member_use
+warning - Unused import: 'dart:async' - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:1:8 - unused_import
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:3:8 - unnecessary_import
+warning - Unused import: '../../../../services/nutrition/food_catalog_service.dart' - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:7:8 - unused_import
+warning - Unused import: '../../../../widgets/anim/vagus_loader.dart' - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:9:8 - unused_import
+warning - Unused import: '../../../../widgets/anim/empty_state.dart' - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:10:8 - unused_import
+   info - The type name 'FoodPicker2_0' isn't an UpperCamelCase identifier - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:19:7 - camel_case_types
+   info - The type name '_FoodPicker2_0State' isn't an UpperCamelCase identifier - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:39:7 - camel_case_types
+warning - The value of the field '_activeTab' isn't used - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:45:17 - unused_field
+   info - The private field _selectedFoods could be 'final' - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:46:18 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:129:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:165:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:184:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:200:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:201:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:228:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:317:40 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:393:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:394:38 - prefer_const_constructors
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:2:8 - unnecessary_import
+warning - The value of the field '_isPressed' isn't used - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:39:8 - unused_field
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:108:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:109:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:114:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:164:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:187:37 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:196:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:204:11 - prefer_const_constructors
+warning - The operand can't be 'null', so the condition is always 'false' - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:213:61 - unnecessary_null_comparison
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:217:37 - deprecated_member_use
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:223:43 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:224:41 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:225:29 - unnecessary_non_null_assertion
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:233:41 - deprecated_member_use
+   info - Unnecessary braces in a string interpolation - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:237:14 - unnecessary_brace_in_string_interps
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:250:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:273:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:274:33 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:314:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:316:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:350:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:374:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:401:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:446:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:447:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:451:40 - deprecated_member_use
+warning - The operand can't be 'null', so the condition is always 'false' - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:470:30 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:474:43 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:475:41 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:476:29 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:478:37 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:479:27 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:481:33 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:482:25 - unnecessary_non_null_assertion
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:496:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:498:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:557:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:622:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\food_search_result_card.dart:638:33 - deprecated_member_use
+   info - 'window' is deprecated and shouldn't be used. Look up the current FlutterView from the context via View.of(context) or consult the PlatformDispatcher directly instead. Deprecated to prepare for the upcoming multi-window support. This feature was deprecated after v3.7.0-32.0.pre - lib\screens\nutrition\widgets\shared\i18n_nutrition_wrapper.dart:56:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:92:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:134:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:153:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:183:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:213:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:293:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:356:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:387:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_balance_bar_chart.dart:403:33 - deprecated_member_use
+warning - Unused import: '../../../../theme/design_tokens.dart' - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:4:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:93:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:96:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:101:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:184:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:229:30 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:278:12 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\macro_ring_chart.dart:390:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:123:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:151:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:154:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:164:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:170:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:178:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:207:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:208:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:209:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:246:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:249:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:274:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:290:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:291:40 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:336:22 - sized_box_for_whitespace
+   info - 'onWillAccept' is deprecated and shouldn't be used. Use onWillAcceptWithDetails instead. This callback is similar to onWillAcceptWithDetails but does not provide drag details. This feature was deprecated after v3.14.0-0.2.pre - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:353:15 - deprecated_member_use
+   info - 'onAccept' is deprecated and shouldn't be used. Use onAcceptWithDetails instead. This callback is similar to onAcceptWithDetails but does not provide drag details. This feature was deprecated after v3.14.0-0.2.pre - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:354:15 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:387:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:416:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:458:52 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:475:27 - prefer_const_constructors
+   info - Unnecessary use of string interpolation - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:500:29 - unnecessary_string_interpolations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:610:22 - deprecated_member_use
+warning - Dead code - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:642:30 - dead_code
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:642:73 - deprecated_member_use
+warning - Dead code - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:645:32 - dead_code
+warning - Dead code - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:650:11 - dead_code
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:660:12 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:667:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\meal_timeline_visualization.dart:673:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:35:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:42:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:43:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:48:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:54:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:104:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:213:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:301:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:305:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:306:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:349:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_card.dart:419:24 - deprecated_member_use
+   info - The private field _insights could be 'final' - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:34:22 - prefer_final_fields
+warning - The value of the local variable 'proteinPercent' isn't used - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:218:13 - unused_local_variable
+warning - The value of the local variable 'fatPercent' isn't used - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:220:13 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:300:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:340:47 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:343:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:346:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:352:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:354:30 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:404:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:407:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:413:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:428:36 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:541:12 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:631:17 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\nutrition_insights_panel.dart:632:17 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:171:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:195:48 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:198:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:201:23 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:241:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:246:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:247:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:345:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:369:38 - deprecated_member_use
+   info - Unnecessary use of 'toList' in a spread - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:400:12 - unnecessary_to_list_in_spreads
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:418:26 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:418:49 - unnecessary_non_null_assertion
+warning - The operand can't be 'null', so the condition is always 'true' - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:429:24 - unnecessary_null_comparison
+warning - The '!' will have no effect because the receiver can't be null - lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:429:45 - unnecessary_non_null_assertion
+warning - Unused import: 'dart:io' - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:2:8 - unused_import
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:4:8 - unnecessary_import
+warning - The value of the field '_lastScannedBarcode' isn't used - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:43:11 - unused_field
+   info - The private field _scanHistory could be 'final' - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:45:16 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:212:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:232:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:257:39 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:275:14 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:304:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:329:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:404:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:408:47 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:423:17 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:542:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:564:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:594:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:599:50 - deprecated_member_use
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:688:9 - unawaited_futures
+   info - Don't use 'BuildContext's across async gaps - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:707:30 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:717:28 - use_build_context_synchronously
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\nutrition\widgets\shared\smart_food_search.dart:3:8 - unnecessary_import
+   info - The private field _activeFilters could be 'final' - lib\screens\nutrition\widgets\shared\smart_food_search.dart:49:20 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:197:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:198:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:216:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:221:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:247:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:255:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:277:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:301:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:306:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:307:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:367:50 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\widgets\shared\smart_food_search.dart:379:29 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:435:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:440:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\nutrition\widgets\shared\smart_food_search.dart:441:53 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\screens\settings\notification_preferences_screen.dart:18:9 - use_super_parameters
+warning - Unused import: '../../models/workout/exercise.dart' - lib\screens\workout\coach_plan_builder_screen_refactored.dart:5:8 - unused_import
+warning - Unused import: '../../models/workout/cardio_session.dart' - lib\screens\workout\coach_plan_builder_screen_refactored.dart:6:8 - unused_import
+warning - Unused import: '../../services/ai/workout_ai.dart' - lib\screens\workout\coach_plan_builder_screen_refactored.dart:8:8 - unused_import
+warning - The value of the field '_generating' isn't used - lib\screens\workout\coach_plan_builder_screen_refactored.dart:32:8 - unused_field
+warning - The value of the field '_errorMessage' isn't used - lib\screens\workout\coach_plan_builder_screen_refactored.dart:33:11 - unused_field
+warning - The value of the field '_successMessage' isn't used - lib\screens\workout\coach_plan_builder_screen_refactored.dart:34:11 - unused_field
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workout\coach_plan_builder_screen_refactored.dart:275:23 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workout\coach_plan_builder_screen_refactored.dart:284:23 - use_build_context_synchronously
+   info - 'WillPopScope' is deprecated and shouldn't be used. Use PopScope instead. The Android predictive back feature will not work with WillPopScope. This feature was deprecated after v3.12.0-1.0.pre - lib\screens\workout\coach_plan_builder_screen_refactored.dart:382:12 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\coach_plan_builder_screen_refactored.dart:443:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\coach_plan_builder_screen_refactored.dart:654:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\coach_plan_builder_screen_refactored.dart:873:33 - deprecated_member_use
+   info - The 'child' argument should be last in widget constructor invocations - lib\screens\workout\coach_plan_builder_screen_refactored.dart:929:11 - sort_child_properties_last
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\workout\coach_plan_builder_screen_refactored.dart:1091:7 - unawaited_futures
+   info - Parameter 'key' could be a super parameter - lib\screens\workout\widgets\exercise_completion_widget.dart:15:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\widgets\exercise_completion_widget.dart:175:48 - deprecated_member_use
+   info - 'surfaceVariant' is deprecated and shouldn't be used. Use surfaceContainerHighest instead. This feature was deprecated after v3.18.0-0.1.pre - lib\screens\workout\widgets\exercise_completion_widget.dart:210:43 - deprecated_member_use
+   info - The import of 'package:flutter/foundation.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\workout\widgets\offline_sync_manager.dart:3:8 - unnecessary_import
+   info - Parameter 'key' could be a super parameter - lib\screens\workout\widgets\offline_sync_manager.dart:364:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\widgets\offline_sync_manager.dart:384:46 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\screens\workout\widgets\progress_chart_widget.dart:11:9 - use_super_parameters
+   info - 'surfaceVariant' is deprecated and shouldn't be used. Use surfaceContainerHighest instead. This feature was deprecated after v3.18.0-0.1.pre - lib\screens\workout\widgets\progress_chart_widget.dart:155:42 - deprecated_member_use
+   info - 'surfaceVariant' is deprecated and shouldn't be used. Use surfaceContainerHighest instead. This feature was deprecated after v3.18.0-0.1.pre - lib\screens\workout\widgets\progress_chart_widget.dart:161:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\widgets\progress_chart_widget.dart:240:50 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\widgets\progress_chart_widget.dart:261:21 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\widgets\progress_chart_widget.dart:321:37 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\widgets\progress_chart_widget.dart:342:21 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\widgets\progress_chart_widget.dart:402:38 - deprecated_member_use
+   info - 'surfaceVariant' is deprecated and shouldn't be used. Use surfaceContainerHighest instead. This feature was deprecated after v3.18.0-0.1.pre - lib\screens\workout\widgets\progress_chart_widget.dart:497:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\widgets\progress_chart_widget.dart:497:49 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\screens\workout\widgets\rest_timer_widget.dart:13:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\widgets\rest_timer_widget.dart:155:35 - deprecated_member_use
+   info - 'surfaceVariant' is deprecated and shouldn't be used. Use surfaceContainerHighest instead. This feature was deprecated after v3.18.0-0.1.pre - lib\screens\workout\widgets\rest_timer_widget.dart:206:52 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\screens\workout\widgets\rest_timer_widget.dart:342:9 - use_super_parameters
+   info - 'surfaceVariant' is deprecated and shouldn't be used. Use surfaceContainerHighest instead. This feature was deprecated after v3.18.0-0.1.pre - lib\screens\workout\widgets\rest_timer_widget.dart:445:52 - deprecated_member_use
+warning - Unused import: 'package:fl_chart/fl_chart.dart' - lib\screens\workout\workout_analytics_screen.dart:2:8 - unused_import
+   info - Parameter 'key' could be a super parameter - lib\screens\workout\workout_analytics_screen.dart:23:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_analytics_screen.dart:226:38 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\workout_analytics_screen.dart:234:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\workout_analytics_screen.dart:664:23 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_analytics_screen.dart:728:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_analytics_screen.dart:864:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_analytics_screen.dart:918:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_analytics_screen.dart:1000:22 - deprecated_member_use
+warning - Unused import: 'widgets/rest_timer_widget.dart' - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:11:8 - unused_import
+warning - Unused import: 'package:intl/intl.dart' - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:15:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:362:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:679:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:718:33 - deprecated_member_use
+warning - The value of the local variable 'profile' isn't used - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:1020:13 - unused_local_variable
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:1033:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\workout\workout_plan_viewer_screen_refactored.dart:1037:28 - use_build_context_synchronously
+   info - 'textScaleFactor' is deprecated and shouldn't be used. Use textScaler instead. Use of textScaleFactor was deprecated in preparation for the upcoming nonlinear text scaling support. This feature was deprecated after v3.12.0-2.0.pre - lib\services\accessibility\accessibility_service.dart:26:35 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - lib\services\accessibility\accessibility_service.dart:142:44 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use (*.g * 255.0).round() & 0xff - lib\services\accessibility\accessibility_service.dart:143:44 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - lib\services\accessibility\accessibility_service.dart:144:44 - deprecated_member_use
+   info - 'onKey' is deprecated and shouldn't be used. Use onKeyEvent instead. This feature was deprecated after v3.18.0-2.0.pre - lib\services\accessibility\accessibility_service.dart:178:9 - deprecated_member_use
+   info - 'RawKeyDownEvent' is deprecated and shouldn't be used. Use KeyDownEvent instead. This feature was deprecated after v3.18.0-2.0.pre - lib\services\accessibility\accessibility_service.dart:181:26 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:169:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:170:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:171:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:175:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:176:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:177:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:181:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:182:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:183:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:187:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\ai\nutrition_ai.dart:188:11 - prefer_const_constructors
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:75:5 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:96:7 - unawaited_futures
+   info - Don't use 'BuildContext's across async gaps - lib\services\navigation\notification_deep_link_handler.dart:106:28 - use_build_context_synchronously
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:114:7 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:129:5 - unawaited_futures
+   info - Use 'const' with the constructor to improve performance - lib\services\navigation\notification_deep_link_handler.dart:132:16 - prefer_const_constructors
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:176:5 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:195:5 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:283:7 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:307:7 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:313:7 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\navigation\notification_deep_link_handler.dart:325:5 - unawaited_futures
+   info - Invalid use of a private type in a public API - lib\services\notifications\onesignal_service.dart:12:10 - library_private_types_in_public_api
+   info - The variable name 'Notifications' isn't a lowerCamelCase identifier - lib\services\notifications\onesignal_service.dart:12:33 - non_constant_identifier_names
+   info - Invalid use of a private type in a public API - lib\services\notifications\onesignal_service.dart:13:10 - library_private_types_in_public_api
+   info - The variable name 'User' isn't a lowerCamelCase identifier - lib\services\notifications\onesignal_service.dart:13:24 - non_constant_identifier_names
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\services\notifications\onesignal_service.dart:60:7 - unawaited_futures
+   info - Unnecessary use of double quotes - lib\services\notifications\onesignal_service.dart:438:9 - prefer_single_quotes
+warning - Unnecessary cast - lib\services\nutrition\allergy_medical_service.dart:438:48 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\allergy_medical_service.dart:477:48 - unnecessary_cast
+warning - The operand can't be 'null', so the condition is always 'false' - lib\services\nutrition\allergy_medical_service.dart:696:22 - unnecessary_null_comparison
+warning - Unnecessary cast - lib\services\nutrition\allergy_medical_service.dart:763:46 - unnecessary_cast
+   info - Use 'const' with the constructor to improve performance - lib\services\nutrition\analytics_engine_service.dart:477:58 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\nutrition\analytics_engine_service.dart:575:58 - prefer_const_constructors
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:579:33 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:634:31 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:670:53 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:756:38 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:806:47 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:847:37 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:917:30 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\collaboration_service.dart:953:38 - unnecessary_cast
+   info - Don't invoke 'print' in production code - lib\services\nutrition\food_database_service.dart:37:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\nutrition\food_database_service.dart:61:7 - avoid_print
+   info - The private field _leaderboard could be 'final' - lib\services\nutrition\gamification_service.dart:17:26 - prefer_final_fields
+warning - Unused import: 'package:http/http.dart' - lib\services\nutrition\integration_ecosystem_service.dart:17:8 - unused_import
+warning - Unused import: 'dart:convert' - lib\services\nutrition\integration_ecosystem_service.dart:18:8 - unused_import
+warning - The operand can't be 'null', so the condition is always 'false' - lib\services\nutrition\integration_ecosystem_service.dart:415:20 - unnecessary_null_comparison
+warning - Unnecessary cast - lib\services\nutrition\integration_ecosystem_service.dart:460:49 - unnecessary_cast
+   info - Use 'const' with the constructor to improve performance - lib\services\nutrition\integration_ecosystem_service.dart:504:58 - prefer_const_constructors
+warning - Unnecessary cast - lib\services\nutrition\integration_ecosystem_service.dart:577:39 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\integration_ecosystem_service.dart:647:51 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\integration_ecosystem_service.dart:711:43 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\macro_cycling_service.dart:685:40 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\macro_cycling_service.dart:704:40 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\macro_cycling_service.dart:749:40 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\macro_cycling_service.dart:768:40 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\macro_cycling_service.dart:823:38 - unnecessary_cast
+warning - Unnecessary cast - lib\services\nutrition\macro_cycling_service.dart:842:38 - unnecessary_cast
+   info - Function literals shouldn't be passed to 'forEach' - lib\services\nutrition\macro_cycling_service.dart:873:29 - avoid_function_literals_in_foreach_calls
+   info - The private field _prepTasks could be 'final' - lib\services\nutrition\meal_prep_service.dart:14:25 - prefer_final_fields
+   info - The private field _storageInfo could be 'final' - lib\services\nutrition\meal_prep_service.dart:15:28 - prefer_final_fields
+warning - The left operand can't be null, so the right operand is never executed - lib\services\workout\progression_service.dart:430:43 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\workout\progression_service.dart:455:43 - dead_null_aware_expression
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:52:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:53:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:132:7 - prefer_final_locals
+warning - The value of the local variable 'volumeByMuscleGroup' isn't used - lib\services\workout\workout_analytics_service.dart:132:27 - unused_local_variable
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:133:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:134:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:158:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:244:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:251:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:373:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:388:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:418:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:425:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:508:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:526:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:624:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:650:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:715:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:751:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:767:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_analytics_service.dart:884:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_export_service.dart:193:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_export_service.dart:197:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_export_service.dart:198:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_export_service.dart:199:7 - prefer_final_locals
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\widgets\admin\support\saved_views_bar.dart:90:40 - use_build_context_synchronously
+   info - Local variables should be final - lib\widgets\coach\quick_action_sheets.dart:66:9 - prefer_final_locals
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\widgets\coach\quick_action_sheets.dart:105:5 - unawaited_futures
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:178:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:180:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:182:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:238:43 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:285:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:406:51 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:437:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:439:40 - prefer_const_constructors
+warning - The value of the field '_searchController' isn't used - lib\widgets\coach\quick_action_sheets.dart:506:31 - unused_field
+warning - The value of the field '_dosageController' isn't used - lib\widgets\coach\quick_action_sheets.dart:507:31 - unused_field
+warning - The value of the field '_notesController' isn't used - lib\widgets\coach\quick_action_sheets.dart:508:31 - unused_field
+   info - The private field _clients could be 'final' - lib\widgets\coach\quick_action_sheets.dart:510:30 - prefer_final_fields
+warning - The value of the field '_clients' isn't used - lib\widgets\coach\quick_action_sheets.dart:510:30 - unused_field
+warning - The value of the field '_selectedClientId' isn't used - lib\widgets\coach\quick_action_sheets.dart:511:11 - unused_field
+warning - The value of the field '_selectedSupplement' isn't used - lib\widgets\coach\quick_action_sheets.dart:512:11 - unused_field
+   info - The private field _frequency could be 'final' - lib\widgets\coach\quick_action_sheets.dart:513:10 - prefer_final_fields
+warning - The value of the field '_frequency' isn't used - lib\widgets\coach\quick_action_sheets.dart:513:10 - unused_field
+   info - The private field _duration could be 'final' - lib\widgets\coach\quick_action_sheets.dart:514:7 - prefer_final_fields
+warning - The value of the field '_duration' isn't used - lib\widgets\coach\quick_action_sheets.dart:514:7 - unused_field
+   info - The private field _loading could be 'final' - lib\widgets\coach\quick_action_sheets.dart:515:8 - prefer_final_fields
+warning - The value of the field '_loading' isn't used - lib\widgets\coach\quick_action_sheets.dart:515:8 - unused_field
+   info - The private field _saving could be 'final' - lib\widgets\coach\quick_action_sheets.dart:516:8 - prefer_final_fields
+warning - The value of the field '_saving' isn't used - lib\widgets\coach\quick_action_sheets.dart:516:8 - unused_field
+warning - The value of the field '_commonSupplements' isn't used - lib\widgets\coach\quick_action_sheets.dart:518:22 - unused_field
+warning - The value of the field '_frequencies' isn't used - lib\widgets\coach\quick_action_sheets.dart:523:22 - unused_field
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:572:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:574:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:576:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:595:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:596:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:597:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:600:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:615:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:618:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:710:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:712:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:714:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:733:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:734:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:735:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:738:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:753:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_action_sheets.dart:756:38 - prefer_const_constructors
+warning - The declaration '_navigateToNutritionCreation' isn't referenced - lib\widgets\coach\quick_actions_grid.dart:225:8 - unused_element
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_actions_grid.dart:322:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_actions_grid.dart:324:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_actions_grid.dart:326:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_actions_grid.dart:328:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_actions_grid.dart:338:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_actions_grid.dart:346:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\coach\quick_actions_grid.dart:348:22 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\widgets\coach\quick_book_sheet.dart:304:25 - use_build_context_synchronously
+warning - Unused import: '../../screens/nutrition/nutrition_hub_screen.dart' - lib\widgets\navigation\vagus_side_menu.dart:10:8 - unused_import
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\widgets\nutrition\animated\animated_save_button.dart:65:5 - unawaited_futures
+   info - Don't invoke 'print' in production code - lib\widgets\nutrition\animated_food_item_edit_modal.dart:243:7 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\widgets\nutrition\food_item_edit_modal.dart:146:27 - prefer_const_constructors
+   info - Parameter 'key' could be a super parameter - lib\widgets\workout\exercise_card.dart:43:9 - use_super_parameters
+warning - Unused import: 'exercise_card.dart' - lib\widgets\workout\superset_group_widget.dart:6:8 - unused_import
+   info - Parameter 'key' could be a super parameter - lib\widgets\workout\superset_group_widget.dart:41:9 - use_super_parameters
+   info - Parameter 'key' could be a super parameter - lib\widgets\workout\week_progress_bar.dart:31:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\week_progress_bar.dart:131:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\week_progress_bar.dart:135:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\week_progress_bar.dart:151:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\week_progress_bar.dart:155:32 - prefer_const_constructors
+warning - The value of the local variable 'json' isn't used - test\models\workout_plan_test.dart:6:13 - unused_local_variable
+warning - Unused import: 'package:mockito/mockito.dart' - test\services\workout_ai_test.dart:2:8 - unused_import
+warning - The value of the local variable 'userProfile' isn't used - test\services\workout_ai_test.dart:11:13 - unused_local_variable
+warning - The value of the local variable 'userProfile' isn't used - test\services\workout_ai_test.dart:30:13 - unused_local_variable
+warning - The value of the local variable 'beginnerProfile' isn't used - test\services\workout_ai_test.dart:45:13 - unused_local_variable
+warning - The value of the local variable 'advancedProfile' isn't used - test\services\workout_ai_test.dart:59:13 - unused_local_variable
+warning - The value of the local variable 'bodyweightProfile' isn't used - test\services\workout_ai_test.dart:73:13 - unused_local_variable
+warning - The value of the local variable 'userProfile' isn't used - test\services\workout_ai_test.dart:88:13 - unused_local_variable
+warning - The value of the local variable 'userProfile' isn't used - test\services\workout_ai_test.dart:101:13 - unused_local_variable
+warning - The value of the local variable 'muscleGroup' isn't used - test\services\workout_ai_test.dart:117:13 - unused_local_variable
+warning - The value of the local variable 'count' isn't used - test\services\workout_ai_test.dart:118:13 - unused_local_variable
+warning - The value of the local variable 'muscleGroup' isn't used - test\services\workout_ai_test.dart:131:13 - unused_local_variable
+warning - The value of the local variable 'count' isn't used - test\services\workout_ai_test.dart:132:13 - unused_local_variable
+warning - The value of the local variable 'muscleGroup' isn't used - test\services\workout_ai_test.dart:145:13 - unused_local_variable
+warning - The value of the local variable 'count' isn't used - test\services\workout_ai_test.dart:146:13 - unused_local_variable
+warning - The value of the local variable 'muscleGroup' isn't used - test\services\workout_ai_test.dart:159:13 - unused_local_variable
+warning - The value of the local variable 'equipment' isn't used - test\services\workout_ai_test.dart:160:13 - unused_local_variable
+warning - The value of the local variable 'exerciseType' isn't used - test\services\workout_ai_test.dart:174:13 - unused_local_variable
+warning - The value of the local variable 'experienceLevel' isn't used - test\services\workout_ai_test.dart:175:13 - unused_local_variable
+warning - The value of the local variable 'exerciseType' isn't used - test\services\workout_ai_test.dart:188:13 - unused_local_variable
+warning - The value of the local variable 'experienceLevel' isn't used - test\services\workout_ai_test.dart:189:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_ai_test.dart:201:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_ai_test.dart:214:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_ai_test.dart:226:13 - unused_local_variable
+warning - The value of the local variable 'exerciseType' isn't used - test\services\workout_ai_test.dart:238:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_ai_test.dart:239:13 - unused_local_variable
+warning - The value of the local variable 'daysPerWeek' isn't used - test\services\workout_ai_test.dart:254:13 - unused_local_variable
+warning - The value of the local variable 'daysPerWeek' isn't used - test\services\workout_ai_test.dart:266:13 - unused_local_variable
+warning - The value of the local variable 'daysPerWeek' isn't used - test\services\workout_ai_test.dart:278:13 - unused_local_variable
+warning - The value of the local variable 'daysPerWeek' isn't used - test\services\workout_ai_test.dart:290:13 - unused_local_variable
+warning - The value of the local variable 'baseWeek' isn't used - test\services\workout_ai_test.dart:305:13 - unused_local_variable
+warning - The value of the local variable 'totalWeeks' isn't used - test\services\workout_ai_test.dart:306:13 - unused_local_variable
+warning - The value of the local variable 'type' isn't used - test\services\workout_ai_test.dart:307:13 - unused_local_variable
+warning - The value of the local variable 'baseWeek' isn't used - test\services\workout_ai_test.dart:320:13 - unused_local_variable
+warning - The value of the local variable 'totalWeeks' isn't used - test\services\workout_ai_test.dart:321:13 - unused_local_variable
+warning - The value of the local variable 'baseWeek' isn't used - test\services\workout_ai_test.dart:334:13 - unused_local_variable
+warning - The value of the local variable 'totalWeeks' isn't used - test\services\workout_ai_test.dart:335:13 - unused_local_variable
+warning - The value of the local variable 'type' isn't used - test\services\workout_ai_test.dart:336:13 - unused_local_variable
+warning - The value of the local variable 'baseWeek' isn't used - test\services\workout_ai_test.dart:348:13 - unused_local_variable
+warning - The value of the local variable 'totalWeeks' isn't used - test\services\workout_ai_test.dart:349:13 - unused_local_variable
+warning - The value of the local variable 'type' isn't used - test\services\workout_ai_test.dart:350:13 - unused_local_variable
+warning - The value of the local variable 'exercises' isn't used - test\services\workout_ai_test.dart:364:13 - unused_local_variable
+warning - The value of the local variable 'exercises' isn't used - test\services\workout_ai_test.dart:383:13 - unused_local_variable
+warning - The value of the local variable 'plan' isn't used - test\services\workout_ai_test.dart:399:13 - unused_local_variable
+warning - The value of the local variable 'plan' isn't used - test\services\workout_ai_test.dart:417:13 - unused_local_variable
+warning - The value of the local variable 'injuries' isn't used - test\services\workout_ai_test.dart:418:13 - unused_local_variable
+warning - The value of the local variable 'plan' isn't used - test\services\workout_ai_test.dart:431:13 - unused_local_variable
+warning - The value of the local variable 'injuries' isn't used - test\services\workout_ai_test.dart:432:13 - unused_local_variable
+warning - The value of the local variable 'plan' isn't used - test\services\workout_ai_test.dart:445:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_ai_test.dart:446:13 - unused_local_variable
+warning - The value of the local variable 'plan' isn't used - test\services\workout_ai_test.dart:460:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_ai_test.dart:461:13 - unused_local_variable
+warning - The value of the local variable 'prompt' isn't used - test\services\workout_ai_test.dart:477:13 - unused_local_variable
+warning - The value of the local variable 'veryLongPrompt' isn't used - test\services\workout_ai_test.dart:510:13 - unused_local_variable
+warning - The value of the local variable 'invalidPlan' isn't used - test\services\workout_ai_test.dart:521:13 - unused_local_variable
+warning - The value of the local variable 'plan' isn't used - test\services\workout_ai_test.dart:536:13 - unused_local_variable
+warning - The value of the local variable 'excessiveVolumePlan' isn't used - test\services\workout_ai_test.dart:549:13 - unused_local_variable
+warning - Unused import: 'package:mockito/mockito.dart' - test\services\workout_service_test.dart:2:8 - unused_import
+warning - Unused import: 'package:vagus_app/models/workout/workout_plan.dart' - test\services\workout_service_test.dart:6:8 - unused_import
+warning - The value of the local variable 'mockSupabase' isn't used - test\services\workout_service_test.dart:13:27 - unused_local_variable
+warning - The value of the local variable 'workoutService' isn't used - test\services\workout_service_test.dart:14:23 - unused_local_variable
+warning - The value of the local variable 'expectedResponse' isn't used - test\services\workout_service_test.dart:32:13 - unused_local_variable
+warning - The value of the local variable 'invalidPlanData' isn't used - test\services\workout_service_test.dart:45:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:59:13 - unused_local_variable
+warning - The value of the local variable 'nonExistentId' isn't used - test\services\workout_service_test.dart:68:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:77:13 - unused_local_variable
+warning - The value of the local variable 'updates' isn't used - test\services\workout_service_test.dart:78:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:86:13 - unused_local_variable
+warning - The value of the local variable 'userId' isn't used - test\services\workout_service_test.dart:95:13 - unused_local_variable
+warning - The value of the local variable 'userId' isn't used - test\services\workout_service_test.dart:103:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_service_test.dart:104:13 - unused_local_variable
+warning - The value of the local variable 'weekData' isn't used - test\services\workout_service_test.dart:114:13 - unused_local_variable
+   info - Use 'const' with the constructor to improve performance - test\services\workout_service_test.dart:118:40 - prefer_const_constructors
+warning - The value of the local variable 'invalidWeekData' isn't used - test\services\workout_service_test.dart:127:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:138:13 - unused_local_variable
+warning - The value of the local variable 'weekId' isn't used - test\services\workout_service_test.dart:147:13 - unused_local_variable
+warning - The value of the local variable 'dayData' isn't used - test\services\workout_service_test.dart:158:13 - unused_local_variable
+warning - The value of the local variable 'invalidDayData' isn't used - test\services\workout_service_test.dart:170:13 - unused_local_variable
+warning - The value of the local variable 'weekId' isn't used - test\services\workout_service_test.dart:181:13 - unused_local_variable
+warning - The value of the local variable 'dayId' isn't used - test\services\workout_service_test.dart:189:13 - unused_local_variable
+warning - The value of the local variable 'exerciseData' isn't used - test\services\workout_service_test.dart:200:13 - unused_local_variable
+warning - The value of the local variable 'invalidExerciseData' isn't used - test\services\workout_service_test.dart:216:13 - unused_local_variable
+warning - The value of the local variable 'invalidExerciseData' isn't used - test\services\workout_service_test.dart:227:13 - unused_local_variable
+warning - The value of the local variable 'exerciseId' isn't used - test\services\workout_service_test.dart:240:13 - unused_local_variable
+warning - The value of the local variable 'updates' isn't used - test\services\workout_service_test.dart:241:13 - unused_local_variable
+warning - The value of the local variable 'exerciseId' isn't used - test\services\workout_service_test.dart:249:13 - unused_local_variable
+warning - The value of the local variable 'dayId' isn't used - test\services\workout_service_test.dart:257:13 - unused_local_variable
+warning - The value of the local variable 'newOrder' isn't used - test\services\workout_service_test.dart:258:13 - unused_local_variable
+warning - The value of the local variable 'exerciseIds' isn't used - test\services\workout_service_test.dart:267:13 - unused_local_variable
+warning - The value of the local variable 'groupType' isn't used - test\services\workout_service_test.dart:268:13 - unused_local_variable
+warning - The value of the local variable 'exerciseIds' isn't used - test\services\workout_service_test.dart:277:13 - unused_local_variable
+warning - The value of the local variable 'weekId' isn't used - test\services\workout_service_test.dart:288:13 - unused_local_variable
+warning - The value of the local variable 'weekId' isn't used - test\services\workout_service_test.dart:303:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:312:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:320:13 - unused_local_variable
+warning - The value of the local variable 'weight' isn't used - test\services\workout_service_test.dart:329:13 - unused_local_variable
+warning - The value of the local variable 'reps' isn't used - test\services\workout_service_test.dart:330:13 - unused_local_variable
+warning - The value of the local variable 'weight' isn't used - test\services\workout_service_test.dart:344:13 - unused_local_variable
+warning - The value of the local variable 'reps' isn't used - test\services\workout_service_test.dart:345:13 - unused_local_variable
+warning - The value of the local variable 'dayId' isn't used - test\services\workout_service_test.dart:354:13 - unused_local_variable
+warning - The value of the local variable 'dayId' isn't used - test\services\workout_service_test.dart:364:13 - unused_local_variable
+warning - The value of the local variable 'userId' isn't used - test\services\workout_service_test.dart:365:13 - unused_local_variable
+warning - The value of the local variable 'sessionId' isn't used - test\services\workout_service_test.dart:374:13 - unused_local_variable
+warning - The value of the local variable 'sessionId' isn't used - test\services\workout_service_test.dart:383:13 - unused_local_variable
+warning - The value of the local variable 'exerciseId' isn't used - test\services\workout_service_test.dart:384:13 - unused_local_variable
+warning - The value of the local variable 'setData' isn't used - test\services\workout_service_test.dart:385:13 - unused_local_variable
+warning - The value of the local variable 'userId' isn't used - test\services\workout_service_test.dart:397:13 - unused_local_variable
+warning - The value of the local variable 'limit' isn't used - test\services\workout_service_test.dart:398:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:408:13 - unused_local_variable
+warning - The value of the local variable 'templateName' isn't used - test\services\workout_service_test.dart:409:13 - unused_local_variable
+warning - The value of the local variable 'templateId' isn't used - test\services\workout_service_test.dart:417:13 - unused_local_variable
+warning - The value of the local variable 'userId' isn't used - test\services\workout_service_test.dart:418:13 - unused_local_variable
+warning - The value of the local variable 'goal' isn't used - test\services\workout_service_test.dart:432:13 - unused_local_variable
+warning - The value of the local variable 'planData' isn't used - test\services\workout_service_test.dart:488:13 - unused_local_variable
+warning - The value of the local variable 'planData' isn't used - test\services\workout_service_test.dart:496:13 - unused_local_variable
+warning - The value of the local variable 'exerciseData' isn't used - test\services\workout_service_test.dart:505:13 - unused_local_variable
+warning - The value of the local variable 'exerciseData' isn't used - test\services\workout_service_test.dart:513:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:522:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:531:13 - unused_local_variable
+warning - The value of the local variable 'largePlanId' isn't used - test\services\workout_service_test.dart:542:13 - unused_local_variable
+warning - The value of the local variable 'exercises' isn't used - test\services\workout_service_test.dart:558:13 - unused_local_variable
+warning - The value of the local variable 'planId' isn't used - test\services\workout_service_test.dart:582:13 - unused_local_variable
+warning - The value of the local variable 'exerciseId' isn't used - test\services\workout_service_test.dart:594:13 - unused_local_variable
+warning - The value of the local variable 'dayId' isn't used - test\services\workout_service_test.dart:603:13 - unused_local_variable
+warning - Unused import: 'package:flutter/material.dart' - test\widgets\exercise_card_test.dart:1:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:10:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:11:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:12:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:29:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:30:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:31:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:52:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:53:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:54:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:112:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:113:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\widgets\nutrition\macro_progress_bar_test.dart:114:19 - prefer_const_constructors
+warning - Unused import: 'package:flutter/material.dart' - test\widgets\workout_summary_card_test.dart:1:8 - unused_import
+warning - The value of the local variable 'summary' isn't used - test\widgets\workout_summary_card_test.dart:8:13 - unused_local_variable
+   info - Use 'const' with the constructor to improve performance - test_driver\workout_flow_test.dart:253:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test_driver\workout_flow_test.dart:288:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test_driver\workout_flow_test.dart:305:18 - prefer_const_constructors
+
+934 issues found. (ran in 2.8s)
