@@ -1,0 +1,253 @@
+# VAGUS App - TODO/FIXME/HACK Code Markers Inventory
+# Generated: 2025-10-01
+# Research findings for restoration roadmap
+
+## SUMMARY STATISTICS
+Total TODO markers found: 80+
+Total FIXME markers found: 5+
+Total code health markers: 200+ (includes debugPrint, disabled features)
+
+## CRITICAL/URGENT ITEMS
+
+### 1. PDF Export Disabled (CRITICAL)
+**File**: lib/screens/workout/workout_plan_viewer_screen_refactored.dart:1026
+**Issue**: PDF export temporarily disabled due to Windows path resolution issue
+**Impact**: Users cannot export workout plans as PDF
+**Status**: BROKEN FEATURE
+```dart
+// TODO: PDF export temporarily disabled due to Windows path resolution issue
+const SnackBar(content: Text('PDF export temporarily disabled')),
+```
+
+### 2. Response Viewer Not Implemented
+**File**: lib/screens/coach/intake/coach_forms_screen.dart:869
+**Issue**: Coach cannot view intake form responses
+**Impact**: HIGH - Coach workflow incomplete
+```dart
+// TODO: Implement response viewer
+```
+
+### 3. File Navigation TODOs (Multiple instances)
+**Files**:
+- lib/screens/files/upload_photos_screen.dart:412, 459, 467
+- lib/screens/files/file_manager_screen.dart:601
+- lib/widgets/files/inline_file_picker.dart:417
+**Issue**: File preview navigation not implemented
+**Impact**: MEDIUM - Users can upload but not properly view/share files
+
+## HIGH PRIORITY TODOS BY MODULE
+
+### WORKOUT MODULE (15+ TODOs)
+lib/screens/workout/workout_plan_viewer_screen_refactored.dart:
+- Line 145: Load workout progress from local storage/database
+- Line 662: Implement full session mode UI
+- Line 783: Calculate actual completion percentage
+- Line 788: Check if all exercises in day are completed
+- Line 818: Implement exercise demo player
+- Line 839: Implement exercise substitution request
+- Line 848: Implement cardio session mode
+- Line 1029: Get actual coach name
+- Line 1046: Implement share functionality
+- Line 1053: Navigate to workout history screen
+- Line 1060: Show settings dialog
+- Line 1087: Implement rest timer controller
+
+lib/widgets/workout/exercise_detail_sheet.dart:
+- Line 966: Implement proper set type info retrieval from stored logs
+
+lib/widgets/workout/README.md (Missing Widgets):
+- exercise_history_chart.dart - TODO
+- muscle_group_selector.dart - TODO
+- workout_timer_widget.dart - TODO
+- exercise_search_widget.dart - TODO
+- ai_workout_generator_dialog.dart - TODO
+- workout_attachment_viewer.dart - TODO
+- client_workout_comment_box.dart - TODO
+- workout_version_history_viewer.dart - TODO
+- exercise_demo_player.dart - TODO
+- set_rep_input_widget.dart - TODO
+
+### NUTRITION MODULE (12+ TODOs)
+lib/widgets/nutrition/meal_timeline_card.dart:
+- Line 67: Use meal.id when added to Meal model
+- Line 150: Add checkedInAt to Meal model
+- Line 165: Use meal.createdAt
+- Line 169: Use meal.mealType
+- Line 216: Add photo_url field to Meal model
+- Line 312-327: Implement macro calculations (4 TODOs)
+
+lib/widgets/nutrition/macro_table_row.dart:
+- Line 140: Implement macro edit callbacks
+
+lib/components/nutrition/recipe_quick_swap_sheet.dart:
+- Line 52: Get current user ID from auth service
+- Line 91: Get actual user ID
+
+lib/components/nutrition/recipe_item_tile.dart:
+- Line 275: Navigate to recipe details
+
+### ADMIN/SUPPORT MODULE (5+ TODOs)
+lib/screens/admin/admin_ops_screen.dart:
+- Line 554: Implement acknowledge
+- Line 557: Implement extend
+- Line 560: Implement escalate
+
+lib/screens/supplements/supplement_list_screen.dart:
+- Line 245: Navigate to edit supplement
+- Line 415: Navigate to add supplement screen
+- Line 491: Navigate to add supplement screen
+
+### MESSAGING MODULE (2 TODOs)
+lib/widgets/calling/call_chat.dart:
+- Line 396: Implement emoji picker
+
+lib/screens/messaging/client_messenger_screen.dart:
+- Error handling for smart replies (Line 296)
+
+### FILES MODULE (8 TODOs)
+lib/screens/files/upload_photos_screen.dart:
+- Line 412: Navigate to file previewer
+- Line 459: Navigate to file previewer
+- Line 467: Implement share functionality
+
+lib/screens/files/file_manager_screen.dart:
+- Line 601-602: Open file with appropriate app
+
+lib/widgets/files/attach_to_workout_button.dart:
+- Line 361: Implement video recording functionality
+- Line 368: Implement photo capture functionality
+- Line 375: Implement file selector from user's uploaded files
+
+lib/widgets/files/file_previewer.dart:
+- Line 590: Implement file download functionality
+
+lib/widgets/files/attach_to_note_button.dart:
+- Line 315: Implement file selector from user's uploaded files
+
+lib/screens/files/coach_file_feedback_screen.dart:
+- Line 609: Navigate to file previewer
+
+### CALLING MODULE (5 TODOs)
+lib/widgets/calling/call_controls.dart:
+- Line 213: Implement speaker toggle
+- Line 222: Implement camera switch
+- Line 268: Implement more options menu
+
+lib/widgets/calling/call_header.dart:
+- Line 365: Implement call settings dialog
+- Line 447: Implement recording options
+
+lib/widgets/calling/call_session_card.dart:
+- Line 446: Implement session sharing
+
+### SETTINGS MODULE (1 TODO)
+lib/screens/settings/user_settings_screen.dart:
+- Line 428: Navigate to detailed AI quotas screen
+
+### SHARE MODULE (2 TODOs)
+lib/screens/share/share_preview_screen.dart:
+- Line 172: Implement native share functionality
+- Line 202: Implement save to gallery functionality
+
+lib/components/share/face_blur_overlay.dart:
+- Line 62: Implement actual face detection
+
+### COACH MODULE (2 TODOs)
+lib/screens/coach/coach_search_screen.dart:
+- Line 137: QR code scanner navigation
+
+lib/widgets/growth/referral_code_input.dart:
+- Line 59: Call backend to validate code
+
+## DEBUG STATEMENTS (Potential Issues)
+
+### Heavy Debug Logging (Should be removed in production)
+Multiple files contain extensive debugPrint statements:
+- lib/screens/auth/auth_gate.dart (18 debug statements)
+- lib/screens/dashboard/modern_coach_dashboard.dart (3 error handlers)
+- lib/screens/dashboard/modern_client_dashboard.dart (10 debug statements)
+- lib/screens/nav/main_nav.dart (4 debug statements)
+- lib/screens/calendar/event_editor.dart (6 debug statements)
+- lib/screens/workout/workout_plan_viewer_screen_refactored.dart (4 debug statements)
+
+## DISABLED/ARCHIVED FEATURES
+
+### Archived Services (from lib/archive/README.md):
+1. nutrition_state_manager.dart.disabled - Old nutrition state management
+2. sustainability_service.dart.disabled - Sustainability tracking
+3. voice_interface_service.dart.disabled - Voice interface
+4. restaurant_service.dart.disabled - Restaurant integration
+5. role_manager.dart.disabled - Role management
+6. offline_banner.dart.disabled - Offline status banner
+7. offline_operation_queue.dart.disabled - Offline operations
+8. safe_network_image.dart.disabled - Safe network image widget
+9. safe_database_service.dart.disabled - Safe database operations
+
+## MODEL FIELD GAPS (Data Model Issues)
+
+### Meal Model Incomplete:
+- Missing: id field
+- Missing: checkedInAt field
+- Missing: createdAt field
+- Missing: mealType field
+- Missing: photo_url field
+- Missing: items with macros
+
+**Impact**: Nutrition tracking features incomplete
+
+## TOP 10 FILES WITH MOST ISSUES
+
+1. lib/screens/workout/workout_plan_viewer_screen_refactored.dart - 15+ TODOs
+2. lib/widgets/nutrition/meal_timeline_card.dart - 8 TODOs
+3. lib/widgets/workout/README.md - 10 missing widgets
+4. lib/screens/files/upload_photos_screen.dart - 3 TODOs
+5. lib/widgets/files/attach_to_workout_button.dart - 3 TODOs
+6. lib/screens/auth/auth_gate.dart - 18 debug statements
+7. lib/screens/dashboard/modern_client_dashboard.dart - 10 debug statements
+8. lib/widgets/calling/call_controls.dart - 3 TODOs
+9. lib/widgets/calling/call_header.dart - 2 TODOs
+10. lib/components/nutrition/recipe_quick_swap_sheet.dart - 2 TODOs
+
+## COMMENTED OUT CODE PATTERNS
+
+Found minimal commented code:
+- lib/screens/nutrition/components/meal_detail/attachments_gallery.dart:209 - Animation comment
+- lib/screens/nutrition/components/meal_detail/food_list_panel.dart:102 - Animation comment
+- lib/screens/calendar/modern_calendar_viewer.dart:149 - Menu icon removed comment
+
+## RECOMMENDATIONS
+
+### IMMEDIATE PRIORITY:
+1. Fix PDF export (workout_plan_viewer_screen_refactored.dart)
+2. Implement intake form response viewer (coach_forms_screen.dart)
+3. Complete file preview navigation (multiple files)
+4. Add missing Meal model fields
+
+### HIGH PRIORITY:
+1. Complete workout session mode features
+2. Implement exercise demo player
+3. Add workout history screen
+4. Implement file share/download functionality
+5. Complete calling module controls
+
+### MEDIUM PRIORITY:
+1. Clean up debug statements for production
+2. Implement remaining workout widgets (10 missing)
+3. Complete nutrition macro calculations
+4. Add admin operation handlers
+5. Implement AI quotas detail screen
+
+### LOW PRIORITY:
+1. Review archived services for potential restoration
+2. Implement emoji picker for chat
+3. Add face detection for photo blur
+4. Complete referral code validation
+
+## NOTES
+
+- Workout system shows most TODOs - likely due to recent v2 refactor
+- Many TODOs are navigation-related - suggests incomplete flow connections
+- Model field gaps in Meal model indicate incomplete migration
+- Heavy debug logging suggests development mode, needs production cleanup
+- No critical security TODOs found (good sign)
+- Most TODOs are feature completion, not bugs

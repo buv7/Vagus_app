@@ -26,10 +26,10 @@ class WorkoutAnalyticsService {
     try {
       // Fetch week data with exercises
       final weekData = await _supabase
-          .from('workout_weeks')
+          .from('workout_plan_weeks')
           .select('''
             *,
-            workout_days(
+            workout_plan_days(
               *,
               exercises(
                 id,
@@ -52,7 +52,7 @@ class WorkoutAnalyticsService {
       Map<String, double> volumeByMuscleGroup = {};
       Map<String, double> volumeByExercise = {};
 
-      final days = weekData['workout_days'] as List<dynamic>;
+      final days = weekData['workout_plan_days'] as List<dynamic>;
 
       for (final day in days) {
         final exercises = day['exercises'] as List<dynamic>;
@@ -115,9 +115,9 @@ class WorkoutAnalyticsService {
           .from('workout_plans')
           .select('''
             *,
-            workout_weeks(
+            workout_plan_weeks(
               *,
-              workout_days(
+              workout_plan_days(
                 *,
                 exercises(
                   muscle_group,
@@ -133,10 +133,10 @@ class WorkoutAnalyticsService {
       Map<String, int> exerciseCountByMuscleGroup = {};
       Map<String, int> setsByMuscleGroup = {};
 
-      final weeks = planData['workout_weeks'] as List<dynamic>;
+      final weeks = planData['workout_plan_weeks'] as List<dynamic>;
 
       for (final week in weeks) {
-        final days = week['workout_days'] as List<dynamic>;
+        final days = week['workout_plan_days'] as List<dynamic>;
 
         for (final day in days) {
           final exercises = day['exercises'] as List<dynamic>;
@@ -344,13 +344,15 @@ class WorkoutAnalyticsService {
       final startDate = endDate.subtract(Duration(days: weeksToAnalyze * 7));
 
       // Fetch completed sessions
-      final sessionsData = await _supabase
-          .from('workout_sessions')
-          .select('*')
-          .eq('user_id', clientId)
-          .gte('completed_at', startDate.toIso8601String())
-          .lte('completed_at', endDate.toIso8601String())
-          .order('completed_at', ascending: true);
+      // TODO: Re-enable when workout_sessions table is deployed
+      // Migration exists but may need schema adjustments for analytics queries
+      final sessionsData = []; // await _supabase
+      //     .from('workout_sessions')
+      //     .select('*')
+      //     .eq('user_id', clientId)
+      //     .gte('completed_at', startDate.toIso8601String())
+      //     .lte('completed_at', endDate.toIso8601String())
+      //     .order('completed_at', ascending: true);
 
       if (sessionsData.isEmpty) {
         return PatternAnalysis(
@@ -607,15 +609,15 @@ class WorkoutAnalyticsService {
 
       // Compare frequency (sessions per week)
       final freq1Data = await _supabase
-          .from('workout_days')
+          .from('workout_plan_days')
           .select('id')
-          .eq('week_id', (await _supabase.from('workout_weeks').select('id').eq('plan_id', plan1Id).eq('week_number', 1).single())['id'])
+          .eq('week_id', (await _supabase.from('workout_plan_weeks').select('id').eq('plan_id', plan1Id).eq('week_number', 1).single())['id'])
           .count();
 
       final freq2Data = await _supabase
-          .from('workout_days')
+          .from('workout_plan_days')
           .select('id')
-          .eq('week_id', (await _supabase.from('workout_weeks').select('id').eq('plan_id', plan2Id).eq('week_number', 1).single())['id'])
+          .eq('week_id', (await _supabase.from('workout_plan_weeks').select('id').eq('plan_id', plan2Id).eq('week_number', 1).single())['id'])
           .count();
 
       final frequencyDifference = freq2Data.count - freq1Data.count;
@@ -828,18 +830,19 @@ class WorkoutAnalyticsService {
   ) async {
     // Fetch planned sessions
     final plannedData = await _supabase
-        .from('workout_days')
+        .from('workout_plan_days')
         .select('id')
         .gte('date', startDate.toIso8601String())
         .lte('date', endDate.toIso8601String());
 
     // Fetch completed sessions
-    final completedData = await _supabase
-        .from('workout_sessions')
-        .select('id, completed_at')
-        .eq('user_id', clientId)
-        .gte('completed_at', startDate.toIso8601String())
-        .lte('completed_at', endDate.toIso8601String());
+    // TODO: Re-enable when workout_sessions table is deployed
+    final completedData = []; // await _supabase
+    //     .from('workout_sessions')
+    //     .select('id, completed_at')
+    //     .eq('user_id', clientId)
+    //     .gte('completed_at', startDate.toIso8601String())
+    //     .lte('completed_at', endDate.toIso8601String());
 
     final plannedCount = plannedData.length;
     final completedCount = completedData.length;

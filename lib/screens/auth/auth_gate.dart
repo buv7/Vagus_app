@@ -31,7 +31,22 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
 
     _authSub = supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event;
-      if (event == AuthChangeEvent.passwordRecovery) {
+      debugPrint('🔔 Auth state change: $event');
+      debugPrint('   User: ${data.session?.user.id ?? "null"}');
+
+      if (event == AuthChangeEvent.signedIn) {
+        debugPrint('✅ User signed in, reinitializing app state');
+        _initializeApp();
+      } else if (event == AuthChangeEvent.signedOut) {
+        debugPrint('👋 User signed out');
+        if (mounted) {
+          setState(() {
+            _role = 'unauthenticated';
+            _loading = false;
+          });
+        }
+      } else if (event == AuthChangeEvent.passwordRecovery) {
+        debugPrint('🔑 Password recovery triggered');
         // Navigate to SetNewPasswordScreen
         if (mounted) {
           Navigator.of(context).push(
@@ -39,9 +54,12 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
           );
         }
       } else if (event == AuthChangeEvent.userUpdated) {
+        debugPrint('🔄 User updated');
         // Handle email verification updates
         final user = supabase.auth.currentUser;
         _handleUserUpdate(user);
+      } else if (event == AuthChangeEvent.tokenRefreshed) {
+        debugPrint('🔄 Token refreshed');
       }
     });
 

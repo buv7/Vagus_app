@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../services/coach/calendar_quick_book_service.dart';
@@ -298,13 +299,14 @@ class _QuickBookSheetState extends State<QuickBookSheet> {
                         initialDate: chosen,
                       );
                       if (date == null) return;
-                      if (!mounted) return;
+                      if (!context.mounted) return;
 
                       final time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay(hour: chosen.hour, minute: chosen.minute),
                       );
-                      if (time == null || !mounted) return;
+                      if (time == null) return;
+                      if (!context.mounted) return;
                       
                       setLocalState(() {
                         chosen = DateTime(

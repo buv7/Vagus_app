@@ -1030,10 +1030,12 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen>
       //   profile['name'] ?? 'Client',
       // );
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('PDF export temporarily disabled')),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to export PDF: $e')),
       );

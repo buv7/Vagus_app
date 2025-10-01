@@ -271,6 +271,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
         // Create initial version
         await _workoutService.createPlanVersion(planId);
 
+        if (!mounted) return;
         _showSuccess('Workout plan created successfully!');
         Navigator.pop(context, planId);
       } else {
@@ -280,6 +281,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
         // Create version snapshot
         await _workoutService.createPlanVersion(widget.planId!);
 
+        if (!mounted) return;
         _showSuccess('Workout plan updated successfully!');
         Navigator.pop(context);
       }
@@ -577,6 +579,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
               firstDate: DateTime.now().subtract(const Duration(days: 365)),
               lastDate: DateTime.now().add(const Duration(days: 365)),
             );
+            if (!mounted) return;
             if (date != null) {
               setState(() => _startDate = date);
               _markAsChanged();
@@ -1088,7 +1091,8 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
     try {
       final analysis = _workoutService.analyzeMuscleGroupBalance(_currentPlan!);
 
-      showDialog(
+      if (!mounted) return;
+      unawaited(showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('📊 Workout Balance Analysis'),
@@ -1148,7 +1152,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
             ),
           ],
         ),
-      );
+      ));
     } catch (e) {
       _showError('Failed to analyze balance: $e');
     } finally {

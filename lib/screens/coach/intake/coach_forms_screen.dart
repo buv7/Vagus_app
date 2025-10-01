@@ -866,36 +866,220 @@ class _CoachFormsScreenState extends State<CoachFormsScreen> {
   }
 
   void _viewResponse(Map<String, dynamic> response) {
-    // TODO: Implement response viewer
+    final client = response['profiles'] ?? {};
+    final answersJson = response['answers_json'] as Map<String, dynamic>? ?? {};
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Response Details'),
-        content: SingleChildScrollView(
+      builder: (context) => Dialog(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Status: ${response['status']}'),
-              const SizedBox(height: 8),
-              Text('Submitted: ${_formatDate(response['created_at'])}'),
-              const SizedBox(height: 16),
-              const Text('Answers:'),
-              const SizedBox(height: 8),
-              Text(
-                response['answers_json']?.toString() ?? 'No answers',
-                style: const TextStyle(fontFamily: 'monospace'),
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: DesignTokens.blue500,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.assignment, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            client['full_name'] ?? 'Unknown Client',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            client['email'] ?? '',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
+              // Status bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: _getStatusColor(response['status']).withValues(alpha: 0.1),
+                child: Row(
+                  children: [
+                    Icon(
+                      _getStatusIcon(response['status']),
+                      size: 16,
+                      color: _getStatusColor(response['status']),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Status: ${response['status']?.toString().toUpperCase() ?? 'UNKNOWN'}',
+                      style: TextStyle(
+                        color: _getStatusColor(response['status']),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'Submitted: ${_formatDate(response['created_at'])}',
+                      style: DesignTokens.bodySmall.copyWith(
+                        color: DesignTokens.ink500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Answers list
+              Expanded(
+                child: answersJson.isEmpty
+                    ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.inbox, size: 48, color: Colors.grey),
+                            SizedBox(height: 16),
+                            Text('No responses provided'),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: answersJson.length,
+                        itemBuilder: (context, index) {
+                          final entry = answersJson.entries.elementAt(index);
+                          final questionId = entry.key;
+                          final answer = entry.value;
+
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _formatQuestionId(questionId),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      answer?.toString() ?? 'No answer provided',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              // Action buttons
+              if (response['status'] == 'submitted')
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _rejectResponse(response);
+                          },
+                          icon: const Icon(Icons.close),
+                          label: const Text('Reject'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: DesignTokens.danger,
+                            side: const BorderSide(color: DesignTokens.danger),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _approveResponse(response);
+                          },
+                          icon: const Icon(Icons.check),
+                          label: const Text('Approve'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: DesignTokens.success,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
       ),
     );
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'draft':
+        return Icons.edit;
+      case 'submitted':
+        return Icons.send;
+      case 'approved':
+        return Icons.check_circle;
+      case 'rejected':
+        return Icons.cancel;
+      default:
+        return Icons.help;
+    }
+  }
+
+  String _formatQuestionId(String questionId) {
+    // Convert snake_case or camelCase to Title Case
+    return questionId
+        .replaceAll('_', ' ')
+        .replaceAllMapped(
+          RegExp(r'([A-Z])'),
+          (match) => ' ${match.group(0)}',
+        )
+        .split(' ')
+        .map((word) => word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1))
+        .join(' ')
+        .trim();
   }
 }

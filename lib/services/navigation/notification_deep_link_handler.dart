@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../models/notifications/workout_notification_types.dart';
 
@@ -72,13 +73,14 @@ class NotificationDeepLinkHandler {
     final payload = PlanAssignedNotification.fromJson(data['payload']);
 
     // Navigate to workout plan details screen
-    Navigator.of(context).pushNamed(
+    if (!context.mounted) return;
+    unawaited(Navigator.of(context).pushNamed(
       '/workout/plan',
       arguments: {
         'plan_id': payload.planId,
         'show_welcome': true,
       },
-    );
+    ));
   }
 
   /// Handle workout reminder notification
@@ -93,16 +95,18 @@ class NotificationDeepLinkHandler {
 
     if (actionId == 'start') {
       // Start workout immediately
-      Navigator.of(context).pushNamed(
+      if (!context.mounted) return;
+      unawaited(Navigator.of(context).pushNamed(
         '/workout/session/start',
         arguments: {
           'day_id': payload.dayId,
           'day_label': payload.dayLabel,
         },
-      );
+      ));
     } else if (actionId == 'snooze') {
       // Snooze reminder
       await _snoozeReminder(payload.dayId, 15);
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Reminder snoozed for 15 minutes'),
@@ -111,10 +115,11 @@ class NotificationDeepLinkHandler {
       );
     } else {
       // Navigate to workout day details
-      Navigator.of(context).pushNamed(
+      if (!context.mounted) return;
+      unawaited(Navigator.of(context).pushNamed(
         '/workout/day',
         arguments: {'day_id': payload.dayId},
-      );
+      ));
     }
   }
 
@@ -126,7 +131,8 @@ class NotificationDeepLinkHandler {
     final payload = RestDayNotification.fromJson(data['payload']);
 
     // Navigate to recovery screen or show dialog
-    showDialog(
+    if (!context.mounted) return;
+    unawaited(showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Row(
@@ -162,7 +168,7 @@ class NotificationDeepLinkHandler {
           ),
         ],
       ),
-    );
+    ));
   }
 
   /// Handle deload week alert
@@ -173,7 +179,8 @@ class NotificationDeepLinkHandler {
     final payload = DeloadWeekNotification.fromJson(data['payload']);
 
     // Navigate to week overview with deload info
-    Navigator.of(context).pushNamed(
+    if (!context.mounted) return;
+    unawaited(Navigator.of(context).pushNamed(
       '/workout/week',
       arguments: {
         'week_number': payload.weekNumber,
@@ -181,7 +188,7 @@ class NotificationDeepLinkHandler {
         'reason': payload.reason,
         'recommendations': payload.recommendations,
       },
-    );
+    ));
   }
 
   /// Handle PR celebration
@@ -192,7 +199,8 @@ class NotificationDeepLinkHandler {
     final payload = PRCelebrationNotification.fromJson(data['payload']);
 
     // Show celebration dialog
-    showDialog(
+    if (!context.mounted) return;
+    unawaited(showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Row(
@@ -263,7 +271,7 @@ class NotificationDeepLinkHandler {
           ),
         ],
       ),
-    );
+    ));
   }
 
   /// Handle coach feedback
@@ -277,16 +285,18 @@ class NotificationDeepLinkHandler {
 
     if (actionId == 'reply') {
       // Open reply dialog
+      if (!context.mounted) return;
       _showReplyDialog(context, payload);
     } else {
       // Navigate to exercise details with comment highlighted
-      Navigator.of(context).pushNamed(
+      if (!context.mounted) return;
+      unawaited(Navigator.of(context).pushNamed(
         '/workout/exercise',
         arguments: {
           'exercise_id': payload.exerciseId,
           'highlight_comment': true,
         },
-      );
+      ));
     }
   }
 
@@ -301,16 +311,19 @@ class NotificationDeepLinkHandler {
 
     if (actionId == 'reschedule') {
       // Show reschedule dialog
+      if (!context.mounted) return;
       _showRescheduleDialog(context, payload);
     } else if (actionId == 'start_now') {
       // Start workout now
-      Navigator.of(context).pushNamed(
+      if (!context.mounted) return;
+      unawaited(Navigator.of(context).pushNamed(
         '/workout/session/start',
         arguments: {'day_id': payload.dayId},
-      );
+      ));
     } else {
       // Navigate to missed workouts overview
-      Navigator.of(context).pushNamed('/workout/missed');
+      if (!context.mounted) return;
+      unawaited(Navigator.of(context).pushNamed('/workout/missed'));
     }
   }
 
@@ -322,14 +335,15 @@ class NotificationDeepLinkHandler {
     final payload = WeeklySummaryNotification.fromJson(data['payload']);
 
     // Navigate to analytics screen with week details
-    Navigator.of(context).pushNamed(
+    if (!context.mounted) return;
+    unawaited(Navigator.of(context).pushNamed(
       '/analytics',
       arguments: {
         'week_number': payload.weekNumber,
         'week_start': payload.weekStart,
         'week_end': payload.weekEnd,
       },
-    );
+    ));
   }
 
   // Helper methods

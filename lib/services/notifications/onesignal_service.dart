@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 // TODO: Add onesignal_flutter package to pubspec.yaml
@@ -67,7 +68,7 @@ class OneSignalService {
 
     try {
       // Initialize OneSignal
-      OneSignal.initialize(appId);
+      unawaited(OneSignal.initialize(appId));
 
       // Request notification permissions
       await OneSignal.Notifications.requestPermission(true);

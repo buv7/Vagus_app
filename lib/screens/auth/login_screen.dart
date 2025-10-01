@@ -129,9 +129,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _signInWithStoredEmail(String password) async {
     if (_storedUserEmail == null) return;
-    
+
     setState(() => _loading = true);
-    
+
+    debugPrint('🔐 Biometric login with stored email: $_storedUserEmail');
+
     // Show loading dialog
     // ignore: unawaited_futures
     showDialog(
@@ -139,18 +141,22 @@ class _LoginScreenState extends State<LoginScreen> {
       barrierDismissible: false,
       builder: (_) => const Center(child: VagusLoader(size: 72)),
     );
-    
+
     try {
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: _storedUserEmail!,
         password: password,
       );
-      
+
+      debugPrint('✅ Biometric login response received');
+      debugPrint('   User ID: ${response.user?.id ?? "null"}');
+
       if (!mounted) return;
-      
+
       if (response.user == null) {
         Navigator.pop(context); // Remove loader
         _showMessage('Login failed. Check your password.');
+        debugPrint('❌ Biometric login failed: No user in response');
         return;
       } else {
         // Capture account after successful sign-in
@@ -207,8 +213,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signIn() async {
+    debugPrint('🔘 SIGN IN BUTTON PRESSED');
+
     setState(() => _loading = true);
-    
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    debugPrint('🔐 Email field: "$email"');
+    debugPrint('🔐 Password length: ${password.length}');
+
+    // Validation
+    if (email.isEmpty || password.isEmpty) {
+      debugPrint('❌ Validation failed: Empty fields');
+      _showMessage('Please enter both email and password');
+      setState(() => _loading = false);
+      return;
+    }
+
+    debugPrint('🔐 Attempting login with: $email');
+
     // Show loading dialog
     // ignore: unawaited_futures
     showDialog(
@@ -216,20 +240,28 @@ class _LoginScreenState extends State<LoginScreen> {
       barrierDismissible: false,
       builder: (_) => const Center(child: VagusLoader(size: 72)),
     );
-    
+
     try {
       final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+        email: email,
+        password: password,
       );
-      
+
+      debugPrint('✅ Login response received');
+      debugPrint('   User ID: ${response.user?.id ?? "null"}');
+      debugPrint('   Session: ${response.session?.accessToken != null ? "Yes" : "No"}');
+      debugPrint('   Email confirmed: ${response.user?.emailConfirmedAt != null}');
+
       if (!mounted) return;
-      
+
       if (response.user == null) {
         Navigator.pop(context); // Remove loader
         _showMessage('Login failed. Check your credentials.');
+        debugPrint('❌ Login failed: No user in response');
         return;
       }
+
+      debugPrint('✅ Login successful, proceeding with session setup');
       
       // append-only: capture account after successful sign-in
       final user = Supabase.instance.client.auth.currentUser;
@@ -275,12 +307,35 @@ class _LoginScreenState extends State<LoginScreen> {
         // No need to navigate manually as Supabase auth state change will trigger navigation
       }
     } catch (e) {
+      debugPrint('❌ Login error: $e');
+      debugPrint('   Error type: ${e.runtimeType}');
+
+      if (e is AuthException) {
+        debugPrint('   Status code: ${e.statusCode}');
+        debugPrint('   Message: ${e.message}');
+      }
+
       if (mounted) {
         Navigator.pop(context); // Remove loader
-        _showMessage('Error: ${e.toString()}');
+
+        String errorMessage = 'Login failed';
+        if (e is AuthException) {
+          if (e.message.toLowerCase().contains('invalid')) {
+            errorMessage = 'Invalid email or password';
+          } else if (e.message.toLowerCase().contains('email not confirmed')) {
+            errorMessage = 'Please verify your email before logging in';
+          } else {
+            errorMessage = e.message;
+          }
+        } else {
+          errorMessage = 'Error: ${e.toString()}';
+        }
+
+        _showMessage(errorMessage);
       }
     }
-    setState(() => _loading = false);
+
+    if (mounted) setState(() => _loading = false);
   }
 
   Future<void> _showBiometricSetupDialog(String userEmail) async {
@@ -304,6 +359,72 @@ class _LoginScreenState extends State<LoginScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  Future<void> _testSupabaseConnection() async {
+    debugPrint('🧪 TEST CONNECTION BUTTON PRESSED');
+    debugPrint('🧪 Testing Supabase connection...');
+
+    setState(() => _loading = true);
+
+    try {
+      // Test: Simple query to profiles table
+      debugPrint('🧪 Attempting to query profiles table...');
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select('id')
+          .limit(1)
+          .timeout(const Duration(seconds: 10));
+
+      debugPrint('✅ Supabase connection SUCCESS!');
+      debugPrint('✅ Response: $response');
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(child: Text('✅ Supabase connection works!')),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      debugPrint('❌ Supabase connection FAILED: $e');
+      debugPrint('❌ Error type: ${e.runtimeType}');
+
+      if (e is PostgrestException) {
+        debugPrint('❌ Postgrest error code: ${e.code}');
+        debugPrint('❌ Postgrest error message: ${e.message}');
+      }
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text('❌ Connection failed: ${e.toString()}'),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -320,14 +441,23 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 24),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.emailAddress,
+              enabled: !_loading,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
               obscureText: true,
+              enabled: !_loading,
+              onSubmitted: (_) => _loading ? null : _signIn(),
             ),
             const SizedBox(height: 8),
             Row(
@@ -355,11 +485,27 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loading ? null : _signIn,
-              child: _loading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Sign In'),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _signIn,
+                child: _loading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text('Sign In'),
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: _loading ? null : _testSupabaseConnection,
+              child: const Text('Test Connection'),
             ),
             const SizedBox(height: 16),
             TextButton(

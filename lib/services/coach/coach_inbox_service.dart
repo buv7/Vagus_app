@@ -222,17 +222,20 @@ class CoachInboxService {
   }
 
   /// Checks if client has skipped sessions in last 3 days
+  /// TODO: Re-implement when workout_sessions table is deployed with correct schema
   Future<bool> _checkSkippedSessions(String clientId, DateTime threeDaysAgo) async {
     try {
-      // Check for any missed workout sessions
-      final response = await _sb
-          .from('workout_sessions')
-          .select('status, scheduled_date')
-          .eq('client_id', clientId)
-          .eq('status', 'missed')
-          .gte('scheduled_date', threeDaysAgo.toIso8601String());
+      // DISABLED: workout_sessions table not yet deployed or schema mismatch
+      // Migration exists but needs: client_id, status, scheduled_date fields
+      // final response = await _sb
+      //     .from('workout_sessions')
+      //     .select('status, scheduled_date')
+      //     .eq('client_id', clientId)
+      //     .eq('status', 'missed')
+      //     .gte('scheduled_date', threeDaysAgo.toIso8601String());
+      // return (response as List<dynamic>).isNotEmpty;
 
-      return (response as List<dynamic>).isNotEmpty;
+      return false; // Temporarily disabled
     } catch (e) {
       debugPrint('CoachInboxService: Error checking skipped sessions for $clientId - $e');
       return false;

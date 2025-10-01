@@ -323,18 +323,19 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
     final isAdmin = _userRole == 'admin';
 
     return Scaffold(
-      drawer: VagusSideMenu(
-        isClient: _userRole != 'coach',
-        onLogout: () async {
-          try {
-            await Supabase.instance.client.auth.signOut();
-            if (mounted) {
-              unawaited(Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false));
+      drawer: Builder(
+        builder: (drawerContext) => VagusSideMenu(
+          isClient: _userRole != 'coach',
+          onLogout: () async {
+            try {
+              await Supabase.instance.client.auth.signOut();
+              if (!drawerContext.mounted) return;
+              unawaited(Navigator.of(drawerContext).pushNamedAndRemoveUntil('/', (route) => false));
+            } catch (e) {
+              debugPrint('Logout error: $e');
             }
-          } catch (e) {
-            debugPrint('Logout error: $e');
-          }
-        },
+          },
+        ),
       ),
       appBar: isAdmin ? null : AppBar(
         backgroundColor: Colors.transparent,

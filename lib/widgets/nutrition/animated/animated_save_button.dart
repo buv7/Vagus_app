@@ -62,7 +62,7 @@ class _AnimatedSaveButtonState extends State<AnimatedSaveButton>
     if (_isLoading || _isSuccess) return;
 
     setState(() => _isLoading = true);
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
 
     try {
       // Execute the actual save

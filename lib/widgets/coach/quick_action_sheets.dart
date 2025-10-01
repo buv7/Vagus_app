@@ -1,9 +1,10 @@
+import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
-import 'dart:ui';
 
 // Add Coach Note Bottom Sheet
 class AddCoachNoteBottomSheet extends StatefulWidget {
@@ -102,7 +103,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
     if (user == null) return;
 
     setState(() => _saving = true);
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
 
     try {
       await supabase.from('coach_notes').insert({
@@ -326,7 +327,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                       setState(() {
                                         _selectedCategory = category;
                                       });
-                                      HapticFeedback.selectionClick();
+                                      unawaited(HapticFeedback.selectionClick());
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(

@@ -31,6 +31,11 @@ void main() async {
     anonKey: EnvConfig.supabaseAnonKey,
   );
 
+  // Debug: Check initial session state
+  final session = Supabase.instance.client.auth.currentSession;
+  debugPrint('🧪 Initial session check: ${session?.user.id ?? "null"}');
+  debugPrint('🧪 Has access token: ${session?.accessToken != null}');
+
   // Initialize OneSignal notifications
   await OneSignalService.instance.init();
 

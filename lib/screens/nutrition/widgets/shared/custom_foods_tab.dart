@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -366,6 +367,7 @@ class _CustomFoodsTabState extends State<CustomFoodsTab>
       setState(() => _customFoods.removeWhere((f) => f.id == food.id));
 
       Haptics.success();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Deleted "${food.name}"'),
@@ -374,6 +376,7 @@ class _CustomFoodsTabState extends State<CustomFoodsTab>
       );
     } catch (e) {
       Haptics.error();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to delete food'),
@@ -1117,7 +1120,8 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
     Haptics.tap();
     // TODO: Implement image picker (camera or gallery)
     // For now, just show a placeholder dialog
-    showDialog(
+    if (!mounted) return;
+    unawaited(showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.cardDark,
@@ -1136,7 +1140,7 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
           ),
         ],
       ),
-    );
+    ));
   }
 
   void _submitForm() async {

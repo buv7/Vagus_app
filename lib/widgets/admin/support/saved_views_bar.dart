@@ -86,9 +86,8 @@ class _SavedViewsBarState extends State<SavedViewsBar> {
                 setState(() {
                   _views = newViews;
                 });
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('View saved')));
-                }
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('View saved')));
               },
             ),
             IconButton(

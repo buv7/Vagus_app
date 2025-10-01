@@ -685,7 +685,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
       if (product != null) {
         final food = barcodeService.toFoodItem(product);
         setState(() => _recognizedFood = food);
-        _pulseController.repeat(reverse: true);
+        unawaited(_pulseController.repeat(reverse: true));
         Haptics.success();
 
         // Add to scan history
@@ -695,15 +695,16 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
         }
 
         // Auto-proceed after 2 seconds
-        Future.delayed(const Duration(seconds: 2), () {
+        unawaited(Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
             widget.onFoodFound(food);
             Navigator.of(context).pop();
           }
-        });
+        }));
       } else {
         // Food not found
         Haptics.warning();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Food not found for barcode: $barcode'),
@@ -714,6 +715,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
       }
     } catch (e) {
       Haptics.error();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error looking up barcode'),

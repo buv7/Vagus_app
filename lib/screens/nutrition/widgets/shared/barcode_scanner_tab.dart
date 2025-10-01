@@ -671,10 +671,12 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
         widget.onFoodSelected(food);
       } else {
         Haptics.warning();
+        if (!mounted) return;
         _showFoodNotFoundDialog(barcode);
       }
     } catch (e) {
       Haptics.error();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error looking up barcode'),

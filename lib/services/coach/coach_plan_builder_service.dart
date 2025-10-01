@@ -332,7 +332,7 @@ class CoachPlanBuilderService {
     try {
       // Get meal count
       final mealsResponse = await _sb
-          .from('nutrition_plan_meals')
+          .from('nutrition_meals')
           .select('id')
           .eq('plan_id', planId);
 

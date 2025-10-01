@@ -1,0 +1,267 @@
+# VAGUS App - Screens Categorized by Module
+# Generated: 2025-10-01
+
+## Summary Statistics
+- Total Screens: 207 Dart files in lib/screens/
+- Total Widgets: 150+ Dart files in lib/widgets/
+- Total Components: 45+ Dart files in lib/components/
+
+## Module Breakdown
+
+### 1. AUTH MODULE (10 screens)
+Primary screens for authentication, user onboarding, and security
+- auth_gate.dart - Main authentication guard
+- become_coach_screen.dart - Coach application flow
+- device_list_screen.dart - Device management
+- enable_biometrics_dialog.dart - Biometric setup
+- login_screen.dart - Legacy login
+- modern_login_screen.dart - New login (ACTIVE)
+- password_reset_screen.dart - Password recovery
+- set_new_password_screen.dart - Password change
+- signup_screen.dart - User registration
+- verify_email_pending_screen.dart - Email verification
+
+### 2. WORKOUT MODULE (11 screens)
+Workout planning, tracking, and analytics
+- cardio_log_screen.dart
+- client_workout_dashboard_screen.dart
+- coach_plan_builder_screen.dart (OLD)
+- coach_plan_builder_screen_refactored.dart (NEW)
+- coach_workout_dashboard_screen.dart
+- modern_plan_builder_screen.dart
+- workout_analytics_screen.dart
+- workout_plan_builder_screen.dart
+- workout_plan_viewer_screen.dart (OLD)
+- workout_plan_viewer_screen_refactored.dart (NEW - ACTIVE)
+- workouts/modern_workout_plan_viewer.dart
+
+**NOTE**: Workout system underwent major v2 refactor (commit: 1ea2cc2)
+
+### 3. NUTRITION MODULE (7+ screens)
+Meal tracking, recipes, grocery lists, barcode scanning
+- barcode_scan_screen.dart
+- food_snap_screen.dart - OCR food recognition
+- grocery_list_screen.dart
+- nutrition_hub_screen.dart - Main nutrition screen
+- pantry_screen.dart
+- recipe_library_screen.dart
+- Plus numerous widget/component files
+
+**NOTE**: Nutrition v2 with OCR redesign (commit: 9652bb9)
+
+### 4. COACH MODULE (19 screens)
+Coach-specific features: client management, portfolio, intake forms
+- affiliates/coach_affiliates_screen.dart
+- client_profile/coach_client_profile_screen.dart
+- client_weekly_review_screen.dart
+- coach_notes_screen.dart
+- coach_portfolio_marketplace_screen.dart - Portfolio marketplace
+- coach_profile_public_screen.dart
+- coach_requests_screen.dart - Client requests
+- coach_search_screen.dart
+- intake/coach_forms_screen.dart - Google Forms integration
+- intake_form_builder_screen.dart
+- modern_client_management_screen.dart - ACTIVE
+- my_coach_screen.dart
+- portfolio_edit_screen.dart
+- program_ingest_preview_screen.dart - PDF workout import
+- program_ingest_upload_sheet.dart
+- unified_coach_profile_example.dart
+- unified_coach_profile_screen.dart
+- coaches/coach_marketplace_screen.dart
+- coaches/coach_qr_scanner_screen.dart
+- coaches/qr_scanner_screen.dart
+
+**NOTE**: Coach portal completed (commit: 8aba6f2)
+
+### 5. ADMIN MODULE (38+ screens)
+Comprehensive admin tools: support, tickets, analytics, operations
+Core Admin:
+- admin_hub_screen.dart - Main admin hub
+- admin_screen.dart - Legacy admin
+- admin_analytics_screen.dart
+- admin_ops_screen.dart - Operations dashboard
+
+Support System:
+- admin_agent_workload_screen.dart
+- admin_escalation_matrix_screen.dart
+- admin_incidents_screen.dart
+- admin_knowledge_screen.dart
+- admin_live_session_screen.dart
+- admin_macros_screen.dart
+- admin_playbooks_screen.dart
+- admin_root_cause_screen.dart
+- admin_session_copilot_screen.dart
+- admin_sla_policies_screen.dart
+- admin_ticket_board_screen.dart
+- admin_ticket_queue_screen.dart
+- admin_triage_rules_screen.dart
+- support/support_canned_replies_screen.dart
+- support/support_inbox_screen.dart
+- support/support_rules_editor_screen.dart
+- support/support_sla_editor_screen.dart
+
+Configuration:
+- admin_ads_screen.dart - Ad banner management
+- admin_announcements_screen.dart
+- admin_approval_panel.dart
+- ai_config_panel.dart
+- audit_log_screen.dart
+- coach_approval_panel.dart
+- global_settings_panel.dart
+- nutrition_diagnostics_screen.dart
+- price_editor_screen.dart
+- user_manager_panel.dart
+
+### 6. DASHBOARD MODULE (6 screens)
+Main user dashboards for clients and coaches
+- edit_profile_screen.dart
+- home_screen.dart - Universal home
+- modern_client_dashboard.dart - ACTIVE client dashboard
+- modern_coach_dashboard.dart - ACTIVE coach dashboard
+- notes/note_list_screen.dart
+- profile_screen.dart
+
+**NOTE**: Connected to Supabase data (commit: 2837c49)
+
+### 7. MESSAGING MODULE (10 screens)
+Chat, threads, support messaging
+- admin_support_chat_screen.dart
+- admin_support_inbox_screen.dart
+- client_messenger_screen.dart (OLD)
+- client_threads_screen.dart
+- coach_messenger_screen.dart (OLD)
+- coach_threads_screen.dart
+- modern_client_messages_screen.dart (ACTIVE)
+- modern_coach_messenger_screen.dart (ACTIVE)
+- modern_messenger_screen.dart (ACTIVE)
+- menu/modern_coach_menu_screen.dart
+
+### 8. CALENDAR MODULE (5 screens)
+Scheduling, bookings, availability
+- availability_publisher.dart
+- booking_form.dart
+- calendar_screen.dart (OLD)
+- event_editor.dart
+- modern_calendar_viewer.dart (ACTIVE)
+
+### 9. FILES MODULE (3 screens)
+File uploads, management, feedback
+- coach_file_feedback_screen.dart
+- file_manager_screen.dart
+- upload_photos_screen.dart
+
+### 10. SETTINGS MODULE (11 screens)
+User preferences, integrations, notifications
+- ai_usage_screen.dart - AI quota tracking
+- earn_rewards_screen.dart
+- google_integrations_screen.dart
+- health_connections_screen.dart
+- insider_settings_screen.dart
+- music_settings_screen.dart
+- notification_preferences_screen.dart
+- notifications_settings_screen.dart
+- privacy_security_screen.dart
+- profile_settings_screen.dart
+- user_settings_screen.dart - Main settings
+
+### 11. CALLING MODULE (4 screens)
+Video/audio calls
+- call_management_screen.dart
+- calling_demo_screen.dart
+- modern_live_calls_screen.dart
+- simple_call_screen.dart
+
+### 12. BILLING MODULE (4 screens)
+Payments, subscriptions, upgrades
+- billing_payments_screen.dart
+- billing_settings.dart
+- invoice_history_viewer.dart
+- upgrade_screen.dart
+
+### 13. SUPPLEMENTS MODULE (3 screens)
+Supplement tracking and history
+- supplement_history_screen.dart
+- supplement_list_screen.dart
+- supplements_today_screen.dart
+
+### 14. OTHER MODULES
+Progress (1):
+- progress/export_progress_screen.dart
+
+Check-ins (4):
+- checkins/add_checkin_screen.dart
+- checkins/checkin_history_screen.dart
+- checkins/photo_checkin_screen.dart
+- checkins/quick_checkin_screen.dart
+
+Learning (2):
+- learn/learn_client_screen.dart
+- learn/learn_coach_screen.dart
+
+Intake (2):
+- intake/intake_wizard_screen.dart
+- client/intake_form_fill_screen.dart
+
+Period Tracking (1):
+- periods/period_tracker_screen.dart
+
+Rank System (1):
+- rank/rank_hub_screen.dart
+
+Streaks (1):
+- streaks/streak_screen.dart
+
+Share (1):
+- share/share_preview_screen.dart
+
+Voice (1):
+- voice/voice_command_screen.dart
+
+Support (1):
+- support/help_center_screen.dart
+
+Analytics (1):
+- analytics/analytics_reports_screen.dart
+
+Business (1):
+- business/business_profile_screen.dart
+
+Notes (1):
+- notes/coach_note_screen.dart
+
+Navigation (1):
+- nav/main_nav.dart - CRITICAL main navigation
+
+Splash (1):
+- splash/animated_splash_screen.dart
+
+Account (1):
+- account_switch_screen.dart
+
+## Navigation Structure (from main_nav.dart)
+
+### CLIENT TAB BAR (5 tabs):
+1. Home - ModernClientDashboard
+2. Workouts - ModernWorkoutPlanViewer
+3. Calendar - ModernCalendarViewer
+4. Nutrition - NutritionHubScreen
+5. Messages - ModernMessengerScreen
+
+### COACH TAB BAR (5 tabs):
+1. Dashboard - ModernCoachDashboard
+2. Clients - ModernClientManagementScreen
+3. Plans - ModernPlanBuilderScreen
+4. Calendar - ModernCalendarViewer
+5. Messages - ModernClientMessagesScreen
+
+### ADMIN TAB BAR (1 tab):
+1. Admin Hub - AdminHubScreen (single screen with sub-navigation)
+
+## Key Observations
+
+1. **Modern vs Legacy**: Many screens have "modern_" prefixes indicating redesigns
+2. **Refactored Suffix**: _refactored suffix indicates v2 implementations
+3. **Navigation Gating**: Role-based navigation (client/coach/admin)
+4. **Feature-Rich Admin**: 38+ admin screens = most complex module
+5. **Comprehensive Coverage**: ~15 major feature modules

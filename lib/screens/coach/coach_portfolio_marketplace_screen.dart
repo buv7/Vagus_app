@@ -402,7 +402,7 @@ class _CoachPortfolioMarketplaceScreenState extends State<CoachPortfolioMarketpl
                   ),
                 );
                 if (result == true) {
-                  _loadAllData();
+                  unawaited(_loadAllData());
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -680,7 +680,7 @@ class _CoachPortfolioMarketplaceScreenState extends State<CoachPortfolioMarketpl
                   ),
                 );
                 if (result == true) {
-                  _loadAllData();
+                  unawaited(_loadAllData());
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -806,7 +806,7 @@ class _CoachPortfolioMarketplaceScreenState extends State<CoachPortfolioMarketpl
               builder: (context) => PortfolioEditScreen(existingProfile: _profile),
             ),
           );
-          if (result == true) _loadAllData();
+          if (result == true) unawaited(_loadAllData());
         },
       },
       {
@@ -819,7 +819,7 @@ class _CoachPortfolioMarketplaceScreenState extends State<CoachPortfolioMarketpl
               builder: (context) => PortfolioEditScreen(existingProfile: _profile),
             ),
           );
-          if (result == true) _loadAllData();
+          if (result == true) unawaited(_loadAllData());
         },
       },
       {
@@ -837,7 +837,7 @@ class _CoachPortfolioMarketplaceScreenState extends State<CoachPortfolioMarketpl
               builder: (context) => const BusinessProfileScreen(),
             ),
           );
-          if (result == true) _loadAllData();
+          if (result == true) unawaited(_loadAllData());
         },
       },
       {
