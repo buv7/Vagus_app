@@ -32,9 +32,8 @@ class ProgressionService {
       for (final day in currentWeek.days) {
         for (final exercise in day.exercises) {
           final history = await _workoutService.fetchExerciseHistory(
-            clientId: clientId,
-            exerciseName: exercise.name,
-            limit: 10,
+            clientId,
+            exercise.name,
           );
           historyMap[exercise.name] = history;
         }
@@ -74,8 +73,8 @@ class ProgressionService {
     // Check if all recent sessions completed successfully
     final allCompleted = recent.every((entry) {
       final completedSets = entry.completedSets;
-      final targetSets = entry.sets ?? 0;
-      return completedSets >= targetSets;
+      // Note: We don't have target sets in history, using completed sets as reference
+      return completedSets > 0;
     });
 
     if (!allCompleted) {
@@ -122,11 +121,8 @@ class ProgressionService {
     final hasVolumeIncrease = _hasProgression(volumes);
 
     // Check for failed sets
-    final recentFailures = sorted.take(4).where((entry) {
-      final completedSets = entry.completedSets;
-      final targetSets = entry.sets ?? 0;
-      return completedSets < targetSets;
-    }).length;
+    // Note: We don't have target sets in history, so we can't determine failures
+    final recentFailures = 0;
 
     // Determine if plateaued
     final isPlateaued = !hasWeightIncrease && !hasVolumeIncrease;
@@ -570,9 +566,10 @@ class ProgressionService {
   }
 
   double? _calculateAverageRPE(List<ExerciseHistoryEntry> entries) {
+    // Use difficultyRating as a proxy for RPE (1-10 scale)
     final rpeValues = entries
-        .where((e) => e.rpeRating != null)
-        .map((e) => e.rpeRating!.toDouble())
+        .where((e) => e.difficultyRating != null)
+        .map((e) => e.difficultyRating!.toDouble())
         .toList();
 
     if (rpeValues.isEmpty) return null;
@@ -589,7 +586,7 @@ class ProgressionService {
       if (values[i] > values[i - 1]) increases++;
     }
 
-    return increases >= (values.length / 2).floor();
+    return increases >= (values.length ~/ 2);
   }
 
   int _countStagnantWeeks(List<ExerciseHistoryEntry> sorted) {

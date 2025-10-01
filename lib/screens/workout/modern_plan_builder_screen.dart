@@ -5,6 +5,8 @@ import '../../widgets/workout/plan_builder_header.dart';
 import '../../widgets/workout/plan_search_filter_bar.dart';
 import '../../widgets/workout/plan_metrics_cards.dart';
 import '../../widgets/workout/plan_list_view.dart';
+import 'coach_plan_builder_screen.dart';
+import '../nutrition/nutrition_plan_builder.dart';
 
 class ModernPlanBuilderScreen extends StatefulWidget {
   const ModernPlanBuilderScreen({super.key});
@@ -118,16 +120,16 @@ class _ModernPlanBuilderScreenState extends State<ModernPlanBuilderScreen> with 
   }
 
   void _onNewWorkoutPlan() {
-    // Navigate to workout plan builder
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Workout plan builder coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CoachPlanBuilderScreen()),
     );
   }
 
   void _onNewNutritionPlan() {
-    // Navigate to nutrition plan builder
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Nutrition plan builder coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const NutritionPlanBuilder()),
     );
   }
 

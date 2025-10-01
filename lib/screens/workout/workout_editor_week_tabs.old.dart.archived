@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../models/workout/workout_plan.dart';
 import 'workout_day_editor.dart';
 
-/// Week tabs for workout editor - updated to use models
 class WorkoutEditorWeekTabs extends StatefulWidget {
   final int totalWeeks;
-  final List<WorkoutWeek> weeks;
-  final Function(int, WorkoutWeek) onWeekChanged;
+  final List<Map<String, dynamic>> weekData;
+  final Function(int) onWeekChanged;
   final int currentWeek;
 
   const WorkoutEditorWeekTabs({
     super.key,
     required this.totalWeeks,
-    required this.weeks,
+    required this.weekData,
     required this.onWeekChanged,
     required this.currentWeek,
   });
@@ -38,7 +36,7 @@ class _WorkoutEditorWeekTabsState extends State<WorkoutEditorWeekTabs> {
                 child: ChoiceChip(
                   label: Text('Week ${index + 1}'),
                   selected: isSelected,
-                  onSelected: (_) => widget.onWeekChanged(index, widget.weeks[index]),
+                  onSelected: (_) => widget.onWeekChanged(index),
                 ),
               );
             },
@@ -50,34 +48,10 @@ class _WorkoutEditorWeekTabsState extends State<WorkoutEditorWeekTabs> {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-
-        // Display all days for the current week
-        ...List.generate(
-          widget.weeks[widget.currentWeek].days.length,
-          (dayIndex) {
-            final day = widget.weeks[widget.currentWeek].days[dayIndex];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              color: Colors.grey.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: WorkoutDayEditor(
-                  day: day,
-                  onDayChanged: (updatedDay) {
-                    final updatedDays = List<WorkoutDay>.from(
-                      widget.weeks[widget.currentWeek].days,
-                    );
-                    updatedDays[dayIndex] = updatedDay;
-
-                    final updatedWeek = widget.weeks[widget.currentWeek].copyWith(
-                      days: updatedDays,
-                    );
-
-                    widget.onWeekChanged(widget.currentWeek, updatedWeek);
-                  },
-                ),
-              ),
-            );
+        WorkoutDayEditor(
+          days: widget.weekData[widget.currentWeek]['days'],
+          onDaysUpdated: (updatedDays) {
+            widget.weekData[widget.currentWeek]['days'] = updatedDays;
           },
         ),
       ],

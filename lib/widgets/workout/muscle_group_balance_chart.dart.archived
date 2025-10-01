@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../models/workout/analytics_models.dart';
-import '../../utils/locale_helper.dart';
+import '../../services/nutrition/locale_helper.dart';
 
 /// Muscle group balance visualization
 ///

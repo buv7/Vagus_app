@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
-import 'package:vagus_app/models/nutrition/meal.dart';
-import 'package:vagus_app/models/nutrition/food_item.dart';
+import 'package:vagus_app/models/nutrition/nutrition_plan.dart';
 import 'package:vagus_app/widgets/nutrition/food_item_card.dart';
-import 'package:vagus_app/widgets/nutrition/animated/food_item_edit_modal.dart';
+// import 'package:vagus_app/widgets/nutrition/animated/food_item_edit_modal.dart';
 import 'package:vagus_app/services/haptics.dart';
 import 'package:vagus_app/theme/nutrition_text_styles.dart';
 import 'package:vagus_app/theme/nutrition_spacing.dart';
@@ -130,14 +129,20 @@ class _MealEditorModalState extends State<MealEditorModal>
 
     // Initialize meal
     _currentMeal = widget.existingMeal ?? Meal(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: '',
+      label: '',
       items: [],
-      timestamp: DateTime.now(),
+      mealSummary: MealSummary(
+        totalProtein: 0,
+        totalCarbs: 0,
+        totalFat: 0,
+        totalKcal: 0,
+        totalSodium: 0,
+        totalPotassium: 0,
+      ),
     );
 
     _mealNameController = TextEditingController(
-      text: _currentMeal.name.isEmpty ? _getDefaultMealName() : _currentMeal.name,
+      text: _currentMeal.label.isEmpty ? _getDefaultMealName() : _currentMeal.label,
     );
     _notesController = TextEditingController();
 

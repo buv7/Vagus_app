@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/workout/analytics_models.dart';
-import '../../models/workout/workout_plan.dart';
+// import '../../models/workout/workout_plan.dart';
 
 /// Comprehensive workout analytics service
 ///
@@ -89,7 +89,7 @@ class WorkoutAnalyticsService {
 
       return VolumeMetrics(
         totalVolume: totalVolume,
-        avgVolumePerSession: avgVolumePerSession,
+        avgVolumePerSession: avgVolumePerSession.toDouble(),
         totalSets: totalSets,
         totalReps: totalReps,
         volumeByMuscleGroup: volumeByMuscleGroup,
@@ -209,8 +209,8 @@ class WorkoutAnalyticsService {
         exerciseCountByMuscleGroup: exerciseCountByMuscleGroup,
         overdevelopedGroups: overdeveloped,
         underdevelopedGroups: underdeveloped,
-        pushPullRatio: pushPullRatio,
-        upperLowerRatio: upperLowerRatio,
+        pushPullRatio: pushPullRatio.toDouble(),
+        upperLowerRatio: upperLowerRatio.toDouble(),
         recommendations: recommendations,
       );
     } catch (e) {
@@ -319,7 +319,7 @@ class WorkoutAnalyticsService {
 
       return GainsReport(
         gainsByExercise: gainsByExercise,
-        overallGainPercentage: overallGainPercentage,
+        overallGainPercentage: overallGainPercentage.toDouble(),
         bestGainingExercise: bestGaining,
         slowestGainingExercise: slowestGaining,
         totalPRs: totalPRs,
@@ -770,7 +770,7 @@ class WorkoutAnalyticsService {
 
       return ProjectionData(
         exerciseProjections: exerciseProjections,
-        confidenceScore: confidenceScore,
+        confidenceScore: confidenceScore.toDouble(),
         methodology: 'linear',
         projectionDate: DateTime.now(),
       );

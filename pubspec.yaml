@@ -28,7 +28,7 @@ dependencies:
   shared_preferences: ^2.2.3
   mobile_scanner: ^3.5.5
   file_picker: ^6.1.1
-  pdf: ^3.10.6
+  pdf: ^3.11.3
   printing: ^5.12.0
   photo_view: ^0.15.0
   local_auth: ^2.3.0
@@ -54,6 +54,11 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.2
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
+  flutter_driver:
+    sdk: flutter
+  test: ^1.25.2
 
 flutter:
   uses-material-design: true

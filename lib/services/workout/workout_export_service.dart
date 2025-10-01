@@ -59,11 +59,11 @@ class WorkoutExportService {
             pw.SizedBox(height: 8),
             pw.Text('Volume by Muscle Group:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 4),
-            ...report.volumeMetrics.volumeByMuscleGroup.entries
+            ...(report.volumeMetrics.volumeByMuscleGroup.entries
                 .toList()
-                ..sort((a, b) => b.value.compareTo(a.value))
-                ..take(5)
-                ..map((entry) => pw.Row(
+                ..sort((a, b) => b.value.compareTo(a.value)))
+                .take(5)
+                .map((entry) => pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text('  ${entry.key.toUpperCase()}'),
@@ -82,11 +82,11 @@ class WorkoutExportService {
             pw.SizedBox(height: 8),
             pw.Text('Top Exercises:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 4),
-            ...report.gainsReport.gainsByExercise.entries
+            ...(report.gainsReport.gainsByExercise.entries
                 .toList()
-                ..sort((a, b) => b.value.gainPercentage.compareTo(a.value.gainPercentage))
-                ..take(5)
-                ..map((entry) => pw.Row(
+                ..sort((a, b) => b.value.gainPercentage.compareTo(a.value.gainPercentage)))
+                .take(5)
+                .map((entry) => pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Expanded(child: pw.Text('  ${entry.key}')),

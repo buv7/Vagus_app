@@ -1023,14 +1023,15 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen>
           .eq('id', user.id)
           .single();
 
-      await _workoutService.exportWorkoutPlanToPdf(
-        _currentPlan!,
-        'Coach', // TODO: Get actual coach name
-        profile['name'] ?? 'Client',
-      );
+      // TODO: PDF export temporarily disabled due to Windows path resolution issue
+      // await _workoutService.exportWorkoutPlanToPdf(
+      //   _currentPlan!,
+      //   'Coach', // TODO: Get actual coach name
+      //   profile['name'] ?? 'Client',
+      // );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('PDF exported successfully')),
+        const SnackBar(content: Text('PDF export temporarily disabled')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

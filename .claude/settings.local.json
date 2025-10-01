@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Select-Object -First 50)"
+      "Bash(Select-Object -First 50)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter clean:*)",
+      "Bash(cat:*)",
+      "Read(//c/Users/alhas/AppData/Local/Pub/Cache/hosted/pub.dev/pdf-3.11.3/lib/**)",
+      "Bash(dart pub:*)",
+      "Bash(for:*)",
+      "Bash(do mv \"$file\" \"$file.archived\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []
