@@ -41,7 +41,9 @@
       "Bash(Select-Object -First 500)",
       "Bash(dart fix:*)",
       "Bash(find:*)",
-      "Bash(dart analyze:*)"
+      "Bash(dart analyze:*)",
+      "Bash(Select-String -Pattern \"error|warning|issue\" -Context 0,2)",
+      "Bash(Select-Object -First 30)"
     ],
     "deny": [],
     "ask": []

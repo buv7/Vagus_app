@@ -118,33 +118,4 @@ class ExerciseHistoryService {
     if (w == null || reps == null || reps <= 0 || reps > 12) return null;
     return w * (1.0 + reps / 30.0);
   }
-
-  /// Mock data for demonstration (remove when real data is available)
-  Future<List<ExerciseSetLog>> getMockLogs({
-    required String exerciseName,
-    int limit = 3,
-  }) async {
-    // Generate some mock data for demonstration
-    final now = DateTime.now();
-    final mockLogs = <ExerciseSetLog>[];
-    
-    for (int i = 0; i < limit; i++) {
-      final date = now.subtract(Duration(days: (i + 1) * 7)); // Weekly intervals
-      final weight = 80.0 + (i * 2.5); // Increasing weight
-      final reps = 8 - i; // Decreasing reps
-      final rir = 2.0 + i; // Increasing RIR
-      final est1rm = estimate1RM(weight, reps);
-      
-      mockLogs.add(ExerciseSetLog(
-        date: date,
-        weight: weight,
-        reps: reps,
-        rir: rir,
-        est1rm: est1rm,
-        source: 'mock_data',
-      ));
-    }
-    
-    return mockLogs;
-  }
 }

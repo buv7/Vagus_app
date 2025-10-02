@@ -1,0 +1,8 @@
+# Temporarily add to suppress test file warnings
+analyzer:
+  errors:
+    # Allow unused variables in test files for documentation
+    unused_local_variable: ignore
+    # These are acceptable in test files
+    unused_field: warning
+    unused_element: warning

@@ -37,30 +37,22 @@ class _ExerciseHistoryCardState extends State<ExerciseHistoryCard> {
 
   Future<void> _loadHistory() async {
     try {
-      // Try to get real data first
+      // Get real exercise history from local logs
       final logs = await ExerciseHistoryService.instance.lastLogs(
         clientId: widget.clientId,
         exerciseName: (widget.exercise['name'] ?? '').toString(),
         limit: 3,
       );
-      
-      // If no real data, use mock data for demonstration
-      final finalLogs = logs.isEmpty 
-        ? await ExerciseHistoryService.instance.getMockLogs(
-            exerciseName: (widget.exercise['name'] ?? '').toString(),
-            limit: 3,
-          )
-        : logs;
-      
-      final prs = ExerciseHistoryService.instance.computePRs(finalLogs);
-      
+
+      final prs = ExerciseHistoryService.instance.computePRs(logs);
+
       if (mounted) {
         setState(() {
-          _logs = finalLogs;
+          _logs = logs;
           _prs = prs;
           _loading = false;
         });
-        widget.onLogsLoaded?.call(finalLogs);
+        widget.onLogsLoaded?.call(logs);
       }
     } catch (e) {
       if (mounted) {

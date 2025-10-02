@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/food_item.dart';
 
 /// AI-powered nutrition estimation service
@@ -47,32 +48,38 @@ class NutritionAI {
 
   /// Auto-fill suggestions from text input
   Future<List<String>> autoFillFromText(String query, {String? locale}) async {
-    // Simple fallback implementation
-    final suggestions = <String>[];
+    if (query.isEmpty) return [];
 
-    if (query.isNotEmpty) {
-      // Add some basic suggestions based on common foods
-      final commonFoods = [
-        'Chicken breast',
-        'Rice',
-        'Broccoli',
-        'Salmon',
-        'Eggs',
-        'Banana',
-        'Apple',
-        'Oatmeal',
-        'Greek yogurt',
-        'Almonds',
-      ];
+    try {
+      final supabase = Supabase.instance.client;
+      final searchTerm = query.toLowerCase();
 
-      for (final food in commonFoods) {
-        if (food.toLowerCase().contains(query.toLowerCase())) {
-          suggestions.add(food);
+      // Query food database with multilingual support
+      final response = await supabase
+          .from('food_items')
+          .select('name_en, name_ar, name_ku')
+          .or('name_en.ilike.%$searchTerm%,name_ar.ilike.%$searchTerm%,name_ku.ilike.%$searchTerm%')
+          .limit(10);
+
+      final foods = List<Map<String, dynamic>>.from(response);
+
+      // Return names based on locale preference
+      final suggestions = foods.map((food) {
+        if (locale == 'ar' && food['name_ar'] != null) {
+          return food['name_ar'] as String;
+        } else if (locale == 'ku' && food['name_ku'] != null) {
+          return food['name_ku'] as String;
         }
-      }
-    }
+        return food['name_en'] as String;
+      }).toList();
 
-    return suggestions.take(5).toList();
+      return suggestions.take(5).toList();
+    } catch (e) {
+      debugPrint('❌ Failed to fetch food suggestions: $e');
+      // Fallback to basic suggestions on error
+      final basicFoods = ['Chicken breast', 'Rice', 'Broccoli', 'Salmon', 'Eggs'];
+      return basicFoods.where((food) => food.toLowerCase().contains(query.toLowerCase())).take(5).toList();
+    }
   }
 
   /// Check rate limiting
@@ -143,50 +150,75 @@ class NutritionAI {
     List<String>? preferences,
     bool includeReasoning = true,
   }) async {
-    // Placeholder implementation - return mock suggestions
-    final suggestions = <AIFoodSuggestion>[];
+    try {
+      final supabase = Supabase.instance.client;
+      final suggestions = <AIFoodSuggestion>[];
 
-    // Generate mock suggestions based on meal type
-    final mockFoods = _getMockFoodsForMealType(mealType);
+      // Query foods based on meal type tags
+      final tags = _getTagsForMealType(mealType);
 
-    for (var i = 0; i < mockFoods.length; i++) {
-      suggestions.add(AIFoodSuggestion(
-        food: mockFoods[i],
-        category: _getCategoryForMealType(mealType),
-        matchScore: 0.8 - (i * 0.1),
-        reasoning: includeReasoning ? 'Good match for your $mealType based on nutritional goals' : null,
-        tags: ['suggested', if (mealType != null) mealType],
-      ));
+      final response = await supabase
+          .from('food_items')
+          .select('*')
+          .contains('tags', tags)
+          .limit(10);
+
+      final foods = List<Map<String, dynamic>>.from(response);
+
+      // If no foods found with tags, query general foods
+      if (foods.isEmpty) {
+        final fallbackResponse = await supabase
+            .from('food_items')
+            .select('*')
+            .limit(10);
+        foods.addAll(List<Map<String, dynamic>>.from(fallbackResponse));
+      }
+
+      // Convert database records to FoodItem objects
+      for (var i = 0; i < foods.length && i < 5; i++) {
+        final foodData = foods[i];
+        final foodItem = FoodItem(
+          id: foodData['id'] as String?,
+          name: foodData['name_en'] as String,
+          protein: (foodData['protein_g'] as num).toDouble(),
+          carbs: (foodData['carbs_g'] as num).toDouble(),
+          fat: (foodData['fat_g'] as num).toDouble(),
+          kcal: (foodData['kcal'] as num).toDouble(),
+          sodium: (foodData['sodium_mg'] as num?)?.toDouble() ?? 0.0,
+          potassium: (foodData['potassium_mg'] as num?)?.toDouble() ?? 0.0,
+          amount: (foodData['portion_grams'] as num?)?.toDouble() ?? 100.0,
+        );
+
+        suggestions.add(AIFoodSuggestion(
+          food: foodItem,
+          category: _getCategoryForMealType(mealType),
+          matchScore: 0.9 - (i * 0.1), // Decreasing score for each item
+          reasoning: includeReasoning
+              ? 'Recommended for ${mealType ?? "your meal"} based on nutritional profile'
+              : null,
+          tags: ['suggested', if (mealType != null) mealType],
+        ));
+      }
+
+      return suggestions;
+    } catch (e) {
+      debugPrint('❌ Failed to generate food suggestions: $e');
+      // Return empty list on error - UI will handle gracefully
+      return [];
     }
-
-    return suggestions;
   }
 
-  static List<FoodItem> _getMockFoodsForMealType(String? mealType) {
+  /// Get database tags for meal type filtering
+  static List<String> _getTagsForMealType(String? mealType) {
     switch (mealType?.toLowerCase()) {
       case 'breakfast':
-        return [
-          const FoodItem(name: 'Oatmeal', protein: 5.0, carbs: 27.0, fat: 3.0, kcal: 150.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-          const FoodItem(name: 'Eggs', protein: 13.0, carbs: 1.0, fat: 11.0, kcal: 155.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-          const FoodItem(name: 'Banana', protein: 1.0, carbs: 23.0, fat: 0.3, kcal: 89.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-        ];
+        return ['breakfast'];
       case 'lunch':
-        return [
-          const FoodItem(name: 'Chicken Breast', protein: 31.0, carbs: 0.0, fat: 3.6, kcal: 165.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-          const FoodItem(name: 'Brown Rice', protein: 2.6, carbs: 23.0, fat: 0.9, kcal: 111.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-          const FoodItem(name: 'Broccoli', protein: 2.8, carbs: 7.0, fat: 0.4, kcal: 34.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-        ];
+        return ['protein', 'carb'];
       case 'dinner':
-        return [
-          const FoodItem(name: 'Salmon', protein: 20.0, carbs: 0.0, fat: 13.0, kcal: 208.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-          const FoodItem(name: 'Sweet Potato', protein: 1.6, carbs: 20.0, fat: 0.1, kcal: 86.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-          const FoodItem(name: 'Spinach', protein: 2.9, carbs: 3.6, fat: 0.4, kcal: 23.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-        ];
+        return ['protein'];
       default:
-        return [
-          const FoodItem(name: 'Chicken Breast', protein: 31.0, carbs: 0.0, fat: 3.6, kcal: 165.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-          const FoodItem(name: 'Rice', protein: 2.7, carbs: 28.0, fat: 0.3, kcal: 130.0, sodium: 0.0, potassium: 0.0, amount: 100.0),
-        ];
+        return [];
     }
   }
 
