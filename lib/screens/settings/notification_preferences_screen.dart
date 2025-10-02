@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/notifications/workout_notification_types.dart';
-import '../../services/notifications/onesignal_service.dart';
+// OneSignal service archived - no longer in use
+// import '../../services/notifications/onesignal_service.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../theme/design_tokens.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -24,7 +25,8 @@ class NotificationPreferencesScreen extends StatefulWidget {
 
 class _NotificationPreferencesScreenState
     extends State<NotificationPreferencesScreen> {
-  final _oneSignalService = OneSignalService.instance;
+  // OneSignal service archived - no longer in use
+  // final _oneSignalService = OneSignalService.instance;
   final _supabase = Supabase.instance.client;
 
   bool _isLoading = true;
@@ -43,8 +45,10 @@ class _NotificationPreferencesScreenState
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return;
 
-      final preferences =
-          await _oneSignalService.getNotificationPreferences(userId);
+      // OneSignal service archived - load default preferences
+      // final preferences =
+      //     await _oneSignalService.getNotificationPreferences(userId);
+      final preferences = WorkoutNotificationPreferences();
 
       setState(() {
         _preferences = preferences;
@@ -63,13 +67,14 @@ class _NotificationPreferencesScreenState
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return;
 
-      await _oneSignalService.saveNotificationPreferences(userId, _preferences!);
+      // OneSignal service archived - show message that feature is disabled
+      // await _oneSignalService.saveNotificationPreferences(userId, _preferences!);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(LocaleHelper.t('preferences_saved', 'en')),
-            backgroundColor: Colors.green,
+          const SnackBar(
+            content: Text('Push notifications are currently disabled'),
+            backgroundColor: Colors.orange,
           ),
         );
       }
@@ -451,13 +456,14 @@ class _NotificationPreferencesScreenState
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return;
 
-      await _oneSignalService.sendTestNotification(userId);
+      // OneSignal service archived - show message that feature is disabled
+      // await _oneSignalService.sendTestNotification(userId);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(LocaleHelper.t('test_notification_sent', 'en')),
-            backgroundColor: Colors.green,
+          const SnackBar(
+            content: Text('Push notifications are currently disabled'),
+            backgroundColor: Colors.orange,
           ),
         );
       }

@@ -32,7 +32,12 @@
       "Bash(findstr:*)",
       "Bash(dir:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git mv:*)",
+      "Bash(Select-String -Pattern \"archived\" -NotMatch)",
+      "Bash(Select-Object -First 20)",
+      "Bash(tee:*)"
     ],
     "deny": [],
     "ask": []

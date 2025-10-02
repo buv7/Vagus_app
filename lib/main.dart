@@ -6,8 +6,8 @@ import 'config/env_config.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/workout/client_workout_dashboard_screen.dart'; // ✅ import workout screen
 import 'screens/splash/animated_splash_screen.dart';
-// NEW: Import OneSignal service
-import 'services/notifications/onesignal_service.dart';
+// OneSignal service archived - no longer in use
+// import 'services/notifications/onesignal_service.dart';
 import 'services/notifications/notification_helper.dart';
 import 'services/settings/settings_controller.dart';
 import 'services/settings/reduce_motion.dart';
@@ -36,8 +36,8 @@ void main() async {
   debugPrint('🧪 Initial session check: ${session?.user.id ?? "null"}');
   debugPrint('🧪 Has access token: ${session?.accessToken != null}');
 
-  // Initialize OneSignal notifications
-  await OneSignalService.instance.init();
+  // OneSignal notifications disabled - service archived
+  // await OneSignalService.instance.init();
 
   // Initialize local notifications for calendar reminders
   await NotificationHelper.instance.init();

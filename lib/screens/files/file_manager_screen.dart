@@ -6,7 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import '../../widgets/ai/ai_usage_meter.dart';
-import '../../widgets/ai/ai_usage_test_widget.dart';
+// AI Usage Test Widget archived - no longer in use
+// import '../../widgets/ai/ai_usage_test_widget.dart';
 import 'upload_photos_screen.dart';
 import 'coach_file_feedback_screen.dart';
 import '../../theme/design_tokens.dart';
@@ -226,10 +227,10 @@ class _FileManagerScreenState extends State<FileManagerScreen> {
                 onRefresh: _loadFiles,
               ),
             ),
-            
-            // AI Usage Test Panel (for testing purposes)
-            const AIUsageTestWidget(),
-    
+
+            // AI Usage Test Panel archived - no longer displayed
+            // const AIUsageTestWidget(),
+
             // Search and filters
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
