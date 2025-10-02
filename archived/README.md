@@ -4,6 +4,16 @@ This directory contains unused, disconnected, or legacy files from the VAGUS Flu
 
 ## Archive Date
 Files archived on: 2025-10-02
+Phase 2 restoration: 2025-10-02
+
+## Files Restored from Archive
+
+**Phase 2 (2025-10-02):**
+- **note_version_viewer.dart** → Restored to `lib/screens/notes/`
+  - **Reason**: Feature was fully functional, just disconnected from UI
+  - **Status**: Now reconnected in coach_note_screen.dart
+  - **Lines of Code**: ~400
+  - **Functionality**: View note version history with full UI
 
 ## Why Files Are Archived
 

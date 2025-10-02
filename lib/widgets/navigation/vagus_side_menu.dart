@@ -43,6 +43,33 @@ class VagusSideMenu extends StatefulWidget {
 
 class _VagusSideMenuState extends State<VagusSideMenu> {
   final TextEditingController _searchController = TextEditingController();
+  String? _userRole;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserRole();
+  }
+
+  Future<void> _loadUserRole() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user != null) {
+        final profile = await Supabase.instance.client
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+        if (mounted) {
+          setState(() {
+            _userRole = profile['role'] as String?;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading user role: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -176,6 +203,25 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
 
                 // Account Management Section
                 _buildSectionHeader('Account'),
+                // Account Switcher (available for all users)
+                _buildMenuItem(
+                  icon: Icons.swap_horiz,
+                  title: 'Switch Account',
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    Navigator.pushNamed(context, '/account-switch');
+                  },
+                ),
+                // Admin Panel (only for admin role)
+                if (_userRole == 'admin')
+                  _buildMenuItem(
+                    icon: Icons.admin_panel_settings,
+                    title: 'Admin Panel',
+                    onTap: () {
+                      Navigator.pop(context); // Close drawer
+                      Navigator.pushNamed(context, '/admin');
+                    },
+                  ),
                 _buildMenuItem(
                   icon: Icons.star,
                   title: 'Upgrade to Pro',
