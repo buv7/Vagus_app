@@ -41,6 +41,14 @@ class EnvConfig {
   /// Check if running in staging
   static bool get isStaging => environment == 'staging';
 
+  // ==================== Database Configuration ====================
+
+  /// Direct database connection URL (for backend/MCP tools only)
+  /// This is NOT used by the Flutter app - only for server-side operations
+  /// Uses PostgreSQL session pooler for reliable connections
+  static String get databaseUrl =>
+      dotenv.env['DATABASE_URL'] ?? '';
+
   // ==================== Optional Configuration ====================
 
   /// Custom API base URL (if using separate backend)
@@ -68,6 +76,7 @@ class EnvConfig {
         print('   Environment: $environment');
         print('   Supabase URL: ${supabaseUrl.isNotEmpty ? "✓ Set" : "✗ Missing"}');
         print('   Supabase Key: ${supabaseAnonKey.isNotEmpty ? "✓ Set" : "✗ Missing"}');
+        print('   Database URL: ${databaseUrl.isNotEmpty ? "✓ Set (for backend tools)" : "✗ Not set"}');
         print('   OneSignal ID: ${oneSignalAppId.isNotEmpty ? "✓ Set" : "✗ Missing"}');
       }
 
@@ -120,6 +129,7 @@ class EnvConfig {
       'environment': environment,
       'supabaseUrl': supabaseUrl.isNotEmpty ? 'configured' : 'missing',
       'supabaseAnonKey': supabaseAnonKey.isNotEmpty ? 'configured' : 'missing',
+      'databaseUrl': databaseUrl.isNotEmpty ? 'configured' : 'missing',
       'oneSignalAppId': oneSignalAppId.isNotEmpty ? 'configured' : 'missing',
       'isProduction': isProduction,
       'isDevelopment': isDevelopment,

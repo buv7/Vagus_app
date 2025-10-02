@@ -28,7 +28,11 @@
       "Bash(scoop uninstall:*)",
       "Bash(scoop cache rm:*)",
       "Bash(node:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(findstr:*)",
+      "Bash(dir:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
