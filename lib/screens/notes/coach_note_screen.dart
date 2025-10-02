@@ -3,8 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../widgets/branding/vagus_appbar.dart';
 import 'note_reminder_setter.dart';
 import 'smart_panel.dart';
-// Note version viewer archived - will reconnect in Phase 2
-// import 'note_version_viewer.dart';
+// Note version viewer restored in Phase 2
+import 'note_version_viewer.dart';
 import 'voice_recorder.dart';
 import '../../widgets/files/attach_to_note_button.dart';
 import '../../services/ai/embedding_helper.dart';
@@ -159,11 +159,8 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
   }
 
   void _openVersionHistory() {
-    // Note version viewer archived - will reconnect in Phase 2
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Version history feature coming soon')),
-    );
-    /* Navigator.push(
+    // Note version viewer restored in Phase 2
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => NoteVersionViewer(
@@ -171,7 +168,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
           noteTitle: widget.existingNote!['title'] ?? 'Untitled Note',
         ),
       ),
-    ); */
+    );
   }
 
   void _pickReminder() {

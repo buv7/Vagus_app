@@ -18,6 +18,14 @@ import 'screens/settings/user_settings_screen.dart';
 import 'screens/billing/billing_settings.dart';
 import 'screens/admin/admin_screen.dart';
 import 'screens/workout/cardio_log_screen.dart';
+// Additional screen imports for navigation routes
+import 'screens/messaging/coach_threads_screen.dart';
+import 'screens/messaging/client_threads_screen.dart';
+import 'screens/nutrition/nutrition_plan_viewer.dart';
+import 'screens/calendar/calendar_screen.dart';
+import 'screens/progress/client_check_in_calendar.dart';
+import 'screens/files/file_manager_screen.dart';
+import 'screens/account_switch_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -114,20 +122,40 @@ class _VagusMainAppState extends State<VagusMainApp> {
             nextBuilder: (_) => const AuthGate(),
           ),
           routes: {
-            // ✅ Add this route for client workout plan viewer
-            '/client-workout': (context) => const ClientWorkoutDashboardScreen(),
             // Workout routes
+            '/client-workout': (context) => const ClientWorkoutDashboardScreen(),
             '/cardio-log': (context) => const CardioLogScreen(),
-            // Side menu routes
+
+            // Messaging routes
+            '/messages/coach': (context) => const CoachThreadsScreen(),
+            '/messages/client': (context) => const ClientThreadsScreen(),
+            '/messages': (context) => const ClientThreadsScreen(), // Default to client view
+
+            // Nutrition routes
+            '/nutrition': (context) => const NutritionPlanViewer(),
+
+            // Calendar and Progress routes
+            '/calendar': (context) => const CalendarScreen(),
+            '/progress': (context) => const ClientCheckInCalendar(),
+
+            // File management
+            '/files': (context) => const FileManagerScreen(),
+
+            // Account management
+            '/account-switch': (context) => const AccountSwitchScreen(),
+
+            // Settings and Admin routes
             '/settings': (context) => const UserSettingsScreen(),
             '/billing': (context) => const BillingSettings(),
             '/admin': (context) => const AdminScreen(),
-            '/profile/edit': (context) => const UserSettingsScreen(), // Redirect to settings for now
-            '/devices': (context) => const UserSettingsScreen(), // Redirect to settings for now
-            '/ai-usage': (context) => const AdminScreen(), // Redirect to admin for now
-            '/export': (context) => const UserSettingsScreen(), // Redirect to settings for now
-            '/apply-coach': (context) => const AdminScreen(), // Redirect to admin for now
-            '/support': (context) => const UserSettingsScreen(), // Redirect to settings for now
+
+            // Redirects for side menu items
+            '/profile/edit': (context) => const UserSettingsScreen(),
+            '/devices': (context) => const UserSettingsScreen(),
+            '/ai-usage': (context) => const AdminScreen(),
+            '/export': (context) => const UserSettingsScreen(),
+            '/apply-coach': (context) => const AdminScreen(),
+            '/support': (context) => const UserSettingsScreen(),
           },
         );
       },

@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/workout/workout_plan.dart';
 import '../../services/workout/workout_service.dart';
 import 'workout_week_editor.dart';
+import '../../widgets/ai/ai_usage_meter.dart';
 
 /// Simplified Workout Plan Builder - matches NutritionPlanBuilder pattern
 class CoachPlanBuilderScreen extends StatefulWidget {
@@ -260,6 +261,12 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // AI Usage Meter at top
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: AIUsageMeter(isCompact: true),
+                  ),
+
                   // Plan name
                   TextField(
                     controller: _nameController,

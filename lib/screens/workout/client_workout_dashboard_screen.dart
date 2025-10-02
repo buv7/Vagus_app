@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:vagus_app/screens/workout/workout_plan_viewer_screen.dart';
+import '../../widgets/ai/ai_usage_meter.dart';
 
 class ClientWorkoutDashboardScreen extends StatefulWidget {
   const ClientWorkoutDashboardScreen({super.key});
@@ -85,6 +86,12 @@ class _ClientWorkoutDashboardScreenState
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // AI Usage Meter at top
+            const Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: AIUsageMeter(isCompact: true),
+            ),
+
             Text(
               _plan!['name'] ?? 'Unnamed Plan',
               style: Theme.of(context).textTheme.headlineSmall,
