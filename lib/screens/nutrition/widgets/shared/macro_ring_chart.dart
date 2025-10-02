@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
-import '../../../../theme/design_tokens.dart';
 
 /// Reusable circular progress chart for macronutrients
 /// Used throughout the nutrition system for consistent visualization
@@ -90,15 +89,15 @@ class _MacroRingChartState extends State<MacroRingChart>
         width: widget.size,
         height: widget.size,
         decoration: BoxDecoration(
-          color: AppTheme.cardBackground.withOpacity(0.8),
+          color: AppTheme.cardBackground.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(widget.size / 2),
           border: Border.all(
-            color: AppTheme.mediumGrey.withOpacity(0.2),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.2),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -181,7 +180,7 @@ class _MacroRingPainter extends CustomPainter {
 
     // Background ring
     final backgroundPaint = Paint()
-      ..color = AppTheme.mediumGrey.withOpacity(0.2)
+      ..color = AppTheme.mediumGrey.withValues(alpha: 0.2)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -226,7 +225,7 @@ class _MacroRingPainter extends CustomPainter {
     // Add glow effect for over-target
     if (isOverTarget) {
       final glowPaint = Paint()
-        ..color = Colors.red.withOpacity(0.3)
+        ..color = Colors.red.withValues(alpha: 0.3)
         ..strokeWidth = strokeWidth + 4
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
@@ -275,7 +274,7 @@ class MultiMacroRingChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
       child: Stack(
@@ -387,7 +386,7 @@ class _MultiMacroRingPainter extends CustomPainter {
 
     // Background ring
     final backgroundPaint = Paint()
-      ..color = AppTheme.mediumGrey.withOpacity(0.1)
+      ..color = AppTheme.mediumGrey.withValues(alpha: 0.1)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
 

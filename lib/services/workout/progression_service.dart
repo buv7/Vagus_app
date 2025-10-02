@@ -427,7 +427,7 @@ class ProgressionService {
   ) {
     // Get wave multiplier for this week
     final pattern = WavePattern.standard;
-    final weekNumber = week.weekNumber ?? 1;
+    final weekNumber = week.weekNumber;
     final multiplier = pattern.intensityMultipliers[
       (weekNumber - 1) % pattern.intensityMultipliers.length
     ];
@@ -452,7 +452,7 @@ class ProgressionService {
   ) {
     // Determine current block phase
     final blockCycle = BlockSettings.standardCycle;
-    final weekNumber = week.weekNumber ?? 1;
+    final weekNumber = week.weekNumber;
 
     BlockSettings currentBlock = blockCycle.first;
     int weeksInCycle = 0;

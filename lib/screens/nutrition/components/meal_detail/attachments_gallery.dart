@@ -6,7 +6,6 @@ import '../../../../theme/design_tokens.dart';
 import '../../../../models/nutrition/nutrition_plan.dart';
 import '../../../../services/nutrition/locale_helper.dart';
 import '../../../../services/haptics.dart';
-import '../../widgets/shared/nutrition_card.dart';
 import '../../widgets/shared/empty_state_widget.dart';
 
 /// Gallery for meal photo attachments with upload and management capabilities
@@ -226,7 +225,7 @@ class _AttachmentsGalleryState extends State<AttachmentsGallery>
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Close photo',
-      barrierColor: Colors.black.withOpacity(0.8),
+      barrierColor: Colors.black.withValues(alpha: 0.8),
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) {
         return _PhotoViewModal(
@@ -355,7 +354,7 @@ class _PhotoThumbnail extends StatelessWidget {
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -378,7 +377,7 @@ class _PhotoThumbnail extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.3),
+                    Colors.black.withValues(alpha: 0.3),
                   ],
                 ),
               ),
@@ -391,7 +390,7 @@ class _PhotoThumbnail extends StatelessWidget {
                 right: DesignTokens.space8,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.8),
+                    color: Colors.red.withValues(alpha: 0.8),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
@@ -419,7 +418,7 @@ class _PhotoThumbnail extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: Text(
@@ -467,7 +466,7 @@ class _PhotoThumbnail extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      color: AppTheme.mediumGrey.withOpacity(0.2),
+      color: AppTheme.mediumGrey.withValues(alpha: 0.2),
       child: const Center(
         child: CircularProgressIndicator(
           color: AppTheme.accentGreen,
@@ -481,7 +480,7 @@ class _PhotoThumbnail extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      color: AppTheme.mediumGrey.withOpacity(0.2),
+      color: AppTheme.mediumGrey.withValues(alpha: 0.2),
       child: const Icon(
         Icons.broken_image,
         color: AppTheme.lightGrey,
@@ -532,7 +531,7 @@ class _PhotoViewModal extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withOpacity(0.6),
+                      Colors.black.withValues(alpha: 0.6),
                       Colors.transparent,
                     ],
                   ),
@@ -546,7 +545,7 @@ class _PhotoViewModal extends StatelessWidget {
                         color: Colors.white,
                       ),
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.black.withOpacity(0.3),
+                        backgroundColor: Colors.black.withValues(alpha: 0.3),
                       ),
                     ),
 
@@ -571,7 +570,7 @@ class _PhotoViewModal extends StatelessWidget {
                           color: Colors.red,
                         ),
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.black.withOpacity(0.3),
+                          backgroundColor: Colors.black.withValues(alpha: 0.3),
                         ),
                       ),
                   ],

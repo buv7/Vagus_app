@@ -190,13 +190,13 @@ class WorkoutExportService {
   ) async {
     try {
       // Get the render object
-      RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!
+      final RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary;
 
       // Capture the image
-      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final Uint8List pngBytes = byteData!.buffer.asUint8List();
 
       // Save to file
       final directory = await getApplicationDocumentsDirectory();

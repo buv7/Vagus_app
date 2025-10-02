@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -90,15 +89,15 @@ class _CustomFoodsTabState extends State<CustomFoodsTab>
       child: Column(
         children: [
           // Title
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.add_circle_outline,
                 color: AppTheme.accentGreen,
                 size: 24,
               ),
-              const SizedBox(width: DesignTokens.space8),
-              const Expanded(
+              SizedBox(width: DesignTokens.space8),
+              Expanded(
                 child: Text(
                   'Custom Foods',
                   style: TextStyle(
@@ -211,13 +210,13 @@ class _CustomFoodsTabState extends State<CustomFoodsTab>
                 vertical: 4,
               ),
               decoration: BoxDecoration(
-                color: AppTheme.lightBlue.withOpacity(0.2),
+                color: AppTheme.lightBlue.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppTheme.lightBlue.withOpacity(0.5),
+                  color: AppTheme.lightBlue.withValues(alpha: 0.5),
                 ),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
@@ -225,8 +224,8 @@ class _CustomFoodsTabState extends State<CustomFoodsTab>
                     color: AppTheme.lightBlue,
                     size: 12,
                   ),
-                  const SizedBox(width: 4),
-                  const Text(
+                  SizedBox(width: 4),
+                  Text(
                     'Custom',
                     style: TextStyle(
                       color: AppTheme.lightBlue,
@@ -253,10 +252,10 @@ class _CustomFoodsTabState extends State<CustomFoodsTab>
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: AppTheme.lightOrange.withOpacity(0.2),
+                      color: AppTheme.lightOrange.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.edit,
                       color: AppTheme.lightOrange,
                       size: 16,
@@ -273,7 +272,7 @@ class _CustomFoodsTabState extends State<CustomFoodsTab>
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.red.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -499,13 +498,13 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           ),
         ),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.restaurant_menu,
             color: AppTheme.accentGreen,
             size: 24,
@@ -530,7 +529,7 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppTheme.mediumGrey.withOpacity(0.2),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -605,7 +604,7 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
               color: AppTheme.cardDark,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppTheme.mediumGrey.withOpacity(0.3),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                 style: BorderStyle.solid,
               ),
             ),
@@ -617,7 +616,7 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
                     fit: BoxFit.cover,
                   ),
                 )
-              : Column(
+              : const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
@@ -625,8 +624,8 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
                       color: AppTheme.lightGrey,
                       size: 32,
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
+                    SizedBox(height: 8),
+                    Text(
                       'Tap to add photo',
                       style: TextStyle(
                         color: AppTheme.lightGrey,
@@ -809,12 +808,12 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
             color: AppTheme.cardDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppTheme.mediumGrey.withOpacity(0.3),
+              color: AppTheme.mediumGrey.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.share,
                 color: AppTheme.accentGreen,
                 size: 20,
@@ -898,14 +897,14 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.6),
+              color: AppTheme.lightGrey.withValues(alpha: 0.6),
             ),
             filled: true,
             fillColor: AppTheme.cardDark,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: AppTheme.mediumGrey.withOpacity(0.3),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.3),
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -968,14 +967,14 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.6),
+              color: AppTheme.lightGrey.withValues(alpha: 0.6),
             ),
             filled: true,
             fillColor: AppTheme.cardDark,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: AppTheme.mediumGrey.withOpacity(0.3),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.3),
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -1027,7 +1026,7 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
             color: AppTheme.cardDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppTheme.mediumGrey.withOpacity(0.3),
+              color: AppTheme.mediumGrey.withValues(alpha: 0.3),
             ),
           ),
           child: DropdownButtonHideUnderline(
@@ -1063,7 +1062,7 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           ),
         ),
       ),
@@ -1074,7 +1073,7 @@ class _CustomFoodCreatorSheetState extends State<CustomFoodCreatorSheet>
               onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.lightGrey,
-                side: BorderSide(color: AppTheme.mediumGrey.withOpacity(0.5)),
+                side: BorderSide(color: AppTheme.mediumGrey.withValues(alpha: 0.5)),
                 padding: const EdgeInsets.symmetric(vertical: DesignTokens.space14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

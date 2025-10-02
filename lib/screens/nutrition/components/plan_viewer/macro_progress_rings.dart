@@ -95,7 +95,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                         vertical: DesignTokens.space4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentGreen.withOpacity(0.1),
+                        color: AppTheme.accentGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(DesignTokens.radius8),
                       ),
                       child: Text(
@@ -197,10 +197,10 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -226,7 +226,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
           Container(
             height: 4,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(2),
             ),
             child: FractionallySizedBox(
@@ -262,10 +262,10 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryDark.withOpacity(0.3),
+        color: AppTheme.primaryDark.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.accentGreen.withOpacity(0.3),
+          color: AppTheme.accentGreen.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -274,7 +274,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.accentGreen.withOpacity(0.2),
+              color: AppTheme.accentGreen.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -302,7 +302,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                 Row(
                   children: [
                     Text(
-                      '${current.toStringAsFixed(0)}',
+                      current.toStringAsFixed(0),
                       style: const TextStyle(
                         color: AppTheme.neutralWhite,
                         fontSize: 20,
@@ -321,7 +321,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                 const SizedBox(height: DesignTokens.space8),
                 LinearProgressIndicator(
                   value: (current / target).clamp(0.0, 1.0),
-                  backgroundColor: AppTheme.mediumGrey.withOpacity(0.3),
+                  backgroundColor: AppTheme.mediumGrey.withValues(alpha: 0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     isOverTarget ? Colors.orange : AppTheme.accentGreen,
                   ),
@@ -363,7 +363,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: AppTheme.mediumGrey.withOpacity(0.1),
+        color: AppTheme.mediumGrey.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
       ),
       child: Column(

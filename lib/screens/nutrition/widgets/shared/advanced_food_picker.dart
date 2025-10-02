@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -263,7 +262,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppTheme.mediumGrey.withOpacity(0.2),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -293,7 +292,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                   Text(
                     'to ${widget.mealType}',
                     style: TextStyle(
-                      color: AppTheme.lightGrey.withOpacity(0.8),
+                      color: AppTheme.lightGrey.withValues(alpha: 0.8),
                       fontSize: 14,
                     ),
                   ),
@@ -309,7 +308,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withOpacity(0.2),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -334,8 +333,8 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _searchFocus.hasFocus
-              ? AppTheme.accentGreen.withOpacity(0.5)
-              : AppTheme.mediumGrey.withOpacity(0.3),
+              ? AppTheme.accentGreen.withValues(alpha: 0.5)
+              : AppTheme.mediumGrey.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -349,12 +348,12 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
           decoration: InputDecoration(
             hintText: 'Search foods, brands, or barcodes...',
             hintStyle: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.6),
+              color: AppTheme.lightGrey.withValues(alpha: 0.6),
               fontSize: 16,
             ),
             prefixIcon: Icon(
               Icons.search,
-              color: AppTheme.lightGrey.withOpacity(0.6),
+              color: AppTheme.lightGrey.withValues(alpha: 0.6),
               size: 20,
             ),
             suffixIcon: _currentQuery.isNotEmpty
@@ -365,7 +364,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                   },
                   child: Icon(
                     Icons.clear,
-                    color: AppTheme.lightGrey.withOpacity(0.6),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.6),
                     size: 20,
                   ),
                 )
@@ -421,13 +420,13 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
           ),
           decoration: BoxDecoration(
             color: isActive
-              ? AppTheme.accentGreen.withOpacity(0.2)
+              ? AppTheme.accentGreen.withValues(alpha: 0.2)
               : AppTheme.cardDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isActive
-                ? AppTheme.accentGreen.withOpacity(0.5)
-                : AppTheme.mediumGrey.withOpacity(0.3),
+                ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                : AppTheme.mediumGrey.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -541,7 +540,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
           padding: const EdgeInsets.all(DesignTokens.space20),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome,
                 color: AppTheme.accentGreen,
                 size: 20,
@@ -599,7 +598,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
           color: AppTheme.cardDark,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -614,7 +613,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppTheme.accentGreen.withOpacity(0.1),
+                    color: AppTheme.accentGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: food.imageUrl != null
@@ -624,7 +623,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                           food.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(
+                            return const Icon(
                               Icons.restaurant,
                               color: AppTheme.accentGreen,
                               size: 24,
@@ -632,7 +631,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                           },
                         ),
                       )
-                    : Icon(
+                    : const Icon(
                         Icons.restaurant,
                         color: AppTheme.accentGreen,
                         size: 24,
@@ -659,7 +658,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                         Text(
                           food.brand!,
                           style: TextStyle(
-                            color: AppTheme.lightGrey.withOpacity(0.8),
+                            color: AppTheme.lightGrey.withValues(alpha: 0.8),
                             fontSize: 14,
                           ),
                         ),
@@ -677,7 +676,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
             ),
 
             // Nutrition info
-            if (showNutrition && food.calories != null) ...[
+            if (showNutrition) ...[
               const SizedBox(height: DesignTokens.space12),
               Container(
                 padding: const EdgeInsets.all(DesignTokens.space12),
@@ -689,12 +688,9 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _buildNutrientInfo('${food.calories}', 'kcal', AppTheme.lightOrange),
-                    if (food.protein != null)
-                      _buildNutrientInfo('${food.protein}g', 'protein', AppTheme.accentGreen),
-                    if (food.carbs != null)
-                      _buildNutrientInfo('${food.carbs}g', 'carbs', AppTheme.lightOrange),
-                    if (food.fat != null)
-                      _buildNutrientInfo('${food.fat}g', 'fat', AppTheme.lightYellow),
+                    _buildNutrientInfo('${food.protein}g', 'protein', AppTheme.accentGreen),
+                    _buildNutrientInfo('${food.carbs}g', 'carbs', AppTheme.lightOrange),
+                    _buildNutrientInfo('${food.fat}g', 'fat', AppTheme.lightYellow),
                   ],
                 ),
               ),
@@ -712,7 +708,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
         vertical: 4,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -747,7 +743,7 @@ class _AdvancedFoodPickerState extends State<AdvancedFoodPicker>
         Text(
           label,
           style: TextStyle(
-            color: AppTheme.lightGrey.withOpacity(0.6),
+            color: AppTheme.lightGrey.withValues(alpha: 0.6),
             fontSize: 10,
           ),
         ),

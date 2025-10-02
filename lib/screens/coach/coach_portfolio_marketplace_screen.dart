@@ -88,8 +88,8 @@ class _CoachPortfolioMarketplaceScreenState extends State<CoachPortfolioMarketpl
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DesignTokens.primaryDark,
-      appBar: VagusAppBar(
-        title: const Text(
+      appBar: const VagusAppBar(
+        title: Text(
           'Coach Portfolio',
           style: TextStyle(
             color: Colors.white,

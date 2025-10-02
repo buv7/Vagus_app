@@ -1,17 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('WorkoutSummaryCard Widget', () {
     testWidgets('renders all summary metrics', (tester) async {
       // Arrange
-      final summary = {
-        'total_volume': 5000.0,
-        'total_duration': 240,
-        'total_sets': 45,
-        'days_completed': 4,
-        'days_total': 5,
-      };
+      // final summary = {
+      //   'total_volume': 5000.0,
+      //   'total_duration': 240,
+      //   'total_sets': 45,
+      //   'days_completed': 4,
+      //   'days_total': 5,
+      // };
 
       // Act
       // await tester.pumpWidget(MaterialApp(

@@ -5,7 +5,6 @@ import '../../../../models/nutrition/nutrition_plan.dart';
 import '../../../../services/nutrition/locale_helper.dart';
 import '../../../../services/haptics.dart';
 import 'nutrition_card.dart';
-import 'animated_circular_progress_rings.dart';
 
 /// Comprehensive nutrition dashboard with card grid layout
 /// Features: 8 cards (calories, macros, fiber, water, sodium, potassium)
@@ -209,7 +208,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFFEF4444).withOpacity(0.2),
+              color: const Color(0xFFEF4444).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: const Icon(
@@ -223,7 +222,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
 
           // Value
           Text(
-            '${calories.toStringAsFixed(0)}',
+            calories.toStringAsFixed(0),
             style: const TextStyle(
               color: AppTheme.neutralWhite,
               fontSize: 24,
@@ -247,7 +246,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             width: double.infinity,
             height: 4,
             decoration: BoxDecoration(
-              color: AppTheme.mediumGrey.withOpacity(0.3),
+              color: AppTheme.mediumGrey.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
             child: FractionallySizedBox(
@@ -297,10 +296,10 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
                 progress: progress,
                 color: const Color(0xFF00D9A3),
               ),
-              child: Center(
+              child: const Center(
                 child: Icon(
                   Icons.fitness_center,
-                  color: const Color(0xFF00D9A3),
+                  color: Color(0xFF00D9A3),
                   size: 20,
                 ),
               ),
@@ -362,10 +361,10 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
                 progress: progress,
                 color: const Color(0xFFFF9A3C),
               ),
-              child: Center(
+              child: const Center(
                 child: Icon(
                   Icons.grain,
-                  color: const Color(0xFFFF9A3C),
+                  color: Color(0xFFFF9A3C),
                   size: 20,
                 ),
               ),
@@ -427,10 +426,10 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
                 progress: progress,
                 color: const Color(0xFFFFD93C),
               ),
-              child: Center(
+              child: const Center(
                 child: Icon(
                   Icons.eco,
-                  color: const Color(0xFFFFD93C),
+                  color: Color(0xFFFFD93C),
                   size: 20,
                 ),
               ),
@@ -488,7 +487,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             width: 60,
             height: 8,
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.2),
+              color: Colors.green.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(4),
             ),
             child: FractionallySizedBox(
@@ -531,7 +530,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
           Text(
             'Goal: ${target.toStringAsFixed(0)}g',
             style: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.8),
+              color: AppTheme.lightGrey.withValues(alpha: 0.8),
               fontSize: 9,
             ),
           ),
@@ -553,10 +552,10 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: Colors.blue.withOpacity(0.3),
+                color: Colors.blue.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -571,13 +570,13 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
                   child: Container(
                     height: (52 * progress).clamp(0.0, 52.0),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.6),
+                      color: Colors.blue.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(26),
                     ),
                   ),
                 ),
                 // Water drop icon
-                Icon(
+                const Icon(
                   Icons.water_drop,
                   color: Colors.blue,
                   size: 20,
@@ -590,7 +589,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
 
           // Value
           Text(
-            '${glasses.toStringAsFixed(0)}',
+            glasses.toStringAsFixed(0),
             style: const TextStyle(
               color: AppTheme.neutralWhite,
               fontSize: 16,
@@ -614,7 +613,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
           Text(
             '${(progress * 100).round()}% of 8',
             style: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.8),
+              color: AppTheme.lightGrey.withValues(alpha: 0.8),
               fontSize: 9,
             ),
           ),
@@ -624,8 +623,6 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
   }
 
   Widget _buildSodiumCard(double sodium, String locale) {
-    final target = _targets['sodium']!;
-    final progress = sodium / target;
     final status = _getSodiumStatus(sodium);
 
     return NutritionCard(
@@ -637,7 +634,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: status.color.withOpacity(0.2),
+              color: status.color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: Icon(
@@ -651,7 +648,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
 
           // Value
           Text(
-            '${sodium.toStringAsFixed(0)}',
+            sodium.toStringAsFixed(0),
             style: const TextStyle(
               color: AppTheme.neutralWhite,
               fontSize: 14,
@@ -707,7 +704,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.2),
+              color: Colors.purple.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: const Icon(
@@ -721,7 +718,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
 
           // Value
           Text(
-            '${potassium.toStringAsFixed(0)}',
+            potassium.toStringAsFixed(0),
             style: const TextStyle(
               color: AppTheme.neutralWhite,
               fontSize: 14,
@@ -826,7 +823,7 @@ class _MiniRingPainter extends CustomPainter {
 
     // Background circle
     final backgroundPaint = Paint()
-      ..color = color.withOpacity(0.2)
+      ..color = color.withValues(alpha: 0.2)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke;
 

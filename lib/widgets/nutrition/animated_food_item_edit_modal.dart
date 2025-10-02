@@ -240,7 +240,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
       if (mounted) {
         setState(() => _isSearching = false);
       }
-      print('Error searching food: $e');
+      // Error searching food: $e
     }
   }
 

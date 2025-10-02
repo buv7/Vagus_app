@@ -29,14 +29,14 @@ class WeekProgressBar extends StatelessWidget {
   final Function(int)? onWeekTap;
 
   const WeekProgressBar({
-    Key? key,
+    super.key,
     required this.totalWeeks,
     required this.currentWeek,
     this.completedWeeks = const [],
     this.deloadWeeks = const [],
     this.weekVolumeChanges,
     this.onWeekTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -128,11 +128,11 @@ class WeekProgressBar extends StatelessWidget {
                       child: Container(
                         width: 16,
                         height: 16,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.green,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.check,
                           size: 12,
                           color: Colors.white,
@@ -148,11 +148,11 @@ class WeekProgressBar extends StatelessWidget {
                       child: Container(
                         width: 16,
                         height: 16,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.orange,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.battery_charging_full,
                           size: 10,
                           color: Colors.white,

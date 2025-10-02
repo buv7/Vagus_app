@@ -3,6 +3,7 @@
 /// This file demonstrates how to use the new UnifiedCoachProfileScreen
 /// and provides migration guidance from the old fragmented screens.
 ///
+library;
 
 import 'package:flutter/material.dart';
 import '../../services/navigation/app_navigator.dart';

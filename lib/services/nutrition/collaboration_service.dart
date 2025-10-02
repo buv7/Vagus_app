@@ -576,7 +576,7 @@ class CollaborationService extends ChangeNotifier {
           .single();
 
       notifyListeners();
-      return Household.fromJson(response as Map<String, dynamic>);
+      return Household.fromJson(response);
     } catch (e) {
       debugPrint('Error creating household: $e');
       return null;
@@ -631,7 +631,7 @@ class CollaborationService extends ChangeNotifier {
         .maybeSingle();
 
     if (response == null) return null;
-    return Household.fromJson(response as Map<String, dynamic>);
+    return Household.fromJson(response);
   }
 
   // =====================================================
@@ -667,7 +667,7 @@ class CollaborationService extends ChangeNotifier {
           .select()
           .single();
 
-      final session = CollaborationSession.fromJson(response as Map<String, dynamic>);
+      final session = CollaborationSession.fromJson(response);
       _activeSessions[session.id] = session;
 
       // Subscribe to real-time updates
@@ -753,7 +753,7 @@ class CollaborationService extends ChangeNotifier {
           .select()
           .single();
 
-      return VersionHistory.fromJson(response as Map<String, dynamic>);
+      return VersionHistory.fromJson(response);
     } catch (e) {
       debugPrint('Error saving version: $e');
       return null;
@@ -803,7 +803,7 @@ class CollaborationService extends ChangeNotifier {
 
       if (response == null) return false;
 
-      final version = VersionHistory.fromJson(response as Map<String, dynamic>);
+      final version = VersionHistory.fromJson(response);
 
       // Restore snapshot
       await _supabase
@@ -844,7 +844,7 @@ class CollaborationService extends ChangeNotifier {
           .select()
           .single();
 
-      return CommentThread.fromJson(response as Map<String, dynamic>);
+      return CommentThread.fromJson(response);
     } catch (e) {
       debugPrint('Error creating comment thread: $e');
       return null;
@@ -914,7 +914,7 @@ class CollaborationService extends ChangeNotifier {
           .single();
 
       notifyListeners();
-      return Cohort.fromJson(response as Map<String, dynamic>);
+      return Cohort.fromJson(response);
     } catch (e) {
       debugPrint('Error creating cohort: $e');
       return null;
@@ -950,7 +950,7 @@ class CollaborationService extends ChangeNotifier {
           .single();
 
       notifyListeners();
-      return SharedResource.fromJson(response as Map<String, dynamic>);
+      return SharedResource.fromJson(response);
     } catch (e) {
       debugPrint('Error sharing resource: $e');
       return null;

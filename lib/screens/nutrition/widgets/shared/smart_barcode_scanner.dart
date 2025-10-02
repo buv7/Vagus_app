@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -40,9 +38,8 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
   bool _isScanning = false;
   bool _hasPermission = false;
   bool _showManualEntry = false;
-  String? _lastScannedBarcode;
   FoodItem? _recognizedFood;
-  List<String> _scanHistory = [];
+  final List<String> _scanHistory = [];
 
   final TextEditingController _manualBarcodeController = TextEditingController();
 
@@ -209,7 +206,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: const Icon(
@@ -229,7 +226,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
                 vertical: DesignTokens.space8,
               ),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
@@ -254,7 +251,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: const Icon(
@@ -272,7 +269,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
 
   Widget _buildScanningArea() {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 280,
         height: 280,
         child: Stack(
@@ -301,7 +298,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.accentGreen.withOpacity(0.5),
+                            color: AppTheme.accentGreen.withValues(alpha: 0.5),
                             blurRadius: 4,
                           ),
                         ],
@@ -326,7 +323,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
         border: Border.all(
           color: _recognizedFood != null
             ? AppTheme.accentGreen
-            : Colors.white.withOpacity(0.8),
+            : Colors.white.withValues(alpha: 0.8),
           width: 2,
         ),
         borderRadius: BorderRadius.circular(16),
@@ -401,11 +398,11 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
             margin: const EdgeInsets.all(DesignTokens.space20),
             padding: const EdgeInsets.all(DesignTokens.space16),
             decoration: BoxDecoration(
-              color: AppTheme.accentGreen.withOpacity(0.9),
+              color: AppTheme.accentGreen.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.accentGreen.withOpacity(0.3),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -420,9 +417,9 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
                   size: 32,
                 ),
                 const SizedBox(height: DesignTokens.space8),
-                Text(
+                const Text(
                   'Food Found!',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -539,7 +536,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
           vertical: DesignTokens.space12,
         ),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
+          color: Colors.black.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -561,7 +558,7 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
 
   Widget _buildManualEntry() {
     return Container(
-      color: Colors.black.withOpacity(0.8),
+      color: Colors.black.withValues(alpha: 0.8),
       child: Center(
         child: Container(
           margin: const EdgeInsets.all(DesignTokens.space20),
@@ -591,12 +588,12 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
                 decoration: InputDecoration(
                   hintText: 'Enter barcode number',
                   hintStyle: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.6),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.6),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: AppTheme.mediumGrey.withOpacity(0.3),
+                      color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -673,7 +670,6 @@ class _SmartBarcodeScannerState extends State<SmartBarcodeScanner>
 
   Future<void> _processBarcode(String barcode) async {
     setState(() {
-      _lastScannedBarcode = barcode;
       _isScanning = false;
     });
 

@@ -1,6 +1,7 @@
 /// Progression Models and Enums
 ///
 /// Data models for intelligent workout progression
+library;
 
 /// Progression type
 enum ProgressionType {

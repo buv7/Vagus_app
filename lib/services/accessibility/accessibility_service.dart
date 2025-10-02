@@ -23,7 +23,7 @@ class AccessibilityService {
   Future<void> initialize(BuildContext context) async {
     // Detect system accessibility settings
     final mediaQuery = MediaQuery.of(context);
-    _textScaleFactor = mediaQuery.textScaleFactor;
+    _textScaleFactor = mediaQuery.textScaler.scale(1.0);
     _reduceMotion = mediaQuery.disableAnimations;
     _highContrastMode = mediaQuery.highContrast;
 
@@ -139,9 +139,9 @@ class AccessibilityService {
   }
 
   double _calculateRelativeLuminance(Color color) {
-    final r = _linearizeColorChannel(color.red / 255);
-    final g = _linearizeColorChannel(color.green / 255);
-    final b = _linearizeColorChannel(color.blue / 255);
+    final r = _linearizeColorChannel((color.r * 255.0).round() / 255);
+    final g = _linearizeColorChannel((color.g * 255.0).round() / 255);
+    final b = _linearizeColorChannel((color.b * 255.0).round() / 255);
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
@@ -175,10 +175,10 @@ class AccessibilityService {
       button: true,
       enabled: true,
       child: Focus(
-        onKey: (node, event) {
+        onKeyEvent: (node, event) {
           if (event.logicalKey == LogicalKeyboardKey.enter ||
               event.logicalKey == LogicalKeyboardKey.space) {
-            if (event is RawKeyDownEvent) {
+            if (event is KeyDownEvent) {
               onPressed();
               return KeyEventResult.handled;
             }

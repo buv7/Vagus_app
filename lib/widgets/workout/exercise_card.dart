@@ -41,7 +41,7 @@ class ExerciseCard extends StatefulWidget {
   final Function(String)? onCommentChanged;
 
   const ExerciseCard({
-    Key? key,
+    super.key,
     required this.exercise,
     this.showGroupBadge = false,
     this.isEditable = true,
@@ -54,7 +54,7 @@ class ExerciseCard extends StatefulWidget {
     this.previousWeight,
     this.comment,
     this.onCommentChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<ExerciseCard> createState() => _ExerciseCardState();

@@ -143,12 +143,12 @@ class _FoodItemEditModalState extends State<FoodItemEditModal> {
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF1A3A3A),
-                    const Color(0xFF0D2626),
+                    Color(0xFF1A3A3A),
+                    Color(0xFF0D2626),
                   ],
                 ),
                 borderRadius: const BorderRadius.vertical(

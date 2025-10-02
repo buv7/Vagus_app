@@ -25,17 +25,11 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
   String _error = '';
 
   late TabController _tabController;
-  int _activeTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _activeTabIndex = _tabController.index;
-      });
-    });
     _loadPlans();
   }
 
@@ -55,8 +49,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
 
       // Get unique client IDs
       final clientIds = plans
-          .where((p) => p.clientId != null)
-          .map((p) => p.clientId!)
+          .map((p) => p.clientId)
           .toSet()
           .toList();
 
@@ -118,7 +111,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                                 size: 64,
                               ),
                               const SizedBox(height: 16),
-                              Text(
+                              const Text(
                                 'Error loading plans',
                                 style: TextStyle(
                                   color: AppTheme.neutralWhite,
@@ -129,7 +122,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                               const SizedBox(height: 8),
                               Text(
                                 _error,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppTheme.lightGrey,
                                   fontSize: 14,
                                 ),
@@ -205,7 +198,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
               ),
               Text(
                 '${_plans.length} plans',
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppTheme.lightGrey,
                   fontSize: 14,
                 ),
@@ -288,7 +281,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
           const SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppTheme.lightGrey,
               fontSize: 16,
             ),
@@ -316,9 +309,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
   }
 
   Widget _buildPlanCard(NutritionPlan plan) {
-    final clientName = plan.clientId != null
-        ? _clientNames[plan.clientId!] ?? 'Unknown Client'
-        : 'Template';
+    final clientName = _clientNames[plan.clientId] ?? 'Template';
     final summary = plan.dailySummary;
 
     return Container(
@@ -360,7 +351,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                       children: [
                         CircleAvatar(
                           backgroundColor: AppTheme.accentGreen.withValues(alpha: 0.2),
-                          child: Icon(
+                          child: const Icon(
                             Icons.person,
                             color: AppTheme.accentGreen,
                           ),
@@ -372,7 +363,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                             children: [
                               Text(
                                 clientName,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppTheme.neutralWhite,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -380,7 +371,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                               ),
                               Text(
                                 plan.name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppTheme.lightGrey,
                                   fontSize: 14,
                                 ),
@@ -395,7 +386,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                             color: AppTheme.accentGreen.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Active',
                             style: TextStyle(
                               color: AppTheme.accentGreen,
@@ -442,7 +433,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.local_fire_department,
                           color: AppTheme.accentOrange,
                           size: 18,
@@ -450,14 +441,14 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                         const SizedBox(width: 6),
                         Text(
                           '${summary.totalKcal.toInt()} kcal',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.neutralWhite,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Icon(
+                        const Icon(
                           Icons.restaurant,
                           color: AppTheme.lightGrey,
                           size: 18,
@@ -465,7 +456,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
                         const SizedBox(width: 6),
                         Text(
                           '${plan.meals.length} meals',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppTheme.lightGrey,
                             fontSize: 14,
                           ),
@@ -506,7 +497,7 @@ class _CoachNutritionDashboardState extends State<CoachNutritionDashboard> with 
           const SizedBox(width: 6),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.bold,

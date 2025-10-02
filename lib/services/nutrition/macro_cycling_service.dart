@@ -682,7 +682,7 @@ class MacroCyclingService extends ChangeNotifier {
           .single();
 
       notifyListeners();
-      return ActiveMacroCycle.fromJson(response as Map<String, dynamic>);
+      return ActiveMacroCycle.fromJson(response);
     } catch (e) {
       debugPrint('Error starting macro cycle: $e');
       return null;
@@ -701,7 +701,7 @@ class MacroCyclingService extends ChangeNotifier {
 
       if (response == null) return null;
 
-      return ActiveMacroCycle.fromJson(response as Map<String, dynamic>);
+      return ActiveMacroCycle.fromJson(response);
     } catch (e) {
       debugPrint('Error fetching active cycle: $e');
       return null;
@@ -746,7 +746,7 @@ class MacroCyclingService extends ChangeNotifier {
           .single();
 
       notifyListeners();
-      return DietPhaseProgram.fromJson(response as Map<String, dynamic>);
+      return DietPhaseProgram.fromJson(response);
     } catch (e) {
       debugPrint('Error creating phase program: $e');
       return null;
@@ -765,7 +765,7 @@ class MacroCyclingService extends ChangeNotifier {
 
       if (response == null) return null;
 
-      return DietPhaseProgram.fromJson(response as Map<String, dynamic>);
+      return DietPhaseProgram.fromJson(response);
     } catch (e) {
       debugPrint('Error fetching phase program: $e');
       return null;
@@ -820,7 +820,7 @@ class MacroCyclingService extends ChangeNotifier {
           .single();
 
       notifyListeners();
-      return RefeedSchedule.fromJson(response as Map<String, dynamic>);
+      return RefeedSchedule.fromJson(response);
     } catch (e) {
       debugPrint('Error setting up refeed: $e');
       return null;
@@ -839,7 +839,7 @@ class MacroCyclingService extends ChangeNotifier {
 
       if (response == null) return null;
 
-      return RefeedSchedule.fromJson(response as Map<String, dynamic>);
+      return RefeedSchedule.fromJson(response);
     } catch (e) {
       debugPrint('Error fetching refeed schedule: $e');
       return null;
@@ -870,12 +870,12 @@ class MacroCyclingService extends ChangeNotifier {
     double totalCarbs = 0;
     double totalFat = 0;
 
-    cycle.dayTargets.values.forEach((target) {
+    for (var target in cycle.dayTargets.values) {
       totalCalories += target.calorieTarget;
       totalProtein += target.proteinTarget;
       totalCarbs += target.carbTarget;
       totalFat += target.fatTarget;
-    });
+    }
 
     final days = cycle.dayTargets.length;
 

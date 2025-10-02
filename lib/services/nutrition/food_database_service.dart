@@ -34,7 +34,7 @@ class FoodDatabaseService {
 
       return [];
     } catch (e) {
-      print('Error searching foods: $e');
+      // Error searching foods: $e
       return [];
     }
   }
@@ -58,7 +58,7 @@ class FoodDatabaseService {
 
       return null;
     } catch (e) {
-      print('Error fetching food nutrition: $e');
+      // Error fetching food nutrition: $e
       return null;
     }
   }

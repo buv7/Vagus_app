@@ -8,11 +8,9 @@ import '../../services/workout/workout_service.dart';
 import '../../services/ai/ai_usage_service.dart';
 import 'widgets/workout_session_manager.dart';
 import 'widgets/exercise_completion_widget.dart';
-import 'widgets/rest_timer_widget.dart';
 import 'widgets/progress_chart_widget.dart';
 // import 'widgets/exercise_demo_player.dart'; // Not yet implemented
 // import 'widgets/muscle_activation_visual.dart'; // Not yet implemented
-import 'package:intl/intl.dart';
 
 /// Enhanced Workout Plan Viewer with session mode, progress tracking, and offline support
 class WorkoutPlanViewerScreen extends StatefulWidget {
@@ -359,7 +357,7 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen>
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      color: Theme.of(context).primaryColor.withOpacity(0.1),
+      color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
       child: Row(
         children: [
           const Icon(Icons.psychology, size: 16),
@@ -676,7 +674,7 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen>
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -715,7 +713,7 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen>
         color: Colors.red[50],
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -1015,13 +1013,6 @@ class _WorkoutPlanViewerScreenState extends State<WorkoutPlanViewerScreen>
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) return;
-
-      // Get user profile for names
-      final profile = await _supabase
-          .from('profiles')
-          .select('name')
-          .eq('id', user.id)
-          .single();
 
       // TODO: PDF export temporarily disabled due to Windows path resolution issue
       // await _workoutService.exportWorkoutPlanToPdf(

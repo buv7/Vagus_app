@@ -168,7 +168,7 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
           // Title and actions
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.history,
                 color: AppTheme.accentGreen,
                 size: 24,
@@ -192,10 +192,10 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.mediumGrey.withOpacity(0.2),
+                    color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -203,8 +203,8 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
                         color: AppTheme.lightGrey,
                         size: 16,
                       ),
-                      const SizedBox(width: 4),
-                      const Text(
+                      SizedBox(width: 4),
+                      Text(
                         'Clear',
                         style: TextStyle(
                           color: AppTheme.lightGrey,
@@ -238,13 +238,13 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
                       ),
                       decoration: BoxDecoration(
                         color: isActive
-                          ? AppTheme.accentGreen.withOpacity(0.2)
+                          ? AppTheme.accentGreen.withValues(alpha: 0.2)
                           : AppTheme.cardDark,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isActive
-                            ? AppTheme.accentGreen.withOpacity(0.5)
-                            : AppTheme.mediumGrey.withOpacity(0.3),
+                            ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                            : AppTheme.mediumGrey.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -342,7 +342,7 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
             vertical: DesignTokens.space8,
           ),
           decoration: BoxDecoration(
-            color: group.color.withOpacity(0.1),
+            color: group.color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -366,7 +366,7 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: group.color.withOpacity(0.2),
+                  color: group.color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -397,7 +397,7 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
             showServingSelector: false,
             showFavoriteButton: true,
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -415,7 +415,7 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
       case RecentFoodFilter.protein:
         return _recentGroups.map((group) {
           final proteinFoods = group.foods.where((food) =>
-            food.protein != null && food.protein! > 15).toList();
+            food.protein > 15).toList();
           return RecentFoodGroup(
             title: group.title,
             foods: proteinFoods,
@@ -426,7 +426,7 @@ class _RecentFoodsTabState extends State<RecentFoodsTab>
       case RecentFoodFilter.lowCarb:
         return _recentGroups.map((group) {
           final lowCarbFoods = group.foods.where((food) =>
-            food.carbs != null && food.carbs! < 10).toList();
+            food.carbs < 10).toList();
           return RecentFoodGroup(
             title: group.title,
             foods: lowCarbFoods,

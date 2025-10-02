@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -46,7 +45,7 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
   late Animation<double> _voicePulseAnimation;
 
   List<FoodItem> _searchResults = [];
-  List<FoodFilter> _activeFilters = [];
+  final List<FoodFilter> _activeFilters = [];
   FoodSortOption _sortOption = FoodSortOption.relevance;
   bool _isLoading = false;
   bool _showFilters = false;
@@ -194,8 +193,8 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _searchFocus.hasFocus
-                  ? AppTheme.accentGreen.withOpacity(0.5)
-                  : AppTheme.mediumGrey.withOpacity(0.3),
+                  ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                  : AppTheme.mediumGrey.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -213,12 +212,12 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                     decoration: InputDecoration(
                       hintText: 'Search foods, brands, or categories...',
                       hintStyle: TextStyle(
-                        color: AppTheme.lightGrey.withOpacity(0.6),
+                        color: AppTheme.lightGrey.withValues(alpha: 0.6),
                         fontSize: 16,
                       ),
                       prefixIcon: Icon(
                         Icons.search,
-                        color: AppTheme.lightGrey.withOpacity(0.6),
+                        color: AppTheme.lightGrey.withValues(alpha: 0.6),
                         size: 20,
                       ),
                       border: InputBorder.none,
@@ -244,7 +243,7 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                           margin: const EdgeInsets.only(right: 8),
                           decoration: BoxDecoration(
                             color: _isVoiceListening
-                              ? AppTheme.accentGreen.withOpacity(0.2)
+                              ? AppTheme.accentGreen.withValues(alpha: 0.2)
                               : Colors.transparent,
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -252,7 +251,7 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                             _isVoiceListening ? Icons.mic : Icons.mic_none,
                             color: _isVoiceListening
                               ? AppTheme.accentGreen
-                              : AppTheme.lightGrey.withOpacity(0.6),
+                              : AppTheme.lightGrey.withValues(alpha: 0.6),
                             size: 20,
                           ),
                         ),
@@ -274,7 +273,7 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                       margin: const EdgeInsets.only(right: 8),
                       child: Icon(
                         Icons.clear,
-                        color: AppTheme.lightGrey.withOpacity(0.6),
+                        color: AppTheme.lightGrey.withValues(alpha: 0.6),
                         size: 20,
                       ),
                     ),
@@ -298,13 +297,13 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                   ),
                   decoration: BoxDecoration(
                     color: _showFilters || _activeFilters.isNotEmpty
-                      ? AppTheme.accentGreen.withOpacity(0.2)
+                      ? AppTheme.accentGreen.withValues(alpha: 0.2)
                       : AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _showFilters || _activeFilters.isNotEmpty
-                        ? AppTheme.accentGreen.withOpacity(0.5)
-                        : AppTheme.mediumGrey.withOpacity(0.3),
+                        ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                        : AppTheme.mediumGrey.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -364,7 +363,7 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                     color: AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppTheme.mediumGrey.withOpacity(0.3),
+                      color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                     ),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -376,7 +375,7 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                         color: AppTheme.neutralWhite,
                         fontSize: 14,
                       ),
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.keyboard_arrow_down,
                         color: AppTheme.lightGrey,
                         size: 20,
@@ -432,13 +431,13 @@ class _SmartFoodSearchState extends State<SmartFoodSearch>
                         ),
                         decoration: BoxDecoration(
                           color: isActive
-                            ? AppTheme.accentGreen.withOpacity(0.2)
+                            ? AppTheme.accentGreen.withValues(alpha: 0.2)
                             : AppTheme.cardDark,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isActive
-                              ? AppTheme.accentGreen.withOpacity(0.5)
-                              : AppTheme.mediumGrey.withOpacity(0.3),
+                              ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                              : AppTheme.mediumGrey.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(

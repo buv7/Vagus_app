@@ -7,7 +7,6 @@ import '../../services/navigation/app_navigator.dart';
 import '../../screens/learn/learn_client_screen.dart';
 import '../../screens/learn/learn_coach_screen.dart';
 import '../../screens/nutrition/coach_nutrition_dashboard.dart';
-import '../../screens/nutrition/nutrition_hub_screen.dart';
 
 class VagusSideMenu extends StatefulWidget {
   final bool isClient;

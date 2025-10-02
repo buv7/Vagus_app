@@ -204,13 +204,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 24),
 
                 // Workout Management Section
-                _buildSectionHeader("🏋️ Workout Management"),
+                _buildSectionHeader('🏋️ Workout Management'),
                 const SizedBox(height: 12),
 
                 ElevatedButton.icon(
                   icon: const Icon(Icons.fitness_center, size: 24),
                   label: const Text(
-                    "Create Workout Plan",
+                    'Create Workout Plan',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   onPressed: _goToPlanBuilder,
@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton.icon(
                   icon: const Icon(Icons.visibility, size: 24),
                   label: const Text(
-                    "View Client Workout Plans",
+                    'View Client Workout Plans',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   onPressed: _goToWorkoutViewer,
@@ -249,13 +249,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 24),
 
                 // Nutrition Management Section
-                _buildSectionHeader("🥗 Nutrition Management"),
+                _buildSectionHeader('🥗 Nutrition Management'),
                 const SizedBox(height: 12),
 
                 ElevatedButton.icon(
                   icon: const Icon(Icons.restaurant_menu, size: 24),
                   label: const Text(
-                    "Create Nutrition Plan",
+                    'Create Nutrition Plan',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   onPressed: _goToNutritionBuilder,
@@ -274,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton.icon(
                   icon: const Icon(Icons.visibility, size: 24),
                   label: const Text(
-                    "View Nutrition Plans",
+                    'View Nutrition Plans',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   onPressed: _goToNutritionViewer,

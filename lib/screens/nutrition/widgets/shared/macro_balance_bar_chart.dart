@@ -89,7 +89,7 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
           Text(
             'Target Distribution',
             style: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.8),
+              color: AppTheme.lightGrey.withValues(alpha: 0.8),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -131,7 +131,7 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
             borderRadius: BorderRadius.circular(isTarget ? 6 : 10),
             boxShadow: isTarget ? null : [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -150,7 +150,7 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
                       gradient: LinearGradient(
                         colors: [
                           const Color(0xFF00D9A3),
-                          const Color(0xFF00D9A3).withOpacity(0.8),
+                          const Color(0xFF00D9A3).withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -180,7 +180,7 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
                       gradient: LinearGradient(
                         colors: [
                           const Color(0xFFFF9A3C),
-                          const Color(0xFFFF9A3C).withOpacity(0.8),
+                          const Color(0xFFFF9A3C).withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -210,7 +210,7 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
                       gradient: LinearGradient(
                         colors: [
                           const Color(0xFFFFD93C),
-                          const Color(0xFFFFD93C).withOpacity(0.8),
+                          const Color(0xFFFFD93C).withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -290,7 +290,7 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -353,7 +353,7 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
           Text(
             'Target: ${targetPercent.toStringAsFixed(0)}%',
             style: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.6),
+              color: AppTheme.lightGrey.withValues(alpha: 0.6),
               fontSize: 9,
             ),
           ),
@@ -384,7 +384,7 @@ class CompactMacroBalance extends StatelessWidget {
       return Container(
         height: 8,
         decoration: BoxDecoration(
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(4),
         ),
       );
@@ -400,7 +400,7 @@ class CompactMacroBalance extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 2,
             offset: const Offset(0, 1),
           ),

@@ -602,7 +602,7 @@ class _MediaGalleryWidgetState extends State<MediaGalleryWidget>
       padding: const EdgeInsets.all(DesignTokens.space32),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.video_library_outlined,
             size: 48,
             color: DesignTokens.textSecondary,
@@ -644,7 +644,7 @@ class _MediaGalleryWidgetState extends State<MediaGalleryWidget>
       padding: const EdgeInsets.all(DesignTokens.space24),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.filter_list_off,
             size: 32,
             color: DesignTokens.textSecondary,

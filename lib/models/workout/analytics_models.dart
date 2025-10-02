@@ -1,6 +1,7 @@
 /// Analytics Data Models
 ///
 /// Data models for workout analytics and reporting
+library;
 
 /// Volume metrics for a specific time period
 class VolumeMetrics {

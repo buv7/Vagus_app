@@ -32,26 +32,26 @@ class NutritionCard extends StatelessWidget {
         padding: padding ?? const EdgeInsets.all(DesignTokens.space16),
         decoration: BoxDecoration(
           color: customBackgroundColor ?? (highlighted
-            ? AppTheme.accentGreen.withOpacity(0.1)
+            ? AppTheme.accentGreen.withValues(alpha: 0.1)
             : AppTheme.cardBackground),
           borderRadius: BorderRadius.circular(
             customBorderRadius ?? DesignTokens.radius16,
           ),
           border: Border.all(
             color: highlighted
-              ? AppTheme.accentGreen.withOpacity(0.3)
-              : AppTheme.mediumGrey.withOpacity(0.2),
+              ? AppTheme.accentGreen.withValues(alpha: 0.3)
+              : AppTheme.mediumGrey.withValues(alpha: 0.2),
             width: highlighted ? 2 : 1,
           ),
           boxShadow: customShadows ?? [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             if (highlighted)
               BoxShadow(
-                color: AppTheme.accentGreen.withOpacity(0.2),
+                color: AppTheme.accentGreen.withValues(alpha: 0.2),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -101,7 +101,7 @@ class MealCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _getMealTypeColor(title).withOpacity(0.2),
+                  color: _getMealTypeColor(title).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: Icon(
@@ -210,7 +210,7 @@ class MealCard extends StatelessWidget {
         vertical: DesignTokens.space4,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
       ),
       child: Row(
@@ -298,12 +298,12 @@ class FoodItemCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.mediumGrey.withOpacity(0.2),
+              color: AppTheme.mediumGrey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
               border: Border.all(
                 color: isRecipe
-                  ? Colors.blue.withOpacity(0.5)
-                  : AppTheme.mediumGrey.withOpacity(0.3),
+                  ? Colors.blue.withValues(alpha: 0.5)
+                  : AppTheme.mediumGrey.withValues(alpha: 0.3),
               ),
             ),
             child: ClipRRect(
@@ -346,7 +346,7 @@ class FoodItemCard extends StatelessWidget {
                           vertical: DesignTokens.space2,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.2),
+                          color: Colors.blue.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(DesignTokens.radius4),
                         ),
                         child: const Text(
@@ -416,7 +416,7 @@ class FoodItemCard extends StatelessWidget {
       child: Container(
         height: 16,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(DesignTokens.radius8),
         ),
         child: Center(

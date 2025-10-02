@@ -64,7 +64,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
           .eq('coach_id', user.id);
 
       if (links.isNotEmpty) {
-        List<String> clientIds = links.map((row) => row['client_id'] as String).toList();
+        final List<String> clientIds = links.map((row) => row['client_id'] as String).toList();
 
         final clients = await supabase
             .from('profiles')
@@ -176,8 +176,8 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                     ),
 
                     // Header
-                    Padding(
-                      padding: const EdgeInsets.all(24),
+                    const Padding(
+                      padding: EdgeInsets.all(24),
                       child: Row(
                         children: [
                           Icon(
@@ -185,8 +185,8 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                             color: AppTheme.accentGreen,
                             size: 24,
                           ),
-                          const SizedBox(width: 12),
-                          const Text(
+                          SizedBox(width: 12),
+                          Text(
                             'Add Coach Note',
                             style: TextStyle(
                               color: AppTheme.neutralWhite,
@@ -236,7 +236,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                   child: DropdownButton<String>(
                                     value: _selectedClientId,
                                     isExpanded: true,
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.arrow_drop_down,
                                       color: AppTheme.lightGrey,
                                     ),
@@ -283,7 +283,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                                     if (client['email'] != null)
                                                       Text(
                                                         client['email'],
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           color: AppTheme.lightGrey,
                                                           fontSize: 12,
                                                         ),
@@ -404,7 +404,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                     ),
                                     border: InputBorder.none,
                                     contentPadding: const EdgeInsets.all(16),
-                                    counterStyle: TextStyle(
+                                    counterStyle: const TextStyle(
                                       color: AppTheme.lightGrey,
                                     ),
                                   ),
@@ -435,7 +435,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Cancel',
                                 style: TextStyle(
                                   color: AppTheme.lightGrey,
@@ -504,24 +504,6 @@ class AddSupplementBottomSheet extends StatefulWidget {
 }
 
 class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
-  final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _dosageController = TextEditingController();
-  final TextEditingController _notesController = TextEditingController();
-
-  List<Map<String, dynamic>> _clients = [];
-  String? _selectedClientId;
-  String? _selectedSupplement;
-  String _frequency = 'Daily';
-  int _duration = 30;
-  bool _loading = false;
-  bool _saving = false;
-
-  final List<String> _commonSupplements = [
-    'Whey Protein', 'Creatine', 'Multivitamin', 'Omega-3', 'Vitamin D',
-    'Magnesium', 'Zinc', 'B-Complex', 'Probiotics', 'Caffeine',
-  ];
-
-  final List<String> _frequencies = ['Daily', 'Twice Daily', 'Three Times Daily', 'Weekly', 'As Needed'];
 
   @override
   void initState() {
@@ -570,8 +552,8 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                     ),
 
                     // Header
-                    Padding(
-                      padding: const EdgeInsets.all(24),
+                    const Padding(
+                      padding: EdgeInsets.all(24),
                       child: Row(
                         children: [
                           Icon(
@@ -579,8 +561,8 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                             color: AppTheme.accentGreen,
                             size: 24,
                           ),
-                          const SizedBox(width: 12),
-                          const Text(
+                          SizedBox(width: 12),
+                          Text(
                             'Add Supplement',
                             style: TextStyle(
                               color: AppTheme.neutralWhite,
@@ -593,7 +575,7 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                     ),
 
                     // Coming Soon Content
-                    Expanded(
+                    const Expanded(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -603,8 +585,8 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                               color: AppTheme.accentOrange,
                               size: 64,
                             ),
-                            const SizedBox(height: 24),
-                            const Text(
+                            SizedBox(height: 24),
+                            Text(
                               'Coming Soon',
                               style: TextStyle(
                                 color: AppTheme.neutralWhite,
@@ -612,7 +594,7 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
                             Text(
                               'Supplement management is currently\nunder development.',
                               textAlign: TextAlign.center,
@@ -708,8 +690,8 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                     ),
 
                     // Header
-                    Padding(
-                      padding: const EdgeInsets.all(24),
+                    const Padding(
+                      padding: EdgeInsets.all(24),
                       child: Row(
                         children: [
                           Icon(
@@ -717,8 +699,8 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                             color: AppTheme.accentGreen,
                             size: 24,
                           ),
-                          const SizedBox(width: 12),
-                          const Text(
+                          SizedBox(width: 12),
+                          Text(
                             'Import Program',
                             style: TextStyle(
                               color: AppTheme.neutralWhite,
@@ -731,7 +713,7 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                     ),
 
                     // Available in existing implementation
-                    Expanded(
+                    const Expanded(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -741,8 +723,8 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                               color: AppTheme.accentGreen,
                               size: 64,
                             ),
-                            const SizedBox(height: 24),
-                            const Text(
+                            SizedBox(height: 24),
+                            Text(
                               'Already Available',
                               style: TextStyle(
                                 color: AppTheme.neutralWhite,
@@ -750,7 +732,7 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
                             Text(
                               'Program import functionality is already\navailable in the existing implementation.',
                               textAlign: TextAlign.center,

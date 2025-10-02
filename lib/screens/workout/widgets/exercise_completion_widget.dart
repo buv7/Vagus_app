@@ -13,7 +13,7 @@ class ExerciseCompletionWidget extends StatefulWidget {
   final bool isSessionActive;
 
   const ExerciseCompletionWidget({
-    Key? key,
+    super.key,
     required this.exercise,
     this.completionData,
     required this.onComplete,
@@ -22,7 +22,7 @@ class ExerciseCompletionWidget extends StatefulWidget {
     this.onRequestSubstitution,
     this.onPlayDemo,
     this.isSessionActive = false,
-  }) : super(key: key);
+  });
 
   @override
   State<ExerciseCompletionWidget> createState() =>
@@ -172,7 +172,7 @@ class _ExerciseCompletionWidgetState extends State<ExerciseCompletionWidget> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: isComplete ? 1 : 2,
       color: isComplete
-          ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+          ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
           : null,
       child: Column(
         children: [
@@ -207,7 +207,7 @@ class _ExerciseCompletionWidgetState extends State<ExerciseCompletionWidget> {
                   shape: BoxShape.circle,
                   color: isComplete
                       ? theme.colorScheme.primary
-                      : theme.colorScheme.surfaceVariant,
+                      : theme.colorScheme.surfaceContainerHighest,
                 ),
                 child: Icon(
                   isComplete ? Icons.check : Icons.fitness_center,

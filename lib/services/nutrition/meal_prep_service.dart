@@ -11,8 +11,8 @@ class MealPrepService extends ChangeNotifier {
   // Prep mode state
   bool _isPrepModeEnabled = false;
   List<PrepDay> _prepDays = [];
-  Map<String, PrepTask> _prepTasks = {};
-  Map<String, StorageInfo> _storageInfo = {};
+  final Map<String, PrepTask> _prepTasks = {};
+  final Map<String, StorageInfo> _storageInfo = {};
 
   bool get isPrepModeEnabled => _isPrepModeEnabled;
   List<PrepDay> get prepDays => _prepDays;

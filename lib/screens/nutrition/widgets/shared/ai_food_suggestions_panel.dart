@@ -5,7 +5,6 @@ import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
 import '../../../../services/ai/nutrition_ai.dart' show NutritionAI, AIFoodSuggestion;
 import '../../../../models/nutrition/food_item.dart';
-import '../../../../widgets/anim/vagus_loader.dart';
 import '../../../../widgets/anim/empty_state.dart';
 
 /// AI-powered food suggestions with smart recommendations
@@ -142,10 +141,10 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.accentGreen.withOpacity(0.1),
+            color: AppTheme.accentGreen.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.auto_awesome,
             color: AppTheme.accentGreen,
             size: 20,
@@ -168,7 +167,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
                 Text(
                   'Optimized for ${widget.mealType}',
                   style: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.8),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.8),
                     fontSize: 14,
                   ),
                 ),
@@ -180,10 +179,10 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.mediumGrey.withOpacity(0.2),
+              color: AppTheme.mediumGrey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.refresh,
               color: AppTheme.lightGrey,
               size: 20,
@@ -225,13 +224,13 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
         ),
         decoration: BoxDecoration(
           color: isActive
-            ? AppTheme.accentGreen.withOpacity(0.2)
+            ? AppTheme.accentGreen.withValues(alpha: 0.2)
             : AppTheme.cardDark,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isActive
-              ? AppTheme.accentGreen.withOpacity(0.5)
-              : AppTheme.mediumGrey.withOpacity(0.3),
+              ? AppTheme.accentGreen.withValues(alpha: 0.5)
+              : AppTheme.mediumGrey.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -285,7 +284,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
               builder: (context, child) {
                 return Transform.rotate(
                   angle: _loadingController.value * 2 * math.pi,
-                  child: Icon(
+                  child: const Icon(
                     Icons.auto_awesome,
                     color: AppTheme.accentGreen,
                     size: 40,
@@ -377,11 +376,11 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
           color: AppTheme.cardDark,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -414,7 +413,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
           height: 48,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: AppTheme.accentGreen.withOpacity(0.1),
+            color: AppTheme.accentGreen.withValues(alpha: 0.1),
           ),
           child: suggestion.food.imageUrl != null
             ? ClipRRect(
@@ -423,7 +422,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
                   suggestion.food.imageUrl!,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Icon(
+                    return const Icon(
                       Icons.restaurant,
                       color: AppTheme.accentGreen,
                       size: 24,
@@ -431,7 +430,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
                   },
                 ),
               )
-            : Icon(
+            : const Icon(
                 Icons.restaurant,
                 color: AppTheme.accentGreen,
                 size: 24,
@@ -457,7 +456,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
                 Text(
                   suggestion.food.brand!,
                   style: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.8),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.8),
                     fontSize: 14,
                   ),
                 ),
@@ -469,10 +468,10 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: AppTheme.accentGreen.withOpacity(0.1),
+            color: AppTheme.accentGreen.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Row(
+          child: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
@@ -480,8 +479,8 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
                 color: AppTheme.accentGreen,
                 size: 12,
               ),
-              const SizedBox(width: 4),
-              const Text(
+              SizedBox(width: 4),
+              Text(
                 'AI',
                 style: TextStyle(
                   color: AppTheme.accentGreen,
@@ -506,7 +505,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.lightbulb_outline,
             color: AppTheme.lightBlue,
             size: 16,
@@ -516,7 +515,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
             child: Text(
               reasoning,
               style: TextStyle(
-                color: AppTheme.lightGrey.withOpacity(0.9),
+                color: AppTheme.lightGrey.withValues(alpha: 0.9),
                 fontSize: 12,
                 height: 1.4,
               ),
@@ -528,8 +527,6 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
   }
 
   Widget _buildNutritionPreview(FoodItem food) {
-    if (food.calories == null) return const SizedBox.shrink();
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -539,27 +536,24 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
           AppTheme.lightOrange,
           Icons.local_fire_department,
         ),
-        if (food.protein != null)
-          _buildNutrientChip(
-            '${food.protein}g',
-            'protein',
-            AppTheme.accentGreen,
-            Icons.fitness_center,
-          ),
-        if (food.carbs != null)
-          _buildNutrientChip(
-            '${food.carbs}g',
-            'carbs',
-            AppTheme.lightOrange,
-            Icons.grain,
-          ),
-        if (food.fat != null)
-          _buildNutrientChip(
-            '${food.fat}g',
-            'fat',
-            AppTheme.lightYellow,
-            Icons.water_drop,
-          ),
+        _buildNutrientChip(
+          '${food.protein}g',
+          'protein',
+          AppTheme.accentGreen,
+          Icons.fitness_center,
+        ),
+        _buildNutrientChip(
+          '${food.carbs}g',
+          'carbs',
+          AppTheme.lightOrange,
+          Icons.grain,
+        ),
+        _buildNutrientChip(
+          '${food.fat}g',
+          'fat',
+          AppTheme.lightYellow,
+          Icons.water_drop,
+        ),
       ],
     );
   }
@@ -568,7 +562,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -586,7 +580,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
           Text(
             label,
             style: TextStyle(
-              color: AppTheme.lightGrey.withOpacity(0.6),
+              color: AppTheme.lightGrey.withValues(alpha: 0.6),
               fontSize: 10,
             ),
           ),
@@ -624,7 +618,7 @@ class _AIFoodSuggestionsPanelState extends State<AIFoodSuggestionsPanel>
           child: Container(
             height: 4,
             decoration: BoxDecoration(
-              color: AppTheme.mediumGrey.withOpacity(0.3),
+              color: AppTheme.mediumGrey.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
             child: FractionallySizedBox(

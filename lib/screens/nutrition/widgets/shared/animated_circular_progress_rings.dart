@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
-import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
 
 /// Stunning animated circular progress rings for macros
@@ -242,13 +241,13 @@ class _AnimatedCircularProgressRingsState
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
                     if (_allTargetsMet())
                       BoxShadow(
-                        color: const Color(0xFF00D9A3).withOpacity(0.3),
+                        color: const Color(0xFF00D9A3).withValues(alpha: 0.3),
                         blurRadius: 30,
                         offset: const Offset(0, 0),
                       ),
@@ -282,7 +281,7 @@ class _AnimatedCircularProgressRingsState
       children: [
         // Total calories
         Text(
-          '${widget.totalCalories.toStringAsFixed(0)}',
+          widget.totalCalories.toStringAsFixed(0),
           style: const TextStyle(
             color: AppTheme.neutralWhite,
             fontSize: 32,
@@ -294,7 +293,7 @@ class _AnimatedCircularProgressRingsState
         Text(
           'kcal',
           style: TextStyle(
-            color: AppTheme.lightGrey.withOpacity(0.8),
+            color: AppTheme.lightGrey.withValues(alpha: 0.8),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -309,7 +308,7 @@ class _AnimatedCircularProgressRingsState
             vertical: 4,
           ),
           decoration: BoxDecoration(
-            color: _getCalorieStatusColor().withOpacity(0.1),
+            color: _getCalorieStatusColor().withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -331,7 +330,7 @@ class _AnimatedCircularProgressRingsState
           width: 60,
           height: 4,
           decoration: BoxDecoration(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(2),
           ),
           child: FractionallySizedBox(
@@ -411,7 +410,7 @@ class _MacroRingsPainter extends CustomPainter {
 
     // Background ring
     final backgroundPaint = Paint()
-      ..color = ring.color.withOpacity(0.1)
+      ..color = ring.color.withValues(alpha: 0.1)
       ..strokeWidth = ring.strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -439,7 +438,7 @@ class _MacroRingsPainter extends CustomPainter {
     // Add glow effect if target achieved
     if (showGlow && ring.progress >= 0.9) {
       final glowPaint = Paint()
-        ..color = ring.color.withOpacity(0.3)
+        ..color = ring.color.withValues(alpha: 0.3)
         ..strokeWidth = ring.strokeWidth + 4
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
@@ -467,7 +466,7 @@ class _MacroRingsPainter extends CustomPainter {
     ];
 
     final sparklePaint = Paint()
-      ..color = color.withOpacity(0.8)
+      ..color = color.withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
 
     for (final pos in sparklePositions) {

@@ -47,7 +47,6 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
   // Plan state
   List<NutritionPlan> _plans = [];
   NutritionPlan? _currentPlan;
-  String? _selectedPlanId;
 
   // UI state
   late TabController _tabController;
@@ -96,10 +95,8 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
       // Set current plan
       if (widget.planToEdit != null) {
         _currentPlan = widget.planToEdit;
-        _selectedPlanId = _currentPlan!.id;
       } else if (_plans.isNotEmpty) {
         _currentPlan = _plans.first;
-        _selectedPlanId = _currentPlan!.id;
       }
 
       setState(() {
@@ -173,7 +170,6 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
     setState(() {
       _plans.insert(0, plan);
       _currentPlan = plan;
-      _selectedPlanId = plan.id;
       _resolvedMode = NutritionHubMode.viewer;
       _isEditMode = false;
     });
@@ -195,7 +191,6 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
     final plan = _plans.firstWhere((p) => p.id == planId);
     setState(() {
       _currentPlan = plan;
-      _selectedPlanId = planId;
     });
   }
 
@@ -313,7 +308,7 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
             end: Alignment.bottomCenter,
             colors: [
               AppTheme.primaryDark,
-              AppTheme.primaryDark.withOpacity(0.95),
+              AppTheme.primaryDark.withValues(alpha: 0.95),
             ],
           ),
         ),
@@ -369,7 +364,7 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
                 color: AppTheme.cardBackground,
                 borderRadius: BorderRadius.circular(60),
                 border: Border.all(
-                  color: AppTheme.mediumGrey.withOpacity(0.3),
+                  color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),

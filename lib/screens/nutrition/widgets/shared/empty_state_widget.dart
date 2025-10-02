@@ -50,7 +50,7 @@ class EmptyStateWidget extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: config.iconColor.withOpacity(0.2),
+                          color: config.iconColor.withValues(alpha: 0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -114,7 +114,7 @@ class EmptyStateWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(DesignTokens.radius12),
                     ),
                     elevation: 8,
-                    shadowColor: config.actionColor.withOpacity(0.3),
+                    shadowColor: config.actionColor.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -125,10 +125,10 @@ class EmptyStateWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(DesignTokens.space16),
                 decoration: BoxDecoration(
-                  color: AppTheme.cardBackground.withOpacity(0.5),
+                  color: AppTheme.cardBackground.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(DesignTokens.radius12),
                   border: Border.all(
-                    color: AppTheme.mediumGrey.withOpacity(0.2),
+                    color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -136,7 +136,7 @@ class EmptyStateWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: DesignTokens.space8),
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.lightbulb_outline,
                           size: 16,
                           color: AppTheme.accentGreen,
@@ -170,7 +170,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.restaurant_menu,
           iconColor: AppTheme.accentGreen,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: AppTheme.accentGreen.withOpacity(0.3),
+          borderColor: AppTheme.accentGreen.withValues(alpha: 0.3),
           title: 'No Meals Added',
           subtitle: 'Start building your nutrition plan by adding meals',
           actionLabel: 'Add First Meal',
@@ -188,7 +188,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.fastfood,
           iconColor: AppTheme.accentOrange,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: AppTheme.accentOrange.withOpacity(0.3),
+          borderColor: AppTheme.accentOrange.withValues(alpha: 0.3),
           title: 'Empty Meal',
           subtitle: 'Add food items to complete this meal',
           actionLabel: 'Add Food Items',
@@ -206,7 +206,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.menu_book,
           iconColor: Colors.blue,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: Colors.blue.withOpacity(0.3),
+          borderColor: Colors.blue.withValues(alpha: 0.3),
           title: 'No Recipes Found',
           subtitle: 'Discover delicious recipes that match your goals',
           actionLabel: 'Browse Recipes',
@@ -224,7 +224,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.medication,
           iconColor: Colors.purple,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: Colors.purple.withOpacity(0.3),
+          borderColor: Colors.purple.withValues(alpha: 0.3),
           title: 'No Supplements',
           subtitle: 'Track supplements to optimize your nutrition',
           actionLabel: 'Add Supplement',
@@ -242,7 +242,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.kitchen,
           iconColor: Colors.brown,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: Colors.brown.withOpacity(0.3),
+          borderColor: Colors.brown.withValues(alpha: 0.3),
           title: 'Empty Pantry',
           subtitle: 'Add items to your pantry for smart meal planning',
           actionLabel: 'Stock Pantry',
@@ -260,7 +260,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.assignment,
           iconColor: AppTheme.accentGreen,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: AppTheme.accentGreen.withOpacity(0.3),
+          borderColor: AppTheme.accentGreen.withValues(alpha: 0.3),
           title: 'No Nutrition Plans',
           subtitle: 'Create your first nutrition plan to get started',
           actionLabel: 'Create Plan',
@@ -278,7 +278,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.search_off,
           iconColor: AppTheme.lightGrey,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: AppTheme.lightGrey.withOpacity(0.3),
+          borderColor: AppTheme.lightGrey.withValues(alpha: 0.3),
           title: 'No Results Found',
           subtitle: 'Try adjusting your search terms or filters',
           actionLabel: 'Clear Search',
@@ -296,7 +296,7 @@ class EmptyStateWidget extends StatelessWidget {
           icon: Icons.cloud_off,
           iconColor: Colors.orange,
           backgroundColor: AppTheme.cardBackground,
-          borderColor: Colors.orange.withOpacity(0.3),
+          borderColor: Colors.orange.withValues(alpha: 0.3),
           title: 'Offline Mode',
           subtitle: 'Some features are limited without internet connection',
           actionLabel: 'Retry Connection',
@@ -406,7 +406,7 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
                     gradient: LinearGradient(
                       colors: [
                         AppTheme.accentGreen,
-                        AppTheme.accentGreen.withOpacity(0.3),
+                        AppTheme.accentGreen.withValues(alpha: 0.3),
                       ],
                       stops: const [0.3, 1.0],
                     ),
@@ -439,7 +439,7 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
               width: 200,
               height: 6,
               decoration: BoxDecoration(
-                color: AppTheme.mediumGrey.withOpacity(0.3),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(3),
               ),
               child: FractionallySizedBox(

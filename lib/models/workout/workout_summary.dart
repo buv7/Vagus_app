@@ -57,11 +57,11 @@ class WorkoutSummary {
     required List<Exercise> exercises,
     required List<CardioSession> cardioSessions,
   }) {
-    double totalVolume = 0.0;
-    int totalSets = 0;
-    int totalExercises = exercises.length;
-    int estimatedDuration = 0;
-    int totalCardioMinutes = 0;
+    var totalVolume = 0.0;
+    var totalSets = 0;
+    final totalExercises = exercises.length;
+    var estimatedDuration = 0;
+    var totalCardioMinutes = 0;
     final groupTypeCounts = <ExerciseGroupType, int>{};
 
     // Calculate exercise metrics

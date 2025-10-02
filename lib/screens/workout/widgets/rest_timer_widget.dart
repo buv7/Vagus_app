@@ -11,13 +11,13 @@ class RestTimerWidget extends StatefulWidget {
   final bool showNotifications;
 
   const RestTimerWidget({
-    Key? key,
+    super.key,
     required this.initialSeconds,
     this.nextExerciseName,
     required this.onComplete,
     this.onSkip,
     this.showNotifications = true,
-  }) : super(key: key);
+  });
 
   @override
   State<RestTimerWidget> createState() => _RestTimerWidgetState();
@@ -152,7 +152,7 @@ class _RestTimerWidgetState extends State<RestTimerWidget>
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -203,7 +203,7 @@ class _RestTimerWidgetState extends State<RestTimerWidget>
                         CircularProgressIndicator(
                           value: 1.0,
                           strokeWidth: 12,
-                          color: theme.colorScheme.surfaceVariant,
+                          color: theme.colorScheme.surfaceContainerHighest,
                         ),
 
                         // Progress circle
@@ -340,13 +340,13 @@ class RestTimerBanner extends StatefulWidget {
   final VoidCallback? onSkip;
 
   const RestTimerBanner({
-    Key? key,
+    super.key,
     required this.initialSeconds,
     this.nextExerciseName,
     required this.onComplete,
     this.onExpand,
     this.onSkip,
-  }) : super(key: key);
+  });
 
   @override
   State<RestTimerBanner> createState() => _RestTimerBannerState();
@@ -442,7 +442,7 @@ class _RestTimerBannerState extends State<RestTimerBanner> {
               // Progress bar
               LinearProgressIndicator(
                 value: progress,
-                backgroundColor: theme.colorScheme.surfaceVariant,
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
                 color: theme.colorScheme.primary,
               ),
             ],

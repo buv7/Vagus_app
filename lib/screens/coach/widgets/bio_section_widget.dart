@@ -224,7 +224,7 @@ class _BioSectionWidgetState extends State<BioSectionWidget>
       child: Center(
         child: Column(
           children: [
-            Icon(
+            const Icon(
               Icons.description_outlined,
               size: 32,
               color: DesignTokens.textSecondary,

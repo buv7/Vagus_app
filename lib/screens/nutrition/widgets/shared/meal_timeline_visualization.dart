@@ -120,7 +120,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
               Text(
                 LocaleHelper.t('drag_to_reorder', locale),
                 style: TextStyle(
-                  color: AppTheme.lightGrey.withOpacity(0.7),
+                  color: AppTheme.lightGrey.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -148,10 +148,10 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground.withOpacity(0.3),
+        color: AppTheme.cardBackground.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(DesignTokens.radius16),
         border: Border.all(
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
         ),
       ),
       child: Center(
@@ -161,13 +161,13 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
             Icon(
               Icons.schedule,
               size: 48,
-              color: AppTheme.lightGrey.withOpacity(0.5),
+              color: AppTheme.lightGrey.withValues(alpha: 0.5),
             ),
             const SizedBox(height: DesignTokens.space12),
             Text(
               LocaleHelper.t('no_meals_scheduled', locale),
               style: TextStyle(
-                color: AppTheme.lightGrey.withOpacity(0.7),
+                color: AppTheme.lightGrey.withValues(alpha: 0.7),
                 fontSize: 16,
               ),
             ),
@@ -175,7 +175,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
             Text(
               LocaleHelper.t('add_first_meal', locale),
               style: TextStyle(
-                color: AppTheme.lightGrey.withOpacity(0.5),
+                color: AppTheme.lightGrey.withValues(alpha: 0.5),
                 fontSize: 12,
               ),
             ),
@@ -204,9 +204,9 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppTheme.accentGreen.withOpacity(0.8),
-                    AppTheme.accentGreen.withOpacity(0.3),
-                    AppTheme.accentGreen.withOpacity(0.1),
+                    AppTheme.accentGreen.withValues(alpha: 0.8),
+                    AppTheme.accentGreen.withValues(alpha: 0.3),
+                    AppTheme.accentGreen.withValues(alpha: 0.1),
                   ],
                 ),
               ),
@@ -243,10 +243,10 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
             vertical: DesignTokens.space4,
           ),
           decoration: BoxDecoration(
-            color: AppTheme.accentGreen.withOpacity(0.1),
+            color: AppTheme.accentGreen.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DesignTokens.radius12),
             border: Border.all(
-              color: AppTheme.accentGreen.withOpacity(0.3),
+              color: AppTheme.accentGreen.withValues(alpha: 0.3),
             ),
           ),
           child: Text(
@@ -271,7 +271,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: AppTheme.accentGreen.withOpacity(0.3),
+                color: AppTheme.accentGreen.withValues(alpha: 0.3),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -287,8 +287,8 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppTheme.accentGreen.withOpacity(0.5),
-                  AppTheme.accentGreen.withOpacity(0.1),
+                  AppTheme.accentGreen.withValues(alpha: 0.5),
+                  AppTheme.accentGreen.withValues(alpha: 0.1),
                 ],
               ),
             ),
@@ -333,7 +333,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
             feedback: Material(
               elevation: 8,
               borderRadius: BorderRadius.circular(DesignTokens.radius16),
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width - 150,
                 child: _buildMealCardContent(meal, index, isDragging: true),
               ),
@@ -350,9 +350,9 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
               setState(() => _draggedIndex = null);
             },
             child: DragTarget<int>(
-              onWillAccept: (data) => data != index,
-              onAccept: (fromIndex) {
-                _reorderMeals(fromIndex, index);
+              onWillAcceptWithDetails: (data) => data.data != index,
+              onAcceptWithDetails: (fromIndex) {
+                _reorderMeals(fromIndex.data, index);
               },
               onMove: (_) {
                 if (_hoveredIndex != index) {
@@ -384,7 +384,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: DesignTokens.space16),
           decoration: BoxDecoration(
-            color: Colors.red.withOpacity(0.8),
+            color: Colors.red.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(DesignTokens.radius16),
           ),
           child: const Icon(
@@ -413,7 +413,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: _getMealTypeColor(meal.label).withOpacity(0.2),
+                    color: _getMealTypeColor(meal.label).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(DesignTokens.radius12),
                   ),
                   child: ClipRRect(
@@ -455,7 +455,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
                                 vertical: DesignTokens.space2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.2),
+                                color: Colors.blue.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
                               ),
                               child: const Icon(
@@ -472,7 +472,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
                       // Time and completion
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.access_time,
                             size: 14,
                             color: AppTheme.lightGrey,
@@ -497,7 +497,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
                         children: [
                           _buildMacroChip(
                             '🔥',
-                            '${meal.mealSummary.totalKcal.toStringAsFixed(0)}',
+                            meal.mealSummary.totalKcal.toStringAsFixed(0),
                             'kcal',
                             Colors.red,
                           ),
@@ -607,7 +607,7 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
         vertical: DesignTokens.space2,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
       ),
       child: Row(
@@ -633,44 +633,36 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
 
   Widget _buildCompletionBadge() {
     // This would be dynamic based on actual completion status
-    final isCompleted = false; // Placeholder
-
+    // Currently using placeholder - will be connected to actual completion tracking
     return Container(
       width: 16,
       height: 16,
       decoration: BoxDecoration(
-        color: isCompleted ? AppTheme.accentGreen : AppTheme.mediumGrey.withOpacity(0.3),
+        color: AppTheme.mediumGrey.withValues(alpha: 0.3),
         shape: BoxShape.circle,
         border: Border.all(
-          color: isCompleted ? AppTheme.accentGreen : AppTheme.mediumGrey,
+          color: AppTheme.mediumGrey,
           width: 2,
         ),
       ),
-      child: isCompleted
-        ? const Icon(
-            Icons.check,
-            size: 10,
-            color: Colors.white,
-          )
-        : null,
     );
   }
 
   Widget _buildAddMealButton(String locale) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: widget.onAddMeal,
         icon: const Icon(Icons.add_circle_outline),
         label: Text(LocaleHelper.t('add_meal', locale)),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.accentGreen.withOpacity(0.1),
+          backgroundColor: AppTheme.accentGreen.withValues(alpha: 0.1),
           foregroundColor: AppTheme.accentGreen,
           padding: const EdgeInsets.symmetric(vertical: DesignTokens.space16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DesignTokens.radius12),
             side: BorderSide(
-              color: AppTheme.accentGreen.withOpacity(0.3),
+              color: AppTheme.accentGreen.withValues(alpha: 0.3),
             ),
           ),
           elevation: 0,

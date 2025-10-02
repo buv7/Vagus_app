@@ -135,11 +135,11 @@ class NotificationDeepLinkHandler {
     unawaited(showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            const Icon(Icons.bedtime, color: Colors.blue),
-            const SizedBox(width: 8),
-            const Text('Rest Day'),
+            Icon(Icons.bedtime, color: Colors.blue),
+            SizedBox(width: 8),
+            Text('Rest Day'),
           ],
         ),
         content: Column(

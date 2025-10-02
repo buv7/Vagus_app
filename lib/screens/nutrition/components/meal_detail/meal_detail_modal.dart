@@ -1,13 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../models/nutrition/nutrition_plan.dart';
 import '../../../../services/nutrition/locale_helper.dart';
-import '../../../../services/haptics.dart';
 import '../../widgets/shared/nutrition_card.dart';
-import '../../widgets/shared/macro_ring_chart.dart';
 import 'food_list_panel.dart';
 import 'macro_breakdown_chart.dart';
 import 'attachments_gallery.dart';
@@ -47,7 +44,7 @@ class MealDetailModal extends StatefulWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Close meal details',
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) {
         return MealDetailModal(
@@ -88,7 +85,6 @@ class _MealDetailModalState extends State<MealDetailModal>
   late Animation<double> _headerAnimation;
 
   late Meal _currentMeal;
-  bool _isEditing = false;
   final TextEditingController _commentController = TextEditingController();
 
   @override
@@ -128,15 +124,6 @@ class _MealDetailModalState extends State<MealDetailModal>
     widget.onMealUpdated?.call(updatedMeal);
   }
 
-  void _saveComment() {
-    if (_commentController.text != _currentMeal.clientComment) {
-      final updatedMeal = _currentMeal.copyWith(
-        clientComment: _commentController.text,
-      );
-      _onMealChanged(updatedMeal);
-      Haptics.success();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +137,7 @@ class _MealDetailModalState extends State<MealDetailModal>
         body: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             child: SafeArea(
               child: Column(
                 children: [
@@ -162,14 +149,14 @@ class _MealDetailModalState extends State<MealDetailModal>
                     child: Container(
                       margin: const EdgeInsets.all(DesignTokens.space16),
                       decoration: BoxDecoration(
-                        color: AppTheme.cardBackground.withOpacity(0.95),
+                        color: AppTheme.cardBackground.withValues(alpha: 0.95),
                         borderRadius: BorderRadius.circular(DesignTokens.radius20),
                         border: Border.all(
-                          color: AppTheme.mediumGrey.withOpacity(0.3),
+                          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -220,14 +207,14 @@ class _MealDetailModalState extends State<MealDetailModal>
               margin: const EdgeInsets.all(DesignTokens.space16),
               padding: const EdgeInsets.all(DesignTokens.space20),
               decoration: BoxDecoration(
-                color: AppTheme.cardBackground.withOpacity(0.9),
+                color: AppTheme.cardBackground.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(DesignTokens.radius16),
                 border: Border.all(
-                  color: AppTheme.mediumGrey.withOpacity(0.3),
+                  color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -243,7 +230,7 @@ class _MealDetailModalState extends State<MealDetailModal>
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: _getMealTypeColor(_currentMeal.label).withOpacity(0.2),
+                          color: _getMealTypeColor(_currentMeal.label).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(DesignTokens.radius12),
                         ),
                         child: Icon(
@@ -288,7 +275,7 @@ class _MealDetailModalState extends State<MealDetailModal>
                           color: AppTheme.neutralWhite,
                         ),
                         style: IconButton.styleFrom(
-                          backgroundColor: AppTheme.mediumGrey.withOpacity(0.2),
+                          backgroundColor: AppTheme.mediumGrey.withValues(alpha: 0.2),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(DesignTokens.radius8),
                           ),
@@ -339,10 +326,10 @@ class _MealDetailModalState extends State<MealDetailModal>
       padding: const EdgeInsets.all(DesignTokens.space12),
       margin: const EdgeInsets.symmetric(horizontal: DesignTokens.space4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -359,7 +346,7 @@ class _MealDetailModalState extends State<MealDetailModal>
           Text(
             label,
             style: TextStyle(
-              color: color.withOpacity(0.8),
+              color: color.withValues(alpha: 0.8),
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),
@@ -372,7 +359,7 @@ class _MealDetailModalState extends State<MealDetailModal>
   Widget _buildTabBar(String locale) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.primaryDark.withOpacity(0.5),
+        color: AppTheme.primaryDark.withValues(alpha: 0.5),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(DesignTokens.radius20),
           topRight: Radius.circular(DesignTokens.radius20),

@@ -26,7 +26,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
   late List<AnimationController> _itemControllers;
   late List<Animation<double>> _itemAnimations;
 
-  List<_InsightItem> _insights = [];
+  final List<_InsightItem> _insights = [];
 
   @override
   void initState() {
@@ -276,7 +276,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withOpacity(0.2),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: const Icon(
@@ -314,7 +314,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withOpacity(0.1),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: Text(
@@ -369,10 +369,10 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: insight.color.withOpacity(0.1),
+        color: insight.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
         border: Border.all(
-          color: insight.color.withOpacity(0.3),
+          color: insight.color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -382,7 +382,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: insight.color.withOpacity(0.2),
+              color: insight.color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: Icon(

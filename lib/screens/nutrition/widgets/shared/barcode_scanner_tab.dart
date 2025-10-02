@@ -5,7 +5,6 @@ import '../../../../services/haptics.dart';
 import '../../../../services/nutrition/barcode_service.dart';
 import '../../../../models/nutrition/food_item.dart';
 import '../../../../widgets/anim/empty_state.dart';
-import 'enhanced_food_card.dart';
 
 /// Barcode scanner tab with full camera integration and scan history
 /// Features: Integrated camera view, manual entry, scan history, quick actions
@@ -32,13 +31,11 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
   late AnimationController _scanController;
   late AnimationController _pulseController;
   late Animation<double> _scanAnimation;
-  late Animation<double> _pulseAnimation;
 
   bool _isCameraActive = false;
   bool _isScanning = false;
   bool _showHistory = false;
   List<ScannedItem> _scanHistory = [];
-  FoodItem? _lastScannedFood;
 
   @override
   void initState() {
@@ -64,14 +61,6 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
     ).animate(CurvedAnimation(
       parent: _scanController,
       curve: Curves.linear,
-    ));
-
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
     ));
   }
 
@@ -132,7 +121,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isCameraActive
                       ? AppTheme.accentGreen
-                      : AppTheme.mediumGrey.withOpacity(0.3),
+                      : AppTheme.mediumGrey.withValues(alpha: 0.3),
                     foregroundColor: _isCameraActive
                       ? Colors.white
                       : AppTheme.lightGrey,
@@ -158,10 +147,10 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                     color: AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppTheme.mediumGrey.withOpacity(0.3),
+                      color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                     ),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.keyboard,
                     color: AppTheme.lightGrey,
                     size: 20,
@@ -181,13 +170,13 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                   padding: const EdgeInsets.all(DesignTokens.space12),
                   decoration: BoxDecoration(
                     color: _showHistory
-                      ? AppTheme.accentGreen.withOpacity(0.2)
+                      ? AppTheme.accentGreen.withValues(alpha: 0.2)
                       : AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _showHistory
-                        ? AppTheme.accentGreen.withOpacity(0.5)
-                        : AppTheme.mediumGrey.withOpacity(0.3),
+                        ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                        : AppTheme.mediumGrey.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Icon(
@@ -218,7 +207,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                 Text(
                   _isScanning ? 'Scanning for barcodes...' : 'Position barcode in view',
                   style: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.8),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.8),
                     fontSize: 14,
                   ),
                 ),
@@ -228,7 +217,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
             Text(
               'Scan barcodes to quickly find foods with accurate nutrition data',
               style: TextStyle(
-                color: AppTheme.lightGrey.withOpacity(0.8),
+                color: AppTheme.lightGrey.withValues(alpha: 0.8),
                 fontSize: 14,
               ),
               textAlign: TextAlign.center,
@@ -256,7 +245,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
         color: Colors.black,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -279,7 +268,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                   ],
                 ),
               ),
-              child: Center(
+              child: const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -288,8 +277,8 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                       color: Colors.white38,
                       size: 80,
                     ),
-                    const SizedBox(height: DesignTokens.space16),
-                    const Text(
+                    SizedBox(height: DesignTokens.space16),
+                    Text(
                       'Camera Preview\n(Simulated)',
                       style: TextStyle(
                         color: Colors.white38,
@@ -361,7 +350,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.accentGreen.withOpacity(0.5),
+                            color: AppTheme.accentGreen.withValues(alpha: 0.5),
                             blurRadius: 4,
                           ),
                         ],
@@ -471,7 +460,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
         decoration: BoxDecoration(
           color: isPrimary
             ? AppTheme.accentGreen
-            : Colors.black.withOpacity(0.6),
+            : Colors.black.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -523,7 +512,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
         color: AppTheme.cardDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -533,10 +522,10 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.accentGreen.withOpacity(0.1),
+              color: AppTheme.accentGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.qr_code,
               color: AppTheme.accentGreen,
               size: 24,
@@ -562,14 +551,14 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
                 Text(
                   'Barcode: ${item.barcode}',
                   style: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.8),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.8),
                     fontSize: 12,
                   ),
                 ),
                 Text(
                   _formatTimestamp(item.timestamp),
                   style: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.6),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.6),
                     fontSize: 12,
                   ),
                 ),
@@ -584,10 +573,10 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: AppTheme.accentGreen.withOpacity(0.2),
+                color: AppTheme.accentGreen.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.refresh,
                 color: AppTheme.accentGreen,
                 size: 18,
@@ -653,7 +642,6 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
 
       if (product != null) {
         final food = barcodeService.toFoodItem(product);
-        setState(() => _lastScannedFood = food);
 
         // Add to history
         _scanHistory.insert(0, ScannedItem(
@@ -701,7 +689,7 @@ class _BarcodeScannerTabState extends State<BarcodeScannerTab>
         ),
         content: Text(
           'No food found for barcode: $barcode\nWould you like to create a custom food entry?',
-          style: TextStyle(color: AppTheme.lightGrey),
+          style: const TextStyle(color: AppTheme.lightGrey),
         ),
         actions: [
           TextButton(
@@ -765,7 +753,7 @@ class _ManualBarcodeDialogState extends State<_ManualBarcodeDialog> {
         style: const TextStyle(color: AppTheme.neutralWhite),
         decoration: InputDecoration(
           hintText: 'Enter barcode number',
-          hintStyle: TextStyle(color: AppTheme.lightGrey.withOpacity(0.6)),
+          hintStyle: TextStyle(color: AppTheme.lightGrey.withValues(alpha: 0.6)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../models/workout/exercise.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../theme/design_tokens.dart';
-import 'exercise_card.dart';
 
 /// Superset/Circuit group widget for visually grouping exercises
 ///
@@ -39,7 +38,7 @@ class SupersetGroupWidget extends StatefulWidget {
   final VoidCallback? onDisbandGroup;
 
   const SupersetGroupWidget({
-    Key? key,
+    super.key,
     required this.exercises,
     required this.groupType,
     required this.groupId,
@@ -51,7 +50,7 @@ class SupersetGroupWidget extends StatefulWidget {
     this.onEditExercise,
     this.onEditGroup,
     this.onDisbandGroup,
-  }) : super(key: key);
+  });
 
   @override
   State<SupersetGroupWidget> createState() => _SupersetGroupWidgetState();

@@ -14,8 +14,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 // =====================================================
 // ENUMS
@@ -412,8 +410,6 @@ class IntegrationEcosystemService extends ChangeNotifier {
           .eq('user_id', userId)
           .order('connected_at', ascending: false);
 
-      if (response == null) return [];
-
       final configs = (response as List)
           .map((json) => IntegrationConfig.fromJson(json as Map<String, dynamic>))
           .toList();
@@ -457,7 +453,7 @@ class IntegrationEcosystemService extends ChangeNotifier {
           .select()
           .single();
 
-      final config = IntegrationConfig.fromJson(response as Map<String, dynamic>);
+      final config = IntegrationConfig.fromJson(response);
       _configCache[config.id] = config;
       notifyListeners();
 
@@ -501,7 +497,7 @@ class IntegrationEcosystemService extends ChangeNotifier {
 
       if (config == null) return null;
 
-      final start = startDate ?? DateTime.now().subtract(Duration(days: 7));
+      final start = startDate ?? DateTime.now().subtract(const Duration(days: 7));
       final end = endDate ?? DateTime.now();
 
       int itemsSynced = 0;
@@ -574,7 +570,7 @@ class IntegrationEcosystemService extends ChangeNotifier {
         .maybeSingle();
 
     if (response == null) return null;
-    return IntegrationConfig.fromJson(response as Map<String, dynamic>);
+    return IntegrationConfig.fromJson(response);
   }
 
   Future<int> _syncAppleHealth(IntegrationConfig config, DateTime start, DateTime end) async {
@@ -644,7 +640,7 @@ class IntegrationEcosystemService extends ChangeNotifier {
           .select()
           .single();
 
-      final order = GroceryDeliveryOrder.fromJson(response as Map<String, dynamic>);
+      final order = GroceryDeliveryOrder.fromJson(response);
 
       // Submit to external provider
       final externalOrderId = await _submitToGroceryProvider(provider, order);
@@ -708,7 +704,7 @@ class IntegrationEcosystemService extends ChangeNotifier {
           .single();
 
       notifyListeners();
-      return MealKitSubscription.fromJson(response as Map<String, dynamic>);
+      return MealKitSubscription.fromJson(response);
     } catch (e) {
       debugPrint('Error subscribing to meal kit: $e');
       return null;

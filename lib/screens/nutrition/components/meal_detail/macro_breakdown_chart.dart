@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../models/nutrition/nutrition_plan.dart';
-import '../../widgets/shared/macro_ring_chart.dart';
 
 /// Beautiful macro breakdown visualization for meals
 class MacroBreakdownChart extends StatefulWidget {
@@ -82,7 +81,7 @@ class _MacroBreakdownChartState extends State<MacroBreakdownChart>
     return Column(
       children: [
         // Main chart
-        Container(
+        SizedBox(
           height: 280,
           child: Stack(
             alignment: Alignment.center,
@@ -116,12 +115,12 @@ class _MacroBreakdownChartState extends State<MacroBreakdownChart>
                         color: AppTheme.cardBackground,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppTheme.mediumGrey.withOpacity(0.3),
+                          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -131,7 +130,7 @@ class _MacroBreakdownChartState extends State<MacroBreakdownChart>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${widget.meal.mealSummary.totalKcal.toStringAsFixed(0)}',
+                            widget.meal.mealSummary.totalKcal.toStringAsFixed(0),
                             style: const TextStyle(
                               color: AppTheme.neutralWhite,
                               fontSize: 20,
@@ -276,13 +275,13 @@ class _MacroBreakdownChartState extends State<MacroBreakdownChart>
             padding: const EdgeInsets.all(DesignTokens.space12),
             decoration: BoxDecoration(
               color: isSelected
-                ? macro.color.withOpacity(0.1)
-                : AppTheme.cardBackground.withOpacity(0.5),
+                ? macro.color.withValues(alpha: 0.1)
+                : AppTheme.cardBackground.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
               border: Border.all(
                 color: isSelected
-                  ? macro.color.withOpacity(0.5)
-                  : AppTheme.mediumGrey.withOpacity(0.2),
+                  ? macro.color.withValues(alpha: 0.5)
+                  : AppTheme.mediumGrey.withValues(alpha: 0.2),
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -296,7 +295,7 @@ class _MacroBreakdownChartState extends State<MacroBreakdownChart>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: macro.color.withOpacity(0.3),
+                        color: macro.color.withValues(alpha: 0.3),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -333,10 +332,10 @@ class _MacroBreakdownChartState extends State<MacroBreakdownChart>
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground.withOpacity(0.3),
+        color: AppTheme.cardBackground.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.mediumGrey.withOpacity(0.2),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -434,7 +433,7 @@ class _MacroPiePainter extends CustomPainter {
       // Add shadow for selected segment
       if (isSelected) {
         final shadowPaint = Paint()
-          ..color = macro.color.withOpacity(0.3)
+          ..color = macro.color.withValues(alpha: 0.3)
           ..style = PaintingStyle.fill
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
 

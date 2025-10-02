@@ -232,7 +232,7 @@ class Exercise {
     final parts = <String>[];
 
     if (percent1RM != null) {
-      parts.add('${percent1RM}% 1RM');
+      parts.add('$percent1RM% 1RM');
     }
     if (rir != null) {
       parts.add('RIR $rir');

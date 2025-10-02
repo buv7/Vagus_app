@@ -1,20 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:vagus_app/services/workout/workout_service.dart';
-import 'package:vagus_app/models/workout/workout_plan.dart';
+// import 'package:vagus_app/services/workout/workout_service.dart';
 
 // Generate mocks with: flutter pub run build_runner build
 @GenerateMocks([SupabaseClient, SupabaseQueryBuilder, PostgrestFilterBuilder])
-import 'workout_service_test.mocks.dart';
+// import 'workout_service_test.mocks.dart';
 
 void main() {
-  late MockSupabaseClient mockSupabase;
-  late WorkoutService workoutService;
+  // late MockSupabaseClient mockSupabase;
+  // late WorkoutService workoutService;
 
   setUp(() {
-    mockSupabase = MockSupabaseClient();
+    // mockSupabase = MockSupabaseClient();
     // Note: In real implementation, you'd need to inject the mock
     // For now, this demonstrates the test structure
   });
@@ -22,18 +20,18 @@ void main() {
   group('WorkoutService - Plan CRUD', () {
     test('createWorkoutPlan creates plan successfully', () async {
       // Arrange
-      final planData = {
-        'name': 'Test Plan',
-        'goal': 'hypertrophy',
-        'total_weeks': 8,
-        'user_id': 'test-user-id',
-      };
+      // final planData = {
+      //   'name': 'Test Plan',
+      //   'goal': 'hypertrophy',
+      //   'total_weeks': 8,
+      //   'user_id': 'test-user-id',
+      // };
 
-      final expectedResponse = {
-        'id': 'plan-123',
-        ...planData,
-        'created_at': DateTime.now().toIso8601String(),
-      };
+      // final expectedResponse = {
+      //   'id': 'plan-123',
+      //   ...planData,
+      //   'created_at': DateTime.now().toIso8601String(),
+      // };
 
       // Act & Assert
       // TODO: Implement mock behavior and assertions
@@ -42,10 +40,10 @@ void main() {
 
     test('createWorkoutPlan throws on invalid data', () async {
       // Arrange
-      final invalidPlanData = {
-        'name': '', // Empty name should fail
-        'total_weeks': -1, // Negative weeks should fail
-      };
+      // final invalidPlanData = {
+      //   'name': '', // Empty name should fail
+      //   'total_weeks': -1, // Negative weeks should fail
+      // };
 
       // Act & Assert
       expect(
@@ -56,7 +54,7 @@ void main() {
 
     test('getWorkoutPlan returns plan by ID', () async {
       // Arrange
-      final planId = 'plan-123';
+      // final planId = 'plan-123';
 
       // Act & Assert
       // TODO: Implement mock and assertions
@@ -65,7 +63,7 @@ void main() {
 
     test('getWorkoutPlan returns null for non-existent plan', () async {
       // Arrange
-      final nonExistentId = 'non-existent';
+      // final nonExistentId = 'non-existent';
 
       // Act & Assert
       // TODO: Implement mock returning null
@@ -74,8 +72,8 @@ void main() {
 
     test('updateWorkoutPlan updates plan successfully', () async {
       // Arrange
-      final planId = 'plan-123';
-      final updates = {'name': 'Updated Plan Name'};
+      // final planId = 'plan-123';
+      // final updates = {'name': 'Updated Plan Name'};
 
       // Act & Assert
       expect(true, true);
@@ -83,7 +81,7 @@ void main() {
 
     test('deleteWorkoutPlan deletes plan and cascades', () async {
       // Arrange
-      final planId = 'plan-123';
+      // final planId = 'plan-123';
 
       // Act & Assert
       // Verify that weeks, days, and exercises are also deleted
@@ -92,7 +90,7 @@ void main() {
 
     test('listWorkoutPlans returns all plans for user', () async {
       // Arrange
-      final userId = 'user-123';
+      // final userId = 'user-123';
 
       // Act & Assert
       expect(true, true);
@@ -100,8 +98,8 @@ void main() {
 
     test('listWorkoutPlans filters by goal', () async {
       // Arrange
-      final userId = 'user-123';
-      final goal = 'strength';
+      // final userId = 'user-123';
+      // final goal = 'strength';
 
       // Act & Assert
       expect(true, true);
@@ -111,12 +109,12 @@ void main() {
   group('WorkoutService - Week Operations', () {
     test('createWorkoutWeek creates week successfully', () async {
       // Arrange
-      final weekData = {
-        'plan_id': 'plan-123',
-        'week_number': 1,
-        'start_date': DateTime.now().toIso8601String(),
-        'end_date': DateTime.now().add(Duration(days: 7)).toIso8601String(),
-      };
+      // final weekData = {
+      //   'plan_id': 'plan-123',
+      //   'week_number': 1,
+      //   'start_date': DateTime.now().toIso8601String(),
+      //   'end_date': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
+      // };
 
       // Act & Assert
       expect(true, true);
@@ -124,10 +122,10 @@ void main() {
 
     test('createWorkoutWeek validates week number', () async {
       // Arrange
-      final invalidWeekData = {
-        'plan_id': 'plan-123',
-        'week_number': 0, // Should be >= 1
-      };
+      // final invalidWeekData = {
+      //   'plan_id': 'plan-123',
+      //   'week_number': 0, // Should be >= 1
+      // };
 
       // Act & Assert
       expect(() => throw Exception('Invalid week number'), throwsException);
@@ -135,7 +133,7 @@ void main() {
 
     test('getWeeksForPlan returns all weeks in order', () async {
       // Arrange
-      final planId = 'plan-123';
+      // final planId = 'plan-123';
 
       // Act & Assert
       // Verify weeks are ordered by week_number
@@ -144,7 +142,7 @@ void main() {
 
     test('duplicateWeek creates copy with incremented number', () async {
       // Arrange
-      final weekId = 'week-123';
+      // final weekId = 'week-123';
 
       // Act & Assert
       // Verify new week has week_number + 1
@@ -155,11 +153,11 @@ void main() {
   group('WorkoutService - Day Operations', () {
     test('createWorkoutDay creates day successfully', () async {
       // Arrange
-      final dayData = {
-        'week_id': 'week-123',
-        'day_label': 'Push Day',
-        'date': DateTime.now().toIso8601String(),
-      };
+      // final dayData = {
+      //   'week_id': 'week-123',
+      //   'day_label': 'Push Day',
+      //   'date': DateTime.now().toIso8601String(),
+      // };
 
       // Act & Assert
       expect(true, true);
@@ -167,10 +165,10 @@ void main() {
 
     test('createWorkoutDay validates day_label', () async {
       // Arrange
-      final invalidDayData = {
-        'week_id': 'week-123',
-        'day_label': '', // Empty label should fail
-      };
+      // final invalidDayData = {
+      //   'week_id': 'week-123',
+      //   'day_label': '', // Empty label should fail
+      // };
 
       // Act & Assert
       expect(() => throw Exception('Invalid day label'), throwsException);
@@ -178,7 +176,7 @@ void main() {
 
     test('getDaysForWeek returns all days in order', () async {
       // Arrange
-      final weekId = 'week-123';
+      // final weekId = 'week-123';
 
       // Act & Assert
       expect(true, true);
@@ -186,7 +184,7 @@ void main() {
 
     test('markDayAsRestDay sets is_rest_day flag', () async {
       // Arrange
-      final dayId = 'day-123';
+      // final dayId = 'day-123';
 
       // Act & Assert
       // Verify is_rest_day = true and exercises are removed
@@ -197,15 +195,15 @@ void main() {
   group('WorkoutService - Exercise Operations', () {
     test('addExercise adds exercise to day', () async {
       // Arrange
-      final exerciseData = {
-        'day_id': 'day-123',
-        'name': 'Barbell Bench Press',
-        'muscle_group': 'chest',
-        'sets': 3,
-        'target_reps_min': 8,
-        'target_reps_max': 12,
-        'target_weight': 80.0,
-      };
+      // final exerciseData = {
+      //   'day_id': 'day-123',
+      //   'name': 'Barbell Bench Press',
+      //   'muscle_group': 'chest',
+      //   'sets': 3,
+      //   'target_reps_min': 8,
+      //   'target_reps_max': 12,
+      //   'target_weight': 80.0,
+      // };
 
       // Act & Assert
       expect(true, true);
@@ -213,10 +211,10 @@ void main() {
 
     test('addExercise validates required fields', () async {
       // Arrange
-      final invalidExerciseData = {
-        'day_id': 'day-123',
-        // Missing required fields
-      };
+      // final invalidExerciseData = {
+      //   'day_id': 'day-123',
+      //   // Missing required fields
+      // };
 
       // Act & Assert
       expect(() => throw Exception('Missing required fields'), throwsException);
@@ -224,12 +222,12 @@ void main() {
 
     test('addExercise validates positive sets/reps/weight', () async {
       // Arrange
-      final invalidExerciseData = {
-        'day_id': 'day-123',
-        'name': 'Test',
-        'sets': -1, // Should be positive
-        'target_reps_min': 0, // Should be > 0
-      };
+      // final invalidExerciseData = {
+      //   'day_id': 'day-123',
+      //   'name': 'Test',
+      //   'sets': -1, // Should be positive
+      //   'target_reps_min': 0, // Should be > 0
+      // };
 
       // Act & Assert
       expect(() => throw Exception('Invalid values'), throwsException);
@@ -237,8 +235,8 @@ void main() {
 
     test('updateExercise updates exercise successfully', () async {
       // Arrange
-      final exerciseId = 'exercise-123';
-      final updates = {'target_weight': 85.0};
+      // final exerciseId = 'exercise-123';
+      // final updates = {'target_weight': 85.0};
 
       // Act & Assert
       expect(true, true);
@@ -246,7 +244,7 @@ void main() {
 
     test('deleteExercise removes exercise', () async {
       // Arrange
-      final exerciseId = 'exercise-123';
+      // final exerciseId = 'exercise-123';
 
       // Act & Assert
       expect(true, true);
@@ -254,8 +252,8 @@ void main() {
 
     test('reorderExercises updates order_index', () async {
       // Arrange
-      final dayId = 'day-123';
-      final newOrder = ['ex-3', 'ex-1', 'ex-2'];
+      // final dayId = 'day-123';
+      // final newOrder = ['ex-3', 'ex-1', 'ex-2'];
 
       // Act & Assert
       // Verify exercises have new order_index values
@@ -264,8 +262,8 @@ void main() {
 
     test('groupExercises creates superset group', () async {
       // Arrange
-      final exerciseIds = ['ex-1', 'ex-2', 'ex-3'];
-      final groupType = 'superset';
+      // final exerciseIds = ['ex-1', 'ex-2', 'ex-3'];
+      // final groupType = 'superset';
 
       // Act & Assert
       // Verify group_id and group_type are set
@@ -274,7 +272,7 @@ void main() {
 
     test('ungroupExercises removes group', () async {
       // Arrange
-      final exerciseIds = ['ex-1', 'ex-2'];
+      // final exerciseIds = ['ex-1', 'ex-2'];
 
       // Act & Assert
       // Verify group_id and group_type are null
@@ -285,7 +283,7 @@ void main() {
   group('WorkoutService - Calculation Methods', () {
     test('calculateWeekVolume sums all exercise volumes', () async {
       // Arrange
-      final weekId = 'week-123';
+      // final weekId = 'week-123';
       // Mock exercises: 3 sets x 10 reps x 80kg = 2400kg
       //                 4 sets x 8 reps x 100kg = 3200kg
       // Expected total: 5600kg
@@ -300,7 +298,7 @@ void main() {
 
     test('calculateWeekVolume handles empty week', () async {
       // Arrange
-      final weekId = 'empty-week';
+      // final weekId = 'empty-week';
 
       // Act & Assert
       // Should return 0 for week with no exercises
@@ -309,7 +307,7 @@ void main() {
 
     test('calculatePlanVolume sums all weeks', () async {
       // Arrange
-      final planId = 'plan-123';
+      // final planId = 'plan-123';
 
       // Act & Assert
       expect(true, true);
@@ -317,7 +315,7 @@ void main() {
 
     test('calculateMuscleGroupDistribution returns percentages', () async {
       // Arrange
-      final planId = 'plan-123';
+      // final planId = 'plan-123';
 
       // Act & Assert
       // Verify percentages sum to ~100%
@@ -326,8 +324,8 @@ void main() {
 
     test('estimate1RM uses Brzycki formula correctly', () {
       // Arrange
-      final weight = 100.0;
-      final reps = 5;
+      // final weight = 100.0;
+      // final reps = 5;
 
       // Act
       // final estimated1RM = workoutService.estimate1RM(weight, reps);
@@ -341,8 +339,8 @@ void main() {
 
     test('estimate1RM returns weight for 1 rep', () {
       // Arrange
-      final weight = 100.0;
-      final reps = 1;
+      // final weight = 100.0;
+      // final reps = 1;
 
       // Act & Assert
       // Should return weight directly for 1 rep
@@ -351,7 +349,7 @@ void main() {
 
     test('calculateTotalSets sums all sets in day', () async {
       // Arrange
-      final dayId = 'day-123';
+      // final dayId = 'day-123';
 
       // Act & Assert
       expect(true, true);
@@ -361,8 +359,8 @@ void main() {
   group('WorkoutService - Session Tracking', () {
     test('startWorkoutSession creates session record', () async {
       // Arrange
-      final dayId = 'day-123';
-      final userId = 'user-123';
+      // final dayId = 'day-123';
+      // final userId = 'user-123';
 
       // Act & Assert
       // Verify session created with start_time
@@ -371,7 +369,7 @@ void main() {
 
     test('completeWorkoutSession updates end_time and duration', () async {
       // Arrange
-      final sessionId = 'session-123';
+      // final sessionId = 'session-123';
 
       // Act & Assert
       // Verify end_time is set and duration_minutes is calculated
@@ -380,13 +378,13 @@ void main() {
 
     test('recordExerciseSet creates exercise_history entry', () async {
       // Arrange
-      final sessionId = 'session-123';
-      final exerciseId = 'exercise-123';
-      final setData = {
-        'weight': 80.0,
-        'reps': 10,
-        'rpe': 7,
-      };
+      // final sessionId = 'session-123';
+      // final exerciseId = 'exercise-123';
+      // final setData = {
+      //   'weight': 80.0,
+      //   'reps': 10,
+      //   'rpe': 7,
+      // };
 
       // Act & Assert
       expect(true, true);
@@ -394,8 +392,8 @@ void main() {
 
     test('getSessionHistory returns sessions for user', () async {
       // Arrange
-      final userId = 'user-123';
-      final limit = 10;
+      // final userId = 'user-123';
+      // final limit = 10;
 
       // Act & Assert
       expect(true, true);
@@ -405,8 +403,8 @@ void main() {
   group('WorkoutService - Template Operations', () {
     test('saveAsTemplate creates template from plan', () async {
       // Arrange
-      final planId = 'plan-123';
-      final templateName = 'My Template';
+      // final planId = 'plan-123';
+      // final templateName = 'My Template';
 
       // Act & Assert
       expect(true, true);
@@ -414,8 +412,8 @@ void main() {
 
     test('loadTemplate creates plan from template', () async {
       // Arrange
-      final templateId = 'template-123';
-      final userId = 'user-123';
+      // final templateId = 'template-123';
+      // final userId = 'user-123';
 
       // Act & Assert
       // Verify new plan is created with template data
@@ -429,7 +427,7 @@ void main() {
 
     test('listTemplates filters by goal', () async {
       // Arrange
-      final goal = 'strength';
+      // final goal = 'strength';
 
       // Act & Assert
       expect(true, true);
@@ -485,7 +483,7 @@ void main() {
   group('WorkoutService - Edge Cases', () {
     test('handles plan with 0 weeks', () async {
       // Arrange
-      final planData = {'total_weeks': 0};
+      // final planData = {'total_weeks': 0};
 
       // Act & Assert
       expect(() => throw Exception('Invalid week count'), throwsException);
@@ -493,7 +491,7 @@ void main() {
 
     test('handles plan with 100+ weeks', () async {
       // Arrange
-      final planData = {'total_weeks': 150};
+      // final planData = {'total_weeks': 150};
 
       // Act & Assert
       // Should either accept or have reasonable max limit
@@ -502,7 +500,7 @@ void main() {
 
     test('handles exercise with 0 sets', () async {
       // Arrange
-      final exerciseData = {'sets': 0};
+      // final exerciseData = {'sets': 0};
 
       // Act & Assert
       expect(() => throw Exception('Invalid sets'), throwsException);
@@ -510,7 +508,7 @@ void main() {
 
     test('handles exercise with very high weight', () async {
       // Arrange
-      final exerciseData = {'target_weight': 500.0};
+      // final exerciseData = {'target_weight': 500.0};
 
       // Act & Assert
       // Should accept reasonable max weight
@@ -519,7 +517,7 @@ void main() {
 
     test('handles concurrent updates to same plan', () async {
       // Arrange
-      final planId = 'plan-123';
+      // final planId = 'plan-123';
 
       // Act & Assert
       // Verify optimistic locking or last-write-wins
@@ -528,7 +526,7 @@ void main() {
 
     test('handles deletion of plan with active sessions', () async {
       // Arrange
-      final planId = 'plan-with-sessions';
+      // final planId = 'plan-with-sessions';
 
       // Act & Assert
       // Should handle gracefully (cascade or prevent)
@@ -539,7 +537,7 @@ void main() {
   group('WorkoutService - Performance', () {
     test('loads large plan efficiently', () async {
       // Arrange
-      final largePlanId = 'large-plan'; // 52 weeks, 300+ exercises
+      // final largePlanId = 'large-plan'; // 52 weeks, 300+ exercises
 
       // Act
       final stopwatch = Stopwatch()..start();
@@ -554,15 +552,15 @@ void main() {
 
     test('batch creates exercises efficiently', () async {
       // Arrange
-      final dayId = 'day-123';
-      final exercises = List.generate(
-        20,
-        (i) => {
-          'day_id': dayId,
-          'name': 'Exercise $i',
-          'sets': 3,
-        },
-      );
+      // final dayId = 'day-123';
+      // final exercises = List.generate(
+      //   20,
+      //   (i) => {
+      //     'day_id': dayId,
+      //     'name': 'Exercise $i',
+      //     'sets': 3,
+      //   },
+      // );
 
       // Act
       final stopwatch = Stopwatch()..start();
@@ -579,7 +577,7 @@ void main() {
   group('WorkoutService - Data Consistency', () {
     test('maintains referential integrity on cascading deletes', () async {
       // Arrange
-      final planId = 'plan-123';
+      // final planId = 'plan-123';
 
       // Act
       // await workoutService.deleteWorkoutPlan(planId);
@@ -591,7 +589,7 @@ void main() {
 
     test('prevents orphaned exercises', () async {
       // Arrange
-      final exerciseId = 'exercise-123';
+      // final exerciseId = 'exercise-123';
 
       // Act & Assert
       // Deleting day should also delete exercises
@@ -600,7 +598,7 @@ void main() {
 
     test('maintains order_index consistency after reorder', () async {
       // Arrange
-      final dayId = 'day-123';
+      // final dayId = 'day-123';
 
       // Act
       // await workoutService.reorderExercises(dayId, newOrder);

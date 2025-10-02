@@ -31,7 +31,7 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
   late List<AnimationController> _insightControllers;
   late List<Animation<double>> _insightAnimations;
 
-  List<_InsightItem> _insights = [];
+  final List<_InsightItem> _insights = [];
 
   @override
   void initState() {
@@ -215,9 +215,7 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
     final totalCals = summary.totalKcal;
 
     if (totalCals > 0) {
-      final proteinPercent = (summary.totalProtein * 4 / totalCals * 100);
       final carbsPercent = (summary.totalCarbs * 4 / totalCals * 100);
-      final fatPercent = (summary.totalFat * 9 / totalCals * 100);
 
       // Check if carbs are too high
       if (carbsPercent > 60) {
@@ -297,7 +295,7 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
                   gradient: LinearGradient(
                     colors: [
                       AppTheme.accentGreen,
-                      AppTheme.accentGreen.withOpacity(0.7),
+                      AppTheme.accentGreen.withValues(alpha: 0.7),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
@@ -337,10 +335,10 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withOpacity(0.1),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
@@ -348,7 +346,7 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
                       size: 12,
                       color: AppTheme.accentGreen,
                     ),
-                    const SizedBox(width: DesignTokens.space4),
+                    SizedBox(width: DesignTokens.space4),
                     Text(
                       'AI',
                       style: TextStyle(
@@ -401,16 +399,16 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: insight.color.withOpacity(0.1),
+        color: insight.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: insight.color.withOpacity(0.3),
+          color: insight.color.withValues(alpha: 0.3),
           width: insight.intensity == _InsightIntensity.high ? 2 : 1,
         ),
         boxShadow: insight.intensity == _InsightIntensity.high
           ? [
               BoxShadow(
-                color: insight.color.withOpacity(0.2),
+                color: insight.color.withValues(alpha: 0.2),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -425,7 +423,7 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: insight.color.withOpacity(0.2),
+              color: insight.color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: Center(
@@ -538,7 +536,7 @@ class _NutritionInsightsPanelState extends State<NutritionInsightsPanel>
   }
 
   Widget _buildSparkline(List<double> data, Color color) {
-    return Container(
+    return SizedBox(
       height: 30,
       width: double.infinity,
       child: CustomPaint(
@@ -628,8 +626,8 @@ class _SparklinePainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          color.withOpacity(0.3),
-          color.withOpacity(0.1),
+          color.withValues(alpha: 0.3),
+          color.withValues(alpha: 0.1),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 

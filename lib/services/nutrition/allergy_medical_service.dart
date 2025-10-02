@@ -435,7 +435,7 @@ class AllergyMedicalService extends ChangeNotifier {
 
       if (response == null) return null;
 
-      _cachedProfile = AllergyProfile.fromJson(response as Map<String, dynamic>);
+      _cachedProfile = AllergyProfile.fromJson(response);
       return _cachedProfile;
     } catch (e) {
       debugPrint('Error fetching allergy profile: $e');
@@ -474,7 +474,7 @@ class AllergyMedicalService extends ChangeNotifier {
           .select()
           .single();
 
-      _cachedProfile = AllergyProfile.fromJson(response as Map<String, dynamic>);
+      _cachedProfile = AllergyProfile.fromJson(response);
       notifyListeners();
       return _cachedProfile;
     } catch (e) {
@@ -693,8 +693,6 @@ class AllergyMedicalService extends ChangeNotifier {
             .select()
             .eq('medication_name', medication);
 
-        if (response == null) continue;
-
         final interactionData = response as List;
         for (final data in interactionData) {
           final interaction = MedicationInteraction.fromJson(data as Map<String, dynamic>);
@@ -760,7 +758,7 @@ class AllergyMedicalService extends ChangeNotifier {
           .select()
           .single();
 
-      return MedicalNutritionReport.fromJson(response as Map<String, dynamic>);
+      return MedicalNutritionReport.fromJson(response);
     } catch (e) {
       debugPrint('Error generating medical report: $e');
       return null;

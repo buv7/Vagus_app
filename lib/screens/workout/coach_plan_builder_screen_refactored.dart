@@ -2,10 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/workout/workout_plan.dart';
-import '../../models/workout/exercise.dart';
-import '../../models/workout/cardio_session.dart';
 import '../../services/workout/workout_service.dart';
-import '../../services/ai/workout_ai.dart';
 import '../../services/ai/ai_usage_service.dart';
 import 'widgets/validation_helper.dart';
 import 'package:intl/intl.dart';
@@ -29,9 +26,6 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
   // State management
   bool _loading = true;
   bool _saving = false;
-  bool _generating = false;
-  String? _errorMessage;
-  String? _successMessage;
 
   // Plan data
   WorkoutPlan? _currentPlan;
@@ -86,7 +80,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
         _initializeNewPlan();
       }
     } catch (e) {
-      setState(() => _errorMessage = 'Failed to initialize: $e');
+      debugPrint('Failed to initialize: $e');
     } finally {
       setState(() => _loading = false);
     }
@@ -381,13 +375,15 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
       );
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (_hasUnsavedChanges) {
+    return PopScope(
+      canPop: !_hasUnsavedChanges,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (!didPop && _hasUnsavedChanges) {
           final shouldPop = await _showUnsavedChangesDialog();
-          return shouldPop ?? false;
+          if (shouldPop == true && context.mounted) {
+            Navigator.of(context).pop();
+          }
         }
-        return true;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -442,7 +438,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Theme.of(context).primaryColor.withOpacity(0.1),
+      color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
       child: Row(
         children: [
           const Icon(Icons.psychology, size: 20),
@@ -654,7 +650,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
         final isSelected = index == _currentWeekIndex;
 
         return Card(
-          color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : null,
           child: ListTile(
             dense: true,
             title: Text('Week ${week.weekNumber}'),
@@ -873,7 +869,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -929,8 +925,8 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
         // Add exercise button
         FloatingActionButton(
           onPressed: _addExercise,
-          child: const Icon(Icons.add),
           heroTag: 'add_exercise',
+          child: const Icon(Icons.add),
         ),
       ],
     );
@@ -1086,7 +1082,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
   void _analyzeBalance() async {
     if (_currentPlan == null) return;
 
-    setState(() => _generating = true);
+    setState(() => _saving = true);
 
     try {
       final analysis = _workoutService.analyzeMuscleGroupBalance(_currentPlan!);
@@ -1156,7 +1152,7 @@ class _CoachPlanBuilderScreenState extends State<CoachPlanBuilderScreen> {
     } catch (e) {
       _showError('Failed to analyze balance: $e');
     } finally {
-      setState(() => _generating = false);
+      setState(() => _saving = false);
     }
   }
 

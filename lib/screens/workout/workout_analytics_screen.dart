@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../models/workout/analytics_models.dart';
 import '../../services/workout/workout_analytics_service.dart';
@@ -21,10 +20,10 @@ class WorkoutAnalyticsScreen extends StatefulWidget {
   final bool isCoachView;
 
   const WorkoutAnalyticsScreen({
-    Key? key,
+    super.key,
     required this.clientId,
     this.isCoachView = false,
-  }) : super(key: key);
+  });
 
   @override
   State<WorkoutAnalyticsScreen> createState() => _WorkoutAnalyticsScreenState();
@@ -223,7 +222,7 @@ class _WorkoutAnalyticsScreenState extends State<WorkoutAnalyticsScreen> {
 
   Widget _buildSummaryCard() {
     return Card(
-      color: DesignTokens.accentBlue.withOpacity(0.1),
+      color: DesignTokens.accentBlue.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -231,7 +230,7 @@ class _WorkoutAnalyticsScreenState extends State<WorkoutAnalyticsScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.summarize, color: DesignTokens.accentBlue),
+                const Icon(Icons.summarize, color: DesignTokens.accentBlue),
                 const SizedBox(width: 8),
                 Text(
                   LocaleHelper.t('summary', 'en'),
@@ -661,7 +660,7 @@ class _WorkoutAnalyticsScreenState extends State<WorkoutAnalyticsScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.insights, size: 18, color: DesignTokens.accentBlue),
+                      const Icon(Icons.insights, size: 18, color: DesignTokens.accentBlue),
                       const SizedBox(width: 8),
                       Expanded(child: Text(pattern, style: Theme.of(context).textTheme.bodySmall)),
                     ],
@@ -725,7 +724,7 @@ class _WorkoutAnalyticsScreenState extends State<WorkoutAnalyticsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: _getTrendColor(compliance.trend).withOpacity(0.1),
+                color: _getTrendColor(compliance.trend).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: _getTrendColor(compliance.trend)),
               ),
@@ -861,7 +860,7 @@ class _WorkoutAnalyticsScreenState extends State<WorkoutAnalyticsScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 24),
@@ -915,7 +914,7 @@ class _WorkoutAnalyticsScreenState extends State<WorkoutAnalyticsScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color),
       ),
@@ -997,7 +996,7 @@ class _WorkoutAnalyticsScreenState extends State<WorkoutAnalyticsScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color),
       ),

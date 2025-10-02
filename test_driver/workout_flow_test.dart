@@ -250,7 +250,7 @@ void main() {
       await driver.waitFor(find.text('Workout Paused'));
 
       // Wait 5 seconds
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 5));
 
       await driver.tap(find.byValueKey('resume_workout_button'));
       await driver.waitFor(find.text('Workout Resumed'));
@@ -285,7 +285,7 @@ void main() {
         find.byValueKey('days_per_week_slider'),
         100,
         0,
-        Duration(milliseconds: 300),
+        const Duration(milliseconds: 300),
       );
 
       await driver.tap(find.byValueKey('duration_dropdown'));
@@ -302,7 +302,7 @@ void main() {
       // Wait for AI generation (may take 10-30 seconds)
       await driver.waitFor(
         find.text('Plan Generated'),
-        timeout: Duration(seconds: 30),
+        timeout: const Duration(seconds: 30),
       );
 
       // 5. Review generated plan

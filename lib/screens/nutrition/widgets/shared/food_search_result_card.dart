@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -36,7 +35,6 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
 
   double _currentPortion = 1.0;
   bool _isExpanded = false;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -79,12 +77,10 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
             opacity: _fadeAnimation.value,
             child: GestureDetector(
               onTapDown: (_) {
-                setState(() => _isPressed = true);
                 _controller.forward();
                 Haptics.tap();
               },
               onTapUp: (_) {
-                setState(() => _isPressed = false);
                 _controller.reverse();
                 if (!_isExpanded && !widget.showPortionSelector) {
                   widget.onSelected(widget.food, _currentPortion);
@@ -93,7 +89,6 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
                 }
               },
               onTapCancel: () {
-                setState(() => _isPressed = false);
                 _controller.reverse();
               },
               child: AnimatedContainer(
@@ -105,13 +100,13 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: _isExpanded
-                      ? AppTheme.accentGreen.withOpacity(0.5)
-                      : AppTheme.mediumGrey.withOpacity(0.3),
+                      ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                      : AppTheme.mediumGrey.withValues(alpha: 0.3),
                     width: _isExpanded ? 2 : 1,
                   ),
                   boxShadow: _isExpanded ? [
                     BoxShadow(
-                      color: AppTheme.accentGreen.withOpacity(0.1),
+                      color: AppTheme.accentGreen.withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -161,7 +156,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
                 Text(
                   widget.food.brand!,
                   style: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.8),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.8),
                     fontSize: 14,
                   ),
                 ),
@@ -184,7 +179,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
       height: 56,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: AppTheme.accentGreen.withOpacity(0.1),
+        color: AppTheme.accentGreen.withValues(alpha: 0.1),
       ),
       child: widget.food.imageUrl != null
         ? ClipRRect(
@@ -193,7 +188,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
               widget.food.imageUrl!,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return Icon(
+                return const Icon(
                   Icons.restaurant,
                   color: AppTheme.accentGreen,
                   size: 28,
@@ -201,7 +196,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
               },
             ),
           )
-        : Icon(
+        : const Icon(
             Icons.restaurant,
             color: AppTheme.accentGreen,
             size: 28,
@@ -210,31 +205,29 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
   }
 
   Widget _buildQuickNutrition() {
-    if (!widget.showNutritionalInfo || widget.food.calories == null) {
+    if (!widget.showNutritionalInfo) {
       return Text(
         'Tap to view nutrition info',
         style: TextStyle(
-          color: AppTheme.lightGrey.withOpacity(0.6),
+          color: AppTheme.lightGrey.withValues(alpha: 0.6),
           fontSize: 12,
         ),
       );
     }
 
-    final calories = (widget.food.calories! * _currentPortion).round();
-    final protein = widget.food.protein != null
-      ? (widget.food.protein! * _currentPortion).round()
-      : null;
+    final calories = (widget.food.calories * _currentPortion).round();
+    final protein = (widget.food.protein * _currentPortion).round();
 
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: AppTheme.lightOrange.withOpacity(0.1),
+            color: AppTheme.lightOrange.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
-            '${calories} kcal',
+            '$calories kcal',
             style: const TextStyle(
               color: AppTheme.lightOrange,
               fontSize: 11,
@@ -242,24 +235,22 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
             ),
           ),
         ),
-        if (protein != null) ...[
-          const SizedBox(width: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: AppTheme.accentGreen.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              '${protein}g protein',
-              style: const TextStyle(
-                color: AppTheme.accentGreen,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
+        const SizedBox(width: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppTheme.accentGreen.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            '${protein}g protein',
+            style: const TextStyle(
+              color: AppTheme.accentGreen,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ],
+        ),
       ],
     );
   }
@@ -270,8 +261,8 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
       height: 36,
       decoration: BoxDecoration(
         color: _isExpanded
-          ? AppTheme.accentGreen.withOpacity(0.2)
-          : AppTheme.mediumGrey.withOpacity(0.2),
+          ? AppTheme.accentGreen.withValues(alpha: 0.2)
+          : AppTheme.mediumGrey.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Icon(
@@ -311,15 +302,15 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.scale,
                 color: AppTheme.accentGreen,
                 size: 16,
               ),
-              const SizedBox(width: DesignTokens.space8),
-              const Text(
+              SizedBox(width: DesignTokens.space8),
+              Text(
                 'Portion Size',
                 style: TextStyle(
                   color: AppTheme.neutralWhite,
@@ -347,7 +338,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: AppTheme.mediumGrey.withOpacity(0.3),
+                    color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -371,7 +362,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
                     color: AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: AppTheme.mediumGrey.withOpacity(0.3),
+                      color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
@@ -398,7 +389,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: AppTheme.accentGreen.withOpacity(0.2),
+                    color: AppTheme.accentGreen.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -443,12 +434,12 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color: isSelected
-              ? AppTheme.accentGreen.withOpacity(0.2)
-              : AppTheme.mediumGrey.withOpacity(0.2),
+              ? AppTheme.accentGreen.withValues(alpha: 0.2)
+              : AppTheme.mediumGrey.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
               color: isSelected
-                ? AppTheme.accentGreen.withOpacity(0.5)
+                ? AppTheme.accentGreen.withValues(alpha: 0.5)
                 : Colors.transparent,
             ),
           ),
@@ -467,20 +458,10 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
   }
 
   Widget _buildDetailedNutrition() {
-    if (widget.food.calories == null) {
-      return const SizedBox.shrink();
-    }
-
-    final calories = (widget.food.calories! * _currentPortion);
-    final protein = widget.food.protein != null
-      ? (widget.food.protein! * _currentPortion)
-      : 0.0;
-    final carbs = widget.food.carbs != null
-      ? (widget.food.carbs! * _currentPortion)
-      : 0.0;
-    final fat = widget.food.fat != null
-      ? (widget.food.fat! * _currentPortion)
-      : 0.0;
+    final calories = (widget.food.calories * _currentPortion);
+    final protein = (widget.food.protein * _currentPortion);
+    final carbs = (widget.food.carbs * _currentPortion);
+    final fat = (widget.food.fat * _currentPortion);
 
     return Container(
       margin: const EdgeInsets.only(top: DesignTokens.space12),
@@ -493,15 +474,15 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.analytics,
                 color: AppTheme.accentGreen,
                 size: 16,
               ),
-              const SizedBox(width: DesignTokens.space8),
-              const Text(
+              SizedBox(width: DesignTokens.space8),
+              Text(
                 'Nutrition Facts',
                 style: TextStyle(
                   color: AppTheme.neutralWhite,
@@ -554,7 +535,7 @@ class _FoodSearchResultCardState extends State<FoodSearchResultCard>
         Text(
           label,
           style: TextStyle(
-            color: AppTheme.lightGrey.withOpacity(0.6),
+            color: AppTheme.lightGrey.withValues(alpha: 0.6),
             fontSize: 11,
           ),
         ),
@@ -619,7 +600,7 @@ class CompactMacroBalance extends StatelessWidget {
       return Container(
         height: 8,
         decoration: BoxDecoration(
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(4),
         ),
       );
@@ -635,7 +616,7 @@ class CompactMacroBalance extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 2,
             offset: const Offset(0, 1),
           ),

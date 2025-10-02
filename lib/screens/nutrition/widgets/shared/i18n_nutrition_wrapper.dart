@@ -53,7 +53,7 @@ class _I18nNutritionWrapperState extends State<I18nNutritionWrapper> {
 
   String _detectSystemLocale() {
     // Try to detect locale from device settings
-    final deviceLocale = WidgetsBinding.instance.window.locale;
+    final deviceLocale = View.of(context).platformDispatcher.locale;
     final languageCode = deviceLocale.languageCode;
 
     // Check if we support this locale

@@ -84,7 +84,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -97,7 +97,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
             height: 64,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              color: AppTheme.accentGreen.withOpacity(0.1),
+              color: AppTheme.accentGreen.withValues(alpha: 0.1),
             ),
             child: widget.food.imageUrl != null
               ? ClipRRect(
@@ -106,7 +106,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
                     widget.food.imageUrl!,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return Icon(
+                      return const Icon(
                         Icons.restaurant,
                         color: AppTheme.accentGreen,
                         size: 32,
@@ -114,7 +114,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
                     },
                   ),
                 )
-              : Icon(
+              : const Icon(
                   Icons.restaurant,
                   color: AppTheme.accentGreen,
                   size: 32,
@@ -143,7 +143,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
                   Text(
                     widget.food.brand!,
                     style: TextStyle(
-                      color: AppTheme.lightGrey.withOpacity(0.8),
+                      color: AppTheme.lightGrey.withValues(alpha: 0.8),
                       fontSize: 16,
                     ),
                   ),
@@ -155,7 +155,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.accentGreen.withOpacity(0.1),
+                    color: AppTheme.accentGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -181,7 +181,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppTheme.mediumGrey.withOpacity(0.2),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -242,24 +242,22 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
   }
 
   Widget _buildCaloriesSummary() {
-    final calories = widget.food.calories != null
-      ? (widget.food.calories! * widget.quantity).round()
-      : 0;
+    final calories = (widget.food.calories * widget.quantity).round();
 
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.lightOrange.withOpacity(0.1),
-            AppTheme.lightOrange.withOpacity(0.05),
+            AppTheme.lightOrange.withValues(alpha: 0.1),
+            AppTheme.lightOrange.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.lightOrange.withOpacity(0.3),
+          color: AppTheme.lightOrange.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -268,10 +266,10 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppTheme.lightOrange.withOpacity(0.2),
+              color: AppTheme.lightOrange.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.local_fire_department,
               color: AppTheme.lightOrange,
               size: 32,
@@ -301,7 +299,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
                 Text(
                   'From ${widget.quantity} ${widget.serving}',
                   style: TextStyle(
-                    color: AppTheme.lightGrey.withOpacity(0.8),
+                    color: AppTheme.lightGrey.withValues(alpha: 0.8),
                     fontSize: 12,
                   ),
                 ),
@@ -315,7 +313,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
               vertical: 6,
             ),
             decoration: BoxDecoration(
-              color: AppTheme.lightOrange.withOpacity(0.2),
+              color: AppTheme.lightOrange.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -355,7 +353,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
         color: AppTheme.cardDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -373,7 +371,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppTheme.accentGreen.withOpacity(0.1),
+                      color: AppTheme.accentGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -426,15 +424,9 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
   }
 
   Widget _buildMacronutrients() {
-    final protein = widget.food.protein != null
-      ? (widget.food.protein! * widget.quantity)
-      : 0.0;
-    final carbs = widget.food.carbs != null
-      ? (widget.food.carbs! * widget.quantity)
-      : 0.0;
-    final fat = widget.food.fat != null
-      ? (widget.food.fat! * widget.quantity)
-      : 0.0;
+    final protein = (widget.food.protein * widget.quantity);
+    final carbs = (widget.food.carbs * widget.quantity);
+    final fat = (widget.food.fat * widget.quantity);
     // Fiber is not available in FoodItem model
     final fiber = 0.0;
 
@@ -553,7 +545,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
                   child: Container(
                     height: 6,
                     decoration: BoxDecoration(
-                      color: AppTheme.mediumGrey.withOpacity(0.3),
+                      color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(3),
                     ),
                     child: FractionallySizedBox(
@@ -595,7 +587,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -610,7 +602,7 @@ class _DetailedNutritionModalState extends State<DetailedNutritionModal>
               label: const Text('Export'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.lightGrey,
-                side: BorderSide(color: AppTheme.mediumGrey.withOpacity(0.5)),
+                side: BorderSide(color: AppTheme.mediumGrey.withValues(alpha: 0.5)),
                 padding: const EdgeInsets.symmetric(vertical: DesignTokens.space12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

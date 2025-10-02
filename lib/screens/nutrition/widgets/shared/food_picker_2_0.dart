@@ -1,13 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
-import '../../../../services/nutrition/food_catalog_service.dart';
 import '../../../../models/nutrition/food_item.dart';
-import '../../../../widgets/anim/vagus_loader.dart';
-import '../../../../widgets/anim/empty_state.dart';
 import 'smart_food_search.dart';
 import 'barcode_scanner_tab.dart';
 import 'recent_foods_tab.dart';
@@ -16,14 +11,14 @@ import 'custom_foods_tab.dart';
 
 /// Food Picker 2.0 - Delightful tabbed interface with advanced features
 /// Features: 5 tabs, smart search, multi-select, voice search, filters
-class FoodPicker2_0 extends StatefulWidget {
+class FoodPicker20 extends StatefulWidget {
   final Function(List<FoodItem>) onFoodsSelected;
   final String? mealType;
   final String? targetMeal;
   final bool multiSelectMode;
   final List<String>? dietaryFilters;
 
-  const FoodPicker2_0({
+  const FoodPicker20({
     super.key,
     required this.onFoodsSelected,
     this.mealType,
@@ -33,17 +28,16 @@ class FoodPicker2_0 extends StatefulWidget {
   });
 
   @override
-  State<FoodPicker2_0> createState() => _FoodPicker2_0State();
+  State<FoodPicker20> createState() => _FoodPicker20State();
 }
 
-class _FoodPicker2_0State extends State<FoodPicker2_0>
+class _FoodPicker20State extends State<FoodPicker20>
     with TickerProviderStateMixin {
   late TabController _tabController;
   late AnimationController _slideController;
   late Animation<Offset> _slideAnimation;
 
-  FoodPickerTab _activeTab = FoodPickerTab.search;
-  List<FoodItem> _selectedFoods = [];
+  final List<FoodItem> _selectedFoods = [];
   bool _isMultiSelectMode = false;
   int _selectedCount = 0;
 
@@ -70,14 +64,6 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
       parent: _slideController,
       curve: Curves.easeOutCubic,
     ));
-
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        setState(() {
-          _activeTab = FoodPickerTab.values[_tabController.index];
-        });
-      }
-    });
 
     _slideController.forward();
   }
@@ -126,7 +112,7 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppTheme.mediumGrey.withOpacity(0.2),
+                color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -162,7 +148,7 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.accentGreen.withOpacity(0.2),
+                          color: AppTheme.accentGreen.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(
@@ -181,7 +167,7 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
                   Text(
                     'to ${widget.targetMeal}',
                     style: TextStyle(
-                      color: AppTheme.lightGrey.withOpacity(0.8),
+                      color: AppTheme.lightGrey.withValues(alpha: 0.8),
                       fontSize: 14,
                     ),
                   ),
@@ -197,8 +183,8 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
               height: 40,
               decoration: BoxDecoration(
                 color: _isMultiSelectMode
-                  ? AppTheme.accentGreen.withOpacity(0.2)
-                  : AppTheme.mediumGrey.withOpacity(0.2),
+                  ? AppTheme.accentGreen.withValues(alpha: 0.2)
+                  : AppTheme.mediumGrey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -225,7 +211,7 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
         isScrollable: true,
         tabAlignment: TabAlignment.start,
         indicator: BoxDecoration(
-          color: AppTheme.accentGreen.withOpacity(0.2),
+          color: AppTheme.accentGreen.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
         ),
         indicatorPadding: const EdgeInsets.all(4),
@@ -314,7 +300,7 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
         color: AppTheme.cardDark,
         border: Border(
           top: BorderSide(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -390,11 +376,11 @@ class _FoodPicker2_0State extends State<FoodPicker2_0>
                                 minHeight: 32,
                               ),
                             ),
-                            Expanded(
+                            const Expanded(
                               child: Text(
                                 '1.0x',
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppTheme.neutralWhite,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,

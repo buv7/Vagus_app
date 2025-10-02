@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -99,19 +98,19 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: widget.isSelected
-                    ? AppTheme.accentGreen.withOpacity(0.5)
-                    : AppTheme.mediumGrey.withOpacity(0.3),
+                    ? AppTheme.accentGreen.withValues(alpha: 0.5)
+                    : AppTheme.mediumGrey.withValues(alpha: 0.3),
                   width: widget.isSelected ? 2 : 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
                   if (widget.isSelected)
                     BoxShadow(
-                      color: AppTheme.accentGreen.withOpacity(0.1),
+                      color: AppTheme.accentGreen.withValues(alpha: 0.1),
                       blurRadius: 16,
                       offset: const Offset(0, 0),
                     ),
@@ -189,7 +188,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                   Text(
                     widget.food.brand!,
                     style: TextStyle(
-                      color: AppTheme.lightGrey.withOpacity(0.8),
+                      color: AppTheme.lightGrey.withValues(alpha: 0.8),
                       fontSize: 14,
                     ),
                   ),
@@ -212,8 +211,8 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                     height: 36,
                     decoration: BoxDecoration(
                       color: _isFavorite
-                        ? AppTheme.accentGreen.withOpacity(0.2)
-                        : AppTheme.mediumGrey.withOpacity(0.2),
+                        ? AppTheme.accentGreen.withValues(alpha: 0.2)
+                        : AppTheme.mediumGrey.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -233,10 +232,10 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: AppTheme.mediumGrey.withOpacity(0.2),
+                    color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.info_outline,
                     color: AppTheme.lightGrey,
                     size: 18,
@@ -256,7 +255,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
       height: 80,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: AppTheme.accentGreen.withOpacity(0.1),
+        color: AppTheme.accentGreen.withValues(alpha: 0.1),
       ),
       child: widget.food.imageUrl != null
         ? ClipRRect(
@@ -274,7 +273,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
   }
 
   Widget _buildFallbackIcon() {
-    return Icon(
+    return const Icon(
       Icons.restaurant,
       color: AppTheme.accentGreen,
       size: 40,
@@ -282,32 +281,23 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
   }
 
   Widget _buildMacroChips() {
-    if (!widget.showNutritionalInfo || widget.food.calories == null) {
+    if (!widget.showNutritionalInfo) {
       return const SizedBox.shrink();
     }
 
-    final calories = (widget.food.calories! * _quantity).round();
-    final protein = widget.food.protein != null
-      ? (widget.food.protein! * _quantity).round()
-      : null;
-    final carbs = widget.food.carbs != null
-      ? (widget.food.carbs! * _quantity).round()
-      : null;
-    final fat = widget.food.fat != null
-      ? (widget.food.fat! * _quantity).round()
-      : null;
+    final calories = (widget.food.calories * _quantity).round();
+    final protein = (widget.food.protein * _quantity).round();
+    final carbs = (widget.food.carbs * _quantity).round();
+    final fat = (widget.food.fat * _quantity).round();
 
     return Wrap(
       spacing: 6,
       runSpacing: 4,
       children: [
-        _buildMacroChip('${calories} kcal', AppTheme.lightOrange, Icons.local_fire_department),
-        if (protein != null)
-          _buildMacroChip('${protein}g P', AppTheme.accentGreen, Icons.fitness_center),
-        if (carbs != null)
-          _buildMacroChip('${carbs}g C', AppTheme.lightOrange, Icons.grain),
-        if (fat != null)
-          _buildMacroChip('${fat}g F', AppTheme.lightYellow, Icons.water_drop),
+        _buildMacroChip('$calories kcal', AppTheme.lightOrange, Icons.local_fire_department),
+        _buildMacroChip('${protein}g P', AppTheme.accentGreen, Icons.fitness_center),
+        _buildMacroChip('${carbs}g C', AppTheme.lightOrange, Icons.grain),
+        _buildMacroChip('${fat}g F', AppTheme.lightYellow, Icons.water_drop),
       ],
     );
   }
@@ -316,7 +306,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -339,13 +329,13 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
 
   Widget _buildNutritionSummary() {
     // Compact macro visualization
-    if (!widget.showNutritionalInfo || widget.food.calories == null) {
+    if (!widget.showNutritionalInfo) {
       return const SizedBox.shrink();
     }
 
-    final protein = widget.food.protein ?? 0;
-    final carbs = widget.food.carbs ?? 0;
-    final fat = widget.food.fat ?? 0;
+    final protein = widget.food.protein;
+    final carbs = widget.food.carbs;
+    final fat = widget.food.fat;
     final total = protein + carbs + fat;
 
     if (total == 0) return const SizedBox.shrink();
@@ -361,7 +351,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
               borderRadius: BorderRadius.circular(3),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 2,
                   offset: const Offset(0, 1),
                 ),
@@ -410,7 +400,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                   color: AppTheme.backgroundDark,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppTheme.mediumGrey.withOpacity(0.3),
+                    color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -422,7 +412,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                       color: AppTheme.neutralWhite,
                       fontSize: 12,
                     ),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.keyboard_arrow_down,
                       color: AppTheme.lightGrey,
                       size: 16,
@@ -457,7 +447,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: AppTheme.mediumGrey.withOpacity(0.3),
+                        color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -490,7 +480,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: AppTheme.accentGreen.withOpacity(0.2),
+                        color: AppTheme.accentGreen.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -519,16 +509,16 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                 color: AppTheme.accentGreen,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.add,
                     color: Colors.white,
                     size: 16,
                   ),
-                  const SizedBox(width: 4),
-                  const Text(
+                  SizedBox(width: 4),
+                  Text(
                     'Add',
                     style: TextStyle(
                       color: Colors.white,

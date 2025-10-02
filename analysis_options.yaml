@@ -12,6 +12,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - ARCHIVE/**
+    - archived/**
   # Downgrade style-only infos to info level to help reach ≤120 warnings goal
   errors:
     # Downgrade file naming style to info (not warning)

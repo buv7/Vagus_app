@@ -1,6 +1,7 @@
 /// Exercise Library Models
 ///
 /// Data models for exercise library system
+library;
 
 /// Exercise library item
 class ExerciseLibraryItem {

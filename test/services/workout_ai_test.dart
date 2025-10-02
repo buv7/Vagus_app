@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
 // Mock for testing AI service
@@ -8,12 +7,12 @@ void main() {
   group('WorkoutAIService - Plan Generation', () {
     test('generateWorkoutPlan creates valid plan structure', () async {
       // Arrange
-      final userProfile = {
-        'goal': 'hypertrophy',
-        'experience_level': 'intermediate',
-        'training_days_per_week': 4,
-        'available_equipment': ['barbell', 'dumbbell', 'bench'],
-      };
+      // final userProfile = {
+      //   'goal': 'hypertrophy',
+      //   'experience_level': 'intermediate',
+      //   'training_days_per_week': 4,
+      //   'available_equipment': ['barbell', 'dumbbell', 'bench'],
+      // };
 
       // Act
       // final plan = await aiService.generateWorkoutPlan(userProfile);
@@ -27,9 +26,9 @@ void main() {
 
     test('generateWorkoutPlan respects training frequency', () async {
       // Arrange
-      final userProfile = {
-        'training_days_per_week': 3,
-      };
+      // final userProfile = {
+      //   'training_days_per_week': 3,
+      // };
 
       // Act
       // final plan = await aiService.generateWorkoutPlan(userProfile);
@@ -42,7 +41,7 @@ void main() {
 
     test('generateWorkoutPlan adapts to experience level', () async {
       // Arrange - Beginner
-      final beginnerProfile = {'experience_level': 'beginner'};
+      // final beginnerProfile = {'experience_level': 'beginner'};
 
       // Act
       // final beginnerPlan = await aiService.generateWorkoutPlan(beginnerProfile);
@@ -56,7 +55,7 @@ void main() {
 
     test('generateWorkoutPlan adapts to advanced experience', () async {
       // Arrange - Advanced
-      final advancedProfile = {'experience_level': 'advanced'};
+      // final advancedProfile = {'experience_level': 'advanced'};
 
       // Act
       // final advancedPlan = await aiService.generateWorkoutPlan(advancedProfile);
@@ -70,9 +69,9 @@ void main() {
 
     test('generateWorkoutPlan handles equipment limitations', () async {
       // Arrange - Bodyweight only
-      final bodyweightProfile = {
-        'available_equipment': ['bodyweight'],
-      };
+      // final bodyweightProfile = {
+      //   'available_equipment': ['bodyweight'],
+      // };
 
       // Act
       // final plan = await aiService.generateWorkoutPlan(bodyweightProfile);
@@ -85,7 +84,7 @@ void main() {
 
     test('generateWorkoutPlan includes progressive overload', () async {
       // Arrange
-      final userProfile = {'goal': 'strength'};
+      // final userProfile = {'goal': 'strength'};
 
       // Act
       // final plan = await aiService.generateWorkoutPlan(userProfile);
@@ -98,7 +97,7 @@ void main() {
 
     test('generateWorkoutPlan balances muscle groups', () async {
       // Arrange
-      final userProfile = {'goal': 'hypertrophy'};
+      // final userProfile = {'goal': 'hypertrophy'};
 
       // Act
       // final plan = await aiService.generateWorkoutPlan(userProfile);
@@ -114,8 +113,8 @@ void main() {
   group('WorkoutAIService - Exercise Selection', () {
     test('selectExercises chooses appropriate for muscle group', () {
       // Arrange
-      final muscleGroup = 'chest';
-      final count = 3;
+      // final muscleGroup = 'chest';
+      // final count = 3;
 
       // Act
       // final exercises = aiService.selectExercises(muscleGroup, count);
@@ -128,8 +127,8 @@ void main() {
 
     test('selectExercises prioritizes compound movements', () {
       // Arrange
-      final muscleGroup = 'back';
-      final count = 5;
+      // final muscleGroup = 'back';
+      // final count = 5;
 
       // Act
       // final exercises = aiService.selectExercises(muscleGroup, count);
@@ -142,8 +141,8 @@ void main() {
 
     test('selectExercises avoids repetition', () {
       // Arrange
-      final muscleGroup = 'legs';
-      final count = 10;
+      // final muscleGroup = 'legs';
+      // final count = 10;
 
       // Act
       // final exercises = aiService.selectExercises(muscleGroup, count);
@@ -156,8 +155,8 @@ void main() {
 
     test('selectExercises respects equipment availability', () {
       // Arrange
-      final muscleGroup = 'shoulders';
-      final equipment = ['dumbbell'];
+      // final muscleGroup = 'shoulders';
+      // final equipment = ['dumbbell'];
 
       // Act
       // final exercises = aiService.selectExercises(muscleGroup, 3, equipment);
@@ -171,8 +170,8 @@ void main() {
   group('WorkoutAIService - Volume Recommendations', () {
     test('recommendSets returns appropriate for beginner', () {
       // Arrange
-      final exerciseType = 'compound';
-      final experienceLevel = 'beginner';
+      // final exerciseType = 'compound';
+      // final experienceLevel = 'beginner';
 
       // Act
       // final sets = aiService.recommendSets(exerciseType, experienceLevel);
@@ -185,8 +184,8 @@ void main() {
 
     test('recommendSets returns appropriate for advanced', () {
       // Arrange
-      final exerciseType = 'isolation';
-      final experienceLevel = 'advanced';
+      // final exerciseType = 'isolation';
+      // final experienceLevel = 'advanced';
 
       // Act
       // final sets = aiService.recommendSets(exerciseType, experienceLevel);
@@ -198,7 +197,7 @@ void main() {
 
     test('recommendReps varies by goal', () {
       // Arrange - Strength
-      final goal = 'strength';
+      // final goal = 'strength';
 
       // Act
       // final reps = aiService.recommendReps(goal);
@@ -211,7 +210,7 @@ void main() {
 
     test('recommendReps for hypertrophy goal', () {
       // Arrange
-      final goal = 'hypertrophy';
+      // final goal = 'hypertrophy';
 
       // Act
       // final reps = aiService.recommendReps(goal);
@@ -223,7 +222,7 @@ void main() {
 
     test('recommendReps for endurance goal', () {
       // Arrange
-      final goal = 'endurance';
+      // final goal = 'endurance';
 
       // Act
       // final reps = aiService.recommendReps(goal);
@@ -235,8 +234,8 @@ void main() {
 
     test('recommendRestPeriod varies by exercise type', () {
       // Arrange - Compound strength
-      final exerciseType = 'compound';
-      final goal = 'strength';
+      // final exerciseType = 'compound';
+      // final goal = 'strength';
 
       // Act
       // final rest = aiService.recommendRestPeriod(exerciseType, goal);
@@ -251,7 +250,7 @@ void main() {
   group('WorkoutAIService - Split Generation', () {
     test('generateSplit creates push/pull/legs for 6 days', () {
       // Arrange
-      final daysPerWeek = 6;
+      // final daysPerWeek = 6;
 
       // Act
       // final split = aiService.generateSplit(daysPerWeek);
@@ -263,7 +262,7 @@ void main() {
 
     test('generateSplit creates upper/lower for 4 days', () {
       // Arrange
-      final daysPerWeek = 4;
+      // final daysPerWeek = 4;
 
       // Act
       // final split = aiService.generateSplit(daysPerWeek);
@@ -275,7 +274,7 @@ void main() {
 
     test('generateSplit creates full body for 3 days', () {
       // Arrange
-      final daysPerWeek = 3;
+      // final daysPerWeek = 3;
 
       // Act
       // final split = aiService.generateSplit(daysPerWeek);
@@ -287,7 +286,7 @@ void main() {
 
     test('generateSplit includes rest days appropriately', () {
       // Arrange
-      final daysPerWeek = 4;
+      // final daysPerWeek = 4;
 
       // Act
       // final split = aiService.generateSplit(daysPerWeek);
@@ -302,9 +301,9 @@ void main() {
   group('WorkoutAIService - Periodization', () {
     test('applyPeriodization creates linear progression', () {
       // Arrange
-      final baseWeek = {}; // Week structure
-      final totalWeeks = 8;
-      final type = 'linear';
+      // final baseWeek = {}; // Week structure
+      // final totalWeeks = 8;
+      // final type = 'linear';
 
       // Act
       // final weeks = aiService.applyPeriodization(baseWeek, totalWeeks, type);
@@ -317,8 +316,8 @@ void main() {
 
     test('applyPeriodization includes deload weeks', () {
       // Arrange
-      final baseWeek = {};
-      final totalWeeks = 8;
+      // final baseWeek = {};
+      // final totalWeeks = 8;
 
       // Act
       // final weeks = aiService.applyPeriodization(baseWeek, totalWeeks);
@@ -331,9 +330,9 @@ void main() {
 
     test('applyPeriodization creates wave pattern', () {
       // Arrange
-      final baseWeek = {};
-      final totalWeeks = 12;
-      final type = 'undulating';
+      // final baseWeek = {};
+      // final totalWeeks = 12;
+      // final type = 'undulating';
 
       // Act
       // final weeks = aiService.applyPeriodization(baseWeek, totalWeeks, type);
@@ -345,9 +344,9 @@ void main() {
 
     test('applyPeriodization creates block periodization', () {
       // Arrange
-      final baseWeek = {};
-      final totalWeeks = 12;
-      final type = 'block';
+      // final baseWeek = {};
+      // final totalWeeks = 12;
+      // final type = 'block';
 
       // Act
       // final weeks = aiService.applyPeriodization(baseWeek, totalWeeks, type);
@@ -361,12 +360,12 @@ void main() {
   group('WorkoutAIService - Optimization', () {
     test('optimizeExerciseOrder prioritizes compounds', () {
       // Arrange
-      final exercises = [
-        {'name': 'Bicep Curl', 'type': 'isolation'},
-        {'name': 'Bench Press', 'type': 'compound'},
-        {'name': 'Leg Extension', 'type': 'isolation'},
-        {'name': 'Squat', 'type': 'compound'},
-      ];
+      // final exercises = [
+      //   {'name': 'Bicep Curl', 'type': 'isolation'},
+      //   {'name': 'Bench Press', 'type': 'compound'},
+      //   {'name': 'Leg Extension', 'type': 'isolation'},
+      //   {'name': 'Squat', 'type': 'compound'},
+      // ];
 
       // Act
       // final optimized = aiService.optimizeExerciseOrder(exercises);
@@ -380,11 +379,11 @@ void main() {
 
     test('optimizeExerciseOrder groups similar muscle groups', () {
       // Arrange
-      final exercises = [
-        {'name': 'Bench Press', 'muscle_group': 'chest'},
-        {'name': 'Squat', 'muscle_group': 'legs'},
-        {'name': 'Incline Press', 'muscle_group': 'chest'},
-      ];
+      // final exercises = [
+      //   {'name': 'Bench Press', 'muscle_group': 'chest'},
+      //   {'name': 'Squat', 'muscle_group': 'legs'},
+      //   {'name': 'Incline Press', 'muscle_group': 'chest'},
+      // ];
 
       // Act
       // final optimized = aiService.optimizeExerciseOrder(exercises);
@@ -396,10 +395,10 @@ void main() {
 
     test('balanceVolume adjusts for muscle group imbalances', () {
       // Arrange
-      final plan = {
-        'chest': 20, // sets per week
-        'back': 10, // Imbalanced - should increase
-      };
+      // final plan = {
+      //   'chest': 20, // sets per week
+      //   'back': 10, // Imbalanced - should increase
+      // };
 
       // Act
       // final balanced = aiService.balanceVolume(plan);
@@ -414,8 +413,8 @@ void main() {
   group('WorkoutAIService - Personalization', () {
     test('personalizeForInjury avoids contraindicated exercises', () {
       // Arrange
-      final plan = {}; // Full plan
-      final injuries = ['lower_back'];
+      // final plan = {}; // Full plan
+      // final injuries = ['lower_back'];
 
       // Act
       // final personalized = aiService.personalizeForInjury(plan, injuries);
@@ -428,8 +427,8 @@ void main() {
 
     test('personalizeForInjury suggests modifications', () {
       // Arrange
-      final plan = {};
-      final injuries = ['knee'];
+      // final plan = {};
+      // final injuries = ['knee'];
 
       // Act
       // final personalized = aiService.personalizeForInjury(plan, injuries);
@@ -442,8 +441,8 @@ void main() {
 
     test('personalizeForGoals adjusts volume for fat loss', () {
       // Arrange
-      final plan = {};
-      final goal = 'fat_loss';
+      // final plan = {};
+      // final goal = 'fat_loss';
 
       // Act
       // final personalized = aiService.personalizeForGoals(plan, goal);
@@ -457,8 +456,8 @@ void main() {
 
     test('personalizeForGoals adjusts for strength', () {
       // Arrange
-      final plan = {};
-      final goal = 'strength';
+      // final plan = {};
+      // final goal = 'strength';
 
       // Act
       // final personalized = aiService.personalizeForGoals(plan, goal);
@@ -474,7 +473,7 @@ void main() {
   group('WorkoutAIService - AI Model Integration', () {
     test('generateWithAI returns valid JSON structure', () async {
       // Arrange
-      final prompt = 'Generate 8-week hypertrophy plan';
+      // final prompt = 'Generate 8-week hypertrophy plan';
 
       // Act
       // final result = await aiService.generateWithAI(prompt);
@@ -507,7 +506,7 @@ void main() {
 
     test('generateWithAI respects token limits', () async {
       // Arrange
-      final veryLongPrompt = 'x' * 10000;
+      // final veryLongPrompt = 'x' * 10000;
 
       // Act & Assert
       // Should truncate or throw error
@@ -518,10 +517,10 @@ void main() {
   group('WorkoutAIService - Validation', () {
     test('validatePlan checks required fields', () {
       // Arrange
-      final invalidPlan = {
-        'name': 'Test',
-        // Missing weeks, days, exercises
-      };
+      // final invalidPlan = {
+      //   'name': 'Test',
+      //   // Missing weeks, days, exercises
+      // };
 
       // Act
       // final isValid = aiService.validatePlan(invalidPlan);
@@ -533,9 +532,9 @@ void main() {
 
     test('validatePlan checks exercise consistency', () {
       // Arrange
-      final plan = {
-        // Plan with exercises that don't match muscle groups
-      };
+      // final plan = {
+      //   // Plan with exercises that don't match muscle groups
+      // };
 
       // Act
       // final isValid = aiService.validatePlan(plan);
@@ -546,9 +545,9 @@ void main() {
 
     test('validatePlan checks volume safety', () {
       // Arrange
-      final excessiveVolumePlan = {
-        // 50+ sets per muscle group per week
-      };
+      // final excessiveVolumePlan = {
+      //   // 50+ sets per muscle group per week
+      // };
 
       // Act
       // final isValid = aiService.validatePlan(excessiveVolumePlan);

@@ -240,7 +240,7 @@ class _ProfileCompletenessWidgetState extends State<ProfileCompletenessWidget>
                     widthFactor: _progressAnimation.value,
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
                             DesignTokens.accentGreen,
                             DesignTokens.accentBlue,
@@ -424,7 +424,7 @@ class _ProfileCompletenessWidgetState extends State<ProfileCompletenessWidget>
                   ),
                 ),
                 const SizedBox(width: DesignTokens.space8),
-                Icon(
+                const Icon(
                   Icons.arrow_forward_ios,
                   size: 12,
                   color: DesignTokens.textSecondary,

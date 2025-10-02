@@ -90,11 +90,11 @@ class _FavoritesTabState extends State<FavoritesTab>
 
     // Categorize by food type
     final proteins = favorites.where((food) =>
-      food.protein != null && food.protein! > 15).toList();
+      food.protein > 15).toList();
     final carbs = favorites.where((food) =>
-      food.carbs != null && food.carbs! > food.protein!).toList();
+      food.carbs > food.protein).toList();
     final snacks = favorites.where((food) =>
-      food.calories != null && food.calories! < 200).toList();
+      food.calories < 200).toList();
     final drinks = favorites.where((food) =>
       food.name.toLowerCase().contains('drink') ||
       food.name.toLowerCase().contains('juice') ||
@@ -192,7 +192,7 @@ class _FavoritesTabState extends State<FavoritesTab>
       padding: const EdgeInsets.all(DesignTokens.space20),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.favorite,
             color: AppTheme.accentGreen,
             size: 24,
@@ -224,8 +224,8 @@ class _FavoritesTabState extends State<FavoritesTab>
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: _showSearch
-                  ? AppTheme.accentGreen.withOpacity(0.2)
-                  : AppTheme.mediumGrey.withOpacity(0.2),
+                  ? AppTheme.accentGreen.withValues(alpha: 0.2)
+                  : AppTheme.mediumGrey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -249,10 +249,10 @@ class _FavoritesTabState extends State<FavoritesTab>
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.lightOrange.withOpacity(0.2),
+                  color: AppTheme.lightOrange.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.clear,
                   color: AppTheme.lightOrange,
                   size: 20,
@@ -276,7 +276,7 @@ class _FavoritesTabState extends State<FavoritesTab>
         color: AppTheme.cardDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
         ),
       ),
       child: TextField(
@@ -288,12 +288,12 @@ class _FavoritesTabState extends State<FavoritesTab>
         decoration: InputDecoration(
           hintText: 'Search favorites...',
           hintStyle: TextStyle(
-            color: AppTheme.lightGrey.withOpacity(0.6),
+            color: AppTheme.lightGrey.withValues(alpha: 0.6),
             fontSize: 16,
           ),
           prefixIcon: Icon(
             Icons.search,
-            color: AppTheme.lightGrey.withOpacity(0.6),
+            color: AppTheme.lightGrey.withValues(alpha: 0.6),
             size: 20,
           ),
           suffixIcon: _searchController.text.isNotEmpty
@@ -301,7 +301,7 @@ class _FavoritesTabState extends State<FavoritesTab>
                 onTap: () => _searchController.clear(),
                 child: Icon(
                   Icons.clear,
-                  color: AppTheme.lightGrey.withOpacity(0.6),
+                  color: AppTheme.lightGrey.withValues(alpha: 0.6),
                   size: 20,
                 ),
               )
@@ -376,13 +376,13 @@ class _FavoritesTabState extends State<FavoritesTab>
         padding: const EdgeInsets.all(DesignTokens.space12),
         decoration: BoxDecoration(
           color: isSelected
-            ? color.withOpacity(0.2)
+            ? color.withValues(alpha: 0.2)
             : AppTheme.cardDark,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-              ? color.withOpacity(0.5)
-              : AppTheme.mediumGrey.withOpacity(0.3),
+              ? color.withValues(alpha: 0.5)
+              : AppTheme.mediumGrey.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -409,7 +409,7 @@ class _FavoritesTabState extends State<FavoritesTab>
             Text(
               '$count',
               style: TextStyle(
-                color: isSelected ? color : AppTheme.lightGrey.withOpacity(0.6),
+                color: isSelected ? color : AppTheme.lightGrey.withValues(alpha: 0.6),
                 fontSize: 9,
               ),
             ),

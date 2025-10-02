@@ -16,7 +16,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// - Weekly summary settings
 /// - Sound and vibration preferences
 class NotificationPreferencesScreen extends StatefulWidget {
-  const NotificationPreferencesScreen({Key? key}) : super(key: key);
+  const NotificationPreferencesScreen({super.key});
 
   @override
   State<NotificationPreferencesScreen> createState() =>

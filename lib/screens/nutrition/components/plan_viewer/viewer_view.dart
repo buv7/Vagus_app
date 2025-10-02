@@ -4,7 +4,6 @@ import '../../../../theme/design_tokens.dart';
 import '../../../../models/nutrition/nutrition_plan.dart';
 import '../../../../services/nutrition/locale_helper.dart';
 import '../../widgets/shared/nutrition_card.dart';
-import '../../widgets/shared/macro_ring_chart.dart';
 import '../../widgets/shared/empty_state_widget.dart';
 import '../meal_detail/meal_detail_modal.dart';
 import 'macro_progress_rings.dart';
@@ -151,7 +150,7 @@ class _ViewerViewState extends State<ViewerView>
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _getPlanTypeColor(plan.lengthType).withOpacity(0.2),
+                  color: _getPlanTypeColor(plan.lengthType).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.radius12),
                 ),
                 child: Icon(
@@ -205,13 +204,13 @@ class _ViewerViewState extends State<ViewerView>
                               vertical: DesignTokens.space4,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentGreen.withOpacity(0.2),
+                              color: AppTheme.accentGreen.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(DesignTokens.radius8),
                               border: Border.all(
-                                color: AppTheme.accentGreen.withOpacity(0.5),
+                                color: AppTheme.accentGreen.withValues(alpha: 0.5),
                               ),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
@@ -219,7 +218,7 @@ class _ViewerViewState extends State<ViewerView>
                                   size: 10,
                                   color: AppTheme.accentGreen,
                                 ),
-                                const SizedBox(width: DesignTokens.space4),
+                                SizedBox(width: DesignTokens.space4),
                                 Text(
                                   'AI Generated',
                                   style: TextStyle(
@@ -246,7 +245,7 @@ class _ViewerViewState extends State<ViewerView>
                     color: AppTheme.accentGreen,
                   ),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppTheme.accentGreen.withOpacity(0.1),
+                    backgroundColor: AppTheme.accentGreen.withValues(alpha: 0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
                     ),
@@ -291,7 +290,7 @@ class _ViewerViewState extends State<ViewerView>
         vertical: DesignTokens.space4,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
       ),
       child: Row(
@@ -453,7 +452,7 @@ class _ViewerViewState extends State<ViewerView>
         style: const TextStyle(fontSize: 12),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: color.withOpacity(0.1),
+        backgroundColor: color.withValues(alpha: 0.1),
         foregroundColor: color,
         elevation: 0,
         padding: const EdgeInsets.symmetric(
@@ -463,7 +462,7 @@ class _ViewerViewState extends State<ViewerView>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(DesignTokens.radius8),
           side: BorderSide(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
           ),
         ),
       ),

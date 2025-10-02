@@ -474,7 +474,7 @@ class AnalyticsEngineService extends ChangeNotifier {
     DateTime? endDate,
   }) async {
     try {
-      final start = startDate ?? DateTime.now().subtract(Duration(days: 90));
+      final start = startDate ?? DateTime.now().subtract(const Duration(days: 90));
       final end = endDate ?? DateTime.now();
 
       // Fetch data for both metrics
@@ -572,7 +572,7 @@ class AnalyticsEngineService extends ChangeNotifier {
     DateTime? endDate,
   }) async {
     try {
-      final start = startDate ?? DateTime.now().subtract(Duration(days: 90));
+      final start = startDate ?? DateTime.now().subtract(const Duration(days: 90));
       final end = endDate ?? DateTime.now();
 
       // Fetch nutrition logs

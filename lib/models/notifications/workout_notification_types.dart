@@ -2,6 +2,7 @@
 ///
 /// Defines notification types, payloads, and preferences
 /// for workout-related push notifications
+library;
 
 /// Workout notification types
 enum WorkoutNotificationType {

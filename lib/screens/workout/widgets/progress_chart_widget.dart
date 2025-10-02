@@ -9,11 +9,11 @@ class ProgressChartWidget extends StatefulWidget {
   final ChartType chartType;
 
   const ProgressChartWidget({
-    Key? key,
+    super.key,
     required this.clientId,
     this.exerciseName,
     this.chartType = ChartType.volume,
-  }) : super(key: key);
+  });
 
   @override
   State<ProgressChartWidget> createState() => _ProgressChartWidgetState();
@@ -152,13 +152,13 @@ class _ProgressChartWidgetState extends State<ProgressChartWidget> {
             drawVerticalLine: true,
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 strokeWidth: 1,
               );
             },
             getDrawingVerticalLine: (value) {
               return FlLine(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 strokeWidth: 1,
               );
             },
@@ -237,7 +237,7 @@ class _ProgressChartWidgetState extends State<ProgressChartWidget> {
               ),
               belowBarData: BarAreaData(
                 show: true,
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -258,7 +258,7 @@ class _ProgressChartWidgetState extends State<ProgressChartWidget> {
       padding: const EdgeInsets.all(16),
       child: LineChart(
         LineChartData(
-          gridData: FlGridData(show: true),
+          gridData: const FlGridData(show: true),
           titlesData: FlTitlesData(
             show: true,
             rightTitles: const AxisTitles(
@@ -318,7 +318,7 @@ class _ProgressChartWidgetState extends State<ProgressChartWidget> {
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(
                 show: true,
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -339,7 +339,7 @@ class _ProgressChartWidgetState extends State<ProgressChartWidget> {
       padding: const EdgeInsets.all(16),
       child: LineChart(
         LineChartData(
-          gridData: FlGridData(show: true),
+          gridData: const FlGridData(show: true),
           titlesData: FlTitlesData(
             show: true,
             rightTitles: const AxisTitles(
@@ -399,7 +399,7 @@ class _ProgressChartWidgetState extends State<ProgressChartWidget> {
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(
                 show: true,
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.orange.withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -494,7 +494,7 @@ class _ProgressChartWidgetState extends State<ProgressChartWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         border: Border(
           top: BorderSide(color: theme.colorScheme.outline),
         ),

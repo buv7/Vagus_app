@@ -37,7 +37,11 @@
       "Bash(git mv:*)",
       "Bash(Select-String -Pattern \"archived\" -NotMatch)",
       "Bash(Select-Object -First 20)",
-      "Bash(tee:*)"
+      "Bash(tee:*)",
+      "Bash(Select-Object -First 500)",
+      "Bash(dart fix:*)",
+      "Bash(find:*)",
+      "Bash(dart analyze:*)"
     ],
     "deny": [],
     "ask": []

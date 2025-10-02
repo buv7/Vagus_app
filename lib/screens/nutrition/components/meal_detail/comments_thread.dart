@@ -5,7 +5,6 @@ import '../../../../models/nutrition/nutrition_plan.dart';
 import '../../../../services/nutrition/locale_helper.dart';
 import '../../../../services/haptics.dart';
 import '../../widgets/shared/nutrition_card.dart';
-import '../../widgets/shared/empty_state_widget.dart';
 
 /// Thread for coach-client comments and notes on meals
 class CommentsThread extends StatefulWidget {
@@ -204,9 +203,9 @@ class _CommentsThreadState extends State<CommentsThread>
 
                 const SizedBox(height: DesignTokens.space12),
 
-                Text(
+                const Text(
                   'No specific notes from your coach for this meal. Follow the portions as planned and feel free to add your own notes below.',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppTheme.lightGrey,
                     fontSize: 14,
                     height: 1.5,
@@ -220,7 +219,7 @@ class _CommentsThreadState extends State<CommentsThread>
 
           // Tips section
           NutritionCard(
-            customBackgroundColor: AppTheme.accentGreen.withOpacity(0.1),
+            customBackgroundColor: AppTheme.accentGreen.withValues(alpha: 0.1),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -319,10 +318,10 @@ class _CommentsThreadState extends State<CommentsThread>
                     width: double.infinity,
                     padding: const EdgeInsets.all(DesignTokens.space12),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryDark.withOpacity(0.3),
+                      color: AppTheme.primaryDark.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
                       border: Border.all(
-                        color: AppTheme.mediumGrey.withOpacity(0.3),
+                        color: AppTheme.mediumGrey.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Text(
@@ -339,10 +338,10 @@ class _CommentsThreadState extends State<CommentsThread>
                     width: double.infinity,
                     padding: const EdgeInsets.all(DesignTokens.space16),
                     decoration: BoxDecoration(
-                      color: AppTheme.mediumGrey.withOpacity(0.1),
+                      color: AppTheme.mediumGrey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
                       border: Border.all(
-                        color: AppTheme.mediumGrey.withOpacity(0.2),
+                        color: AppTheme.mediumGrey.withValues(alpha: 0.2),
                       ),
                     ),
                     child: const Text(
@@ -431,7 +430,7 @@ class _CommentsThreadState extends State<CommentsThread>
         color: AppTheme.cardBackground,
         border: Border(
           top: BorderSide(
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           ),
         ),
       ),
@@ -445,7 +444,7 @@ class _CommentsThreadState extends State<CommentsThread>
               border: Border.all(
                 color: _isTyping
                   ? AppTheme.accentGreen
-                  : AppTheme.mediumGrey.withOpacity(0.3),
+                  : AppTheme.mediumGrey.withValues(alpha: 0.3),
                 width: _isTyping ? 2 : 1,
               ),
             ),

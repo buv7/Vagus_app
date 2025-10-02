@@ -159,7 +159,7 @@ class _MealEditorState extends State<MealEditor> {
               return true;
             }).toList();
             return Container(
-              decoration: BoxDecoration(color: Colors.black, borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
+              decoration: const BoxDecoration(color: Colors.black, borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
               padding: const EdgeInsets.all(16),
               child: Column(children: [
                 Row(
@@ -220,11 +220,19 @@ class _MealEditorState extends State<MealEditor> {
                               IconButton(
                                 tooltip: 'Favorite',
                                 icon: Icon(_favoriteFoodNames.contains(f.name) ? Icons.favorite : Icons.favorite_border, color: Colors.greenAccent),
-                                onPressed: () => setSheet(() { if (_favoriteFoodNames.contains(f.name)) _favoriteFoodNames.remove(f.name); else _favoriteFoodNames.add(f.name); }),
+                                onPressed: () => setSheet(() { if (_favoriteFoodNames.contains(f.name)) {
+                                  _favoriteFoodNames.remove(f.name);
+                                } else {
+                                  _favoriteFoodNames.add(f.name);
+                                } }),
                               ),
                               IconButton(
                                 icon: Icon(isSel ? Icons.check_circle : Icons.add_circle_outline, color: Colors.greenAccent),
-                                onPressed: () => setSheet(() { if (isSel) selected.remove(f.name); else selected[f.name] = {'food': f, 'quantity': 100.0, 'unit': 'g'}; }),
+                                onPressed: () => setSheet(() { if (isSel) {
+                                  selected.remove(f.name);
+                                } else {
+                                  selected[f.name] = {'food': f, 'quantity': 100.0, 'unit': 'g'};
+                                } }),
                               ),
                             ],
                           ),
@@ -279,7 +287,7 @@ class _MealEditorState extends State<MealEditor> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        var updated = List<FoodItem>.from(widget.meal.items);
+                        final updated = List<FoodItem>.from(widget.meal.items);
                         selected.forEach((_, v) {
                           final base = v['food'] as FoodItem;
                           final qty = v['quantity'] as double;
@@ -737,12 +745,12 @@ class _MealEditorState extends State<MealEditor> {
                           ],
                         ),
                       ),
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'advanced_food',
                         child: Row(
                           children: [
-                            const Icon(Icons.add_circle_outline, size: 16),
-                            const SizedBox(width: 8),
+                            Icon(Icons.add_circle_outline, size: 16),
+                            SizedBox(width: 8),
                             Text('Add Food (Advanced)'),
                           ],
                         ),

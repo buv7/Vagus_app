@@ -46,7 +46,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
 
     _colorAnimation = ColorTween(
       begin: Colors.transparent,
-      end: AppTheme.accentGreen.withOpacity(0.1),
+      end: AppTheme.accentGreen.withValues(alpha: 0.1),
     ).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
@@ -139,7 +139,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
           Container(
             width: 2,
             height: 20,
-            color: AppTheme.mediumGrey.withOpacity(0.3),
+            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
           ),
 
         // Meal number circle
@@ -147,7 +147,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: _getMealTypeColor().withOpacity(0.2),
+            color: _getMealTypeColor().withValues(alpha: 0.2),
             shape: BoxShape.circle,
             border: Border.all(
               color: _getMealTypeColor(),
@@ -176,7 +176,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
         Container(
           width: 2,
           height: 20,
-          color: AppTheme.mediumGrey.withOpacity(0.3),
+          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
         ),
       ],
     );
@@ -194,7 +194,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: _getMealTypeColor().withOpacity(0.2),
+                color: _getMealTypeColor().withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
               ),
               child: Icon(
@@ -263,11 +263,11 @@ class _MealTimelineCardState extends State<MealTimelineCard>
                 vertical: DesignTokens.space4,
               ),
               decoration: BoxDecoration(
-                color: AppTheme.accentGreen.withOpacity(0.1),
+                color: AppTheme.accentGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
               ),
               child: Text(
-                '${widget.meal.mealSummary.totalKcal.toStringAsFixed(0)}',
+                widget.meal.mealSummary.totalKcal.toStringAsFixed(0),
                 style: const TextStyle(
                   color: AppTheme.accentGreen,
                   fontSize: 12,
@@ -312,7 +312,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
         // Food items summary
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.restaurant_menu,
               size: 14,
               color: AppTheme.lightGrey,
@@ -327,7 +327,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
             ),
             if (widget.meal.attachments.isNotEmpty) ...[
               const SizedBox(width: DesignTokens.space12),
-              Icon(
+              const Icon(
                 Icons.photo_camera,
                 size: 14,
                 color: AppTheme.lightGrey,
@@ -343,7 +343,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
             ],
             if (widget.meal.clientComment.isNotEmpty) ...[
               const SizedBox(width: DesignTokens.space12),
-              Icon(
+              const Icon(
                 Icons.comment,
                 size: 14,
                 color: AppTheme.lightGrey,
@@ -351,7 +351,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
             ],
             const Spacer(),
             if (widget.onTap != null)
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 size: 12,
                 color: AppTheme.lightGrey,
@@ -370,7 +370,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
       ),
       margin: const EdgeInsets.only(right: DesignTokens.space4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius6),
       ),
       child: Column(
@@ -386,7 +386,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
           Text(
             label,
             style: TextStyle(
-              color: color.withOpacity(0.7),
+              color: color.withValues(alpha: 0.7),
               fontSize: 9,
             ),
           ),

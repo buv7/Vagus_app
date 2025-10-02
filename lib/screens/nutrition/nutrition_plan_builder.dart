@@ -578,10 +578,11 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                                             ),
                                           ],
                                           onChanged: (val) {
-                                            if (val != null)
+                                            if (val != null) {
                                               setModalState(() {
                                                 selected[e.key]!['unit'] = val;
                                               });
+                                            }
                                           },
                                         ),
                                       ],
@@ -617,8 +618,9 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                                 _appendFoodToMeal(mealIndex, scaled);
                                 _recentFoodNames.remove(base.name);
                                 _recentFoodNames.insert(0, base.name);
-                                if (_recentFoodNames.length > 10)
+                                if (_recentFoodNames.length > 10) {
                                   _recentFoodNames.removeLast();
+                                }
                               });
                               Navigator.pop(context);
                             },

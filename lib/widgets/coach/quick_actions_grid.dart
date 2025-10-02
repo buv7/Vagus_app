@@ -5,7 +5,6 @@ import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../screens/workout/modern_plan_builder_screen.dart';
 import '../../screens/workout/coach_workout_dashboard_screen.dart';
-import '../../screens/nutrition/nutrition_hub_screen.dart';
 import '../../screens/nutrition/coach_nutrition_dashboard.dart';
 import '../../screens/messaging/coach_threads_screen.dart';
 import '../../screens/analytics/analytics_reports_screen.dart';
@@ -222,15 +221,6 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
     );
   }
 
-  void _navigateToNutritionCreation(BuildContext context) {
-    _onActionTap();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const NutritionHubScreen(mode: NutritionHubMode.builder),
-      ),
-    );
-  }
 
   void _navigateToNutritionDashboard(BuildContext context) {
     _onActionTap();
@@ -319,10 +309,10 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.primaryDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.construction, color: AppTheme.accentOrange, size: 24),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Text(
               'Coming Soon',
               style: TextStyle(
@@ -335,7 +325,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
         ),
         content: Text(
           '$feature is currently under development. Stay tuned for updates!',
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.lightGrey,
             fontSize: 16,
           ),
@@ -343,7 +333,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Got it',
               style: TextStyle(
                 color: AppTheme.accentGreen,

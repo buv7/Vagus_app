@@ -49,8 +49,8 @@ class WorkoutAnalyticsService {
       double totalVolume = 0;
       int totalSets = 0;
       int totalReps = 0;
-      Map<String, double> volumeByMuscleGroup = {};
-      Map<String, double> volumeByExercise = {};
+      final Map<String, double> volumeByMuscleGroup = {};
+      final Map<String, double> volumeByExercise = {};
 
       final days = weekData['workout_plan_days'] as List<dynamic>;
 
@@ -129,9 +129,8 @@ class WorkoutAnalyticsService {
           .eq('id', planId)
           .single();
 
-      Map<String, double> volumeByMuscleGroup = {};
-      Map<String, int> exerciseCountByMuscleGroup = {};
-      Map<String, int> setsByMuscleGroup = {};
+      final Map<String, int> exerciseCountByMuscleGroup = {};
+      final Map<String, int> setsByMuscleGroup = {};
 
       final weeks = planData['workout_plan_weeks'] as List<dynamic>;
 
@@ -155,7 +154,7 @@ class WorkoutAnalyticsService {
 
       // Calculate percentages
       final totalSets = setsByMuscleGroup.values.fold(0, (a, b) => a + b);
-      Map<String, double> percentageByMuscleGroup = {};
+      final Map<String, double> percentageByMuscleGroup = {};
 
       setsByMuscleGroup.forEach((muscle, sets) {
         percentageByMuscleGroup[muscle] = (sets / totalSets) * 100;
@@ -241,14 +240,14 @@ class WorkoutAnalyticsService {
           .order('completed_at', ascending: true);
 
       // Group by exercise
-      Map<String, List<Map<String, dynamic>>> exerciseGroups = {};
+      final Map<String, List<Map<String, dynamic>>> exerciseGroups = {};
       for (final entry in historyData) {
         final exerciseName = entry['exercise_name'] as String;
         exerciseGroups.putIfAbsent(exerciseName, () => []).add(entry);
       }
 
       // Calculate gains for each exercise
-      Map<String, ExerciseGains> gainsByExercise = {};
+      final Map<String, ExerciseGains> gainsByExercise = {};
       double totalGainPercentage = 0;
       int exerciseCount = 0;
       int totalPRs = 0;
@@ -372,7 +371,7 @@ class WorkoutAnalyticsService {
 
       // Calculate consistency score (0-100)
       // Based on variance in weekly session count
-      Map<int, int> sessionsByWeek = {};
+      final Map<int, int> sessionsByWeek = {};
       for (final session in sessionsData) {
         final date = DateTime.parse(session['completed_at']);
         final weekNumber = date.difference(startDate).inDays ~/ 7;
@@ -387,7 +386,7 @@ class WorkoutAnalyticsService {
       final consistencyScore = (100 - (variance * 10)).clamp(0, 100).toInt();
 
       // Detect preferred training days (0=Monday, 6=Sunday)
-      Map<int, int> dayFrequency = {};
+      final Map<int, int> dayFrequency = {};
       for (final session in sessionsData) {
         final date = DateTime.parse(session['completed_at']);
         final dayOfWeek = date.weekday - 1; // Convert to 0-6
@@ -417,14 +416,14 @@ class WorkoutAnalyticsService {
           .gte('completed_at', startDate.toIso8601String())
           .lte('completed_at', endDate.toIso8601String());
 
-      Map<String, int> exerciseFrequency = {};
+      final Map<String, int> exerciseFrequency = {};
       for (final entry in exerciseHistoryData) {
         final name = entry['exercise_name'] as String;
         exerciseFrequency[name] = (exerciseFrequency[name] ?? 0) + 1;
       }
 
       // Generate patterns
-      List<String> patterns = [];
+      final List<String> patterns = [];
 
       if (avgSessionsPerWeek >= 4) {
         patterns.add('Trains frequently (${avgSessionsPerWeek.toStringAsFixed(1)} sessions/week)');
@@ -507,7 +506,7 @@ class WorkoutAnalyticsService {
       final personalRecords = await _fetchRecentPRs(clientId, startDate);
 
       // Generate achievements
-      List<String> achievements = [];
+      final List<String> achievements = [];
       if (gainsReport.totalPRs > 0) {
         achievements.add('${gainsReport.totalPRs} new personal records');
       }
@@ -525,7 +524,7 @@ class WorkoutAnalyticsService {
       }
 
       // Generate areas for improvement
-      List<String> areasForImprovement = [];
+      final List<String> areasForImprovement = [];
       if (compliance.completionRate < 0.7) {
         areasForImprovement.add('Improve workout adherence (currently ${compliance.completionRateDisplay})');
       }
@@ -623,7 +622,7 @@ class WorkoutAnalyticsService {
       final frequencyDifference = freq2Data.count - freq1Data.count;
 
       // Identify key differences
-      Map<String, String> differences = {};
+      final Map<String, String> differences = {};
 
       if (volumeDifference.abs() > 10) {
         differences['Volume'] = volumeDifference > 0
@@ -649,7 +648,7 @@ class WorkoutAnalyticsService {
       }
 
       // Identify similarities
-      List<String> similarities = [];
+      final List<String> similarities = [];
 
       if (volumeDifference.abs() < 5) {
         similarities.add('Similar total volume');
@@ -714,7 +713,7 @@ class WorkoutAnalyticsService {
       }
 
       // Convert to data points for regression
-      List<MapEntry<int, double>> dataPoints = [];
+      final List<MapEntry<int, double>> dataPoints = [];
       final firstDate = DateTime.parse(historyData.first['completed_at']);
 
       for (final entry in historyData) {
@@ -750,7 +749,7 @@ class WorkoutAnalyticsService {
       final lastDate = DateTime.parse(historyData.last['completed_at']);
       final lastDaysSinceStart = dataPoints.last.key;
 
-      List<ProjectionPoint> projections = [];
+      final List<ProjectionPoint> projections = [];
       for (int week = 1; week <= weeksToProject; week++) {
         final futureDays = lastDaysSinceStart + (week * 7);
         final projectedWeight = slope * futureDays + intercept;
@@ -766,7 +765,7 @@ class WorkoutAnalyticsService {
         ));
       }
 
-      Map<String, List<ProjectionPoint>> exerciseProjections = {
+      final Map<String, List<ProjectionPoint>> exerciseProjections = {
         exerciseName: projections,
       };
 
@@ -884,7 +883,7 @@ class WorkoutAnalyticsService {
         .gte('completed_at', sinceDate.toIso8601String())
         .order('completed_at', ascending: false);
 
-    Map<String, PRRecord> latestPRs = {};
+    final Map<String, PRRecord> latestPRs = {};
 
     for (final entry in historyData) {
       final exerciseName = entry['exercise_name'] as String;

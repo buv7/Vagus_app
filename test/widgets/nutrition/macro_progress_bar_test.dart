@@ -7,7 +7,7 @@ void main() {
   group('MacroProgressBar Widget', () {
     testWidgets('displays macro name and percentage', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: _TestMacroProgressBar(
               label: 'Protein',
@@ -26,7 +26,7 @@ void main() {
 
     testWidgets('progress bar fills correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: _TestMacroProgressBar(
               label: 'Protein',
@@ -49,7 +49,7 @@ void main() {
 
     testWidgets('includes semantic label for accessibility', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: _TestMacroProgressBar(
               label: 'Protein',
@@ -109,7 +109,7 @@ void main() {
 
     testWidgets('handles zero target gracefully', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: _TestMacroProgressBar(
               label: 'Protein',

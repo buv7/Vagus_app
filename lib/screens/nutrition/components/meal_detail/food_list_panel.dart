@@ -257,7 +257,7 @@ class _FoodListPanelState extends State<FoodListPanel>
                               _buildMacroPreview('Protein', '${item.protein.toStringAsFixed(1)}g', Colors.red),
                               _buildMacroPreview('Carbs', '${item.carbs.toStringAsFixed(1)}g', Colors.orange),
                               _buildMacroPreview('Fat', '${item.fat.toStringAsFixed(1)}g', Colors.yellow.shade700),
-                              _buildMacroPreview('Calories', '${item.kcal.toStringAsFixed(0)}', Colors.green),
+                              _buildMacroPreview('Calories', item.kcal.toStringAsFixed(0), Colors.green),
                             ],
                           ),
                         ],
@@ -317,7 +317,7 @@ class _FoodListPanelState extends State<FoodListPanel>
         Text(
           label,
           style: TextStyle(
-            color: color.withOpacity(0.7),
+            color: color.withValues(alpha: 0.7),
             fontSize: 10,
             fontWeight: FontWeight.w500,
           ),

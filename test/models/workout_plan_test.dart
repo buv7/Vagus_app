@@ -3,13 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('WorkoutPlan Model', () {
     test('fromJson creates valid WorkoutPlan', () {
-      final json = {
-        'id': '123',
-        'name': 'Test Plan',
-        'goal': 'hypertrophy',
-        'total_weeks': 8,
-        'created_at': '2024-01-01T00:00:00Z',
-      };
+      // final json = {
+      //   'id': '123',
+      //   'name': 'Test Plan',
+      //   'goal': 'hypertrophy',
+      //   'total_weeks': 8,
+      //   'created_at': '2024-01-01T00:00:00Z',
+      // };
 
       // final plan = WorkoutPlan.fromJson(json);
       // expect(plan.id, '123');

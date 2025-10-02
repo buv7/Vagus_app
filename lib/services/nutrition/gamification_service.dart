@@ -14,7 +14,7 @@ class GamificationService extends ChangeNotifier {
   List<Achievement> _achievements = [];
   List<Challenge> _activeChallenges = [];
   StreakData? _currentStreak;
-  List<LeaderboardEntry> _leaderboard = [];
+  final List<LeaderboardEntry> _leaderboard = [];
 
   List<Achievement> get achievements => _achievements;
   List<Challenge> get activeChallenges => _activeChallenges;
