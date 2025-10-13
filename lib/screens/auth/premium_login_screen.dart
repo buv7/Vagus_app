@@ -308,7 +308,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
         FadeInAnimation(
           delay: const Duration(milliseconds: 400),
           child: Text(
-            'NEURAL FITNESS PLATFORM',
+            'THE MOST ADVANCED ONLINE FITNESS PLATFORM',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w300,
@@ -368,7 +368,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
         FadeInAnimation(
           delay: const Duration(milliseconds: 400),
           child: Text(
-            'NEURAL FITNESS PLATFORM',
+            'ONLINE IRAQI FITNESS COACHING PLATFORM',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w300,
@@ -406,7 +406,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
             const SizedBox(height: 8),
 
             Text(
-              'Initialize your neural connection',
+              'BE YOUR BEST TODAY WITH OUR ELITE COACHES AND THE MOST ADVANCED FITNESS PLATFORM ON EARTH',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white.withValues(alpha: 0.5),
@@ -523,7 +523,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
 
             // Login button
             PremiumGradientButton(
-              text: 'Initialize Connection',
+              text: 'LOG IN',
               onPressed: _handleLogin,
               isLoading: _isLoading,
               enabled: !_isLoading,
