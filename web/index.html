@@ -18,21 +18,145 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Vagus - Your Personal Fitness & Nutrition Coach">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="vagus_app">
+  <meta name="apple-mobile-web-app-title" content="Vagus">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>vagus_app</title>
+  <title>Vagus - Fitness & Nutrition Coach</title>
   <link rel="manifest" href="manifest.json">
+  
+  <!-- Loading Screen Styles -->
+  <style>
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0F0B1F 0%, #1A1525 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .loading-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      background: rgba(0, 229, 160, 0.1);
+      border: 2px solid rgba(0, 229, 160, 0.3);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .loading-logo::before {
+      content: 'V';
+      color: #00E5A0;
+      font-size: 32px;
+      font-weight: 600;
+    }
+    
+    .loading-title {
+      color: #FFFFFF;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    
+    .loading-subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(0, 229, 160, 0.3);
+      border-top: 3px solid #00E5A0;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .loading-progress {
+      margin-top: 24px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .flutter-app {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo"></div>
+    <div class="loading-title">Welcome to VAGUS</div>
+    <div class="loading-subtitle">Your Personal Fitness & Nutrition Coach</div>
+    <div class="loading-spinner"></div>
+    <div class="loading-progress">Loading your personalized experience...</div>
+  </div>
+
+  <!-- Flutter App -->
+  <div class="flutter-app">
+    <script src="flutter_bootstrap.js" async></script>
+  </div>
+
+  <!-- Hide loading screen when Flutter loads -->
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      const loadingScreen = document.getElementById('loading-screen');
+      const flutterApp = document.querySelector('.flutter-app');
+      
+      if (loadingScreen && flutterApp) {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.transition = 'opacity 0.5s ease-out';
+        
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+          flutterApp.style.display = 'block';
+        }, 500);
+      }
+    });
+    
+    // Fallback: hide loading screen after 10 seconds
+    setTimeout(() => {
+      const loadingScreen = document.getElementById('loading-screen');
+      const flutterApp = document.querySelector('.flutter-app');
+      
+      if (loadingScreen && flutterApp) {
+        loadingScreen.style.display = 'none';
+        flutterApp.style.display = 'block';
+      }
+    }, 10000);
+  </script>
 </body>
 </html>

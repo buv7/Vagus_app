@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/supplements/supplement_models.dart';
 import '../../services/supplements/supplement_service.dart';
-import '../../services/billing/plan_access_manager.dart';
 import '../../theme/design_tokens.dart';
 
 class SupplementEditorSheet extends StatefulWidget {
   final Supplement? supplement;
-  final String clientId;
+  final String? clientId;
   final Function(Supplement) onSaved;
 
   const SupplementEditorSheet({
     super.key,
     this.supplement,
-    required this.clientId,
+    this.clientId,
     required this.onSaved,
   });
 
@@ -27,26 +27,33 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
   final _nameController = TextEditingController();
   final _dosageController = TextEditingController();
   final _instructionsController = TextEditingController();
-  
+
   String _selectedCategory = 'general';
   String _selectedIcon = 'medication';
   String _selectedColor = '#6C83F7';
-  
+
   // Schedule fields
   String _scheduleType = 'fixed_times';
   final List<int> _selectedDaysOfWeek = [];
   final List<TimeOfDay> _selectedTimes = [const TimeOfDay(hour: 8, minute: 0)];
   int _intervalHours = 12;
+  int _intervalMinutes = 0;
+  int _intervalSeconds = 0;
   DateTime _startDate = DateTime.now();
   DateTime? _endDate;
-  
+
   bool _loading = false;
-  bool _isProUser = false;
+
+  // Client selection
+  String? _selectedClientId;
+  List<Map<String, dynamic>> _clients = [];
+  bool _loadingClients = true;
 
   @override
   void initState() {
     super.initState();
-    _loadProStatus();
+    _selectedClientId = widget.clientId;
+    _loadClients();
     _initializeForm();
   }
 
@@ -58,9 +65,45 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
     super.dispose();
   }
 
-  Future<void> _loadProStatus() async {
-    final isPro = await PlanAccessManager.instance.isProUser();
-    setState(() => _isProUser = isPro);
+  Future<void> _loadClients() async {
+    try {
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
+      if (user == null) return;
+
+      // Load clients linked to the current coach
+      final links = await supabase
+          .from('coach_clients')
+          .select('client_id')
+          .eq('coach_id', user.id);
+
+      List<Map<String, dynamic>> clients = [];
+      if (links.isNotEmpty) {
+        final clientIds = links
+            .map((row) => row['client_id'] as String)
+            .toList();
+
+        final response = await supabase
+            .from('profiles')
+            .select('id, name, email')
+            .inFilter('id', clientIds);
+
+        clients = List<Map<String, dynamic>>.from(response);
+      }
+
+      setState(() {
+        _clients = clients;
+        _loadingClients = false;
+
+        // If no client was pre-selected and we have clients, select the first one
+        if (_selectedClientId == null && clients.isNotEmpty) {
+          _selectedClientId = clients.first['id'].toString();
+        }
+      });
+    } catch (e) {
+      setState(() => _loadingClients = false);
+      debugPrint('Failed to load clients: $e');
+    }
   }
 
   void _initializeForm() {
@@ -78,6 +121,14 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
   Future<void> _saveSupplement() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Validate client selection
+    if (_selectedClientId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a client first')),
+      );
+      return;
+    }
+
     setState(() => _loading = true);
 
     try {
@@ -91,8 +142,8 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
         supplement = widget.supplement!.copyWith(
           name: _nameController.text.trim(),
           dosage: _dosageController.text.trim(),
-          instructions: _instructionsController.text.trim().isEmpty 
-              ? null 
+          instructions: _instructionsController.text.trim().isEmpty
+              ? null
               : _instructionsController.text.trim(),
           category: _selectedCategory,
           icon: _selectedIcon,
@@ -105,14 +156,14 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
         supplement = Supplement.create(
           name: _nameController.text.trim(),
           dosage: _dosageController.text.trim(),
-          instructions: _instructionsController.text.trim().isEmpty 
-              ? null 
+          instructions: _instructionsController.text.trim().isEmpty
+              ? null
               : _instructionsController.text.trim(),
           category: _selectedCategory,
           icon: _selectedIcon,
           color: _selectedColor,
           createdBy: currentUser.id,
-          clientId: widget.clientId,
+          clientId: _selectedClientId!,
         );
         supplement = await SupplementService.instance.createSupplement(supplement);
       }
@@ -151,7 +202,7 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
         scheduleType: 'fixed_times',
         frequency: 'weekly',
         timesPerDay: _selectedTimes.length,
-        specificTimes: _selectedTimes.map((time) => 
+        specificTimes: _selectedTimes.map((time) =>
           DateTime(2024, 1, 1, time.hour, time.minute)
         ).toList(),
         daysOfWeek: _selectedDaysOfWeek,
@@ -160,14 +211,18 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
         createdBy: currentUser.id,
       );
       await SupplementService.instance.createSchedule(schedule);
-    } else if (_scheduleType == 'interval' && _isProUser) {
-      // Create interval schedule (Pro only)
+    } else if (_scheduleType == 'interval') {
+      // Create interval schedule
+      // Convert total interval to hours (with decimal precision)
+      final totalSeconds = (_intervalHours * 3600) + (_intervalMinutes * 60) + _intervalSeconds;
+      final intervalInHours = totalSeconds / 3600.0;
+
       final schedule = SupplementSchedule.create(
         supplementId: supplementId,
         scheduleType: 'interval',
         frequency: 'daily',
-        timesPerDay: (24 / _intervalHours).round(),
-        intervalHours: _intervalHours,
+        timesPerDay: intervalInHours > 0 ? (24 / intervalInHours).round() : 1,
+        intervalHours: intervalInHours.round(),
         startDate: _startDate,
         endDate: _endDate,
         createdBy: currentUser.id,
@@ -204,50 +259,305 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(DesignTokens.space16),
-            decoration: const BoxDecoration(
-              color: DesignTokens.ink50,
-                           border: Border(
-               bottom: BorderSide(color: DesignTokens.ink100),
-             ),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  widget.supplement != null ? 'Edit Supplement' : 'Add Supplement',
-                  style: DesignTokens.titleLarge.copyWith(
-                    fontWeight: FontWeight.bold,
+  Future<void> _showIntervalPicker() async {
+    int tempHours = _intervalHours;
+    int tempMinutes = _intervalMinutes;
+    int tempSeconds = _intervalSeconds;
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          height: 350,
+          decoration: const BoxDecoration(
+            color: DesignTokens.cardBackground,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: DesignTokens.glassBorder),
                   ),
                 ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: DesignTokens.textSecondary),
+                      ),
+                    ),
+                    const Text(
+                      'Select Interval',
+                      style: TextStyle(
+                        color: DesignTokens.neutralWhite,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _intervalHours = tempHours;
+                          _intervalMinutes = tempMinutes;
+                          _intervalSeconds = tempSeconds;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Done',
+                        style: TextStyle(
+                          color: DesignTokens.accentGreen,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              // Picker
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Hours
+                    Expanded(
+                      child: CupertinoPicker(
+                        scrollController: FixedExtentScrollController(
+                          initialItem: _intervalHours,
+                        ),
+                        itemExtent: 40,
+                        onSelectedItemChanged: (int index) {
+                          tempHours = index;
+                        },
+                        selectionOverlay: Container(
+                          decoration: BoxDecoration(
+                            border: Border.symmetric(
+                              horizontal: BorderSide(
+                                color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        children: List<Widget>.generate(100, (int index) {
+                          return Center(
+                            child: Text(
+                              '$index',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                color: DesignTokens.neutralWhite,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        'h',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: DesignTokens.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    // Minutes
+                    Expanded(
+                      child: CupertinoPicker(
+                        scrollController: FixedExtentScrollController(
+                          initialItem: _intervalMinutes,
+                        ),
+                        itemExtent: 40,
+                        onSelectedItemChanged: (int index) {
+                          tempMinutes = index;
+                        },
+                        selectionOverlay: Container(
+                          decoration: BoxDecoration(
+                            border: Border.symmetric(
+                              horizontal: BorderSide(
+                                color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        children: List<Widget>.generate(60, (int index) {
+                          return Center(
+                            child: Text(
+                              index.toString().padLeft(2, '0'),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                color: DesignTokens.neutralWhite,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        'm',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: DesignTokens.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    // Seconds
+                    Expanded(
+                      child: CupertinoPicker(
+                        scrollController: FixedExtentScrollController(
+                          initialItem: _intervalSeconds,
+                        ),
+                        itemExtent: 40,
+                        onSelectedItemChanged: (int index) {
+                          tempSeconds = index;
+                        },
+                        selectionOverlay: Container(
+                          decoration: BoxDecoration(
+                            border: Border.symmetric(
+                              horizontal: BorderSide(
+                                color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        children: List<Widget>.generate(60, (int index) {
+                          return Center(
+                            child: Text(
+                              index.toString().padLeft(2, '0'),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                color: DesignTokens.neutralWhite,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        's',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: DesignTokens.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          
-          // Form
-          Expanded(
-            child: Form(
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: DesignTokens.darkBackground,
+      appBar: AppBar(
+        backgroundColor: DesignTokens.primaryDark,
+        foregroundColor: DesignTokens.neutralWhite,
+        title: Text(
+          widget.supplement != null ? 'Edit Supplement' : 'Add Supplement',
+          style: const TextStyle(
+            color: DesignTokens.neutralWhite,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: DesignTokens.neutralWhite),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Form(
               key: _formKey,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(DesignTokens.space16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Client Selection
+                    Text(
+                      'Client',
+                      style: DesignTokens.titleMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: DesignTokens.space16),
+
+                    if (_loadingClients)
+                      const Center(child: CircularProgressIndicator())
+                    else if (_clients.isEmpty)
+                      Container(
+                        padding: const EdgeInsets.all(DesignTokens.space16),
+                        decoration: BoxDecoration(
+                          color: DesignTokens.blue50,
+                          borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                          border: Border.all(color: DesignTokens.blue50),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.info_outline, color: DesignTokens.blue600),
+                            SizedBox(width: DesignTokens.space8),
+                            Expanded(
+                              child: Text(
+                                'No clients available. Please add clients first.',
+                                style: TextStyle(color: DesignTokens.blue600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      DropdownButtonFormField<String>(
+                        value: _selectedClientId,
+                        decoration: const InputDecoration(
+                          labelText: 'Select Client',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
+                        items: _clients.map((client) {
+                          final clientId = client['id']?.toString() ?? '';
+                          final clientName = client['name'] ?? client['email'] ?? 'Unknown';
+                          return DropdownMenuItem<String>(
+                            value: clientId,
+                            child: Text(clientName),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedClientId = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a client';
+                          }
+                          return null;
+                        },
+                      ),
+
+                    const SizedBox(height: DesignTokens.space24),
+
                     // Basic Info
                     Text(
                       'Basic Information',
@@ -256,7 +566,7 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
                       ),
                     ),
                     const SizedBox(height: DesignTokens.space16),
-                    
+
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -313,17 +623,16 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
                     
                     // Schedule Type Selection
                     SegmentedButton<String>(
-                      segments: [
-                        const ButtonSegment(
+                      segments: const [
+                        ButtonSegment(
                           value: 'fixed_times',
                           label: Text('Fixed Times'),
                           icon: Icon(Icons.schedule),
                         ),
                         ButtonSegment(
                           value: 'interval',
-                          label: const Text('Every N Hours'),
-                          icon: const Icon(Icons.timer),
-                          enabled: _isProUser,
+                          label: Text('Every N Hours'),
+                          icon: Icon(Icons.timer),
                         ),
                       ],
                       selected: {_scheduleType},
@@ -333,32 +642,6 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
                         });
                       },
                     ),
-                    
-                    if (!_isProUser && _scheduleType == 'interval')
-                      Container(
-                        margin: const EdgeInsets.only(top: DesignTokens.space8),
-                        padding: const EdgeInsets.all(DesignTokens.space8),
-                        decoration: BoxDecoration(
-                          color: DesignTokens.blue50,
-                          borderRadius: BorderRadius.circular(DesignTokens.radius4),
-                          border: Border.all(color: DesignTokens.blue50),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.info_outline, 
-                              color: DesignTokens.blue600, size: 16),
-                            const SizedBox(width: DesignTokens.space4),
-                            Expanded(
-                              child: Text(
-                                'Every N hours schedules are available for Pro users only',
-                                style: DesignTokens.bodySmall.copyWith(
-                                  color: DesignTokens.blue600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     
                     const SizedBox(height: DesignTokens.space16),
                     
@@ -445,42 +728,58 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
                           ),
                         );
                       }),
-                    ] else if (_scheduleType == 'interval' && _isProUser) ...[
+                    ] else if (_scheduleType == 'interval') ...[
                       // Interval Hours Selection
                       Text(
-                        'Interval (hours)',
+                        'Interval',
                         style: DesignTokens.bodyMedium.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: DesignTokens.space8),
-                      
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              if (_intervalHours > 1) {
-                                setState(() => _intervalHours--);
-                              }
-                            },
-                            icon: const Icon(Icons.remove_circle_outline),
+
+                      InkWell(
+                        onTap: _showIntervalPicker,
+                        borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: DesignTokens.space16,
+                            vertical: DesignTokens.space16,
                           ),
-                          Expanded(
-                            child: Text(
-                              'Every $_intervalHours hours',
-                              textAlign: TextAlign.center,
-                              style: DesignTokens.titleMedium,
+                          decoration: BoxDecoration(
+                            color: DesignTokens.cardBackground,
+                            border: Border.all(
+                              color: DesignTokens.accentGreen.withValues(alpha: 0.3),
+                              width: 2,
                             ),
+                            borderRadius: BorderRadius.circular(DesignTokens.radius8),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              if (_intervalHours < 24) {
-                                setState(() => _intervalHours++);
-                              }
-                            },
-                            icon: const Icon(Icons.add_circle_outline),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.schedule,
+                                color: DesignTokens.accentGreen,
+                                size: 24,
+                              ),
+                              const SizedBox(width: DesignTokens.space12),
+                              Text(
+                                'Every ${_intervalHours}h ${_intervalMinutes.toString().padLeft(2, '0')}m ${_intervalSeconds.toString().padLeft(2, '0')}s',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: DesignTokens.neutralWhite,
+                                ),
+                              ),
+                              const SizedBox(width: DesignTokens.space12),
+                              const Icon(
+                                Icons.arrow_drop_down,
+                                color: DesignTokens.textSecondary,
+                                size: 24,
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ],
                     
@@ -560,14 +859,18 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
                     const SizedBox(height: DesignTokens.space24),
                     
                     // Save Button
+                    const SizedBox(height: DesignTokens.space32),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _loading ? null : _saveSupplement,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: DesignTokens.blue600,
-                          foregroundColor: Colors.white,
+                          backgroundColor: DesignTokens.accentGreen,
+                          foregroundColor: DesignTokens.primaryDark,
                           padding: const EdgeInsets.all(DesignTokens.space16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                          ),
                         ),
                         child: _loading
                             ? const SizedBox(
@@ -580,16 +883,18 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
                               )
                             : Text(
                                 widget.supplement != null ? 'Update Supplement' : 'Create Supplement',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
                               ),
                       ),
                     ),
+                    const SizedBox(height: DesignTokens.space24),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
-      ),
     );
   }
 

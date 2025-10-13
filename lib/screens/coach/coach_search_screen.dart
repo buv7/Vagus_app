@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../theme/design_tokens.dart';
 
 class CoachSearchScreen extends StatefulWidget {
   const CoachSearchScreen({super.key});
@@ -106,6 +107,11 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
   Widget _buildCoachCard(Map<String, dynamic> coach) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: DesignTokens.cardBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(DesignTokens.radius12),
+        side: const BorderSide(color: DesignTokens.glassBorder),
+      ),
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: coach['avatar_url'] != null
@@ -116,9 +122,16 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
               : null,
         ),
         title: Text(coach['name'] ?? 'No name'),
-        subtitle: Text(coach['email'] ?? ''),
+        subtitle: Text(
+          coach['email'] ?? '',
+          style: const TextStyle(color: DesignTokens.textSecondary),
+        ),
         trailing: ElevatedButton(
           onPressed: () => _sendRequest(coach['id']),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: DesignTokens.accentGreen,
+            foregroundColor: Colors.white,
+          ),
           child: const Text('Connect'),
         ),
       ),
@@ -128,7 +141,9 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: DesignTokens.darkBackground,
       appBar: AppBar(
+        backgroundColor: DesignTokens.primaryDark,
         title: const Text('Find a Coach'),
         actions: [
           IconButton(
@@ -147,8 +162,23 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search by name or email',
+                hintStyle: const TextStyle(color: DesignTokens.textSecondary),
+                filled: true,
+                fillColor: DesignTokens.cardBackground,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                  borderSide: const BorderSide(color: DesignTokens.glassBorder),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                  borderSide: const BorderSide(color: DesignTokens.glassBorder),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                  borderSide: const BorderSide(color: DesignTokens.accentGreen),
+                ),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
+                  icon: const Icon(Icons.search, color: DesignTokens.accentGreen),
                   onPressed: _search,
                 ),
               ),
@@ -156,15 +186,15 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
             ),
           ),
           if (_loading)
-            const Center(child: CircularProgressIndicator())
+            const Center(child: CircularProgressIndicator(color: DesignTokens.accentGreen))
           else if (_error.isNotEmpty)
             Padding(
               padding: const EdgeInsets.all(8),
-              child: Text(_error, style: const TextStyle(color: Colors.red)),
+              child: Text(_error, style: const TextStyle(color: DesignTokens.accentGreen)),
             )
           else if (_results.isEmpty)
               const Expanded(
-                child: Center(child: Text('No coaches found.')),
+                child: Center(child: Text('No coaches found.', style: TextStyle(color: DesignTokens.textSecondary))),
               )
             else
               Expanded(

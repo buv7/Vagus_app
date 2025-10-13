@@ -5,7 +5,7 @@ import '../../services/account_switcher.dart';
 import '../../services/session/session_service.dart';
 import '../../services/settings/settings_service.dart';
 
-import 'modern_login_screen.dart';
+import 'premium_login_screen.dart';
 import 'set_new_password_screen.dart';
 import 'verify_email_pending_screen.dart';
 import '../admin/admin_screen.dart';
@@ -234,7 +234,7 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
     }
 
     if (_role == 'unauthenticated') {
-      return const ModernLoginScreen();
+      return const PremiumLoginScreen();
     }
 
     if (_role == 'email_verification_pending') {
@@ -242,7 +242,7 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
       if (user != null) {
         return VerifyEmailPendingScreen(email: user.email ?? '');
       }
-      return const ModernLoginScreen();
+      return const PremiumLoginScreen();
     }
 
     if (_role == 'admin') {

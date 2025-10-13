@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
 
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({super.key});
@@ -104,17 +103,17 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: DesignTokens.primaryDark,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: DesignTokens.primaryDark,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back, color: AppTheme.neutralWhite),
+          icon: const Icon(Icons.arrow_back, color: DesignTokens.neutralWhite),
         ),
         title: const Text(
           'Help Center',
-          style: TextStyle(color: AppTheme.neutralWhite),
+          style: TextStyle(color: DesignTokens.neutralWhite),
         ),
       ),
       body: SingleChildScrollView(
@@ -125,25 +124,25 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
             // Search Bar
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.cardBackground,
+                color: DesignTokens.cardBackground,
                 borderRadius: BorderRadius.circular(DesignTokens.radius12),
                 border: Border.all(
-                  color: AppTheme.mediumGrey,
+                  color: DesignTokens.glassBorder,
                   width: 1,
                 ),
               ),
               child: TextField(
                 controller: _searchController,
                 onChanged: (value) => setState(() => _searchQuery = value),
-                style: const TextStyle(color: AppTheme.neutralWhite),
+                style: const TextStyle(color: DesignTokens.neutralWhite),
                 decoration: InputDecoration(
                   hintText: 'Search for help...',
-                  hintStyle: const TextStyle(color: AppTheme.lightGrey),
+                  hintStyle: const TextStyle(color: DesignTokens.textSecondary),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(DesignTokens.space16),
                   prefixIcon: const Icon(
                     Icons.search,
-                    color: AppTheme.accentGreen,
+                    color: DesignTokens.accentGreen,
                     size: 20,
                   ),
                   suffixIcon: _searchQuery.isNotEmpty
@@ -154,7 +153,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                           },
                           icon: const Icon(
                             Icons.clear,
-                            color: AppTheme.lightGrey,
+                            color: DesignTokens.textSecondary,
                             size: 20,
                           ),
                         )
@@ -195,7 +194,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     return Text(
       title,
       style: const TextStyle(
-        color: AppTheme.lightGrey,
+        color: DesignTokens.textSecondary,
         fontSize: 16,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
@@ -246,10 +245,10 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       child: Container(
         padding: const EdgeInsets.all(DesignTokens.space16),
         decoration: BoxDecoration(
-          color: AppTheme.cardBackground,
+          color: DesignTokens.cardBackground,
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
           border: Border.all(
-            color: AppTheme.mediumGrey,
+            color: DesignTokens.glassBorder,
             width: 1,
           ),
         ),
@@ -258,14 +257,14 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           children: [
             Icon(
               icon,
-              color: AppTheme.accentGreen,
+              color: DesignTokens.accentGreen,
               size: 32,
             ),
             const SizedBox(height: DesignTokens.space8),
             Text(
               title,
               style: const TextStyle(
-                color: AppTheme.neutralWhite,
+                color: DesignTokens.neutralWhite,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -287,10 +286,10 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space12),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.mediumGrey,
+          color: DesignTokens.glassBorder,
           width: 1,
         ),
       ),
@@ -298,13 +297,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         contentPadding: const EdgeInsets.all(DesignTokens.space16),
         leading: Icon(
           option['icon'],
-          color: AppTheme.accentGreen,
+          color: DesignTokens.accentGreen,
           size: 24,
         ),
         title: Text(
           option['title'],
           style: const TextStyle(
-            color: AppTheme.neutralWhite,
+            color: DesignTokens.neutralWhite,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -312,13 +311,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         subtitle: Text(
           option['subtitle'],
           style: const TextStyle(
-            color: AppTheme.lightGrey,
+            color: DesignTokens.textSecondary,
             fontSize: 12,
           ),
         ),
         trailing: const Icon(
           Icons.arrow_forward_ios,
-          color: AppTheme.lightGrey,
+          color: DesignTokens.textSecondary,
           size: 16,
         ),
         onTap: option['action'],
@@ -333,10 +332,10 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       return Container(
         padding: const EdgeInsets.all(DesignTokens.space20),
         decoration: BoxDecoration(
-          color: AppTheme.cardBackground,
+          color: DesignTokens.cardBackground,
           borderRadius: BorderRadius.circular(DesignTokens.radius12),
           border: Border.all(
-            color: AppTheme.mediumGrey,
+            color: DesignTokens.glassBorder,
             width: 1,
           ),
         ),
@@ -345,21 +344,21 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
             children: [
               Icon(
                 Icons.search_off,
-                color: AppTheme.lightGrey,
+                color: DesignTokens.textSecondary,
                 size: 48,
               ),
               SizedBox(height: DesignTokens.space16),
               Text(
                 'No results found',
                 style: TextStyle(
-                  color: AppTheme.lightGrey,
+                  color: DesignTokens.textSecondary,
                   fontSize: 16,
                 ),
               ),
               Text(
                 'Try different keywords',
                 style: TextStyle(
-                  color: AppTheme.lightGrey,
+                  color: DesignTokens.textTertiary,
                   fontSize: 12,
                 ),
               ),
@@ -378,10 +377,10 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space12),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.mediumGrey,
+          color: DesignTokens.glassBorder,
           width: 1,
         ),
       ),
@@ -398,19 +397,19 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         leading: Container(
           padding: const EdgeInsets.all(DesignTokens.space8),
           decoration: BoxDecoration(
-            color: AppTheme.accentGreen.withValues(alpha: 0.2),
+            color: DesignTokens.successBg,
             borderRadius: BorderRadius.circular(DesignTokens.radius8),
           ),
           child: const Icon(
             Icons.help_outline,
-            color: AppTheme.accentGreen,
+            color: DesignTokens.accentGreen,
             size: 20,
           ),
         ),
         title: Text(
           item['question'],
           style: const TextStyle(
-            color: AppTheme.neutralWhite,
+            color: DesignTokens.neutralWhite,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -418,17 +417,17 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         subtitle: Text(
           item['category'],
           style: const TextStyle(
-            color: AppTheme.lightGrey,
+            color: DesignTokens.textSecondary,
             fontSize: 12,
           ),
         ),
-        iconColor: AppTheme.accentGreen,
-        collapsedIconColor: AppTheme.lightGrey,
+        iconColor: DesignTokens.accentGreen,
+        collapsedIconColor: DesignTokens.textSecondary,
         children: [
           Text(
             item['answer'],
             style: const TextStyle(
-              color: AppTheme.lightGrey,
+              color: DesignTokens.textSecondary,
               fontSize: 14,
               height: 1.5,
             ),
@@ -443,7 +442,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Getting started guide coming soon'),
-        backgroundColor: AppTheme.accentGreen,
+        backgroundColor: DesignTokens.accentGreen,
       ),
     );
   }
@@ -452,7 +451,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Video tutorials coming soon'),
-        backgroundColor: AppTheme.accentGreen,
+        backgroundColor: DesignTokens.accentGreen,
       ),
     );
   }
@@ -461,7 +460,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('User guide coming soon'),
-        backgroundColor: AppTheme.accentGreen,
+        backgroundColor: DesignTokens.accentGreen,
       ),
     );
   }
@@ -470,7 +469,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Feature requests coming soon'),
-        backgroundColor: AppTheme.accentGreen,
+        backgroundColor: DesignTokens.accentGreen,
       ),
     );
   }
@@ -499,7 +498,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Live chat coming soon'),
-        backgroundColor: AppTheme.accentGreen,
+        backgroundColor: DesignTokens.accentGreen,
       ),
     );
   }
@@ -508,7 +507,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Video call scheduling coming soon'),
-        backgroundColor: AppTheme.accentGreen,
+        backgroundColor: DesignTokens.accentGreen,
       ),
     );
   }

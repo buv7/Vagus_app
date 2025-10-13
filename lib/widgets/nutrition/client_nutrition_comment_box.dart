@@ -64,12 +64,12 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
         color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
+          color: DesignTokens.accentGreen,
+          width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
             blurRadius: 20,
             spreadRadius: 0,
           ),
@@ -89,7 +89,7 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
               Icon(
                 widget.isClientView ? Icons.comment : Icons.feedback,
                 size: 16,
-                color: widget.isClientView ? Colors.blue.shade600 : Colors.grey.shade600,
+                color: widget.isClientView ? DesignTokens.accentGreen : DesignTokens.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
@@ -97,7 +97,7 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: widget.isClientView ? Colors.blue.shade600 : Colors.grey.shade600,
+                  color: widget.isClientView ? DesignTokens.accentGreen : DesignTokens.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -106,7 +106,7 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
                   icon: const Icon(Icons.save, size: 16),
                   onPressed: widget.onSave,
                   tooltip: 'Save comment',
-                  color: Colors.blue.shade600,
+                  color: DesignTokens.accentGreen,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -118,16 +118,17 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
             enabled: !widget.isReadOnly,
             maxLines: 3,
             decoration: InputDecoration(
-              hintText: widget.isClientView 
+              hintText: widget.isClientView
                   ? 'Add your comment or feedback...'
                   : 'Add notes for the client...',
+              hintStyle: const TextStyle(color: DesignTokens.textTertiary),
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
               isDense: true,
             ),
             style: TextStyle(
               fontSize: 14,
-              color: widget.isReadOnly ? Colors.grey.shade600 : Colors.black87,
+              color: widget.isReadOnly ? DesignTokens.textSecondary : DesignTokens.textPrimary,
             ),
           ),
         ],

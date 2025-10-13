@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/branding/vagus_appbar.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 
 class LearnClientScreen extends StatelessWidget {
   const LearnClientScreen({super.key});
@@ -18,9 +18,11 @@ class LearnClientScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: AppTheme.primaryDark,
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+              decoration: BoxDecoration(
+                gradient: DesignTokens.primaryGradient,
+                borderRadius: const BorderRadius.all(Radius.circular(DesignTokens.radius16)),
+                border: Border.all(color: DesignTokens.glassBorderAccent),
+                boxShadow: DesignTokens.glowMd,
               ),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +30,7 @@ class LearnClientScreen extends StatelessWidget {
                   Text(
                     'MASTER VAGUS',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: DesignTokens.neutralWhite,
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
@@ -38,7 +40,7 @@ class LearnClientScreen extends StatelessWidget {
                   Text(
                     'Your complete guide to getting the most out of VAGUS',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: DesignTokens.textSecondary,
                       fontSize: 16,
                     ),
                   ),
@@ -178,15 +180,16 @@ class LearnClientScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
-                border: Border.all(color: AppTheme.lightGrey),
+                color: DesignTokens.cardBackground,
+                borderRadius: const BorderRadius.all(Radius.circular(DesignTokens.radius16)),
+                border: Border.all(color: DesignTokens.glassBorder),
+                boxShadow: DesignTokens.cardShadow,
               ),
               child: const Column(
                 children: [
                   Icon(
                     Icons.school,
-                    color: AppTheme.primaryDark,
+                    color: DesignTokens.accentGreen,
                     size: 32,
                   ),
                   SizedBox(height: 12),
@@ -195,14 +198,14 @@ class LearnClientScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryDark,
+                      color: DesignTokens.textPrimary,
                     ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Start implementing these tips today and unlock your full potential with VAGUS.',
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: DesignTokens.textSecondary,
                       fontSize: 14,
                     ),
                     textAlign: TextAlign.center,
@@ -226,7 +229,7 @@ class LearnClientScreen extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: AppTheme.primaryDark,
+              color: DesignTokens.accentGreen,
               size: 24,
             ),
             const SizedBox(width: 12),
@@ -235,7 +238,7 @@ class LearnClientScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: AppTheme.primaryDark,
+                color: DesignTokens.textPrimary,
               ),
             ),
           ],
@@ -249,6 +252,11 @@ class LearnClientScreen extends StatelessWidget {
   Widget _buildGuideItem(String title, String description, String steps) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      color: DesignTokens.cardBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(DesignTokens.radius12),
+        side: const BorderSide(color: DesignTokens.glassBorder),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -259,14 +267,14 @@ class LearnClientScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.primaryDark,
+                color: DesignTokens.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               description,
               style: const TextStyle(
-                color: Colors.grey,
+                color: DesignTokens.textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -275,15 +283,15 @@ class LearnClientScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                border: Border.all(color: AppTheme.lightGrey),
+                color: DesignTokens.darkBackground,
+                borderRadius: const BorderRadius.all(Radius.circular(DesignTokens.radius8)),
+                border: Border.all(color: DesignTokens.glassBorder),
               ),
               child: Text(
                 steps,
                 style: const TextStyle(
                   fontSize: 13,
-                  color: AppTheme.primaryDark,
+                  color: DesignTokens.textPrimary,
                   height: 1.4,
                 ),
               ),
