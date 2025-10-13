@@ -151,14 +151,23 @@ class ProgramApplyService {
 
       // Try to insert into workout_plans table if it exists
       try {
-        await _supabase.from('workout_plans').insert({
-          'client_id': clientId,
-          'coach_id': user.id,
-          'name': 'Imported Workout Plan',
-          'plan_data': workoutPlan,
-          'is_active': true,
+        final result = await _supabase.rpc('create_workout_plan', params: {
+          'plan_name': 'Imported Workout Plan',
+          'plan_description': 'Workout plan imported from program',
+          'plan_created_by': user.id,
+          'plan_client_id': clientId,
+          'plan_coach_id': user.id,
+          'plan_duration_weeks': 4,
+          'plan_is_template': false,
+          'plan_status': 'active',
+          'plan_metadata': {'imported_plan_data': workoutPlan},
         });
-        return 1;
+        
+        if (result['success'] == true) {
+          return 1;
+        } else {
+          throw Exception('Failed to create workout plan: ${result['error']}');
+        }
       } catch (e) {
         // If workout_plans table doesn't exist or has different structure,
         // store as a note instead

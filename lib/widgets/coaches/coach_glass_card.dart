@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vagus_app/theme/design_tokens.dart';
 import 'package:vagus_app/services/coaches/coach_repository.dart';
-import 'package:vagus_app/screens/coach/coach_profile_public_screen.dart';
+import 'package:vagus_app/screens/coach_profile/coach_profile_screen.dart';
 
 class CoachGlassCard extends StatelessWidget {
   final CoachCardVm coach;
@@ -15,9 +15,9 @@ class CoachGlassCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CoachProfilePublicScreen(
+            builder: (context) => CoachProfileScreen(
               coachId: coach.coachId,
-              username: coach.username,
+              isPublicView: true,
             ),
           ),
         );
@@ -133,9 +133,9 @@ class CoachGlassCard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CoachProfilePublicScreen(
+                          builder: (context) => CoachProfileScreen(
                             coachId: coach.coachId,
-                            username: coach.username,
+                            isPublicView: true,
                           ),
                         ),
                       );

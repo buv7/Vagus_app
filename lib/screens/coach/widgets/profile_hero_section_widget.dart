@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../models/coach/coach_profile.dart';
-import '../../../models/coach/coach_profile_stats.dart';
+import '../../../models/coach_profile.dart';
+import '../../../models/coach_profile_stats.dart';
 import '../../../theme/design_tokens.dart';
 
 class ProfileHeroSectionWidget extends StatefulWidget {

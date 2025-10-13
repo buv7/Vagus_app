@@ -2,9 +2,9 @@ name: Supabase Status Check
 
 on:
   workflow_dispatch:
-  schedule:
-    # Run every 6 hours to check Supabase health
-    - cron: '0 */6 * * *'
+  # schedule:
+  #   # Run every 6 hours to check Supabase health
+  #   - cron: '0 */6 * * *'
 
 jobs:
   health-check:

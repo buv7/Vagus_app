@@ -1,52 +1,96 @@
 import '../../services/calendar/calendar_service.dart';
 import '../../services/settings/settings_service.dart';
+import '../core/logger.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class ReminderManager {
   ReminderManager._();
   static final ReminderManager instance = ReminderManager._();
+  
+  final FlutterLocalNotificationsPlugin _flnPlugin = FlutterLocalNotificationsPlugin();
 
-  /// Schedule reminders for an event
-  /// Creates notifications at 24h, 1h, and 15m before the event
-  Future<void> scheduleEventReminders(CalendarEvent event) async {
+  /// Schedule reminders for an event based on reminder_minutes array
+  Future<void> scheduleEventReminders({
+    required String eventId,
+    required DateTime startAt,
+    required List<int> minutesBefore,
+    required String title,
+    String? body,
+  }) async {
     try {
-      final eventTime = event.startAt;
       final now = DateTime.now();
       
       // Only schedule reminders for future events
-      if (eventTime.isBefore(now)) return;
+      if (startAt.isBefore(now)) return;
 
-      // 24 hour reminder
-      final reminder24h = eventTime.subtract(const Duration(hours: 24));
-      if (reminder24h.isAfter(now)) {
-        debugPrint('📅 Would schedule 24h reminder for event: ${event.title} at $reminder24h');
+      // Deduplicate reminder times
+      final uniqueMinutes = minutesBefore.toSet().toList();
+      
+      for (final minutes in uniqueMinutes) {
+        final reminderTime = startAt.subtract(Duration(minutes: minutes));
+        
+        if (reminderTime.isAfter(now)) {
+          final notificationId = _generateNotificationId(eventId, minutes);
+          
+          await _flnPlugin.zonedSchedule(
+            notificationId,
+            title,
+            body ?? 'Starting in $minutes minutes',
+            tz.TZDateTime.from(reminderTime, tz.local),
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'calendar',
+                'Calendar Reminders',
+                channelDescription: 'Reminders for calendar events',
+                importance: Importance.high,
+                priority: Priority.high,
+                icon: '@mipmap/ic_launcher',
+              ),
+              iOS: DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+              ),
+            ),
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation: 
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.time,
+          );
+          
+          Logger.debug('Scheduled reminder', data: {
+            'eventId': eventId,
+            'minutes': minutes,
+            'at': reminderTime.toIso8601String(),
+          });
+        }
       }
-
-      // 1 hour reminder
-      final reminder1h = eventTime.subtract(const Duration(hours: 1));
-      if (reminder1h.isAfter(now)) {
-        debugPrint('📅 Would schedule 1h reminder for event: ${event.title} at $reminder1h');
-      }
-
-      // 15 minute reminder
-      final reminder15m = eventTime.subtract(const Duration(minutes: 15));
-      if (reminder15m.isAfter(now)) {
-        debugPrint('📅 Would schedule 15m reminder for event: ${event.title} at $reminder15m');
-      }
-    } catch (e) {
-      // Log error but don't throw - reminders are not critical
-      debugPrint('Failed to schedule event reminders: $e');
+    } catch (e, st) {
+      Logger.error('Failed to schedule event reminders', error: e, stackTrace: st);
     }
+  }
+  
+  /// Generate stable notification ID from event ID and minutes
+  int _generateNotificationId(String eventId, int minutes) {
+    return ('$eventId-$minutes').hashCode & 0x7fffffff;
   }
 
   /// Cancel all reminders for an event
   Future<void> cancelEventReminders(String eventId) async {
     try {
-      // Cancel all reminder types for this event
-      debugPrint('📅 Would cancel reminders for event: $eventId');
-    } catch (e) {
-      // Log error but don't throw
-      debugPrint('Failed to cancel event reminders: $e');
+      // Cancel common reminder offsets
+      final commonOffsets = [5, 15, 30, 60, 120, 1440]; // 5m, 15m, 30m, 1h, 2h, 24h
+      
+      for (final minutes in commonOffsets) {
+        final notificationId = _generateNotificationId(eventId, minutes);
+        await _flnPlugin.cancel(notificationId);
+      }
+      
+      Logger.debug('Cancelled reminders for event', data: {'eventId': eventId});
+    } catch (e, st) {
+      Logger.error('Failed to cancel event reminders', error: e, stackTrace: st);
     }
   }
 
@@ -56,10 +100,16 @@ class ReminderManager {
       // Cancel existing reminders
       await cancelEventReminders(event.id);
       
-      // Schedule new reminders
-      await scheduleEventReminders(event);
-    } catch (e) {
-      debugPrint('Failed to update event reminders: $e');
+      // Schedule new reminders with event data
+      await scheduleEventReminders(
+        eventId: event.id,
+        startAt: event.startAt,
+        minutesBefore: [30, 15], // Default reminders
+        title: event.title,
+        body: 'Event starting soon',
+      );
+    } catch (e, st) {
+      Logger.error('Failed to update event reminders', error: e, stackTrace: st);
     }
   }
 

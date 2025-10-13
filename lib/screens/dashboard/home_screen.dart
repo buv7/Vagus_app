@@ -5,7 +5,7 @@ import '../../widgets/branding/vagus_appbar.dart';
 import 'edit_profile_screen.dart';
 import '../account_switch_screen.dart';
 import '../workout/coach_workout_dashboard_screen.dart';
-import '../workout/coach_plan_builder_screen_refactored.dart';
+import '../plans/plans_dashboard_screen.dart';
 import '../nutrition/coach_nutrition_dashboard.dart';
 import '../nutrition/nutrition_plan_builder.dart';
 
@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (_) {
           debugPrint('✅ Opening CoachPlanBuilderScreen');
-          return const CoachPlanBuilderScreen();
+          return const PlansDashboardScreen();
         },
       ),
     );

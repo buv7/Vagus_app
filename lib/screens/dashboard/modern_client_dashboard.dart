@@ -12,8 +12,8 @@ import '../billing/upgrade_screen.dart';
 import '../settings/profile_settings_screen.dart';
 import '../settings/notifications_settings_screen.dart';
 import '../support/help_center_screen.dart';
-import '../coaches/coach_marketplace_screen.dart';
 import '../../widgets/ads/ad_banner_strip.dart';
+import '../client/client_coach_marketplace.dart';
 
 class ModernClientDashboard extends StatefulWidget {
   const ModernClientDashboard({super.key});
@@ -663,7 +663,9 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   void _goToCoachSearch() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const CoachMarketplaceScreen()),
+      MaterialPageRoute(
+        builder: (_) => const ClientCoachMarketplace(),
+      ),
     );
   }
 

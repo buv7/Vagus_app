@@ -6,12 +6,15 @@ import '../../services/billing/plan_access_manager.dart';
 import 'supplement_history_screen.dart';
 
 /// Screen showing all supplements with management options
+/// For coaches: pass clientId to view client's supplements
 class SupplementListScreen extends StatefulWidget {
   final String? userId;
+  final String? clientId; // Coach viewing client supplements
 
   const SupplementListScreen({
     super.key,
     this.userId,
+    this.clientId,
   });
 
   @override
@@ -39,8 +42,10 @@ class _SupplementListScreenState extends State<SupplementListScreen> {
     try {
       setState(() => _loading = true);
       
+      // Use clientId if provided (coach viewing client)
       final supplements = await _supplementService.listSupplements(
         userId: widget.userId,
+        clientId: widget.clientId,
         isActive: true,
       );
       

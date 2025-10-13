@@ -7,11 +7,22 @@ import 'model_registry.dart';
 import '../billing/plan_access_manager.dart';
 
 class CalendarAI {
+  // Singleton instance
+  static final CalendarAI _instance = CalendarAI._internal();
+  static CalendarAI get instance => _instance;
+  CalendarAI._internal();
+  
   static final AIClient _aiClient = AIClient();
   static final AICache _cache = AICache();
   static final AIUsageService _usageService = AIUsageService.instance;
   static final RateLimiter _rateLimiter = RateLimiter();
   static final ModelRegistry _modelRegistry = ModelRegistry();
+  
+  // Instance method for compatibility
+  Future<List<String>> suggestEventTags(String eventText) async {
+    final parts = eventText.split('\n');
+    return autoTags(title: parts.first, description: parts.length > 1 ? parts.sublist(1).join('\n') : null);
+  }
 
   static Future<List<String>> autoTags({
     required String title, 

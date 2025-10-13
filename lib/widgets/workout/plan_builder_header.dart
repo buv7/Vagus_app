@@ -17,7 +17,7 @@ class PlanBuilderHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: Colors.blue,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.1),

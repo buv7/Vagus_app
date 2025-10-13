@@ -177,16 +177,12 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
                 _buildSectionHeader('Quick Access'),
                 _buildMenuItem(
                   icon: Icons.person,
-                  title: 'Edit Profile',
-                  onTap: widget.onEditProfile ?? () => AppNavigator.editProfile(context),
+                  title: widget.isClient ? 'Edit Profile' : 'My Profile',
+                  subtitle: !widget.isClient ? 'Manage profile, media & marketplace' : null,
+                  onTap: !widget.isClient
+                      ? () => AppNavigator.myCoachProfile(context)
+                      : (widget.onEditProfile ?? () => AppNavigator.editProfile(context)),
                 ),
-                // Only show Portfolio Marketplace for coaches
-                if (!widget.isClient)
-                  _buildMenuItem(
-                    icon: Icons.storefront,
-                    title: 'Portfolio Marketplace',
-                    onTap: () => AppNavigator.coachPortfolioMarketplace(context),
-                  ),
                 _buildMenuItem(
                   icon: Icons.settings,
                   title: 'Settings',
@@ -437,6 +433,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
+    String? subtitle,
     VoidCallback? onTap,
   }) {
     return ListTile(
@@ -452,6 +449,15 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
           fontWeight: FontWeight.w500,
         ),
       ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: const TextStyle(
+                color: DesignTokens.textSecondary,
+                fontSize: 12,
+              ),
+            )
+          : null,
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
       hoverColor: Colors.white.withValues(alpha: 0.1),

@@ -385,14 +385,32 @@ class CoachPlanBuilderService {
     bool isTemplate = false,
   }) async {
     try {
-      final response = await _sb.from('workout_plans').insert({
-        'coach_id': coachId,
-        'title': title,
-        'description': description,
-        'difficulty': difficulty,
-        'duration_weeks': durationWeeks,
-        'is_template': isTemplate,
-      }).select('id').single();
+      final result = await _sb.rpc('create_workout_plan', params: {
+        'plan_name': title,
+        'plan_description': description,
+        'plan_created_by': coachId,
+        'plan_coach_id': coachId,
+        'plan_client_id': null,
+        'plan_duration_weeks': durationWeeks,
+        'plan_difficulty_level': difficulty,
+        'plan_is_template': isTemplate,
+        'plan_status': 'draft',
+        'plan_metadata': {},
+        'plan_tags': [],
+      });
+      
+      if (result['success'] != true) {
+        throw Exception('Failed to create workout plan: ${result['error']}');
+      }
+      
+      // Since the function doesn't return the ID directly, we need to get it differently
+      final response = await _sb.from('workout_plans')
+          .select('id')
+          .eq('created_by', coachId)
+          .eq('name', title)
+          .order('created_at', ascending: false)
+          .limit(1)
+          .single();
 
       // Clear cache
       _clearCacheForCoach(coachId);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../models/coach/coach_profile.dart';
-import '../../../models/coach/coach_profile_stats.dart';
+import '../../../models/coach_profile.dart';
+import '../../../models/coach_profile_stats.dart';
 import '../../../theme/design_tokens.dart';
 
 class ProfileHeaderWidget extends StatefulWidget {

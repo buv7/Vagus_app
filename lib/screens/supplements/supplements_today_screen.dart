@@ -7,8 +7,14 @@ import '../../theme/app_theme.dart';
 import '../../services/billing/plan_access_manager.dart';
 
 /// Full screen showing supplements due today with progress tracking
+/// For coaches: pass clientId to view client's supplements
 class SupplementsTodayScreen extends StatefulWidget {
-  const SupplementsTodayScreen({super.key});
+  final String? clientId; // Coach viewing client supplements
+
+  const SupplementsTodayScreen({
+    super.key,
+    this.clientId,
+  });
 
   @override
   State<SupplementsTodayScreen> createState() => _SupplementsTodayScreenState();
@@ -39,7 +45,10 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
       // Try to load supplements, but if the database function doesn't exist,
       // show mock data instead of crashing
       try {
-        final supplements = await _supplementService.getSupplementsDueToday();
+        // Use clientId if provided (coach viewing client)
+        final supplements = await _supplementService.getSupplementsDueToday(
+          clientId: widget.clientId,
+        );
         setState(() {
           _supplements = supplements;
           _loading = false;

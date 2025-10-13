@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:app_links/app_links.dart';
-import '../screens/coach/coach_profile_public_screen.dart';
+import '../screens/coach_profile/coach_profile_screen.dart';
 
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
@@ -101,9 +101,9 @@ class DeepLinkService {
         unawaited(Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CoachProfilePublicScreen(
+            builder: (context) => CoachProfileScreen(
               coachId: response['id'],
-              coachData: response,
+              isPublicView: true,
             ),
           ),
         ));
@@ -146,9 +146,9 @@ class DeepLinkService {
         unawaited(Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CoachProfilePublicScreen(
+            builder: (context) => CoachProfileScreen(
               coachId: coachData['coach_id'],
-              coachData: coachData,
+              isPublicView: true,
             ),
           ),
         ));

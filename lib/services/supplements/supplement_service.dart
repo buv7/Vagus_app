@@ -82,7 +82,8 @@ class SupplementService {
     }
   }
 
-  /// List supplements for a user
+  /// List supplements for a user or client
+  /// For coaches viewing client supplements, pass clientId
   Future<List<Supplement>> listSupplements({
     String? userId,
     String? clientId,
@@ -90,16 +91,23 @@ class SupplementService {
   }) async {
     try {
       final user = userId ?? _supabase.auth.currentUser?.id;
-      if (user == null) return [];
+      if (user == null) {
+        debugPrint('⚠️ SUPPLEMENTS: No user ID provided, returning empty list');
+        return [];
+      }
 
       var query = _supabase
           .from('supplements')
           .select();
 
+      // If clientId is specified (coach viewing client), scope to that client
       if (clientId != null) {
-        query = query.eq('client_id', clientId);
+        debugPrint('📊 SUPPLEMENTS: Fetching supplements for client: $clientId (requested by: $user)');
+        query = query.eq('owner_id', clientId);
       } else {
-        query = query.or('created_by.eq.$user,client_id.eq.$user');
+        // Otherwise, fetch user's own supplements (RLS will handle coach access)
+        debugPrint('📊 SUPPLEMENTS: Fetching supplements for user: $user');
+        query = query.eq('owner_id', user);
       }
 
       if (isActive != null) {
@@ -107,13 +115,22 @@ class SupplementService {
       }
 
       final response = await query.order('name');
+      
+      if (response.isEmpty) {
+        debugPrint('📊 SUPPLEMENTS: No supplements found - User: $user, ClientId: $clientId');
+        return [];
+      }
+      
       final supplements = response.map((map) => Supplement.fromMap(map)).toList();
       
       // Debug logging for analytics
-      debugPrint('📊 ANALYTICS: Supplements listed - User: $user, Count: ${supplements.length}, Active filter: $isActive');
+      debugPrint('✅ SUPPLEMENTS: Listed ${supplements.length} supplements - User: $user, ClientId: $clientId, Active filter: $isActive');
       
       return supplements;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ SUPPLEMENTS ERROR: Failed to list supplements - User: $userId, ClientId: $clientId');
+      debugPrint('❌ Error details: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
       throw Exception('Failed to list supplements: $e');
     }
   }
@@ -578,29 +595,41 @@ class SupplementService {
     }
   }
 
-  /// Get supplements due today for a user
+  /// Get supplements due today for a user or client
+  /// For coaches viewing client supplements, pass clientId
   Future<List<SupplementDueToday>> getSupplementsDueToday({
     String? userId,
+    String? clientId,
   }) async {
     try {
-      final user = userId ?? _supabase.auth.currentUser?.id;
-      if (user == null) return [];
+      // Use clientId if provided (coach viewing client), otherwise use userId
+      final targetUser = clientId ?? userId ?? _supabase.auth.currentUser?.id;
+      if (targetUser == null) {
+        debugPrint('⚠️ SUPPLEMENTS: No user ID provided for getSupplementsDueToday');
+        return [];
+      }
 
+      debugPrint('📊 SUPPLEMENTS: Fetching supplements due today for: $targetUser');
+      
       final response = await _supabase.rpc('get_supplements_due_today', params: {
-        'p_user_id': user,
+        'p_user_id': targetUser,
       });
 
       if (response is List) {
         final supplements = response.map((map) => SupplementDueToday.fromMap(map)).toList();
         
         // Debug logging for analytics
-        debugPrint('📊 ANALYTICS: Supplements due today - User: $userId, Count: ${supplements.length}');
+        debugPrint('✅ SUPPLEMENTS: Found ${supplements.length} supplements due today - User: $targetUser');
         
         return supplements;
       }
 
+      debugPrint('📊 SUPPLEMENTS: No supplements due today - User: $targetUser');
       return [];
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ SUPPLEMENTS ERROR: Failed to get supplements due today - User: $userId, ClientId: $clientId');
+      debugPrint('❌ Error details: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
       throw Exception('Failed to get supplements due today: $e');
     }
   }

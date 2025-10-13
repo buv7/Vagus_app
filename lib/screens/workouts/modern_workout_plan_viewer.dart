@@ -10,7 +10,9 @@ import '../../theme/app_theme.dart';
 import '../../widgets/navigation/vagus_side_menu.dart';
 
 class ModernWorkoutPlanViewer extends StatefulWidget {
-  const ModernWorkoutPlanViewer({super.key});
+  final Map<String, dynamic>? planOverride;
+
+  const ModernWorkoutPlanViewer({super.key, this.planOverride});
 
   @override
   State<ModernWorkoutPlanViewer> createState() => _ModernWorkoutPlanViewerState();
@@ -43,8 +45,23 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
 
   Future<void> _loadWorkoutPlans() async {
     if (!mounted) return;
-    
+
     try {
+      // If planOverride is provided, use it directly
+      if (widget.planOverride != null) {
+        if (mounted) {
+          setState(() {
+            _currentPlan = widget.planOverride;
+            _workoutPlans = [widget.planOverride!];
+            _selectedPlan = widget.planOverride!['id']?.toString() ?? '';
+            _totalWeeks = (widget.planOverride!['weeks'] as List<dynamic>?)?.length ?? 8;
+            _isLoading = false;
+            _error = null;
+          });
+        }
+        return;
+      }
+
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
 
@@ -232,25 +249,25 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                         ),
                       )
                     : SingleChildScrollView(
-                        padding: const EdgeInsets.all(DesignTokens.space16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Header with hamburger menu
                             _buildHeader(),
-                            
-                            const SizedBox(height: DesignTokens.space24),
-                            
+
+                            const SizedBox(height: 12),
+
                             // Plan Selector and Search
                             _buildPlanSelectorAndSearch(),
-                            
-                            const SizedBox(height: DesignTokens.space24),
+
+                            const SizedBox(height: 16),
                             
                             // Program Overview Card
                             _buildProgramOverviewCard(),
-                            
-                            const SizedBox(height: DesignTokens.space24),
-                            
+
+                            const SizedBox(height: 16),
+
                             // Workout List
                             _buildWorkoutList(),
                           ],
@@ -261,41 +278,90 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      children: [
-        // Hamburger menu
-        Builder(
-          builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
-          ),
-        ),
-        
-        // Title
-        Expanded(
-          child: Text(
-            'Workouts',
-            style: DesignTokens.titleLarge.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          // Hamburger menu
+          Builder(
+            builder: (ctx) => IconButton(
+              icon: const Icon(Icons.menu, color: Colors.white, size: 24),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              onPressed: () => Scaffold.of(ctx).openDrawer(),
             ),
           ),
-        ),
-      ],
+
+          const SizedBox(width: 8),
+
+          // Title
+          Expanded(
+            child: Text(
+              'Workouts',
+              style: DesignTokens.titleLarge.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildPlanSelectorAndSearch() {
-    return Column(
-      children: [
-        // Plan Selector
-        GestureDetector(
-          onTap: _workoutPlans.length > 1 ? _showPlanSelector : null,
-          child: Container(
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 90),
+      child: Column(
+        children: [
+          // Plan Selector
+          GestureDetector(
+            onTap: _workoutPlans.length > 1 ? _showPlanSelector : null,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                color: AppTheme.cardBackground,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _currentPlan?['name'] ?? 'No workout plan',
+                      style: DesignTokens.bodyMedium.copyWith(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (_workoutPlans.length > 1)
+                    const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Search Bar
+          Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(
-              horizontal: DesignTokens.space16,
-              vertical: DesignTokens.space12,
+              horizontal: 12,
+              vertical: 10,
             ),
             decoration: BoxDecoration(
               color: AppTheme.cardBackground,
@@ -304,66 +370,33 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             ),
             child: Row(
               children: [
+                const Icon(
+                  Icons.search,
+                  color: Colors.white70,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    _currentPlan?['name'] ?? 'No workout plan',
+                    'Search exercises...',
                     style: DesignTokens.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: Colors.white70,
+                      fontSize: 14,
                     ),
                   ),
                 ),
-                if (_workoutPlans.length > 1)
-                  const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.white,
-                    size: 20,
-                  ),
               ],
             ),
           ),
-        ),
-        
-        const SizedBox(height: DesignTokens.space12),
-        
-        // Search Bar
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space16,
-            vertical: DesignTokens.space12,
-          ),
-          decoration: BoxDecoration(
-            color: AppTheme.cardBackground,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.search,
-                color: Colors.white70,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Search exercises...',
-                  style: DesignTokens.bodyMedium.copyWith(
-                    color: Colors.white70,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildProgramOverviewCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DesignTokens.space16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(12),
@@ -380,7 +413,10 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                   style: DesignTokens.titleMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
@@ -396,87 +432,52 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                   'Week $_currentWeek',
                   style: DesignTokens.bodySmall.copyWith(
                     color: Colors.white70,
+                    fontSize: 11,
                   ),
                 ),
               ),
             ],
           ),
-          
-          const SizedBox(height: 8),
-          
+
+          const SizedBox(height: 6),
+
           // Program Info
           Text(
             '$_totalWeeks week program • Created by Coach',
             style: DesignTokens.bodySmall.copyWith(
               color: Colors.white70,
+              fontSize: 12,
             ),
           ),
-          
+
           const SizedBox(height: 8),
           
-          // Play Music Button
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DesignTokens.space12,
-                vertical: DesignTokens.space8,
-              ),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryDark.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.play_arrow,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Play Music',
-                    style: DesignTokens.bodySmall.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: DesignTokens.space24),
-          
-          // Circular Progress
+          // Circular Progress (smaller for mobile)
           Center(
             child: SizedBox(
-              width: 120,
-              height: 120,
+              width: 100,
+              height: 100,
               child: Stack(
                 children: [
                   // Background circle
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: 100,
+                    height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.2),
-                        width: 8,
+                        width: 6,
                       ),
                     ),
                   ),
                   // Progress circle
                   SizedBox(
-                    width: 120,
-                    height: 120,
+                    width: 100,
+                    height: 100,
                     child: CircularProgressIndicator(
                       value: _completionPercentage,
-                      strokeWidth: 8,
+                      strokeWidth: 6,
                       backgroundColor: Colors.transparent,
                       valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
                     ),
@@ -491,13 +492,14 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                           style: DesignTokens.titleLarge.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                            fontSize: 20,
                           ),
                         ),
                         Text(
                           '/$_targetProgress',
                           style: DesignTokens.bodySmall.copyWith(
                             color: Colors.white70,
+                            fontSize: 11,
                           ),
                         ),
                       ],
@@ -507,59 +509,47 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
               ),
             ),
           ),
-          
-          const SizedBox(height: DesignTokens.space24),
+
+          const SizedBox(height: 12),
           
           // Week Navigation
           _buildWeekNavigation(),
-          
-          const SizedBox(height: DesignTokens.space16),
-          
+
+          const SizedBox(height: 10),
+
           // Progress Info
           Center(
             child: Text(
               'Week $_currentWeek of $_totalWeeks • ${(_completionPercentage * 100).round()}% Complete',
               style: DesignTokens.bodySmall.copyWith(
                 color: Colors.white70,
+                fontSize: 11,
               ),
             ),
           ),
+
+          const SizedBox(height: 12),
           
-          const SizedBox(height: DesignTokens.space16),
-          
-          // Action Buttons
+          // Action Buttons (compact grid)
           Row(
             children: [
-              Expanded(
-                child: _buildActionButton(
-                  'Cardio Log',
-                  Icons.camera_alt,
-                ),
-              ),
-              const SizedBox(width: 8),
               Expanded(
                 child: _buildActionButton(
                   'Share',
                   Icons.share,
                 ),
               ),
-            ],
-          ),
-          
-          const SizedBox(height: 8),
-          
-          Row(
-            children: [
+              const SizedBox(width: 6),
               Expanded(
                 child: _buildActionButton(
-                  'Edit Plan',
+                  'Edit',
                   Icons.edit,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Expanded(
                 child: _buildActionButton(
-                  'Export PDF',
+                  'PDF',
                   Icons.description,
                 ),
               ),
@@ -616,12 +606,17 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   Widget _buildActionButton(String text, IconData icon) {
+    // Map compact button names to full action names
+    String action = text;
+    if (text == 'PDF') action = 'Export PDF';
+    if (text == 'Edit') action = 'Edit Plan';
+
     return GestureDetector(
-      onTap: () => _handleActionButton(text),
+      onTap: () => _handleActionButton(action),
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: DesignTokens.space12,
-          vertical: DesignTokens.space8,
+          horizontal: 8,
+          vertical: 8,
         ),
         decoration: BoxDecoration(
           color: AppTheme.primaryDark.withValues(alpha: 0.3),
@@ -636,13 +631,17 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             Icon(
               icon,
               color: Colors.white,
-              size: 16,
+              size: 14,
             ),
             const SizedBox(width: 4),
-            Text(
-              text,
-              style: DesignTokens.bodySmall.copyWith(
-                color: Colors.white,
+            Flexible(
+              child: Text(
+                text,
+                style: DesignTokens.bodySmall.copyWith(
+                  color: Colors.white,
+                  fontSize: 11,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -719,8 +718,8 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
 
   Widget _buildWorkoutCard(Map<String, dynamic> workout) {
     return Container(
-      margin: const EdgeInsets.only(bottom: DesignTokens.space12),
-      padding: const EdgeInsets.all(DesignTokens.space16),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(12),

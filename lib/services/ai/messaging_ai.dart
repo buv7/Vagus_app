@@ -7,11 +7,25 @@ import 'model_registry.dart';
 import '../billing/plan_access_manager.dart';
 
 class MessagingAI {
+  // Singleton instance
+  static final MessagingAI _instance = MessagingAI._internal();
+  static MessagingAI get instance => _instance;
+  MessagingAI._internal();
+  
   static final AIClient _aiClient = AIClient();
   static final AICache _cache = AICache();
   static final AIUsageService _usageService = AIUsageService.instance;
   static final RateLimiter _rateLimiter = RateLimiter();
   static final ModelRegistry _modelRegistry = ModelRegistry();
+  
+  // Instance methods for compatibility
+  Future<List<String>> generateSmartReplies(String messageContent, {int maxSuggestions = 3}) async {
+    return smartReplies(lastMessage: messageContent);
+  }
+  
+  Future<String> translateMessage({required String text, required String fromLanguage, required String toLanguage}) async {
+    return translate(text: text, targetLang: toLanguage);
+  }
 
   static Future<List<String>> smartReplies({
     required String lastMessage, 

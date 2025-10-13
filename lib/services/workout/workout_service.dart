@@ -25,24 +25,36 @@ class WorkoutService {
       final user = _supabase.auth.currentUser;
       if (user == null) throw Exception('User not authenticated');
 
-      // Insert the main plan
+      // Insert the main plan using safe function
+      final result = await _supabase.rpc('create_workout_plan', params: {
+        'plan_name': plan.name,
+        'plan_description': plan.description,
+        'plan_created_by': user.id,
+        'plan_coach_id': plan.coachId,
+        'plan_client_id': plan.clientId,
+        'plan_duration_weeks': plan.durationWeeks,
+        'plan_start_date': plan.startDate?.toIso8601String().split('T')[0],
+        'plan_is_template': plan.isTemplate,
+        'plan_template_category': plan.templateCategory,
+        'plan_ai_generated': plan.aiGenerated,
+        'plan_unseen_update': plan.unseenUpdate,
+        'plan_metadata': plan.metadata,
+        'plan_status': 'draft',
+        'plan_tags': [],
+      });
+      
+      if (result['success'] != true) {
+        throw Exception('Failed to create workout plan: ${result['error']}');
+      }
+      
+      // Get the created plan ID
       final planResponse = await _supabase
           .from('workout_plans')
-          .insert({
-        'coach_id': plan.coachId,
-        'client_id': plan.clientId,
-        'name': plan.name,
-        'description': plan.description,
-        'duration_weeks': plan.durationWeeks,
-        'start_date': plan.startDate?.toIso8601String().split('T')[0],
-        'created_by': user.id,
-        'is_template': plan.isTemplate,
-        'template_category': plan.templateCategory,
-        'ai_generated': plan.aiGenerated,
-        'unseen_update': plan.unseenUpdate,
-        'metadata': plan.metadata,
-      })
-          .select()
+          .select('*')
+          .eq('created_by', user.id)
+          .eq('name', plan.name)
+          .order('created_at', ascending: false)
+          .limit(1)
           .single();
 
       final planId = planResponse['id'].toString();

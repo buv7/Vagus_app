@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../models/coach/coach_profile.dart';
+import '../../../models/coach_profile.dart';
 import '../../../theme/design_tokens.dart';
 
 class SpecialtiesSectionWidget extends StatefulWidget {

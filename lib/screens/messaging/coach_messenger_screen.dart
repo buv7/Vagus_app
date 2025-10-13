@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/messages_service.dart';
 import '../../services/messaging/ai_draft_reply_service.dart';
@@ -18,7 +20,6 @@ import '../../components/messaging/pin_panel.dart';
 import '../../components/messaging/thread_view.dart';
 import '../../widgets/anim/typing_dots.dart';
 import '../../widgets/branding/vagus_appbar.dart';
-import 'dart:io';
 
 class CoachMessengerScreen extends StatefulWidget {
   final Map<String, dynamic> client;
@@ -69,10 +70,31 @@ class _CoachMessengerScreenState extends State<CoachMessengerScreen> {
 
   @override
   void dispose() {
+    // Restore system UI when leaving messenger screen
+    _restoreSystemUI();
     _messageController.dispose();
     _scrollController.dispose();
     _smartRepliesTimer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    // Safety net: Restore UI even if dispose isn't called properly
+    _restoreSystemUI();
+    super.deactivate();
+  }
+
+  /// Restore system UI to show navigation bar and status bar
+  void _restoreSystemUI() {
+    try {
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.edgeToEdge,
+        overlays: SystemUiOverlay.values, // Show all system overlays
+      );
+    } catch (e) {
+      debugPrint('❌ Failed to restore system UI: $e');
+    }
   }
 
   Future<void> _initializeChat() async {

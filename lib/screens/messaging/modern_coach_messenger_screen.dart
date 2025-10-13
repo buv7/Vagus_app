@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/messaging/messaging_header.dart';
@@ -33,9 +34,30 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
 
   @override
   void dispose() {
+    // Restore system UI when leaving messenger screen
+    _restoreSystemUI();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    // Safety net: Restore UI even if dispose isn't called properly
+    _restoreSystemUI();
+    super.deactivate();
+  }
+
+  /// Restore system UI to show navigation bar and status bar
+  void _restoreSystemUI() {
+    try {
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.edgeToEdge,
+        overlays: SystemUiOverlay.values, // Show all system overlays
+      );
+    } catch (e) {
+      debugPrint('❌ Failed to restore system UI: $e');
+    }
   }
 
   void _loadMessages() {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:vagus_app/theme/design_tokens.dart';
 import 'package:vagus_app/services/coaches/qr_service.dart';
-import 'package:vagus_app/screens/coach/coach_profile_public_screen.dart';
+import 'package:vagus_app/screens/coach_profile/coach_profile_screen.dart';
 
 class CoachQrScannerScreen extends StatefulWidget {
   const CoachQrScannerScreen({super.key});
@@ -95,9 +95,9 @@ class _CoachQrScannerScreenState extends State<CoachQrScannerScreen> {
       unawaited(Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => CoachProfilePublicScreen(
+          builder: (context) => CoachProfileScreen(
             coachId: coachId,
-            username: username,
+            isPublicView: true,
           ),
         ),
       ));

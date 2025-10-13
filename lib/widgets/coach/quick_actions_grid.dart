@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
-import '../../screens/workout/modern_plan_builder_screen.dart';
+import '../../screens/plans/plans_dashboard_screen.dart';
 import '../../screens/workout/coach_workout_dashboard_screen.dart';
 import '../../screens/nutrition/coach_nutrition_dashboard.dart';
 import '../../screens/messaging/coach_threads_screen.dart';
@@ -209,7 +209,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
     _onActionTap();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const ModernPlanBuilderScreen()),
+      MaterialPageRoute(builder: (_) => const PlansDashboardScreen()),
     );
   }
 

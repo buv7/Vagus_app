@@ -79,19 +79,23 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
           debugPrint('🧪 Supabase user: ${user?.id}');
 
     if (user == null) {
-      setState(() {
-        _role = 'unauthenticated';
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _role = 'unauthenticated';
+          _loading = false;
+        });
+      }
       return;
     }
 
     // Check if user's email is verified
     if (user.emailConfirmedAt == null) {
-      setState(() {
-        _role = 'email_verification_pending';
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _role = 'email_verification_pending';
+          _loading = false;
+        });
+      }
       return;
     }
 
@@ -178,17 +182,21 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
         debugPrint('🔧 AuthGate: Profile fetched successfully, role: $role');
       }
 
-      setState(() {
-        _role = role;
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _role = role;
+          _loading = false;
+        });
+      }
     } catch (e) {
       debugPrint('❌ AuthGate: Error during initialization: $e');
       debugPrint('❌ AuthGate: Stack trace: ${StackTrace.current}');
-      setState(() {
-        _role = 'unauthenticated';
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _role = 'unauthenticated';
+          _loading = false;
+        });
+      }
     }
 
     // append-only: background refresh of active account, non-blocking
