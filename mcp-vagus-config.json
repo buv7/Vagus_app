@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "vagus-deployment": {
+      "command": "node",
+      "args": ["mcp-vagus-deployment.js"],
+      "cwd": "C:\\Users\\alhas\\StudioProjects\\vagus_app",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
