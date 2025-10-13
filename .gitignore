@@ -54,3 +54,4 @@ node_modules/
 
 # Archived code - exclude from analysis
 ARCHIVE/
+.vercel
