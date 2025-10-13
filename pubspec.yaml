@@ -50,6 +50,11 @@ dependencies:
   qr_flutter: ^4.1.0
   app_links: ^6.4.0
   flutter_dotenv: ^5.1.0
+  flutter_inappwebview: ^6.0.0
+  glassmorphism: ^3.0.0
+  shimmer: ^3.0.0
+  animated_text_kit: ^4.2.2
+  simple_animations: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +81,7 @@ flutter:
     - assets/anim/empty_box.json
     - assets/anim/typing_dots.json
     - assets/anim/mic_ripple.riv
+    - assets/html/neural_login.html
 
 flutter_native_splash:
   color: "#000000"

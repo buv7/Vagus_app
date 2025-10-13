@@ -163,12 +163,12 @@ class _FileAttachToMealState extends State<FileAttachToMeal> {
         color: DesignTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
+          color: DesignTokens.accentGreen,
+          width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: DesignTokens.accentOrange.withValues(alpha: 0.3),
+            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
             blurRadius: 20,
             spreadRadius: 0,
           ),

@@ -7,32 +7,58 @@ class DesignTokens {
   // Private constructor to prevent instantiation
   DesignTokens._();
 
-  // ===== NFT MARKETPLACE COLORS =====
+  // ===== PREMIUM NEURAL FITNESS COLORS =====
 
-  /// Primary Background Colors - Dark purple/navy theme
-  static const Color primaryDark = Color(0xFF0F0B1F);      // Deep navy background
-  static const Color secondaryDark = Color(0xFF1A1525);    // Dark purple
-  static const Color cardBackground = Color(0x991E172D);   // Semi-transparent dark with blur
+  /// Primary Background Colors - Pure black theme
+  static const Color primaryDark = Color(0xFF000000);      // Black base
+  static const Color darkBackground = Color(0xFF0A0A14);   // Black soft
+  static const Color secondaryDark = Color(0xFF0A0A14);    // Black soft (compatibility)
+  static const Color cardBackground = Color(0xF20A0A14);   // Black soft with 95% opacity
 
-  /// Accent Colors - Vibrant NFT marketplace colors
-  static const Color accentGreen = Color(0xFF00E5A0);      // Bright green (replaces mintAqua)
-  static const Color accentPink = Color(0xFFFF6B9D);       // Pink
-  static const Color accentBlue = Color(0xFF6B8AFF);       // Blue
-  static const Color accentPurple = Color(0xFF9D6BFF);     // Purple gradient
-  static const Color accentOrange = Color(0xFFFF9D6B);     // Orange (optional)
+  /// Cyan/Blue Spectrum Colors
+  static const Color accentGreen = Color(0xFF00C8FF);      // Cyan primary (renamed from green for compatibility)
+  static const Color accentBlue = Color(0xFF0080FF);       // Blue deep
+  static const Color primaryBlue = Color(0xFF0099FF);      // Blue medium
+  static const Color darkBlue = Color(0xFF0064C8);         // Blue dark
 
-  /// Neutral Colors - Updated for dark theme
+  /// Accent Colors
+  static const Color accentTeal = Color(0xFF00FFC8);       // Teal
+  static const Color accentPink = Color(0xFFFF6B9D);       // Pink (kept)
+  static const Color accentPurple = Color(0xFF9D6BFF);     // Purple (kept)
+  static const Color accentOrange = Color(0xFFFF9D6B);     // Orange (kept)
+
+  /// Text Colors - Pure white spectrum
   static const Color neutralWhite = Color(0xFFFFFFFF);     // Pure white text
-  static const Color textSecondary = Color(0x99FFFFFF);    // 60% opacity white
-  static const Color lightGrey = Color(0xFF2A2433);        // Darker grey for dark theme
-  static const Color mediumGrey = Color(0xFF6A7385);       // Medium text
-  static const Color darkGrey = Color(0xFF1C1C1C);         // Dark card backgrounds
+  static const Color textPrimary = Color(0xFFFFFFFF);      // Primary text (white)
+  static const Color textSecondary = Color(0x99FFFFFF);    // Secondary text (60% white)
+  static const Color textTertiary = Color(0x66FFFFFF);     // Tertiary text (40% white)
+  static const Color textDisabled = Color(0x4DFFFFFF);     // Disabled text (30% white)
+  static const Color lightGrey = Color(0xFF2A2433);        // Darker grey for dark theme (legacy)
+  static const Color mediumGrey = Color(0xFF6A7385);       // Medium text (legacy)
+  static const Color darkGrey = Color(0xFF1C1C1C);         // Dark card backgrounds (legacy)
 
-  /// Gradient Definitions
-  static const LinearGradient vibrantGradient = LinearGradient(
-    colors: [Color(0xFF6B8AFF), Color(0xFF9D6BFF), Color(0xFFFF6B9D)],
+  /// Gradient Definitions - Premium neural style
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [Color(0xFF00C8FF), Color(0xFF0080FF)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient textGradient = LinearGradient(
+    colors: [Color(0xFFFFFFFF), Color(0xCC00C8FF)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+  static const RadialGradient backgroundGradient = RadialGradient(
+    colors: [
+      Color(0x1A00C8FF), // Subtle cyan hint
+      Color(0x0D0080FF), // Subtle blue hint
+      Color(0xFF000000), // Black base
+    ],
+    stops: [0.0, 0.5, 1.0],
+    center: Alignment.center,
+    radius: 1.5,
   );
 
   static const LinearGradient cardGradient = LinearGradient(
@@ -42,22 +68,25 @@ class DesignTokens {
   );
 
   static const LinearGradient darkGradient = LinearGradient(
-    colors: [Color(0xFF0F0B1F), Color(0xFF1A1525)],
+    colors: [Color(0xFF000000), Color(0xFF0A0A14)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  /// State Colors (updated for NFT theme)
-  static const Color success = Color(0xFF00E5A0); // Use accent green
-  static const Color info = Color(0xFF6B8AFF);    // Use accent blue
-  static const Color warn = Color(0xFFFF9D6B);    // Use accent orange
-  static const Color danger = Color(0xFFFF6B9D);  // Use accent pink
+  // Legacy gradient for compatibility
+  static const LinearGradient vibrantGradient = primaryGradient;
+
+  /// State Colors (updated for premium theme)
+  static const Color success = Color(0xFF00C8FF); // Use cyan primary
+  static const Color info = Color(0xFF0080FF);    // Use blue deep
+  static const Color warn = Color(0xFFFF9D6B);    // Use accent orange (kept)
+  static const Color danger = Color(0xFFFF6B9D);  // Use accent pink (kept)
 
   /// State Background Colors (dark theme variants)
-  static const Color successBg = Color(0x2000E5A0); // 12% opacity
-  static const Color infoBg = Color(0x206B8AFF);
-  static const Color warnBg = Color(0x20FF9D6B);
-  static const Color dangerBg = Color(0x20FF6B9D);
+  static const Color successBg = Color(0x2000C8FF); // 12% cyan
+  static const Color infoBg = Color(0x200080FF);    // 12% blue
+  static const Color warnBg = Color(0x20FF9D6B);    // 12% orange
+  static const Color dangerBg = Color(0x20FF6B9D);  // 12% pink
 
   // ===== BACKWARD COMPATIBILITY COLORS =====
 
@@ -86,74 +115,78 @@ class DesignTokens {
   static const Color ink50 = Color(0xFFF7F8FC);  // Lightest surface (kept for light theme)
 
   // ===== TYPOGRAPHY =====
-  
-  /// Display Text (semibold)
+
+  /// Display Text (ultra-light for premium feel)
   static const TextStyle displayLarge = TextStyle(
-    fontSize: 40,
-    fontWeight: FontWeight.w600,
-    height: 1.2,
+    fontSize: 72,
+    fontWeight: FontWeight.w100,
+    letterSpacing: -2,
+    height: 1.1,
   );
-  
+
   static const TextStyle displayMedium = TextStyle(
-    fontSize: 34,
-    fontWeight: FontWeight.w600,
+    fontSize: 48,
+    fontWeight: FontWeight.w100,
+    letterSpacing: -1,
     height: 1.2,
   );
-  
+
   static const TextStyle displaySmall = TextStyle(
-    fontSize: 28,
-    fontWeight: FontWeight.w600,
+    fontSize: 34,
+    fontWeight: FontWeight.w200,
+    letterSpacing: -0.5,
     height: 1.2,
   );
-  
-  /// Title Text (semibold)
+
+  /// Title Text (light to regular)
   static const TextStyle titleLarge = TextStyle(
     fontSize: 24,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w400,
     height: 1.3,
   );
-  
+
   static const TextStyle titleMedium = TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.w600,
-    height: 1.3,
-  );
-  
-  static const TextStyle titleSmall = TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w400,
     height: 1.3,
   );
-  
-  /// Body Text (regular)
-  static const TextStyle bodyLarge = TextStyle(
+
+  static const TextStyle titleSmall = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w400,
-    height: 1.5,
+    height: 1.3,
   );
-  
-  static const TextStyle bodyMedium = TextStyle(
+
+  /// Body Text (regular with increased line height)
+  static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    height: 1.5,
+    height: 1.8,
   );
-  
-  static const TextStyle bodySmall = TextStyle(
+
+  static const TextStyle bodyMedium = TextStyle(
     fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 1.6,
+  );
+
+  static const TextStyle bodySmall = TextStyle(
+    fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.5,
   );
-  
-  /// Meta/Label Text (medium)
+
+  /// Label Text (semibold for buttons)
   static const TextStyle labelMedium = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     height: 1.4,
   );
-  
+
   static const TextStyle labelSmall = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
+    letterSpacing: 1.5,
     height: 1.4,
   );
 
@@ -187,10 +220,10 @@ class DesignTokens {
 
   // ===== SHADOWS & GLASSMORPHIC EFFECTS =====
 
-  /// Glassmorphic shadows with NFT glow effects
+  /// Glassmorphic shadows with premium glow effects
   static const List<BoxShadow> glowSm = [
     BoxShadow(
-      color: Color(0x4000E5A0), // Accent green @ 25%
+      color: Color(0x4000C8FF), // Cyan primary @ 25%
       blurRadius: 20,
       offset: Offset(0, 0),
       spreadRadius: 0,
@@ -199,7 +232,7 @@ class DesignTokens {
 
   static const List<BoxShadow> glowMd = [
     BoxShadow(
-      color: Color(0x406B8AFF), // Accent blue @ 25%
+      color: Color(0x400080FF), // Blue deep @ 25%
       blurRadius: 30,
       offset: Offset(0, 0),
       spreadRadius: 0,
@@ -208,7 +241,7 @@ class DesignTokens {
 
   static const List<BoxShadow> glowLg = [
     BoxShadow(
-      color: Color(0x40FF6B9D), // Accent pink @ 25%
+      color: Color(0x4000C8FF), // Cyan primary @ 25%
       blurRadius: 40,
       offset: Offset(0, 0),
       spreadRadius: 0,
@@ -217,7 +250,7 @@ class DesignTokens {
 
   static const List<BoxShadow> glowPurple = [
     BoxShadow(
-      color: Color(0x409D6BFF), // Accent purple @ 25%
+      color: Color(0x4000FFC8), // Teal @ 25%
       blurRadius: 30,
       offset: Offset(0, 0),
       spreadRadius: 0,
@@ -245,8 +278,8 @@ class DesignTokens {
   ];
 
   /// Glassmorphic border colors
-  static const Color glassBorder = Color(0x33FFFFFF); // 20% white
-  static const Color glassBorderAccent = Color(0x4000E5A0); // 25% green
+  static const Color glassBorder = Color(0x14FFFFFF); // 8% white
+  static const Color glassBorderAccent = Color(0x4000C8FF); // 25% cyan
 
   /// Backdrop filter blur values
   static const double blurSm = 10.0;
@@ -262,19 +295,19 @@ class DesignTokens {
 
   // ===== CATEGORY COLORS =====
 
-  /// Category color mapping for consistent visual hierarchy (updated for NFT theme)
+  /// Category color mapping for consistent visual hierarchy (updated for premium theme)
   static const Map<String, Color> categoryColors = {
-    'workout': accentBlue,     // Blue for workouts
-    'nutrition': accentGreen,  // Green for nutrition
-    'calling': accentPink,     // Pink for calling/sessions
-    'coach': accentPurple,     // Purple for coaching
-    'other': mediumGrey,       // Grey for other
+    'workout': primaryBlue,    // Blue medium for workouts
+    'nutrition': accentGreen,  // Cyan primary for nutrition
+    'calling': accentPink,     // Pink for calling/sessions (kept)
+    'coach': accentPurple,     // Purple for coaching (kept)
+    'other': mediumGrey,       // Grey for other (kept)
   };
 
   /// Category background colors (dark theme variants)
   static const Map<String, Color> categoryBgColors = {
-    'workout': Color(0x206B8AFF),   // Blue @ 12%
-    'nutrition': Color(0x2000E5A0), // Green @ 12%
+    'workout': Color(0x200099FF),   // Blue medium @ 12%
+    'nutrition': Color(0x2000C8FF), // Cyan primary @ 12%
     'calling': Color(0x20FF6B9D),   // Pink @ 12%
     'coach': Color(0x209D6BFF),     // Purple @ 12%
     'other': Color(0x206A7385),     // Grey @ 12%
@@ -282,14 +315,14 @@ class DesignTokens {
 
   // ===== NAVIGATION =====
 
-  /// Navigation active state colors (updated for NFT theme)
-  static const Color navActive = accentGreen;
+  /// Navigation active state colors (updated for premium theme)
+  static const Color navActive = accentGreen; // Cyan primary
   static const Color navInactive = textSecondary; // 60% white
 
   /// Navigation active state styles
   static const TextStyle navActiveLabel = TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.w700, // Increased weight
+    fontWeight: FontWeight.w600,
     color: accentGreen,
   );
 
@@ -305,11 +338,11 @@ class DesignTokens {
   static const double badgeSize = 16.0;
   static const double badgeSizeSmall = 12.0;
 
-  /// Badge colors (updated for NFT theme)
-  static const Color badgeDefault = accentBlue;
-  static const Color badgeSuccess = accentGreen;
-  static const Color badgeWarning = accentOrange;
-  static const Color badgeDanger = accentPink;
+  /// Badge colors (updated for premium theme)
+  static const Color badgeDefault = accentBlue; // Blue deep
+  static const Color badgeSuccess = accentGreen; // Cyan primary
+  static const Color badgeWarning = accentOrange; // Orange (kept)
+  static const Color badgeDanger = accentPink; // Pink (kept)
 
   // ===== GLASSMORPHIC HELPER METHODS =====
 

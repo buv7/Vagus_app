@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/coach_marketplace_service.dart';
 import '../../models/coach_profile.dart';
+import '../../theme/design_tokens.dart';
 import 'coach_profile_view_screen.dart';
 
 class ClientCoachMarketplace extends StatefulWidget {
@@ -90,10 +91,11 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
+      backgroundColor: DesignTokens.darkBackground,
       appBar: AppBar(
+        backgroundColor: DesignTokens.primaryDark,
+        foregroundColor: DesignTokens.textPrimary,
         title: const Text('Find a Coach'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(110),
@@ -105,12 +107,14 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: _filterCoaches,
+                  style: const TextStyle(color: DesignTokens.textPrimary),
                   decoration: InputDecoration(
                     hintText: 'Search coaches...',
-                    prefixIcon: const Icon(Icons.search),
+                    hintStyle: const TextStyle(color: DesignTokens.textSecondary),
+                    prefixIcon: const Icon(Icons.search, color: DesignTokens.accentGreen),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: const Icon(Icons.clear, color: DesignTokens.textSecondary),
                             onPressed: () {
                               _searchController.clear();
                               _filterCoaches('');
@@ -118,23 +122,19 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                           )
                         : null,
                     filled: true,
-                    fillColor: isDarkMode ? const Color(0xFF1E1E2E) : Colors.grey[100],
+                    fillColor: DesignTokens.cardBackground,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: isDarkMode
-                          ? BorderSide(color: Colors.white.withValues(alpha: 0.1))
-                          : BorderSide.none,
+                      borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                      borderSide: const BorderSide(color: DesignTokens.glassBorder),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: isDarkMode
-                          ? BorderSide(color: Colors.white.withValues(alpha: 0.1))
-                          : BorderSide.none,
+                      borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                      borderSide: const BorderSide(color: DesignTokens.glassBorder),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                      borderSide: const BorderSide(
+                        color: DesignTokens.accentGreen,
                         width: 2,
                       ),
                     ),
@@ -158,20 +158,18 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                         label: Text(specialty),
                         selected: isSelected,
                         onSelected: (_) => _selectSpecialty(specialty),
-                        backgroundColor: isDarkMode ? const Color(0xFF1E1E2E) : Colors.grey[200],
-                        selectedColor: Theme.of(context).primaryColor,
+                        backgroundColor: DesignTokens.cardBackground,
+                        selectedColor: DesignTokens.accentGreen,
                         side: BorderSide(
                           color: isSelected
-                              ? Theme.of(context).primaryColor
-                              : (isDarkMode
-                                  ? Colors.white.withValues(alpha: 0.2)
-                                  : Colors.grey.shade400),
+                              ? DesignTokens.accentGreen
+                              : DesignTokens.glassBorder,
                           width: isSelected ? 2 : 1,
                         ),
                         labelStyle: TextStyle(
                           color: isSelected
-                              ? Colors.white
-                              : (isDarkMode ? Colors.white.withValues(alpha: 0.9) : null),
+                              ? DesignTokens.primaryDark
+                              : DesignTokens.textPrimary,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                         ),
                       ),
@@ -184,7 +182,7 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: DesignTokens.accentGreen))
           : _filteredCoaches.isEmpty
               ? _buildEmptyState()
               : RefreshIndicator(
@@ -201,29 +199,29 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.search_off,
             size: 80,
-            color: Colors.grey[400],
+            color: DesignTokens.textSecondary,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'No coaches found',
             style: TextStyle(
               fontSize: 18,
-              color: Colors.grey[600],
+              color: DesignTokens.textSecondary,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Try adjusting your search or filters',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[500],
+              color: DesignTokens.textTertiary,
             ),
           ),
         ],
@@ -232,15 +230,13 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
   }
 
   Widget _buildCoachCard(CoachProfile coach) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      color: isDarkMode ? const Color(0xFF1E1E2E) : Colors.white,
+      color: DesignTokens.cardBackground,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isDarkMode ? Colors.white.withValues(alpha: 0.1) : Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(DesignTokens.radius12),
+        side: const BorderSide(
+          color: DesignTokens.glassBorder,
         ),
       ),
       child: InkWell(
@@ -280,14 +276,15 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            color: DesignTokens.textPrimary,
                           ),
                         ),
                         if (coach.username != null)
                           Text(
                             '@${coach.username}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[600],
+                              color: DesignTokens.textSecondary,
                             ),
                           ),
                         // Rating placeholder
@@ -295,9 +292,9 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                           children: [
                             Icon(Icons.star, size: 16, color: Colors.amber[700]),
                             const SizedBox(width: 4),
-                            const Text('0.0', style: TextStyle(fontSize: 14)),
-                            const Text(' • ', style: TextStyle(fontSize: 14)),
-                            const Text('0 clients', style: TextStyle(fontSize: 14)),
+                            const Text('0.0', style: TextStyle(fontSize: 14, color: DesignTokens.textSecondary)),
+                            const Text(' • ', style: TextStyle(fontSize: 14, color: DesignTokens.textSecondary)),
+                            const Text('0 clients', style: TextStyle(fontSize: 14, color: DesignTokens.textSecondary)),
                           ],
                         ),
                       ],
@@ -314,6 +311,7 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                   style: const TextStyle(
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
+                    color: DesignTokens.accentGreen,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -325,7 +323,10 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                 const SizedBox(height: 12),
                 Text(
                   coach.bio!,
-                  style: const TextStyle(fontSize: 14),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: DesignTokens.textSecondary,
+                  ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -342,36 +343,29 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: isDarkMode
-                              ? [
-                                  Theme.of(context).primaryColor.withValues(alpha: 0.3),
-                                  Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                                ]
-                              : [
-                                  Theme.of(context).primaryColor.withValues(alpha: 0.15),
-                                  Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                                ],
+                          colors: [
+                            DesignTokens.accentGreen.withValues(alpha: 0.3),
+                            DesignTokens.accentBlue.withValues(alpha: 0.2),
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Theme.of(context).primaryColor,
+                          color: DesignTokens.accentGreen,
                           width: 1.5,
                         ),
-                        boxShadow: isDarkMode
-                            ? [
-                                BoxShadow(
-                                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
+                        boxShadow: [
+                          BoxShadow(
+                            color: DesignTokens.accentGreen.withValues(alpha: 0.2),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: Text(
                         specialty,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: isDarkMode ? Colors.white : Theme.of(context).primaryColor,
+                          color: DesignTokens.textPrimary,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.2,
                         ),
@@ -386,19 +380,30 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CoachProfileViewScreen(coachId: coach.coachId),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [DesignTokens.accentGreen, DesignTokens.accentBlue],
+                        ),
+                        borderRadius: BorderRadius.circular(DesignTokens.radius12),
                       ),
-                      child: const Text('View Profile'),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CoachProfileViewScreen(coachId: coach.coachId),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: DesignTokens.primaryDark,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text('View Profile', style: TextStyle(fontWeight: FontWeight.w600)),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -411,6 +416,7 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Connection request sent!'),
+                                backgroundColor: DesignTokens.accentGreen,
                               ),
                             );
                           }
@@ -419,15 +425,17 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Error: $e'),
+                                backgroundColor: DesignTokens.danger,
                               ),
                             );
                           }
                         }
                       },
-                      icon: const Icon(Icons.person_add, size: 18),
-                      label: const Text('Connect'),
+                      icon: const Icon(Icons.person_add, size: 18, color: DesignTokens.accentGreen),
+                      label: const Text('Connect', style: TextStyle(color: DesignTokens.accentGreen)),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: DesignTokens.accentGreen, width: 2),
                       ),
                     ),
                   ),

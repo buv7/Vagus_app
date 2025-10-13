@@ -143,9 +143,9 @@ class Failure<T, E> extends Result<T, E> {
   int get hashCode => error.hashCode;
 }
 
-/// Extension for Future<Result<T, E>>
+/// Extension for `Future<Result<T, E>>`
 extension ResultFutureExtension<T, E> on Future<Result<T, E>> {
-  /// Map the success value in a Future<Result>
+  /// Map the success value in a `Future<Result>`
   Future<Result<R, E>> mapAsync<R>(Future<R> Function(T value) transform) async {
     final result = await this;
     if (result.isSuccess) {
@@ -163,7 +163,7 @@ extension ResultFutureExtension<T, E> on Future<Result<T, E>> {
     return Result.failure(result.error);
   }
 
-  /// FlatMap for Future<Result>
+  /// FlatMap for `Future<Result>`
   Future<Result<R, E>> flatMapAsync<R>(
     Future<Result<R, E>> Function(T value) transform,
   ) async {

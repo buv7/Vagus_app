@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/navigation/app_navigator.dart';
+import '../../theme/design_tokens.dart';
 
 class AiUsageScreen extends StatelessWidget {
   const AiUsageScreen({super.key});
@@ -116,7 +117,7 @@ class _QuotaItem extends StatelessWidget {
     } else if (isWarning || showLimitWarning) {
       progressColor = Colors.orange;
     } else {
-      progressColor = Colors.green;
+      progressColor = DesignTokens.accentGreen;
     }
 
     return Column(
@@ -137,17 +138,20 @@ class _QuotaItem extends StatelessWidget {
             Text(
               '$current/$total',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: DesignTokens.textSecondary,
                   ),
             ),
           ],
         ),
         const SizedBox(height: 6),
-        LinearProgressIndicator(
-          value: percentage,
-          minHeight: 4,
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-          valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: LinearProgressIndicator(
+            value: percentage,
+            minHeight: 4,
+            backgroundColor: DesignTokens.darkBackground,
+            valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+          ),
         ),
         if (isWarning || showLimitWarning) ...[
           const SizedBox(height: 6),

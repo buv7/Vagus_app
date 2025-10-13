@@ -274,7 +274,7 @@ class _HealthConnectionsScreenState extends State<HealthConnectionsScreen> {
                   onPressed: _isLoading ? null : () => _connectToProvider(provider),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: DesignTokens.blue600,
-                    foregroundColor: Colors.white,
+                    foregroundColor: DesignTokens.neutralWhite,
                   ),
                   child: const Text('Connect'),
                 ),
@@ -365,7 +365,7 @@ class _HealthConnectionsScreenState extends State<HealthConnectionsScreen> {
         foregroundColor: DesignTokens.ink900,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: DesignTokens.accentGreen))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(DesignTokens.space16),
               child: Column(
@@ -489,7 +489,7 @@ class _HealthConnectionsScreenState extends State<HealthConnectionsScreen> {
                               onPressed: _isLoading ? null : _syncNow,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: DesignTokens.blue600,
-                                foregroundColor: Colors.white,
+                                foregroundColor: DesignTokens.neutralWhite,
                               ),
                               child: const Text('Sync Now'),
                             ),
@@ -559,7 +559,7 @@ class _HealthConnectionsScreenState extends State<HealthConnectionsScreen> {
                               onPressed: _isLoading ? null : _processOCRCardio,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: DesignTokens.success,
-                                foregroundColor: Colors.white,
+                                foregroundColor: DesignTokens.neutralWhite,
                               ),
                               child: const Text('📸 Process Image'),
                             ),

@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/nutrition_plan.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 import '../../services/nutrition/nutrition_service.dart';
 import '../../services/ai/nutrition_ai.dart';
 import '../../services/nutrition/locale_helper.dart';
@@ -366,11 +366,11 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                     .toList();
                 return Container(
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: DesignTokens.primaryDark,
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(16),
                     ),
-                    border: Border.all(color: Colors.grey.shade800),
+                    border: Border.all(color: DesignTokens.glassBorder),
                   ),
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -441,17 +441,17 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                             final f = items[i];
                             final isSelected = selected.containsKey(f.name);
                             return Card(
-                              color: Colors.grey.shade900,
+                              color: DesignTokens.cardBackground,
                               margin: const EdgeInsets.only(bottom: 8),
                               child: ListTile(
                                 title: Text(
                                   f.name,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: DesignTokens.neutralWhite),
                                 ),
                                 subtitle: Text(
                                   'P ${f.protein}g • C ${f.carbs}g • F ${f.fat}g • ${f.kcal.toStringAsFixed(0)} kcal',
                                   style: const TextStyle(
-                                    color: Colors.white70,
+                                    color: DesignTokens.textSecondary,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -464,7 +464,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                                         _favoriteFoodNames.contains(f.name)
                                             ? Icons.favorite
                                             : Icons.favorite_border,
-                                        color: Colors.greenAccent,
+                                        color: DesignTokens.accentGreen,
                                       ),
                                       onPressed: () => setModalState(() {
                                         if (_favoriteFoodNames.contains(
@@ -481,7 +481,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                                         isSelected
                                             ? Icons.check_circle
                                             : Icons.add_circle_outline,
-                                        color: Colors.greenAccent,
+                                        color: DesignTokens.accentGreen,
                                       ),
                                       onPressed: () => setModalState(() {
                                         if (isSelected) {
@@ -517,7 +517,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                                 margin: const EdgeInsets.only(right: 8),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade900,
+                                  color: DesignTokens.cardBackground,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Column(
@@ -529,7 +529,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                                           child: Text(
                                             base.name,
                                             style: const TextStyle(
-                                              color: Colors.white,
+                                              color: DesignTokens.neutralWhite,
                                               fontSize: 12,
                                             ),
                                             maxLines: 1,
@@ -540,7 +540,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                                           icon: const Icon(
                                             Icons.close,
                                             size: 16,
-                                            color: Colors.white54,
+                                            color: DesignTokens.textSecondary,
                                           ),
                                           onPressed: () => setModalState(() {
                                             selected.remove(e.key);
@@ -1047,16 +1047,6 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
     );
   }
 
-  String? _resolveCurrentClientId() {
-    // If the screen already has a selected client, return its userId.
-    // Otherwise, if this is a coach multi-client context, return the first available client
-    try {
-      return _selectedClientId ?? _clients.firstOrNull?['id']?.toString();
-    } catch (_) {
-      return null;
-    }
-  }
-
   Future<void> _refreshNutritionData() async {
     try {
       // Refresh the current plan data if editing an existing plan
@@ -1081,15 +1071,11 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: const Color(0xFF0A1A1A),
+        backgroundColor: DesignTokens.primaryDark,
         appBar: _buildGlassmorphismAppBar(context),
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF0A1A1A), Color(0xFF0D2626), Color(0xFF1A3A3A)],
-            ),
+            color: DesignTokens.darkBackground,
           ),
           child: SafeArea(
             child: _loading
@@ -1099,7 +1085,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                       children: [
                         const CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF00D9A3),
+                            DesignTokens.accentGreen,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -1109,7 +1095,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                             Localizations.localeOf(context).languageCode,
                           ),
                           style: const TextStyle(
-                            color: Colors.white70,
+                            color: DesignTokens.textSecondary,
                             fontSize: 14,
                           ),
                         ),
@@ -1203,7 +1189,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back, color: DesignTokens.neutralWhite),
         onPressed: () {
           HapticFeedback.lightImpact();
           Navigator.pop(context);
@@ -1220,7 +1206,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                 Localizations.localeOf(context).languageCode,
               ),
         style: const TextStyle(
-          color: Colors.white,
+          color: DesignTokens.neutralWhite,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
@@ -1228,38 +1214,29 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
       actions: [
         IconButton(
           tooltip: 'Add supplement',
-          icon: const Icon(Icons.local_pharmacy_outlined, color: Colors.white),
+          icon: const Icon(Icons.local_pharmacy_outlined, color: DesignTokens.neutralWhite),
           onPressed: () async {
-            final clientId = _resolveCurrentClientId();
-            if (clientId == null) {
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No clients available')),
-              );
-              return;
-            }
             if (!context.mounted) return;
-            await showModalBottomSheet(
-              context: context,
-              useRootNavigator: true,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (_) => SupplementEditorSheet(
-                clientId: clientId,
-                onSaved: (supplement) {
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Supplement created')),
-                  );
-                  unawaited(_refreshNutritionData());
-                },
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SupplementEditorSheet(
+                  clientId: _selectedClientId,
+                  onSaved: (supplement) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Supplement created')),
+                    );
+                    unawaited(_refreshNutritionData());
+                  },
+                ),
               ),
             );
           },
         ),
         if (widget.planToEdit != null)
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+            icon: const Icon(Icons.picture_as_pdf, color: DesignTokens.neutralWhite),
             tooltip: LocaleHelper.t(
               'export_pdf',
               Localizations.localeOf(context).languageCode,
@@ -1268,7 +1245,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
           ),
         if (widget.planToEdit != null)
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
+            icon: const Icon(Icons.more_vert, color: DesignTokens.neutralWhite),
             onSelected: (value) {
               if (value == 'duplicate') {
                 _duplicatePlan();
@@ -1327,10 +1304,10 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
     return showDialog<FoodItem>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: AppTheme.cardBackground,
+        backgroundColor: DesignTokens.cardBackground,
         title: const Text(
           'Create custom food',
-          style: TextStyle(color: AppTheme.neutralWhite),
+          style: TextStyle(color: DesignTokens.neutralWhite),
         ),
         content: SingleChildScrollView(
           child: Column(
@@ -1425,14 +1402,14 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
     return TextField(
       controller: c,
       keyboardType: text ? TextInputType.text : TextInputType.number,
-      style: const TextStyle(color: AppTheme.neutralWhite),
+      style: const TextStyle(color: DesignTokens.neutralWhite),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppTheme.lightGrey),
+        labelStyle: const TextStyle(color: DesignTokens.textSecondary),
         filled: true,
-        fillColor: AppTheme.primaryDark,
+        fillColor: DesignTokens.primaryDark,
         border: const OutlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.mediumGrey),
+          borderSide: BorderSide(color: DesignTokens.glassBorder),
         ),
       ),
     );
@@ -1482,7 +1459,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                   'no_clients_add_first',
                   Localizations.localeOf(context).languageCode,
                 ),
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
+                style: const TextStyle(color: DesignTokens.textSecondary, fontSize: 14),
               ),
             ),
           ],
@@ -1529,13 +1506,13 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                       height: 40,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF00D9A3), Color(0xFF00B88C)],
+                          colors: [DesignTokens.accentGreen, DesignTokens.accentBlue],
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
                         Icons.person_outline,
-                        color: Colors.white,
+                        color: DesignTokens.neutralWhite,
                         size: 20,
                       ),
                     ),
@@ -1550,7 +1527,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                               Localizations.localeOf(context).languageCode,
                             ),
                             style: const TextStyle(
-                              color: Colors.white54,
+                              color: DesignTokens.textSecondary,
                               fontSize: 12,
                             ),
                           ),
@@ -1558,7 +1535,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                           Text(
                             clientName,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: DesignTokens.neutralWhite,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1568,7 +1545,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                     ),
                     const Icon(
                       Icons.arrow_drop_down,
-                      color: Colors.white54,
+                      color: DesignTokens.textSecondary,
                       size: 24,
                     ),
                   ],
@@ -1587,11 +1564,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A3A3A), Color(0xFF0D2626)],
-          ),
+          color: DesignTokens.cardBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -1612,7 +1585,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
               child: Text(
                 'Select Client',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: DesignTokens.neutralWhite,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1634,22 +1607,22 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                     height: 40,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFF00D9A3)
+                          ? DesignTokens.accentGreen
                           : Colors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       Icons.person,
-                      color: isSelected ? Colors.white : Colors.white54,
+                      color: isSelected ? DesignTokens.neutralWhite : DesignTokens.textSecondary,
                       size: 20,
                     ),
                   ),
                   title: Text(
                     clientName,
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                    style: const TextStyle(color: DesignTokens.neutralWhite, fontSize: 16),
                   ),
                   trailing: isSelected
-                      ? const Icon(Icons.check, color: Color(0xFF00D9A3))
+                      ? const Icon(Icons.check, color: DesignTokens.accentGreen)
                       : null,
                   onTap: () {
                     HapticFeedback.selectionClick();
@@ -1675,7 +1648,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
         const Text(
           'Plan Name',
           style: TextStyle(
-            color: Colors.white70,
+            color: DesignTokens.textSecondary,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -1704,7 +1677,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
             Localizations.localeOf(context).languageCode,
           ),
           style: const TextStyle(
-            color: Colors.white70,
+            color: DesignTokens.textSecondary,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -1738,21 +1711,21 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
           decoration: BoxDecoration(
             gradient: isSelected
                 ? const LinearGradient(
-                    colors: [Color(0xFF00D9A3), Color(0xFF00B88C)],
+                    colors: [DesignTokens.accentGreen, DesignTokens.accentBlue],
                   )
                 : null,
             color: isSelected ? null : Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected
-                  ? const Color(0xFF00D9A3)
+                  ? DesignTokens.accentGreen
                   : Colors.white.withValues(alpha: 0.1),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF00D9A3).withValues(alpha: 0.3),
+                      color: DesignTokens.accentGreen.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -1763,7 +1736,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
             LocaleHelper.t(value, Localizations.localeOf(context).languageCode),
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white,
+              color: DesignTokens.neutralWhite,
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             ),
@@ -1814,7 +1787,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                 ),
               )
             else
-              const Icon(Icons.auto_awesome, color: Colors.white, size: 22),
+              const Icon(Icons.auto_awesome, color: DesignTokens.neutralWhite, size: 22),
             const SizedBox(width: 12),
             Text(
               _loading
@@ -1824,7 +1797,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                       Localizations.localeOf(context).languageCode,
                     ),
               style: const TextStyle(
-                color: Colors.white,
+                color: DesignTokens.neutralWhite,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
@@ -1849,7 +1822,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                 Localizations.localeOf(context).languageCode,
               ),
               style: const TextStyle(
-                color: Colors.white,
+                color: DesignTokens.neutralWhite,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -1864,8 +1837,8 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00D9A3),
-                foregroundColor: Colors.white,
+                backgroundColor: DesignTokens.accentGreen,
+                foregroundColor: DesignTokens.neutralWhite,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 10,
@@ -1963,7 +1936,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
               Localizations.localeOf(context).languageCode,
             ),
             style: const TextStyle(
-              color: Colors.white54,
+              color: DesignTokens.textSecondary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -1974,7 +1947,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
               'use_ai_or_add_meal',
               Localizations.localeOf(context).languageCode,
             ),
-            style: const TextStyle(color: Colors.white38, fontSize: 14),
+            style: const TextStyle(color: DesignTokens.textTertiary, fontSize: 14),
             textAlign: TextAlign.center,
           ),
         ],
@@ -2022,7 +1995,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                       ),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: DesignTokens.neutralWhite,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -2045,14 +2018,14 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                 gradient: LinearGradient(
                   colors: _saving
                       ? [Colors.grey, Colors.grey.shade700]
-                      : [const Color(0xFF00D9A3), const Color(0xFF00B88C)],
+                      : [DesignTokens.accentGreen, DesignTokens.accentBlue],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: _saving
                     ? []
                     : [
                         BoxShadow(
-                          color: const Color(0xFF00D9A3).withValues(alpha: 0.4),
+                          color: DesignTokens.accentGreen.withValues(alpha: 0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -2061,7 +2034,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.send, color: Colors.white, size: 18),
+                  const Icon(Icons.send, color: DesignTokens.neutralWhite, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     _saving
@@ -2074,7 +2047,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
                             Localizations.localeOf(context).languageCode,
                           ),
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: DesignTokens.neutralWhite,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
