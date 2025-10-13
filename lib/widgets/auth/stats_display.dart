@@ -1,29 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class StatsDisplay extends StatelessWidget {
+class StatsDisplay extends StatefulWidget {
   const StatsDisplay({super.key});
 
   @override
+  State<StatsDisplay> createState() => _StatsDisplayState();
+}
+
+class _StatsDisplayState extends State<StatsDisplay> {
+  int _coachCount = 120; // Default fallback value
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCoachCount();
+  }
+
+  Future<void> _fetchCoachCount() async {
+    try {
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select('id')
+          .eq('role', 'coach');
+
+      if (mounted) {
+        setState(() {
+          _coachCount = response.length;
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      // If fetch fails, keep default value
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+      debugPrint('Failed to fetch coach count: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
-        Expanded(
+        const Expanded(
           child: _StatItem(
-            value: 86,
+            value: 100,
             suffix: '%',
-            label: 'PERFORMANCE GAIN',
+            label: 'CUSTOMISED PLANS',
           ),
         ),
-        SizedBox(width: 32),
+        const SizedBox(width: 32),
         Expanded(
           child: _StatItem(
-            value: 120,
+            value: _coachCount,
             suffix: '+',
-            label: 'NEURAL PATHWAYS',
+            label: 'ELITE COACHES',
+            isLoading: _loading,
           ),
         ),
-        SizedBox(width: 32),
-        Expanded(
+        const SizedBox(width: 32),
+        const Expanded(
           child: _StatItem(
             value: 24,
             suffix: '/7',
@@ -39,11 +79,13 @@ class _StatItem extends StatelessWidget {
   final int value;
   final String suffix;
   final String label;
+  final bool isLoading;
 
   const _StatItem({
     required this.value,
     required this.suffix,
     required this.label,
+    this.isLoading = false,
   });
 
   @override
@@ -60,7 +102,7 @@ class _StatItem extends StatelessWidget {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: animatedValue.toInt().toString(),
+                    text: isLoading ? '...' : animatedValue.toInt().toString(),
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,
@@ -68,14 +110,15 @@ class _StatItem extends StatelessWidget {
                       letterSpacing: -0.5,
                     ),
                   ),
-                  TextSpan(
-                    text: suffix,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF00C8FF).withValues(alpha: 0.7),
+                  if (!isLoading)
+                    TextSpan(
+                      text: suffix,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF00C8FF).withValues(alpha: 0.7),
+                      ),
                     ),
-                  ),
                 ],
               ),
             );
