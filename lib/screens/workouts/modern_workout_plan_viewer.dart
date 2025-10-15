@@ -312,83 +312,40 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   Widget _buildPlanSelectorAndSearch() {
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 90),
-      child: Column(
-        children: [
-          // Plan Selector
-          GestureDetector(
-            onTap: _workoutPlans.length > 1 ? _showPlanSelector : null,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                color: AppTheme.cardBackground,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _currentPlan?['name'] ?? 'No workout plan',
-                      style: DesignTokens.bodyMedium.copyWith(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (_workoutPlans.length > 1)
-                    const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Search Bar
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-              color: AppTheme.cardBackground,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.search,
-                  color: Colors.white70,
-                  size: 18,
+    return GestureDetector(
+      onTap: _workoutPlans.length > 1 ? _showPlanSelector : null,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 10,
+        ),
+        decoration: BoxDecoration(
+          color: AppTheme.cardBackground,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                _currentPlan?['name'] ?? 'No workout plan',
+                style: DesignTokens.bodyMedium.copyWith(
+                  color: Colors.white,
+                  fontSize: 14,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Search exercises...',
-                    style: DesignTokens.bodyMedium.copyWith(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+            if (_workoutPlans.length > 1)
+              const Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.white,
+                size: 20,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -717,99 +674,243 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   Widget _buildWorkoutCard(Map<String, dynamic> workout) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          // Arrow icon
-          const Icon(
-            Icons.chevron_right,
-            color: Colors.white70,
-            size: 20,
-          ),
-          
-          const SizedBox(width: DesignTokens.space12),
-          
-          // Workout details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  workout['name'],
-                  style: DesignTokens.bodyMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: () => _openWorkoutDetails(workout),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppTheme.cardBackground,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            // Arrow icon
+            const Icon(
+              Icons.chevron_right,
+              color: Colors.white70,
+              size: 20,
+            ),
+
+            const SizedBox(width: DesignTokens.space12),
+
+            // Workout details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    workout['name'],
+                    style: DesignTokens.bodyMedium.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.calendar_today,
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
+                        color: Colors.white70,
+                        size: 12,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        workout['day'],
+                        style: DesignTokens.bodySmall.copyWith(
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${workout['sets']} • ${workout['duration']}',
+                        style: DesignTokens.bodySmall.copyWith(
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Attachments and View icon
+            Row(
+              children: [
+                if (workout['attachments'] > 0) ...[
+                  const Icon(
+                    Icons.attach_file,
+                    color: Colors.white70,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${workout['attachments']}',
+                    style: DesignTokens.bodySmall.copyWith(
                       color: Colors.white70,
-                      size: 12,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      workout['day'],
-                      style: DesignTokens.bodySmall.copyWith(
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${workout['sets']} • ${workout['duration']}',
-                      style: DesignTokens.bodySmall.copyWith(
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ],
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: AppTheme.accentGreen,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.visibility,
+                    color: AppTheme.primaryDark,
+                    size: 20,
+                  ),
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openWorkoutDetails(Map<String, dynamic> workout) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: AppTheme.cardBackground,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          
-          // Attachments and Add button
-          Row(
+          child: Column(
             children: [
-              if (workout['attachments'] > 0) ...[
-                const Icon(
-                  Icons.attach_file,
-                  color: Colors.white70,
-                  size: 16,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '${workout['attachments']}',
-                  style: DesignTokens.bodySmall.copyWith(
-                    color: Colors.white70,
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
+              // Handle bar
               Container(
+                margin: const EdgeInsets.only(top: 12),
                 width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: AppTheme.accentGreen,
-                  shape: BoxShape.circle,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white30,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                child: const Icon(
-                  Icons.add,
-                  color: AppTheme.primaryDark,
-                  size: 20,
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            workout['name'],
+                            style: DesignTokens.titleMedium.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${workout['day']} • ${workout['duration']}',
+                            style: DesignTokens.bodySmall.copyWith(
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(color: Colors.white24, height: 1),
+              // Exercise list
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(20),
+                  itemCount: (workout['exercises'] as List?)?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final exercises = workout['exercises'] as List;
+                    final exercise = exercises[index] as Map<String, dynamic>;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryDark,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            exercise['name'] ?? 'Exercise ${index + 1}',
+                            style: DesignTokens.bodyMedium.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              _buildExerciseDetail(
+                                'Sets',
+                                exercise['sets']?.toString() ?? '0',
+                              ),
+                              const SizedBox(width: 16),
+                              _buildExerciseDetail(
+                                'Reps',
+                                exercise['reps']?.toString() ?? '0',
+                              ),
+                              const SizedBox(width: 16),
+                              _buildExerciseDetail(
+                                'Rest',
+                                exercise['rest']?.toString() ?? '60s',
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildExerciseDetail(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: DesignTokens.bodySmall.copyWith(
+            color: Colors.white70,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: DesignTokens.bodyMedium.copyWith(
+            color: AppTheme.accentGreen,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 

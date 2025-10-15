@@ -230,30 +230,37 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
   }
 
   Widget _buildCoachCard(CoachProfile coach) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      color: DesignTokens.cardBackground,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DesignTokens.radius12),
-        side: const BorderSide(
-          color: DesignTokens.glassBorder,
-        ),
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => CoachProfileViewScreen(coachId: coach.coachId),
+    return FutureBuilder<String?>(
+      future: _marketplaceService.getConnectionStatus(coach.coachId),
+      builder: (context, snapshot) {
+        final connectionStatus = snapshot.data;
+        final isActive = connectionStatus == 'active';
+        final isPending = connectionStatus == 'pending';
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          color: DesignTokens.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+            side: const BorderSide(
+              color: DesignTokens.glassBorder,
             ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          ),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CoachProfileViewScreen(coachId: coach.coachId),
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               // Header with avatar and basic info
               Row(
                 children: [
@@ -408,36 +415,96 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () async {
-                        try {
-                          await _marketplaceService.connectWithCoach(coach.coachId);
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Connection request sent!'),
-                                backgroundColor: DesignTokens.accentGreen,
+                    child: isActive
+                        ? OutlinedButton.icon(
+                            onPressed: null,
+                            icon: const Icon(Icons.check_circle, size: 18, color: Colors.green),
+                            label: const Text('Connected', style: TextStyle(color: Colors.green)),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              side: const BorderSide(color: Colors.green, width: 2),
+                            ),
+                          )
+                        : isPending
+                            ? OutlinedButton.icon(
+                                onPressed: () async {
+                                  final shouldCancel = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Cancel Request?'),
+                                      content: const Text('Do you want to cancel your connection request to this coach?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, false),
+                                          child: const Text('No'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => Navigator.pop(context, true),
+                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                          child: const Text('Cancel Request'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (shouldCancel == true) {
+                                    try {
+                                      await _marketplaceService.cancelConnectionRequest(coach.coachId);
+                                      if (!context.mounted) return;
+                                      setState(() {}); // Refresh to show connect button
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Connection request cancelled'),
+                                          backgroundColor: Colors.orange,
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      if (!context.mounted) return;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Error: $e'),
+                                          backgroundColor: DesignTokens.danger,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                                icon: const Icon(Icons.schedule, size: 18, color: Colors.orange),
+                                label: const Text('Pending (tap to cancel)', style: TextStyle(color: Colors.orange)),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  side: const BorderSide(color: Colors.orange, width: 2),
+                                ),
+                              )
+                            : OutlinedButton.icon(
+                                onPressed: () async {
+                                  try {
+                                    await _marketplaceService.connectWithCoach(coach.coachId);
+                                    if (!context.mounted) return;
+                                    setState(() {}); // Refresh to show pending status
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Connection request sent!'),
+                                        backgroundColor: DesignTokens.accentGreen,
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    if (!context.mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Error: $e'),
+                                        backgroundColor: DesignTokens.danger,
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: const Icon(Icons.person_add, size: 18, color: DesignTokens.accentGreen),
+                                label: const Text('Connect', style: TextStyle(color: DesignTokens.accentGreen)),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  side: const BorderSide(color: DesignTokens.accentGreen, width: 2),
+                                ),
                               ),
-                            );
-                          }
-                        } catch (e) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: $e'),
-                                backgroundColor: DesignTokens.danger,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      icon: const Icon(Icons.person_add, size: 18, color: DesignTokens.accentGreen),
-                      label: const Text('Connect', style: TextStyle(color: DesignTokens.accentGreen)),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        side: const BorderSide(color: DesignTokens.accentGreen, width: 2),
-                      ),
-                    ),
                   ),
                 ],
               ),
@@ -445,6 +512,8 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
           ),
         ),
       ),
+        );
+      },
     );
   }
 }

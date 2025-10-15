@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'config/env_config.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/workout/client_workout_dashboard_screen.dart'; // ✅ import workout screen
+import 'screens/workout/revolutionary_plan_builder_screen.dart'; // ✅ import workout editor
 import 'screens/splash/animated_splash_screen.dart';
 // OneSignal service archived - no longer in use
 // import 'services/notifications/onesignal_service.dart';
@@ -121,6 +122,19 @@ class _VagusMainAppState extends State<VagusMainApp> {
           home: AnimatedSplashScreen(
             nextBuilder: (_) => const AuthGate(),
           ),
+          onGenerateRoute: (settings) {
+            // Handle routes with arguments
+            if (settings.name == '/workout-editor') {
+              final args = settings.arguments as Map<String, dynamic>?;
+              return MaterialPageRoute(
+                builder: (context) => RevolutionaryPlanBuilderScreen(
+                  planId: args?['id']?.toString(),
+                  clientId: args?['client_id']?.toString(),
+                ),
+              );
+            }
+            return null; // Let the routes table handle other routes
+          },
           routes: {
             // Workout routes
             '/client-workout': (context) => const ClientWorkoutDashboardScreen(),

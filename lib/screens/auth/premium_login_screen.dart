@@ -324,7 +324,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
         FadeInAnimation(
           delay: const Duration(milliseconds: 600),
           child: Text(
-            'Experience the fusion of advanced neural optimization and personalized fitness coaching. Transform your potential into measurable results.',
+            'Experience the advanced features withoptimization and personalized fitness coaching. Transform your potential into measurable results.',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w300,
@@ -368,7 +368,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
         FadeInAnimation(
           delay: const Duration(milliseconds: 400),
           child: Text(
-            'ONLINE IRAQI FITNESS COACHING PLATFORM',
+            'The most advanced IRAQI ONLINE FITNESS COACHING PLATFORM',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w300,
@@ -406,7 +406,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
             const SizedBox(height: 8),
 
             Text(
-              'BE YOUR BEST TODAY WITH OUR ELITE COACHES AND THE MOST ADVANCED FITNESS PLATFORM ON EARTH',
+              'BE YOUR BEST TODAY WITH OUR ELITE COACHES AND THE MOST ADVANCED FITNESS PLATFORM ON EARTH !',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white.withValues(alpha: 0.5),
@@ -523,7 +523,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
 
             // Login button
             PremiumGradientButton(
-              text: 'LOG IN',
+              text: 'Un lock your dream physique',
               onPressed: _handleLogin,
               isLoading: _isLoading,
               enabled: !_isLoading,
