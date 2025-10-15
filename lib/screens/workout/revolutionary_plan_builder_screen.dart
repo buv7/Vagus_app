@@ -1213,7 +1213,32 @@ class _RevolutionaryPlanBuilderScreenState
       );
     }
 
+    if (_currentPlan!.weeks.isEmpty) {
+      return const Center(
+        child: Text('No weeks in this plan. Add a week to get started.'),
+      );
+    }
+
+    if (_selectedWeekIndex >= _currentPlan!.weeks.length) {
+      return const Center(
+        child: Text('Selected week not found'),
+      );
+    }
+
     final week = _currentPlan!.weeks[_selectedWeekIndex];
+
+    if (week.days.isEmpty) {
+      return const Center(
+        child: Text('No days in this week. Add a day to get started.'),
+      );
+    }
+
+    if (_selectedDayIndex >= week.days.length) {
+      return const Center(
+        child: Text('Selected day not found'),
+      );
+    }
+
     final day = week.days[_selectedDayIndex];
 
     return Container(

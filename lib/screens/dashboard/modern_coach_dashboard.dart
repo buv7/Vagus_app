@@ -12,6 +12,7 @@ import '../../widgets/coach/upcoming_sessions_card.dart';
 import '../../widgets/coach/quick_actions_grid.dart';
 import '../../widgets/ads/ad_banner_strip.dart';
 import '../coach/program_ingest_upload_sheet.dart';
+import '../coach/modern_client_management_screen.dart';
 
 class ModernCoachDashboard extends StatefulWidget {
   const ModernCoachDashboard({super.key});
@@ -47,11 +48,12 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
     try {
 
 
-      // Load connected clients
+      // Load connected clients (only active)
       final links = await supabase
           .from('coach_clients')
           .select('client_id')
-          .eq('coach_id', user.id);
+          .eq('coach_id', user.id)
+          .eq('status', 'active');
 
       List<String> clientIds = [];
       if (links.isNotEmpty) {
@@ -62,6 +64,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
             .select('id, name, email, avatar_url')
             .inFilter('id', clientIds);
 
+        if (!mounted) return;
         setState(() {
           _clients = List<Map<String, dynamic>>.from(clients);
         });
@@ -99,11 +102,13 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
           }
         }
 
+        if (!mounted) return;
         setState(() {
           _requests = requests;
         });
       } catch (e) {
         debugPrint('❌ Failed to load pending requests: $e');
+        if (!mounted) return;
         setState(() {
           _requests = [];
         });
@@ -127,6 +132,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
       debugPrint('❌ Failed to load data: $e');
     }
 
+    if (!mounted) return;
     setState(() {
       _loading = false;
     });
@@ -163,12 +169,14 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
           });
         }
       }
-      
+
+      if (!mounted) return;
       setState(() {
         _recentCheckins = List<Map<String, dynamic>>.from(checkinsData);
       });
     } catch (e) {
       debugPrint('❌ Failed to load check-ins: $e');
+      if (!mounted) return;
       setState(() {
         _recentCheckins = [];
       });
@@ -179,6 +187,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
+        if (!mounted) return;
         setState(() => _upcomingSessions = []);
         return;
       }
@@ -252,11 +261,13 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
         });
       }
 
+      if (!mounted) return;
       setState(() {
         _upcomingSessions = processedSessions;
       });
     } catch (e) {
       debugPrint('❌ Failed to load upcoming sessions: $e');
+      if (!mounted) return;
       setState(() {
         _upcomingSessions = [];
       });
@@ -281,17 +292,20 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
+        if (!mounted) return;
         setState(() => _inboxItems = []);
         return;
       }
 
-      // Get all client IDs for this coach
+      // Get all client IDs for this coach (only active)
       final clientLinks = await supabase
           .from('coach_clients')
           .select('client_id')
-          .eq('coach_id', user.id);
+          .eq('coach_id', user.id)
+          .eq('status', 'active');
 
       if (clientLinks.isEmpty) {
+        if (!mounted) return;
         setState(() => _inboxItems = []);
         return;
       }
@@ -433,11 +447,13 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
         return (priority[a['status']] ?? 3).compareTo(priority[b['status']] ?? 3);
       });
 
+      if (!mounted) return;
       setState(() {
         _inboxItems = alerts.take(10).toList();
       });
     } catch (e) {
       debugPrint('❌ Failed to load inbox items: $e');
+      if (!mounted) return;
       setState(() {
         _inboxItems = [];
       });
@@ -456,6 +472,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
+        if (!mounted) return;
         setState(() => _analytics = null);
         return;
       }
@@ -464,15 +481,17 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
       final sevenDaysAgo = now.subtract(const Duration(days: 7));
       final fourteenDaysAgo = now.subtract(const Duration(days: 14));
 
-      // Get all client IDs for this coach
+      // Get all client IDs for this coach (only active)
       final clientLinks = await supabase
           .from('coach_clients')
           .select('client_id')
-          .eq('coach_id', user.id);
+          .eq('coach_id', user.id)
+          .eq('status', 'active');
 
       final totalClients = clientLinks.length;
 
       if (totalClients == 0) {
+        if (!mounted) return;
         setState(() => _analytics = null);
         return;
       }
@@ -526,37 +545,48 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
       // 3. Avg Response Time (from messages)
       double avgResponseHours = 0;
       try {
-        final threads = await supabase
-            .from('message_threads')
-            .select('id')
-            .eq('coach_id', user.id);
+        // Get messages where coach is either sender or recipient
+        final messages = await supabase
+            .from('messages')
+            .select('sender_id, recipient_id, created_at')
+            .or('sender_id.eq.${user.id},recipient_id.eq.${user.id}')
+            .gte('created_at', sevenDaysAgo.toIso8601String())
+            .order('created_at', ascending: true)
+            .limit(200);
 
-        if (threads.isNotEmpty) {
-          final threadIds = threads.map((e) => e['id'] as String).toList();
-
-          final messages = await supabase
-              .from('messages')
-              .select('thread_id, sender_id, created_at')
-              .inFilter('thread_id', threadIds)
-              .gte('created_at', sevenDaysAgo.toIso8601String())
-              .order('created_at', ascending: true)
-              .limit(200);
-
+        if (messages.isNotEmpty) {
           final responseTimes = <Duration>[];
 
-          for (var i = 0; i < messages.length - 1; i++) {
-            final current = messages[i];
-            final next = messages[i + 1];
+          // Group messages by conversation (sender-recipient pair)
+          final conversations = <String, List<Map<String, dynamic>>>{};
+          for (final msg in messages) {
+            final senderId = msg['sender_id'] as String;
+            final recipientId = msg['recipient_id'] as String?;
+            if (recipientId == null) continue;
 
-            // If client sent message and coach responded next
-            if (current['sender_id'] != user.id && next['sender_id'] == user.id) {
-              final clientTime = DateTime.parse(current['created_at'] as String);
-              final coachTime = DateTime.parse(next['created_at'] as String);
-              final diff = coachTime.difference(clientTime);
+            // Create a consistent key for the conversation
+            final conversationKey = [senderId, recipientId].toList()..sort();
+            final key = conversationKey.join('_');
 
-              // Only count responses within 24 hours
-              if (diff.inHours < 24) {
-                responseTimes.add(diff);
+            conversations.putIfAbsent(key, () => []).add(msg);
+          }
+
+          // Calculate response times within each conversation
+          for (final msgs in conversations.values) {
+            for (var i = 0; i < msgs.length - 1; i++) {
+              final current = msgs[i];
+              final next = msgs[i + 1];
+
+              // If client sent message and coach responded next
+              if (current['sender_id'] != user.id && next['sender_id'] == user.id) {
+                final clientTime = DateTime.parse(current['created_at'] as String);
+                final coachTime = DateTime.parse(next['created_at'] as String);
+                final diff = coachTime.difference(clientTime);
+
+                // Only count responses within 24 hours
+                if (diff.inHours < 24) {
+                  responseTimes.add(diff);
+                }
               }
             }
           }
@@ -567,7 +597,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
           }
         }
       } catch (e) {
-        debugPrint('⚠️ Could not calculate response time: $e');
+        debugPrint('! Could not calculate response time: $e');
       }
 
       // 4. Client Satisfaction (from feedback table - may not exist)
@@ -626,6 +656,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
         debugPrint('⚠️ Could not calculate compliance: $e');
       }
 
+      if (!mounted) return;
       setState(() {
         _analytics = {
           'activeClients': activeClientsThisWeek,
@@ -644,6 +675,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
       });
     } catch (e) {
       debugPrint('❌ Failed to load analytics: $e');
+      if (!mounted) return;
       setState(() {
         _analytics = null;
       });
@@ -716,7 +748,12 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
               ConnectedClientsCard(
                 clients: _clients,
                 onViewAll: () {
-                  // Navigate to client management
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ModernClientManagementScreen(),
+                    ),
+                  );
                 },
                 onWeeklyReview: (client) {
                   // Navigate to weekly review

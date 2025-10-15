@@ -118,39 +118,65 @@ class CoachMessagingService {
         return _conversationsCache[coachId]!;
       }
 
+      // Get conversations where coach is involved
       final response = await _sb
           .from('conversations')
-          .select('''
-            id,
-            coach_id,
-            client_id,
-            last_message_at,
-            profiles!conversations_client_id_fkey(
-              name,
-              name
-            )
-          ''')
+          .select('id, coach_id, client_id, last_message_at')
           .eq('coach_id', coachId)
           .order('last_message_at', ascending: false);
 
       final conversations = <Conversation>[];
       for (final row in response as List<dynamic>) {
-        final profile = row['profiles'] as Map<String, dynamic>?;
-        if (profile == null) continue;
+        final clientId = row['client_id'] as String;
 
-        // Get last message and unread count
-        final lastMessageData = await _getLastMessageAndUnreadCount(row['id'] as String, coachId);
-        
+        // Get client profile
+        final profileResponse = await _sb
+            .from('profiles')
+            .select('name, full_name')
+            .eq('id', clientId)
+            .maybeSingle();
+
+        if (profileResponse == null) continue;
+
+        final clientName = (profileResponse['full_name'] as String?) ??
+                          (profileResponse['name'] as String?) ??
+                          'Unknown Client';
+
+        // Get last message between coach and client using the existing schema (sender_id/recipient_id)
+        final lastMessageResponse = await _sb
+            .from('messages')
+            .select('content, created_at, is_read, sender_id')
+            .or('and(sender_id.eq.$coachId,recipient_id.eq.$clientId),and(sender_id.eq.$clientId,recipient_id.eq.$coachId)')
+            .order('created_at', ascending: false)
+            .limit(1)
+            .maybeSingle();
+
+        final lastMessage = lastMessageResponse?['content'] as String?;
+        final lastMessageAt = lastMessageResponse?['created_at'] != null
+            ? DateTime.tryParse(lastMessageResponse!['created_at'].toString())
+            : null;
+
+        // Count unread messages from client to coach
+        final unreadResponse = await _sb
+            .from('messages')
+            .select('id')
+            .eq('sender_id', clientId)
+            .eq('recipient_id', coachId)
+            .eq('is_read', false)
+            .count();
+
+        final unreadCount = unreadResponse.count;
+
         final conversation = Conversation.fromMap({
           'id': row['id'],
           'coach_id': row['coach_id'],
-          'client_id': row['client_id'],
-          'client_name': profile['name'],
-          'client_avatar_url': null, // avatar_url column doesn't exist yet
-          'last_message': lastMessageData['last_message'],
-          'last_message_at': row['last_message_at'],
-          'unread_count': lastMessageData['unread_count'],
-          'is_online': false, // TODO: Implement online status
+          'client_id': clientId,
+          'client_name': clientName,
+          'client_avatar_url': null,
+          'last_message': lastMessage,
+          'last_message_at': lastMessageAt?.toIso8601String() ?? row['last_message_at'],
+          'unread_count': unreadCount,
+          'is_online': false,
         });
 
         conversations.add(conversation);
@@ -176,19 +202,33 @@ class CoachMessagingService {
   }) async {
     try {
       final cacheKey = 'messages_$conversationId';
-      
+
       // Check cache first
       if (_messagesCache.containsKey(cacheKey) && _isCacheValid(cacheKey)) {
         final cached = _messagesCache[cacheKey]!;
         return cached.skip(offset).take(limit).toList();
       }
 
+      // Get client_id from conversation
+      final convResponse = await _sb
+          .from('conversations')
+          .select('client_id')
+          .eq('id', conversationId)
+          .maybeSingle();
+
+      if (convResponse == null) {
+        return [];
+      }
+
+      final clientId = convResponse['client_id'] as String;
+
+      // Get messages between coach and client using sender_id/recipient_id schema
       final response = await _sb
           .from('messages')
           .select('''
             id,
-            conversation_id,
             sender_id,
+            recipient_id,
             content,
             message_type,
             is_read,
@@ -198,7 +238,7 @@ class CoachMessagingService {
               file_name
             )
           ''')
-          .eq('conversation_id', conversationId)
+          .or('and(sender_id.eq.$coachId,recipient_id.eq.$clientId),and(sender_id.eq.$clientId,recipient_id.eq.$coachId)')
           .order('created_at', ascending: false)
           .limit(limit + offset);
 
@@ -209,10 +249,10 @@ class CoachMessagingService {
 
         final message = Message.fromMap({
           'id': row['id'],
-          'conversation_id': row['conversation_id'],
+          'conversation_id': conversationId, // Use conversationId for compatibility
           'sender_id': row['sender_id'],
           'content': row['content'],
-          'message_type': row['message_type'],
+          'message_type': row['message_type'] ?? 'text',
           'is_read': row['is_read'],
           'created_at': row['created_at'],
           'attachment_url': attachment?['file_url'],
@@ -243,10 +283,26 @@ class CoachMessagingService {
     String? attachmentName,
   }) async {
     try {
-      // Insert message
+      // Get recipient_id from conversation
+      final convResponse = await _sb
+          .from('conversations')
+          .select('coach_id, client_id')
+          .eq('id', conversationId)
+          .maybeSingle();
+
+      if (convResponse == null) {
+        debugPrint('CoachMessagingService: Conversation not found');
+        return false;
+      }
+
+      final coachId = convResponse['coach_id'] as String;
+      final clientId = convResponse['client_id'] as String;
+      final recipientId = senderId == coachId ? clientId : coachId;
+
+      // Insert message using sender_id/recipient_id schema
       final messageResponse = await _sb.from('messages').insert({
-        'conversation_id': conversationId,
         'sender_id': senderId,
+        'recipient_id': recipientId,
         'content': content,
         'message_type': messageType,
         'is_read': false,
@@ -264,6 +320,12 @@ class CoachMessagingService {
         });
       }
 
+      // Update conversation last_message_at
+      await _sb
+          .from('conversations')
+          .update({'last_message_at': DateTime.now().toIso8601String()})
+          .eq('id', conversationId);
+
       // Clear cache for this conversation
       _clearCacheForConversation(conversationId);
 
@@ -280,11 +342,28 @@ class CoachMessagingService {
     required String userId,
   }) async {
     try {
+      // Get client_id from conversation
+      final convResponse = await _sb
+          .from('conversations')
+          .select('coach_id, client_id')
+          .eq('id', conversationId)
+          .maybeSingle();
+
+      if (convResponse == null) {
+        return false;
+      }
+
+      final coachId = convResponse['coach_id'] as String;
+      final clientId = convResponse['client_id'] as String;
+      final otherUserId = userId == coachId ? clientId : coachId;
+
+      // Mark messages from other user as read using sender_id/recipient_id schema
       await _sb
           .from('messages')
           .update({'is_read': true})
-          .eq('conversation_id', conversationId)
-          .neq('sender_id', userId); // Don't mark own messages as read
+          .eq('sender_id', otherUserId)
+          .eq('recipient_id', userId)
+          .eq('is_read', false);
 
       // Clear cache
       _clearCacheForConversation(conversationId);

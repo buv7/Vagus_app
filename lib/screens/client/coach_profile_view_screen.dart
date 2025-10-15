@@ -26,6 +26,7 @@ class _CoachProfileViewScreenState extends State<CoachProfileViewScreen>
   CoachProfile? _profile;
   bool _loading = true;
   bool _isConnected = false;
+  String? _connectionStatus;
 
   final List<String> _tabs = ['Profile', 'Media'];
 
@@ -64,13 +65,17 @@ class _CoachProfileViewScreenState extends State<CoachProfileViewScreen>
 
   Future<void> _checkConnection() async {
     final connected = await _marketplaceService.isConnected(widget.coachId);
-    setState(() => _isConnected = connected);
+    final status = await _marketplaceService.getConnectionStatus(widget.coachId);
+    setState(() {
+      _isConnected = connected;
+      _connectionStatus = status;
+    });
   }
 
   Future<void> _connect() async {
     try {
       await _marketplaceService.connectWithCoach(widget.coachId);
-      setState(() => _isConnected = true);
+      await _checkConnection(); // Refresh connection status
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -223,12 +228,28 @@ class _CoachProfileViewScreenState extends State<CoachProfileViewScreen>
                   Expanded(
                     flex: 2,
                     child: ElevatedButton.icon(
-                      onPressed: _isConnected ? null : _connect,
-                      icon: Icon(_isConnected ? Icons.check : Icons.person_add),
-                      label: Text(_isConnected ? 'Connected' : 'Connect'),
+                      onPressed: _isConnected || _connectionStatus == 'pending' ? null : _connect,
+                      icon: Icon(
+                        _isConnected
+                            ? Icons.check_circle
+                            : _connectionStatus == 'pending'
+                                ? Icons.schedule
+                                : Icons.person_add,
+                      ),
+                      label: Text(
+                        _isConnected
+                            ? 'Connected'
+                            : _connectionStatus == 'pending'
+                                ? 'Pending'
+                                : 'Connect',
+                      ),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor: _isConnected ? Colors.green : null,
+                        backgroundColor: _isConnected
+                            ? Colors.green
+                            : _connectionStatus == 'pending'
+                                ? Colors.orange
+                                : null,
                       ),
                     ),
                   ),

@@ -65,7 +65,14 @@
       "Bash(mv:*)",
       "Bash(cp:*)",
       "Bash(Select-Object -Last 10)",
-      "Bash(where psql)"
+      "Bash(where psql)",
+      "Bash(git clean:*)",
+      "Bash(npm list:*)",
+      "Bash(npm install:*)",
+      "Bash(docker run:*)",
+      "Bash(Get-Content .claude/claude_desktop_config.json -ErrorAction SilentlyContinue)",
+      "Bash(mcp list-tools:*)",
+      "Bash(Get-Content $env:APPDATA/Claude/claude_desktop_config.json -ErrorAction SilentlyContinue)"
     ],
     "deny": [],
     "ask": []

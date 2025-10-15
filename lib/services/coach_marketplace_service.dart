@@ -133,15 +133,53 @@ class CoachMarketplaceService {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) throw Exception('Not authenticated');
 
-    await _supabase.from('coach_clients').insert({
+    // Check if request already exists
+    final existingRequest = await _supabase
+        .from('coach_requests')
+        .select()
+        .eq('coach_id', coachId)
+        .eq('client_id', userId)
+        .maybeSingle();
+
+    if (existingRequest != null) {
+      throw Exception('You already have a ${existingRequest['status']} request with this coach');
+    }
+
+    // Create request in coach_requests table (this is what coaches see)
+    await _supabase.from('coach_requests').insert({
       'coach_id': coachId,
       'client_id': userId,
       'status': 'pending',
       'created_at': DateTime.now().toIso8601String(),
     });
+
+    // Check if entry exists in user_coach_links (base table)
+    final existingConnection = await _supabase
+        .from('user_coach_links')
+        .select()
+        .eq('coach_id', coachId)
+        .eq('client_id', userId)
+        .maybeSingle();
+
+    if (existingConnection == null) {
+      // Create new entry in user_coach_links for status tracking
+      await _supabase.from('user_coach_links').insert({
+        'coach_id': coachId,
+        'client_id': userId,
+        'status': 'pending',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } else {
+      // Update existing entry to pending
+      await _supabase
+          .from('user_coach_links')
+          .update({'status': 'pending'})
+          .eq('coach_id', coachId)
+          .eq('client_id', userId);
+    }
   }
 
-  /// Check if already connected
+  /// Check if already connected (only returns true for active connections)
   Future<bool> isConnected(String coachId) async {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) return false;
@@ -151,8 +189,46 @@ class CoachMarketplaceService {
         .select()
         .eq('coach_id', coachId)
         .eq('client_id', userId)
+        .eq('status', 'active')
         .maybeSingle();
 
     return response != null;
+  }
+
+  /// Check connection status (returns 'active', 'pending', 'rejected', or null)
+  Future<String?> getConnectionStatus(String coachId) async {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) return null;
+
+    final response = await _supabase
+        .from('coach_clients')
+        .select('status')
+        .eq('coach_id', coachId)
+        .eq('client_id', userId)
+        .maybeSingle();
+
+    return response?['status'] as String?;
+  }
+
+  /// Cancel a pending connection request
+  Future<void> cancelConnectionRequest(String coachId) async {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) throw Exception('Not authenticated');
+
+    // Delete from coach_requests
+    await _supabase
+        .from('coach_requests')
+        .delete()
+        .eq('coach_id', coachId)
+        .eq('client_id', userId)
+        .eq('status', 'pending');
+
+    // Delete from user_coach_links (the base table for coach_clients view)
+    await _supabase
+        .from('user_coach_links')
+        .delete()
+        .eq('coach_id', coachId)
+        .eq('client_id', userId)
+        .eq('status', 'pending');
   }
 }

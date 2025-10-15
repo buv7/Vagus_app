@@ -210,9 +210,8 @@ class _ClientListViewState extends State<ClientListView> {
     final statusColor = _getStatusColor(status);
     final compliance = client['compliance'] as int;
     final complianceColor = _getComplianceColor(compliance);
-    
+
     return Container(
-      margin: const EdgeInsets.only(bottom: DesignTokens.space12),
       padding: const EdgeInsets.all(DesignTokens.space14),
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
@@ -225,9 +224,10 @@ class _ClientListViewState extends State<ClientListView> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Row(
             children: [
               // Client Avatar
@@ -462,6 +462,7 @@ class _ClientListViewState extends State<ClientListView> {
             ],
           ),
         ],
+        ),
       ),
     );
   }

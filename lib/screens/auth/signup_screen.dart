@@ -310,7 +310,7 @@ class _SignupScreenState extends State<SignupScreen>
         FadeInAnimation(
           delay: const Duration(milliseconds: 400),
           child: Text(
-            'ONLINE IRAQI FITNESS COACHING PLATFORM',
+            'Welcome to the most advanced IRAQI ONLINE FITNESS COACHING PLATFORM',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w300,
@@ -326,7 +326,7 @@ class _SignupScreenState extends State<SignupScreen>
         FadeInAnimation(
           delay: const Duration(milliseconds: 600),
           child: Text(
-            'Join the revolution in neural fitness training. Create your account and unlock personalized coaching powered by advanced FEATURES.',
+            'Join the revolution in fitness training. Create your account and unlock personalized coaching powered by VAGUS.',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w300,
@@ -370,7 +370,7 @@ class _SignupScreenState extends State<SignupScreen>
         FadeInAnimation(
           delay: const Duration(milliseconds: 400),
           child: Text(
-            'ONLINE IRAQI FITNESS COACHING PLATFORM',
+            'The most advanced IRAQI ONLINE FITNESS COACHING PLATFORM',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w300,

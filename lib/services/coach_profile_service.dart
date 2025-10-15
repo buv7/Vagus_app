@@ -23,6 +23,7 @@ class CoachProfileService {
 
   // Update profile
   Future<void> updateProfile(String coachId, Map<String, dynamic> updates) async {
+    // Update coach_profiles table
     await _supabase
         .from('coach_profiles')
         .upsert({
@@ -30,6 +31,22 @@ class CoachProfileService {
           ...updates,
           'updated_at': DateTime.now().toIso8601String(),
         });
+
+    // Also update username in profiles table if it's included in updates
+    if (updates.containsKey('username')) {
+      await _supabase
+          .from('profiles')
+          .update({'username': updates['username']})
+          .eq('id', coachId);
+    }
+
+    // Also update display_name/name in profiles table if it's included
+    if (updates.containsKey('display_name')) {
+      await _supabase
+          .from('profiles')
+          .update({'name': updates['display_name']})
+          .eq('id', coachId);
+    }
   }
 
   // Media management

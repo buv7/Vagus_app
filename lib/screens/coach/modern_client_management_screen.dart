@@ -5,6 +5,7 @@ import '../../widgets/coach/client_management_header.dart';
 import '../../widgets/coach/client_search_filter_bar.dart';
 import '../../widgets/coach/client_metrics_cards.dart';
 import '../../widgets/coach/client_list_view.dart';
+import 'coach_requests_screen.dart';
 
 class ModernClientManagementScreen extends StatefulWidget {
   const ModernClientManagementScreen({super.key});
@@ -53,11 +54,12 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
         return;
       }
 
-      // Get linked clients
+      // Get linked clients (only active connections)
       final response = await supabase
           .from('coach_clients')
-          .select('client_id, created_at')
-          .eq('coach_id', user.id);
+          .select('client_id, created_at, status')
+          .eq('coach_id', user.id)
+          .eq('status', 'active');
 
       if (response.isEmpty) {
         setState(() {
@@ -373,10 +375,13 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
   }
 
   void _onAddClient() {
-    // Navigate to add client screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Add client functionality coming soon!')),
-    );
+    // Navigate to pending requests/coach requests screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CoachRequestsScreen(),
+      ),
+    ).then((_) => _refreshData()); // Refresh when returning
   }
 
   void _onViewProfile(Map<String, dynamic> client) {

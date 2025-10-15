@@ -219,26 +219,32 @@ class ConnectedClientsCard extends StatelessWidget {
           ),
           
           const SizedBox(height: DesignTokens.space12),
-          
+
           // Action Buttons
           Row(
             children: [
-              _buildActionButton(
-                icon: Icons.calendar_today_outlined,
-                label: 'Weekly Review',
-                onPressed: () => onWeeklyReview(client),
+              Expanded(
+                child: _buildActionButton(
+                  icon: Icons.calendar_today_outlined,
+                  label: 'Weekly Review',
+                  onPressed: () => onWeeklyReview(client),
+                ),
               ),
               const SizedBox(width: DesignTokens.space8),
-              _buildActionButton(
-                icon: Icons.chat_bubble_outline,
-                label: 'Message',
-                onPressed: () => onMessage(client),
+              Expanded(
+                child: _buildActionButton(
+                  icon: Icons.chat_bubble_outline,
+                  label: 'Message',
+                  onPressed: () => onMessage(client),
+                ),
               ),
               const SizedBox(width: DesignTokens.space8),
-              _buildActionButton(
-                icon: Icons.note_outlined,
-                label: 'Notes',
-                onPressed: () => onNotes(client),
+              Expanded(
+                child: _buildActionButton(
+                  icon: Icons.note_outlined,
+                  label: 'Notes',
+                  onPressed: () => onNotes(client),
+                ),
               ),
             ],
           ),

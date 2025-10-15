@@ -102,9 +102,45 @@ class _CoachProfileScreenState extends State<CoachProfileScreen>
   }
 
   Future<void> _saveProfile() async {
+    // Validate username format
+    final username = _usernameController.text.trim();
+    if (username.isNotEmpty) {
+      if (username.length < 3 || username.length > 20) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Username must be 3-20 characters'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Check if starts with letter
+      if (!RegExp(r'^[a-zA-Z]').hasMatch(username)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Username must start with a letter'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Check if contains only letters, numbers, and underscores
+      if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$').hasMatch(username)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Username can only contain letters, numbers, and underscores'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
     final updates = {
       'display_name': _displayNameController.text.trim(),
-      'username': _usernameController.text.trim(),
+      'username': username,
       'headline': _headlineController.text.trim(),
       'bio': _bioController.text.trim(),
       'specialties': _selectedSpecialties,
