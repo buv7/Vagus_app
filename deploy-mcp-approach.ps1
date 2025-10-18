@@ -9,7 +9,7 @@ $env:DATABASE_URL = "postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws
 
 # You'll need to get the anon key from Supabase dashboard
 # Go to: https://supabase.com/dashboard/project/kydrpnrmqbedjflklgue/settings/api
-$env:SUPABASE_ANON_KEY = "your-anon-key-here"  # Replace with actual anon key
+$env:SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZHJwbnJtcWJlZGpmbGtsZ3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUxODAsImV4cCI6MjA2OTgwMTE4MH0.qlpGUiy17IbDsfgOf3-F2XBjOajjwxfy2NLMlUZWaqo"
 
 Write-Host "📦 Getting Flutter dependencies..." -ForegroundColor Blue
 flutter pub get
