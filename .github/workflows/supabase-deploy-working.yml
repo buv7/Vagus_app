@@ -1,0 +1,100 @@
+name: Supabase Auto Deploy (Working)
+
+on:
+  push:
+    branches: [ develop, main ]
+  workflow_dispatch:
+
+jobs:
+  deploy_dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Link dev project
+        run: |
+          echo "🔗 Linking to development project..."
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF_DEV }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
+
+      - name: Push DB migrations (dev)
+        run: |
+          echo "📦 Pushing database migrations..."
+          supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
+
+      - name: Deploy Edge Functions (dev)
+        if: ${{ success() }}
+        run: |
+          if [ -d supabase/functions ]; then
+            for d in supabase/functions/* ; do
+              [ -d "$d" ] && echo "Deploying function: $(basename "$d")" && supabase functions deploy "$(basename "$d")"
+            done
+          else
+            echo "ℹ️ No Edge Functions found to deploy"
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
+
+      - name: Verify deployment (dev)
+        if: ${{ success() }}
+        run: |
+          echo "✅ Development deployment completed successfully"
+          echo "🔗 Supabase URL: https://${{ secrets.SUPABASE_PROJECT_REF_DEV }}.supabase.co"
+
+  deploy_prod:
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Link prod project
+        run: |
+          echo "🔗 Linking to production project..."
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Push DB migrations (prod)
+        run: |
+          echo "📦 Pushing database migrations..."
+          supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy Edge Functions (prod)
+        if: ${{ success() }}
+        run: |
+          if [ -d supabase/functions ]; then
+            for d in supabase/functions/* ; do
+              [ -d "$d" ] && echo "Deploying function: $(basename "$d")" && supabase functions deploy "$(basename "$d")"
+            done
+          else
+            echo "ℹ️ No Edge Functions found to deploy"
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Verify deployment (prod)
+        if: ${{ success() }}
+        run: |
+          echo "✅ Production deployment completed successfully"
+          echo "🔗 Supabase URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co"
+
+      - name: Notify deployment success
+        if: ${{ success() }}
+        run: |
+          echo "🚀 Production deployment to Supabase completed!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
