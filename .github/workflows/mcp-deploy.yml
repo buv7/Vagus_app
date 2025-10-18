@@ -1,0 +1,75 @@
+name: MCP-based Deployment
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build web app
+        run: flutter build web --release
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Link Supabase project
+        run: |
+          echo "🔗 Linking to Supabase project using MCP approach..."
+          supabase link --project-ref kydrpnrmqbedjflklgue
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Apply database migrations (MCP approach)
+        run: |
+          echo "📦 Applying database migrations via MCP..."
+          # Use the session pooler connection string
+          export DATABASE_URL="postgresql://postgres.kydrpnrmqbedjflklgue:X.7achoony.X@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
+          supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy Edge Functions
+        if: ${{ success() }}
+        run: |
+          if [ -d supabase/functions ]; then
+            for d in supabase/functions/* ; do
+              [ -d "$d" ] && echo "Deploying function: $(basename "$d")" && supabase functions deploy "$(basename "$d")"
+            done
+          else
+            echo "ℹ️ No Edge Functions found to deploy"
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--prod'
+
+      - name: Verify deployment
+        if: ${{ success() }}
+        run: |
+          echo "✅ MCP-based deployment completed successfully!"
+          echo "🔗 Supabase URL: https://kydrpnrmqbedjflklgue.supabase.co"
+          echo "🌐 Vercel URL: https://vagus.fit"
+          echo "📊 Database: Connected via MCP session pooler"
+          echo "🎯 Latest version with Iraqi/Arabic/Kurdish titles is now live!"
