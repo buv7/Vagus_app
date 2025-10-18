@@ -1,4 +1,4 @@
-name: Supabase Auto Deploy (Fixed)
+name: Supabase Auto Deploy (Fixed v2)
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
           # Apply the complete production fix to resolve schema issues
           supabase db push --include-all --dry-run
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
 
       - name: Push DB migrations (dev) - with retry
         run: |
@@ -55,7 +55,7 @@ jobs:
             fi
           done
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
 
       - name: Deploy Edge Functions (dev)
         if: ${{ success() }}
@@ -68,14 +68,14 @@ jobs:
             echo "ℹ️ No Edge Functions found to deploy"
           fi
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
 
       - name: Verify deployment (dev)
         if: ${{ success() }}
         run: |
           echo "✅ Development deployment completed successfully"
-          echo "🔗 Supabase URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co"
-          echo "📊 Dashboard: https://supabase.com/dashboard/project/${{ secrets.SUPABASE_PROJECT_REF }}"
+          echo "🔗 Supabase URL: https://${{ secrets.SUPABASE_PROJECT_REF_DEV }}.supabase.co"
+          echo "📊 Dashboard: https://supabase.com/dashboard/project/${{ secrets.SUPABASE_PROJECT_REF_DEV }}"
 
   deploy_prod:
     if: github.ref == 'refs/heads/main'
@@ -88,7 +88,14 @@ jobs:
         uses: supabase/setup-cli@v1
 
       - name: Link prod project
-        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          echo "🔗 Linking to production project..."
+          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
+            echo "❌ SUPABASE_PROJECT_REF secret is missing!"
+            echo "Please set SUPABASE_PROJECT_REF in GitHub Secrets"
+            exit 1
+          fi
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
