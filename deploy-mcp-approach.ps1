@@ -18,7 +18,7 @@ Write-Host "🔨 Building Flutter web app..." -ForegroundColor Blue
 flutter build web --release
 
 Write-Host "🚀 Deploying to Vercel with MCP integration..." -ForegroundColor Blue
-vercel --prod
+npx vercel --prod
 
 Write-Host "✅ Deployment complete!" -ForegroundColor Green
 Write-Host "🌐 Your app should be live at vagus.fit" -ForegroundColor Cyan
