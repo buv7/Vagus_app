@@ -113,7 +113,7 @@ jobs:
         run: |
           echo "🔧 Applying production database fixes..."
           # Apply the complete production fix to resolve schema issues
-          supabase db push --include-all --dry-run
+          supabase db push --include-all --dry-run --password ${{ secrets.SUPABASE_DB_PASSWORD }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
@@ -123,7 +123,7 @@ jobs:
           # Try to push migrations with retry logic
           for i in {1..3}; do
             echo "Attempt $i/3..."
-            if supabase db push --include-all; then
+            if supabase db push --include-all --password ${{ secrets.SUPABASE_DB_PASSWORD }}; then
               echo "✅ Migration successful on attempt $i"
               break
             else
