@@ -1,4 +1,4 @@
-name: Supabase Auto Deploy (Fixed v3)
+name: Supabase Auto Deploy (Simple)
 
 on:
   push:
@@ -20,45 +20,16 @@ jobs:
           echo "🔗 Linking to development project..."
           if [ -z "${{ secrets.SUPABASE_PROJECT_REF_DEV }}" ]; then
             echo "❌ SUPABASE_PROJECT_REF_DEV secret is missing!"
-            echo "Please set SUPABASE_PROJECT_REF_DEV in GitHub Secrets"
-            exit 1
-          fi
-          if [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}" ]; then
-            echo "❌ SUPABASE_ACCESS_TOKEN_DEV secret is missing!"
-            echo "Please set SUPABASE_ACCESS_TOKEN_DEV in GitHub Secrets"
             exit 1
           fi
           supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF_DEV }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
 
-      - name: Apply Production Fixes First
-        run: |
-          echo "🔧 Applying production database fixes..."
-          # Apply the complete production fix to resolve schema issues
-          supabase db push --include-all --dry-run
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
-
-      - name: Push DB migrations (dev) - with retry
+      - name: Push DB migrations (dev)
         run: |
           echo "📦 Pushing database migrations..."
-          # Try to push migrations with retry logic
-          for i in {1..3}; do
-            echo "Attempt $i/3..."
-            if supabase db push --include-all; then
-              echo "✅ Migration successful on attempt $i"
-              break
-            else
-              echo "❌ Migration failed on attempt $i"
-              if [ $i -eq 3 ]; then
-                echo "🚨 All migration attempts failed"
-                exit 1
-              fi
-              echo "⏳ Waiting 10 seconds before retry..."
-              sleep 10
-            fi
-          done
+          supabase db push
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN_DEV }}
 
@@ -80,11 +51,10 @@ jobs:
         run: |
           echo "✅ Development deployment completed successfully"
           echo "🔗 Supabase URL: https://${{ secrets.SUPABASE_PROJECT_REF_DEV }}.supabase.co"
-          echo "📊 Dashboard: https://supabase.com/dashboard/project/${{ secrets.SUPABASE_PROJECT_REF_DEV }}"
 
   deploy_prod:
     if: github.ref == 'refs/heads/main'
-    environment: production   # enable manual approval in GitHub Environments for safety
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -97,49 +67,18 @@ jobs:
           echo "🔗 Linking to production project..."
           if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
             echo "❌ SUPABASE_PROJECT_REF secret is missing!"
-            echo "Please set SUPABASE_PROJECT_REF in GitHub Secrets"
-            exit 1
-          fi
-          if [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ]; then
-            echo "❌ SUPABASE_ACCESS_TOKEN secret is missing!"
-            echo "Please set SUPABASE_ACCESS_TOKEN in GitHub Secrets"
             exit 1
           fi
           supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
-      - name: Apply Production Fixes First
-        run: |
-          echo "🔧 Applying production database fixes..."
-          # Apply the complete production fix to resolve schema issues
-          supabase db push --include-all --dry-run
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-
-      - name: Push DB migrations (prod) - with retry
+      - name: Push DB migrations (prod)
         run: |
           echo "📦 Pushing database migrations..."
-          # Try to push migrations with retry logic
-          for i in {1..3}; do
-            echo "Attempt $i/3..."
-            if supabase db push --include-all; then
-              echo "✅ Migration successful on attempt $i"
-              break
-            else
-              echo "❌ Migration failed on attempt $i"
-              if [ $i -eq 3 ]; then
-                echo "🚨 All migration attempts failed"
-                exit 1
-              fi
-              echo "⏳ Waiting 10 seconds before retry..."
-              sleep 10
-            fi
-          done
+          supabase db push
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       - name: Deploy Edge Functions (prod)
         if: ${{ success() }}
@@ -159,7 +98,6 @@ jobs:
         run: |
           echo "✅ Production deployment completed successfully"
           echo "🔗 Supabase URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co"
-          echo "📊 Dashboard: https://supabase.com/dashboard/project/${{ secrets.SUPABASE_PROJECT_REF }}"
 
       - name: Notify deployment success
         if: ${{ success() }}
