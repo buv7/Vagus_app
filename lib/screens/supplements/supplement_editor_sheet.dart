@@ -471,10 +471,11 @@ class _SupplementEditorSheetState extends State<SupplementEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.darkBackground,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: DesignTokens.neutralWhite,
         title: Text(
           widget.supplement != null ? 'Edit Supplement' : 'Add Supplement',

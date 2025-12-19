@@ -414,7 +414,7 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
           child: CircularProgressIndicator(
             color: AppTheme.accentGreen,
@@ -426,7 +426,7 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
     // Error state
     if (_error.isNotEmpty) {
       return Scaffold(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: const Text('Client Management'),
           backgroundColor: AppTheme.cardBackground,
@@ -463,7 +463,7 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
     // Empty state
     if (_clients.isEmpty) {
       return Scaffold(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: Column(
             children: [
@@ -522,7 +522,7 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
 
     // Normal state with data
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: RefreshIndicator(
         onRefresh: _refreshData,
         color: AppTheme.accentGreen,

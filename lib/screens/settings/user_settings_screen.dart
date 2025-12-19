@@ -77,10 +77,10 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                     const SizedBox(width: DesignTokens.space12),
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.neutralWhite,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -97,17 +97,23 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
+            colors: isDark ? [
               AppTheme.primaryDark,
               AppTheme.primaryDark.withValues(alpha: 0.8),
               AppTheme.accentGreen.withValues(alpha: 0.1),
+            ] : [
+              theme.scaffoldBackgroundColor,
+              theme.scaffoldBackgroundColor,
+              AppTheme.accentGreen.withValues(alpha: 0.05),
             ],
           ),
         ),

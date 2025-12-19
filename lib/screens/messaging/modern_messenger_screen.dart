@@ -316,13 +316,17 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       drawerEdgeDragWidth: 24,
       drawer: const VagusSideMenu(isClient: true),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: DesignTokens.darkGradient,
+        decoration: BoxDecoration(
+          gradient: isDark ? DesignTokens.darkGradient : LinearGradient(
+            colors: [theme.scaffoldBackgroundColor, theme.scaffoldBackgroundColor],
+          ),
         ),
         child: SafeArea(
           child: _isLoading 
@@ -950,9 +954,9 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           
           if (isUser) ...[
             const SizedBox(width: DesignTokens.space8),
-            const CircleAvatar(
+            CircleAvatar(
               radius: 16,
-              backgroundColor: AppTheme.primaryDark,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               child: Text(
                 'A',
                 style: TextStyle(

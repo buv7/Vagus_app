@@ -22,6 +22,9 @@ import '../../widgets/workout/exercise_picker_dialog.dart';
 import '../../widgets/workout/advanced_exercise_editor.dart';
 import '../../widgets/workout/cardio_editor_dialog.dart';
 
+// Screens
+import 'weekly_volume_detail_screen.dart';
+
 /// Revolutionary Workout Plan Builder - The centerpiece of VAGUS
 /// A premium, feature-rich workout plan creation and editing experience
 class RevolutionaryPlanBuilderScreen extends StatefulWidget {
@@ -610,8 +613,9 @@ class _RevolutionaryPlanBuilderScreenState
       return _buildErrorState();
     }
 
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -648,8 +652,9 @@ class _RevolutionaryPlanBuilderScreenState
   }
 
   Widget _buildLoadingState() {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -672,8 +677,9 @@ class _RevolutionaryPlanBuilderScreenState
   }
 
   Widget _buildErrorState() {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -2402,6 +2408,21 @@ class _RevolutionaryPlanBuilderScreenState
                 color: DesignTokens.accentGreen,
                 width: isMobile ? constraints.maxWidth : (constraints.maxWidth / 2) - 8,
                 child: _buildVolumeDisplay(analytics),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => WeeklyVolumeDetailScreen(
+                        analytics: analytics,
+                        weekNumber: _selectedWeekIndex + 1,
+                        totalWeeks: _currentPlan?.weeks.length ?? 0,
+                        planName: _currentPlan?.name,
+                        weekData: _currentPlan?.weeks[_selectedWeekIndex],
+                        plan: _currentPlan, // Pass full plan for comparison
+                      ),
+                    ),
+                  );
+                },
               ),
 
               // Muscle Groups Card
@@ -2444,12 +2465,18 @@ class _RevolutionaryPlanBuilderScreenState
     double totalVolume = 0;
     double totalTonnage = 0;
     int totalMinutes = 0;
+    int totalSets = 0;
+    int totalReps = 0;
     int activeDays = 0;
-    final Map<String, int> muscleGroups = {};
+    final Map<String, double> muscleGroupVolumes = {};
     final List<double> dailyVolumes = [];
+    final List<Map<String, dynamic>> dailyDetails = [];
 
     for (final day in week.days) {
       double dayVolume = 0;
+      int daySets = 0;
+      int dayReps = 0;
+      final List<Map<String, dynamic>> dayExercises = [];
 
       for (final exercise in day.exercises) {
         final volume = exercise.calculateVolume();
@@ -2459,11 +2486,47 @@ class _RevolutionaryPlanBuilderScreenState
           totalTonnage += volume;
         }
 
-        // Track muscle groups (simplified - would need exercise metadata)
-        muscleGroups['Other'] = (muscleGroups['Other'] ?? 0) + 1;
+        if (exercise.sets != null) {
+          daySets += exercise.sets!;
+          totalSets += exercise.sets!;
+        }
+
+        final repsNumeric = exercise.getRepsNumeric();
+        if (repsNumeric != null && exercise.sets != null) {
+          final exerciseReps = repsNumeric * exercise.sets!;
+          dayReps += exerciseReps;
+          totalReps += exerciseReps;
+        }
+
+        // Track exercise details
+        dayExercises.add({
+          'name': exercise.name,
+          'sets': exercise.sets,
+          'reps': exercise.reps,
+          'volume': volume ?? 0.0,
+        });
+
+        // Extract muscle groups from exercise name
+        final muscleGroups = _extractMuscleGroups(exercise.name);
+        if (muscleGroups.isEmpty) {
+          muscleGroupVolumes['Other'] =
+              (muscleGroupVolumes['Other'] ?? 0.0) + (volume ?? 0.0);
+        } else {
+          for (final muscle in muscleGroups) {
+            muscleGroupVolumes[muscle] =
+                (muscleGroupVolumes[muscle] ?? 0.0) + (volume ?? 0.0);
+          }
+        }
       }
 
       dailyVolumes.add(dayVolume);
+      dailyDetails.add({
+        'exercises': dayExercises,
+        'sets': daySets,
+        'reps': dayReps,
+        'volume': dayVolume,
+        'duration': _calculateDayDuration(day),
+      });
 
       if (day.exercises.isNotEmpty || day.cardioSessions.isNotEmpty) {
         activeDays++;
@@ -2475,9 +2538,13 @@ class _RevolutionaryPlanBuilderScreenState
       'totalVolume': totalVolume,
       'totalTonnage': totalTonnage,
       'totalMinutes': totalMinutes,
+      'totalSets': totalSets,
+      'totalReps': totalReps,
       'activeDays': activeDays,
-      'muscleGroups': muscleGroups,
+      'muscleGroups': muscleGroupVolumes.keys.length, // Count for compatibility
+      'muscleGroupVolumes': muscleGroupVolumes, // Enhanced: volume per muscle group
       'dailyVolumes': dailyVolumes,
+      'dailyDetails': dailyDetails, // Enhanced: detailed daily breakdown
       'avgSessionDuration': activeDays > 0 ? totalMinutes / activeDays : 0,
     };
   }
@@ -2488,14 +2555,19 @@ class _RevolutionaryPlanBuilderScreenState
     required Color color,
     required double width,
     required Widget child,
+    VoidCallback? onTap,
   }) {
-    return Container(
+    final cardContent = Container(
       width: width,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: DesignTokens.primaryDark.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DesignTokens.glassBorder),
+        border: Border.all(
+          color: onTap != null
+              ? color.withValues(alpha: 0.3)
+              : DesignTokens.glassBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2511,13 +2583,22 @@ class _RevolutionaryPlanBuilderScreenState
                 child: Icon(icon, color: color, size: 20),
               ),
               const SizedBox(width: 12),
-              Text(
-                title,
-                style: DesignTokens.titleSmall.copyWith(
-                  color: DesignTokens.neutralWhite,
-                  fontWeight: FontWeight.w600,
+              Expanded(
+                child: Text(
+                  title,
+                  style: DesignTokens.titleSmall.copyWith(
+                    color: DesignTokens.neutralWhite,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
+              if (onTap != null) ...[
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: color,
+                  size: 16,
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 16),
@@ -2525,6 +2606,15 @@ class _RevolutionaryPlanBuilderScreenState
         ],
       ),
     );
+
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        child: cardContent,
+      );
+    }
+
+    return cardContent;
   }
 
   Widget _buildVolumeDisplay(Map<String, dynamic> analytics) {
@@ -2939,6 +3029,97 @@ class _RevolutionaryPlanBuilderScreenState
       ),
     );
   }
+
+  /// Extract muscle groups from exercise name using keyword matching
+  /// Similar to WorkoutMetricsService._pluckMuscles
+  List<String> _extractMuscleGroups(String exerciseName) {
+    final name = exerciseName.toLowerCase();
+    final Set<String> muscles = {};
+
+    // Common compound lifts
+    if (name.contains('bench')) {
+      muscles.addAll(['Chest', 'Triceps', 'Shoulders']);
+    }
+    if (name.contains('squat')) {
+      muscles.addAll(['Quads', 'Glutes', 'Hamstrings', 'Core']);
+    }
+    if (name.contains('deadlift')) {
+      muscles.addAll(['Back', 'Glutes', 'Hamstrings']);
+    }
+    if (name.contains('row')) {
+      muscles.addAll(['Back', 'Biceps']);
+    }
+    if (name.contains('pull-up') ||
+        name.contains('pull up') ||
+        name.contains('chin')) {
+      muscles.addAll(['Back', 'Biceps']);
+    }
+    if (name.contains('press') && !name.contains('bench')) {
+      muscles.addAll(['Shoulders', 'Chest', 'Triceps']);
+    }
+    if (name.contains('overhead')) {
+      muscles.add('Shoulders');
+    }
+    if (name.contains('ohp')) {
+      muscles.add('Shoulders');
+    }
+    if (name.contains('lunge')) {
+      muscles.addAll(['Quads', 'Glutes']);
+    }
+    if (name.contains('calf')) {
+      muscles.add('Calves');
+    }
+    if (name.contains('curl')) {
+      muscles.add('Biceps');
+    }
+    if (name.contains('extension') && name.contains('tricep')) {
+      muscles.add('Triceps');
+    }
+    if (name.contains('dip')) {
+      muscles.add('Triceps');
+    }
+    if (name.contains('crunch') ||
+        name.contains('plank') ||
+        name.contains('sit-up') ||
+        name.contains('sit up')) {
+      muscles.add('Core');
+    }
+    if (name.contains('lat pulldown') || name.contains('pulldown')) {
+      muscles.addAll(['Back', 'Biceps']);
+    }
+    if (name.contains('fly')) {
+      muscles.add('Chest');
+    }
+    if (name.contains('shoulder') || name.contains('deltoid')) {
+      muscles.add('Shoulders');
+    }
+    if (name.contains('leg press')) {
+      muscles.addAll(['Quads', 'Glutes']);
+    }
+    if (name.contains('hamstring') || name.contains('leg curl')) {
+      muscles.add('Hamstrings');
+    }
+    if (name.contains('quad') || name.contains('leg extension')) {
+      muscles.add('Quads');
+    }
+    if (name.contains('glute')) {
+      muscles.add('Glutes');
+    }
+    if (name.contains('back') && !name.contains('deadlift')) {
+      muscles.add('Back');
+    }
+    if (name.contains('chest')) {
+      muscles.add('Chest');
+    }
+    if (name.contains('tricep')) {
+      muscles.add('Triceps');
+    }
+    if (name.contains('bicep')) {
+      muscles.add('Biceps');
+    }
+
+    return muscles.toList();
+  }
 }
 
 // ==================== DIALOGS ====================
@@ -3108,6 +3289,7 @@ class _DurationPickerDialogState extends State<_DurationPickerDialog> {
       ),
     );
   }
+
 }
 
 class _ConfirmationDialog extends StatelessWidget {

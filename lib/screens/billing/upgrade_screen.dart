@@ -44,8 +44,9 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Upgrade Plan'),
         backgroundColor: Colors.transparent,

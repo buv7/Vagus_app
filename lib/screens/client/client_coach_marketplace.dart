@@ -91,10 +91,11 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.darkBackground,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: DesignTokens.textPrimary,
         title: const Text('Find a Coach'),
         bottom: PreferredSize(

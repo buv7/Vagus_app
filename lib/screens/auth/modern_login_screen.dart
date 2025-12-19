@@ -628,11 +628,15 @@ class _ModernLoginScreenState extends State<ModernLoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: DesignTokens.darkGradient,
+        decoration: BoxDecoration(
+          gradient: isDark ? DesignTokens.darkGradient : LinearGradient(
+            colors: [theme.scaffoldBackgroundColor, theme.scaffoldBackgroundColor],
+          ),
         ),
         child: Stack(
         children: [

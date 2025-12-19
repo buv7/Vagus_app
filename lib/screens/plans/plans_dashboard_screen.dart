@@ -138,8 +138,9 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: _loading ? _buildLoadingState() : _buildDashboard(),
     );
   }

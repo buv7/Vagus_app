@@ -166,8 +166,9 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       drawerEdgeDragWidth: 24,
       drawer: const VagusSideMenu(isClient: true),
       body: SafeArea(

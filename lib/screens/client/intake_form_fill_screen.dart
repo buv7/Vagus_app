@@ -218,7 +218,7 @@ class _IntakeFormFillScreenState extends State<IntakeFormFillScreen> {
                                   child: ElevatedButton(
                                     onPressed: _submitting ? null : _submitForm,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppTheme.primaryDark,
+                                      backgroundColor: Theme.of(context).colorScheme.surface,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(vertical: 16),
                                       shape: RoundedRectangleBorder(

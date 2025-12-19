@@ -340,9 +340,10 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: DesignTokens.primaryDark,
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: CircularProgressIndicator(color: AppTheme.accentGreen),
         ),
@@ -351,14 +352,14 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
 
     if (_error != null) {
       return Scaffold(
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error, color: Colors.red, size: 64),
               const SizedBox(height: 16),
-              Text('Error: $_error', style: const TextStyle(color: Colors.white)),
+              Text('Error: $_error', style: TextStyle(color: theme.colorScheme.onSurface)),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _loadUserData,
@@ -371,7 +372,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
     }
 
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),

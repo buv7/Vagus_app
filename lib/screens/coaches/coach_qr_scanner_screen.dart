@@ -125,8 +125,9 @@ class _CoachQrScannerScreenState extends State<CoachQrScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           'Scan QR Code',
@@ -134,7 +135,7 @@ class _CoachQrScannerScreenState extends State<CoachQrScannerScreen> {
             color: DesignTokens.neutralWhite,
           ),
         ),
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: DesignTokens.neutralWhite,
         elevation: 0,
       ),

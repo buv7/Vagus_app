@@ -216,10 +216,11 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: DesignTokens.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(

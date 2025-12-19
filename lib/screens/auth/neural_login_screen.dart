@@ -344,7 +344,7 @@ class _NeuralLoginScreenState extends State<NeuralLoginScreen> with TickerProvid
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -357,7 +357,7 @@ class _NeuralLoginScreenState extends State<NeuralLoginScreen> with TickerProvid
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           children: [
             // 3D Neural Network Background

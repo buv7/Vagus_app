@@ -77,17 +77,27 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: isDark ? LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppTheme.primaryDark,
               AppTheme.primaryDark.withValues(alpha: 0.8),
               AppTheme.accentGreen.withValues(alpha: 0.1),
+            ],
+          ) : LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.scaffoldBackgroundColor,
+              theme.scaffoldBackgroundColor,
+              AppTheme.accentGreen.withValues(alpha: 0.05),
             ],
           ),
         ),

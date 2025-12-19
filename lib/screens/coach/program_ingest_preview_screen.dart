@@ -127,10 +127,11 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         title: const Text(
           'Program Preview',
           style: TextStyle(color: AppTheme.neutralWhite),

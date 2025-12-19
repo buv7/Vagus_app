@@ -15,10 +15,11 @@ class _CardioLogScreenState extends State<CardioLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: Colors.white,
         title: const Text(
           'Cardio Log',

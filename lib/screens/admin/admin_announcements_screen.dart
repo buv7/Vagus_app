@@ -196,7 +196,7 @@ class _AdminAnnouncementsScreenState extends State<AdminAnnouncementsScreen> {
                     ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createAnnouncement,
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add),
       ),

@@ -174,10 +174,11 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return PopScope(
       canPop: !_isLoading,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Stack(
           children: [
             // Animated gradient background
@@ -523,7 +524,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
 
             // Login button
             PremiumGradientButton(
-              text: 'Un lock your dream physique',
+              text: 'LOG IN',
               onPressed: _handleLogin,
               isLoading: _isLoading,
               enabled: !_isLoading,

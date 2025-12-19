@@ -237,7 +237,7 @@ class _IntakeFormBuilderScreenState extends State<IntakeFormBuilderScreen> {
                                   child: ElevatedButton(
                                     onPressed: _saveForm,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppTheme.primaryDark,
+                                      backgroundColor: Theme.of(context).colorScheme.surface,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(vertical: 16),
                                       shape: RoundedRectangleBorder(

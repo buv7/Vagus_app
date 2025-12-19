@@ -1071,11 +1071,11 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: DesignTokens.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: _buildGlassmorphismAppBar(context),
         body: Container(
-          decoration: const BoxDecoration(
-            color: DesignTokens.darkBackground,
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: SafeArea(
             child: _loading

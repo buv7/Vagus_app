@@ -61,9 +61,9 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
   Widget build(BuildContext context) {
     if (!_isAdmin) {
       return Scaffold(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: AppTheme.primaryDark,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           title: const Text(
             'Ad Management',
             style: TextStyle(color: AppTheme.neutralWhite),
@@ -82,10 +82,11 @@ class _AdminAdsScreenState extends State<AdminAdsScreen> {
       );
     }
 
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         title: const Text(
           'Ad Management',
           style: TextStyle(color: AppTheme.neutralWhite),

@@ -416,7 +416,9 @@ class CoachMessagingService {
   }
 
   /// Get last message and unread count for a conversation
-  Future<Map<String, dynamic>> _getLastMessageAndUnreadCount(String conversationId, String coachId) async {
+  // ignore: unused_element
+  Future<Map<String, dynamic>> _getLastMessageAndUnreadCount(
+      String conversationId, String coachId) async {
     try {
       final response = await _sb
           .from('messages')

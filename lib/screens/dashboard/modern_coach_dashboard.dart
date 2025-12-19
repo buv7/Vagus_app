@@ -684,9 +684,10 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (_loading) {
-      return const Scaffold(
-        backgroundColor: AppTheme.primaryDark,
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: CircularProgressIndicator(
             color: AppTheme.accentGreen,
@@ -696,7 +697,7 @@ class _ModernCoachDashboardState extends State<ModernCoachDashboard> {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(DesignTokens.space16),

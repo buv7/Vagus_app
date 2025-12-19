@@ -145,10 +145,10 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: VagusAppBar(
         title: const Text('Calls'),
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -585,7 +585,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
               child: const Center(
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundColor: AppTheme.primaryDark,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   child: Text(
                     'A',
                     style: TextStyle(

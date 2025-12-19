@@ -251,11 +251,12 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
       );
     }
 
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.primaryDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: VagusAppBar(
         title: Text(LocaleHelper.t('nutrition', locale)),
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: AppTheme.neutralWhite,
         actions: [
           // Mode switch button (for coaches)
