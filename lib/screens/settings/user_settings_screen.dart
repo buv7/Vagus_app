@@ -37,10 +37,12 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   }
 
   Widget _buildModernCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Widget child,
   }) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space16),
       decoration: BoxDecoration(
@@ -178,6 +180,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                     children: [
             // Theme Settings Card
             _buildModernCard(
+              context: context,
               icon: Icons.palette,
               title: 'Theme',
               child: ThemeToggle(
@@ -187,6 +190,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // Language Settings Card
             _buildModernCard(
+              context: context,
               icon: Icons.language,
               title: 'Language',
               child: LanguageSelector(
@@ -196,6 +200,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // Reminder Defaults Card
             _buildModernCard(
+              context: context,
               icon: Icons.notifications,
               title: 'Reminder Defaults',
               child: ReminderDefaults(
@@ -205,6 +210,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // Reduce Motion Card
             _buildModernCard(
+              context: context,
               icon: Icons.accessibility,
               title: 'Accessibility',
               child: SwitchListTile(
@@ -226,6 +232,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // Workout Popout Defaults Card
             _buildModernCard(
+              context: context,
               icon: Icons.fitness_center,
               title: 'Workout Preferences',
               child: const WorkoutPopoutPrefsSection(),
@@ -233,6 +240,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // Music Settings Card
             _buildModernCard(
+              context: context,
               icon: Icons.music_note,
               title: 'Music Integration',
               child: Column(
@@ -275,6 +283,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // Google Integrations Card
             _buildModernCard(
+              context: context,
               icon: Icons.cloud,
               title: 'Google Integration',
               child: Column(
@@ -317,6 +326,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // Earn Rewards Card
             _buildModernCard(
+              context: context,
               icon: Icons.card_giftcard,
               title: 'Earn Rewards',
               child: Column(
@@ -359,6 +369,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
             // AI Quotas Card
             _buildModernCard(
+              context: context,
               icon: Icons.psychology,
               title: 'AI Usage & Quotas',
               child: const AIQuotasCard(),

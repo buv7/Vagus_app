@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../models/announcements/announcement.dart';
 import '../../services/announcements_service.dart';
 import '../../widgets/branding/vagus_appbar.dart';
-import '../../theme/app_theme.dart';
 
 class AdminAnnouncementsScreen extends StatefulWidget {
   const AdminAnnouncementsScreen({super.key});

@@ -582,7 +582,7 @@ class _ModernLiveCallsScreenState extends State<ModernLiveCallsScreen> {
                   width: 2,
                 ),
               ),
-              child: const Center(
+              child: Center(
                 child: CircleAvatar(
                   radius: 20,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,

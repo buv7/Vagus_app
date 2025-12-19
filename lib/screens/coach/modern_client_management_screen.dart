@@ -412,9 +412,10 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (_loading) {
-      return const Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: CircularProgressIndicator(
             color: AppTheme.accentGreen,
