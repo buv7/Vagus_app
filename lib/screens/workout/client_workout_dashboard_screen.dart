@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:vagus_app/screens/workouts/modern_workout_plan_viewer.dart';
 import '../../widgets/ai/ai_usage_meter.dart';
+import '../../models/workout/fatigue_models.dart';
+import '../../services/workout/fatigue_recovery_service.dart';
+import '../../services/workout/psychology_service.dart';
+import '../../widgets/workout/session_mode_selector.dart';
+import '../../services/config/feature_flags.dart';
+import '../../widgets/common/fatigue_recovery_icon.dart';
+import 'fatigue_recovery_screen.dart';
 
 class ClientWorkoutDashboardScreen extends StatefulWidget {
   const ClientWorkoutDashboardScreen({super.key});
@@ -17,6 +24,8 @@ class _ClientWorkoutDashboardScreenState
   Map<String, dynamic>? _plan;
   bool _loading = true;
   String _error = '';
+  TransformationMode _mode = TransformationMode.defaultMode;
+  ReadinessIndicator? _readiness;
 
   @override
   void initState() {
@@ -100,6 +109,91 @@ class _ClientWorkoutDashboardScreenState
             Text("🗓️ Weeks: ${_plan!['weeks']?.length ?? 0}"),
             const SizedBox(height: 8),
             Text("📅 Assigned At: ${_plan!['created_at'] ?? 'Unknown'}"),
+            const SizedBox(height: 16),
+            // ✅ VAGUS ADD: session-transformation-modes START
+            FutureBuilder<bool>(
+              future: FeatureFlags.instance.isEnabled(FeatureFlags.workoutTransformationModes),
+              builder: (context, snapshot) {
+                if (!(snapshot.data ?? false)) return const SizedBox.shrink();
+                return SessionModeSelector(
+                  value: _mode,
+                  onChanged: (m) async {
+                    setState(() => _mode = m);
+                    // If you already have an active session object/id, update it here.
+                    // If not, it will be saved when session is created (workout_service patch).
+                  },
+                );
+              },
+            ),
+            // ✅ VAGUS ADD: session-transformation-modes END
+            const SizedBox(height: 12),
+            // ✅ VAGUS ADD: fatigue-recovery-readiness START
+            FutureBuilder<bool>(
+              future: FeatureFlags.instance.isEnabled(FeatureFlags.workoutReadinessIndicators),
+              builder: (context, flagSnapshot) {
+                if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+                return FutureBuilder<ReadinessIndicator>(
+                  future: () async {
+                    final user = Supabase.instance.client.auth.currentUser!;
+                    final ind = await FatigueRecoveryService.I.getReadinessIndicator(userId: user.id);
+                    _readiness = ind;
+                    return ind;
+                  }(),
+                  builder: (context, snap) {
+                    final ind = snap.data ?? _readiness;
+                    if (ind == null) return const SizedBox.shrink();
+
+                    return Card(
+                      child: ListTile(
+                        leading: FatigueRecoveryIcon(size: 24),
+                        title: Text('Readiness: ${ind.score.toStringAsFixed(1)} / 10  (${ind.label})'),
+                        subtitle: Text(ind.hint),
+                        trailing: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const FatigueRecoveryScreen()),
+                            );
+                          },
+                          child: const Text('Log'),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            // ✅ VAGUS ADD: fatigue-recovery-readiness END
+            const SizedBox(height: 12),
+            // ✅ VAGUS ADD: client-psychology START
+            FutureBuilder<bool>(
+              future: FeatureFlags.instance.isEnabled(FeatureFlags.workoutPsychology),
+              builder: (context, flagSnapshot) {
+                if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+                return Builder(
+                  builder: (context) {
+                    final ind = _readiness ?? ReadinessIndicator.fromScore(6.0);
+                    final msg = WorkoutPsychologyService.I.getMotivationalMessage(
+                      readiness: ind,
+                      mode: _mode,
+                    );
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.psychology),
+                            const SizedBox(width: 10),
+                            Expanded(child: Text(msg)),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            // ✅ VAGUS ADD: client-psychology END
             const Spacer(),
             SizedBox(
               width: double.infinity,

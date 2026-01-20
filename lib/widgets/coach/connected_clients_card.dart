@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class ConnectedClientsCard extends StatelessWidget {
   final List<Map<String, dynamic>> clients;
@@ -21,12 +22,13 @@ class ConnectedClientsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -55,10 +57,10 @@ class ConnectedClientsCard extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: DesignTokens.space8),
-              const Text(
+              Text(
                 'Connected Clients',
                 style: TextStyle(
-                  color: AppTheme.neutralWhite,
+                  color: tc.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -70,13 +72,13 @@ class ConnectedClientsCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.mediumGrey,
+                  color: tc.chipBg,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: Text(
                   '${clients.length}',
-                  style: const TextStyle(
-                    color: AppTheme.neutralWhite,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -100,20 +102,20 @@ class ConnectedClientsCard extends StatelessWidget {
           
           // Clients List
           if (clients.isEmpty)
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(DesignTokens.space32),
+                padding: const EdgeInsets.all(DesignTokens.space32),
                 child: Text(
                   'No clients connected yet',
                   style: TextStyle(
-                    color: AppTheme.lightGrey,
+                    color: tc.textSecondary,
                     fontSize: 16,
                   ),
                 ),
               ),
             )
           else
-            ...clients.take(3).map((client) => _buildClientItem(client)),
+            ...clients.take(3).map((client) => _buildClientItem(context, client)),
         ],
             ),
           ),
@@ -122,15 +124,16 @@ class ConnectedClientsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildClientItem(Map<String, dynamic> client) {
+  Widget _buildClientItem(BuildContext context, Map<String, dynamic> client) {
+    final tc = ThemeColors.of(context);
     final isActive = client['status'] == 'active';
-    final statusColor = isActive ? Colors.green : AppTheme.mediumGrey;
+    final statusColor = isActive ? Colors.green : tc.chipBg;
     
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space12),
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryDark,
+        color: tc.surfaceAlt,
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
       ),
       child: Column(
@@ -146,11 +149,11 @@ class ConnectedClientsCard extends StatelessWidget {
                   color: AppTheme.accentGreen,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'V',
                     style: TextStyle(
-                      color: AppTheme.primaryDark,
+                      color: tc.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -169,8 +172,8 @@ class ConnectedClientsCard extends StatelessWidget {
                       children: [
                         Text(
                           client['name'] ?? 'Unknown',
-                          style: const TextStyle(
-                            color: AppTheme.neutralWhite,
+                          style: TextStyle(
+                            color: tc.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -187,8 +190,8 @@ class ConnectedClientsCard extends StatelessWidget {
                           ),
                           child: Text(
                             isActive ? 'Active' : 'Paused',
-                            style: const TextStyle(
-                              color: AppTheme.neutralWhite,
+                            style: TextStyle(
+                              color: tc.textPrimary,
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
@@ -199,16 +202,16 @@ class ConnectedClientsCard extends StatelessWidget {
                     const SizedBox(height: DesignTokens.space4),
                     Text(
                       client['email'] ?? '',
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 14,
                       ),
                     ),
                     const SizedBox(height: DesignTokens.space4),
                     Text(
                       '${client['program'] ?? 'General Training'} • Last active: ${client['lastActive'] ?? 'Unknown'}',
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 12,
                       ),
                     ),
@@ -225,6 +228,7 @@ class ConnectedClientsCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildActionButton(
+                  context: context,
                   icon: Icons.calendar_today_outlined,
                   label: 'Weekly Review',
                   onPressed: () => onWeeklyReview(client),
@@ -233,6 +237,7 @@ class ConnectedClientsCard extends StatelessWidget {
               const SizedBox(width: DesignTokens.space8),
               Expanded(
                 child: _buildActionButton(
+                  context: context,
                   icon: Icons.chat_bubble_outline,
                   label: 'Message',
                   onPressed: () => onMessage(client),
@@ -241,6 +246,7 @@ class ConnectedClientsCard extends StatelessWidget {
               const SizedBox(width: DesignTokens.space8),
               Expanded(
                 child: _buildActionButton(
+                  context: context,
                   icon: Icons.note_outlined,
                   label: 'Notes',
                   onPressed: () => onNotes(client),
@@ -254,26 +260,28 @@ class ConnectedClientsCard extends StatelessWidget {
   }
 
   Widget _buildActionButton({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required VoidCallback onPressed,
   }) {
+    final tc = ThemeColors.of(context);
     return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(
         icon,
-        color: AppTheme.neutralWhite,
+        color: tc.icon,
         size: 16,
       ),
       label: Text(
         label,
-        style: const TextStyle(
-          color: AppTheme.neutralWhite,
+        style: TextStyle(
+          color: tc.textPrimary,
           fontSize: 12,
         ),
       ),
       style: TextButton.styleFrom(
-        backgroundColor: AppTheme.mediumGrey,
+        backgroundColor: tc.surfaceAlt,
         padding: const EdgeInsets.symmetric(
           horizontal: DesignTokens.space12,
           vertical: DesignTokens.space6,

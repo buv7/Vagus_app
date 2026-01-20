@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/growth/referrals_models.dart';
+import '../config/feature_flags.dart';
+import 'viral_analytics_service.dart';
 
 /// Service for referrals and affiliates functionality
 class ReferralsService {
@@ -81,6 +83,19 @@ class ReferralsService {
         'referrer_id': referrerId,
         'referee_id': userId,
       });
+
+      // ✅ VAGUS ADD: viral-analytics-tracking START
+      final isViralAnalyticsEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.viralAnalytics);
+      if (isViralAnalyticsEnabled) {
+        await ViralAnalyticsService.I.logEventFromReferral(
+          userId: userId,
+          referralCode: code,
+          additionalData: {
+            'referrer_id': referrerId,
+          },
+        );
+      }
+      // ✅ VAGUS ADD: viral-analytics-tracking END
         } catch (e) {
       debugPrint('Error recording attribution: $e');
     }

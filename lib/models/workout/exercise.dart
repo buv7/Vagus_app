@@ -1,3 +1,5 @@
+import 'enhanced_exercise.dart' show TrainingMethod;
+
 class Exercise {
   final String? id;
   final String dayId;
@@ -25,6 +27,11 @@ class Exercise {
   // Grouping (supersets, circuits, etc.)
   final String? groupId; // Identifier for grouping exercises
   final ExerciseGroupType groupType;
+  final String? _groupTypeRaw; // Store raw string when enum is unknown (preserves DB value)
+
+  // Training method
+  final TrainingMethod? trainingMethod;
+  final String? _trainingMethodRaw; // Store raw string when enum is unknown (preserves DB value)
 
   // Metadata
   final DateTime createdAt;
@@ -47,12 +54,33 @@ class Exercise {
     this.mediaUrls,
     this.groupId,
     this.groupType = ExerciseGroupType.none,
+    String? groupTypeRaw,
+    this.trainingMethod,
+    String? trainingMethodRaw,
     DateTime? createdAt,
     DateTime? updatedAt,
-  })  : createdAt = createdAt ?? DateTime.now(),
+  })  : _groupTypeRaw = groupTypeRaw,
+        _trainingMethodRaw = trainingMethodRaw,
+        createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
 
   factory Exercise.fromMap(Map<String, dynamic> map) {
+    // Parse groupType with raw string preservation for unknown values
+    final groupTypeValue = map['group_type']?.toString();
+    final parsedGroupType = ExerciseGroupType.fromString(groupTypeValue);
+    final shouldPreserveGroupTypeRaw = parsedGroupType == ExerciseGroupType.unknown && groupTypeValue != null;
+    
+    // Parse trainingMethod with raw string preservation for unknown values
+    final trainingMethodValue = map['training_method']?.toString();
+    TrainingMethod? parsedTrainingMethod;
+    String? trainingMethodRaw;
+    if (trainingMethodValue != null && trainingMethodValue.isNotEmpty) {
+      parsedTrainingMethod = TrainingMethod.fromString(trainingMethodValue);
+      if (parsedTrainingMethod == TrainingMethod.unknown) {
+        trainingMethodRaw = trainingMethodValue; // Preserve raw string
+      }
+    }
+    
     return Exercise(
       id: map['id']?.toString(),
       dayId: map['day_id']?.toString() ?? '',
@@ -71,7 +99,10 @@ class Exercise {
           ?.map((url) => url.toString())
           .toList(),
       groupId: map['group_id']?.toString(),
-      groupType: ExerciseGroupType.fromString(map['group_type']?.toString()),
+      groupType: parsedGroupType,
+      groupTypeRaw: shouldPreserveGroupTypeRaw ? groupTypeValue : null,
+      trainingMethod: parsedTrainingMethod,
+      trainingMethodRaw: trainingMethodRaw,
       createdAt: DateTime.tryParse(map['created_at']?.toString() ?? '') ??
           DateTime.now(),
       updatedAt: DateTime.tryParse(map['updated_at']?.toString() ?? '') ??
@@ -96,7 +127,10 @@ class Exercise {
       if (notes != null) 'notes': notes,
       if (mediaUrls != null) 'media_urls': mediaUrls,
       if (groupId != null) 'group_id': groupId,
-      'group_type': groupType.value,
+      // Preserve raw string if enum is unknown, otherwise use enum value
+      'group_type': _groupTypeRaw ?? groupType.value,
+      // Preserve raw string if enum is unknown, otherwise use enum value (only if trainingMethod is set)
+      if (trainingMethod != null) 'training_method': _trainingMethodRaw ?? trainingMethod!.value,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -119,6 +153,9 @@ class Exercise {
     List<String>? mediaUrls,
     String? groupId,
     ExerciseGroupType? groupType,
+    String? groupTypeRaw,
+    TrainingMethod? trainingMethod,
+    String? trainingMethodRaw,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -139,6 +176,9 @@ class Exercise {
       mediaUrls: mediaUrls ?? this.mediaUrls,
       groupId: groupId ?? this.groupId,
       groupType: groupType ?? this.groupType,
+      groupTypeRaw: groupTypeRaw ?? _groupTypeRaw,
+      trainingMethod: trainingMethod ?? this.trainingMethod,
+      trainingMethodRaw: trainingMethodRaw ?? _trainingMethodRaw,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -227,6 +267,15 @@ class Exercise {
   /// Check if this exercise is part of a group (superset, circuit, etc.)
   bool get isGrouped => groupType != ExerciseGroupType.none && groupId != null;
 
+  /// Get the raw training method string (for custom values)
+  /// Returns the raw string if trainingMethod is unknown, otherwise null
+  String? get trainingMethodRawForDisplay {
+    if (trainingMethod == TrainingMethod.unknown && _trainingMethodRaw != null) {
+      return _trainingMethodRaw;
+    }
+    return null;
+  }
+
   /// Get display text for intensity
   String getIntensityDisplay() {
     final parts = <String>[];
@@ -264,26 +313,48 @@ enum ExerciseGroupType {
   circuit('circuit'),
   giantSet('giant_set'),
   dropSet('drop_set'),
-  restPause('rest_pause');
+  restPause('rest_pause'),
+  unknown('unknown'); // For unknown values - raw string stored separately in model
 
   final String value;
   const ExerciseGroupType(this.value);
 
+  /// Parse string to enum. Returns unknown if value doesn't match known enums.
+  /// Caller must check for unknown and preserve raw string separately.
   static ExerciseGroupType fromString(String? value) {
-    switch (value?.toLowerCase()) {
+    if (value == null || value.isEmpty) {
+      return ExerciseGroupType.none;
+    }
+    
+    final lowerValue = value.toLowerCase();
+    switch (lowerValue) {
       case 'superset':
         return ExerciseGroupType.superset;
       case 'circuit':
         return ExerciseGroupType.circuit;
       case 'giant_set':
+      case 'giantset':
         return ExerciseGroupType.giantSet;
       case 'drop_set':
+      case 'dropset':
         return ExerciseGroupType.dropSet;
       case 'rest_pause':
+      case 'restpause':
         return ExerciseGroupType.restPause;
-      default:
+      case 'none':
+      case '':
         return ExerciseGroupType.none;
+      default:
+        // Unknown value - return unknown enum
+        return ExerciseGroupType.unknown;
     }
+  }
+  
+  /// Helper to determine if raw string should be preserved
+  static bool shouldPreserveRaw(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final parsed = fromString(value);
+    return parsed == ExerciseGroupType.unknown;
   }
 
   String get displayName {
@@ -300,6 +371,8 @@ enum ExerciseGroupType {
         return 'Drop Set';
       case ExerciseGroupType.restPause:
         return 'Rest-Pause';
+      case ExerciseGroupType.unknown:
+        return 'Unknown';
     }
   }
 }

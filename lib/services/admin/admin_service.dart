@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
+import '../config/feature_flags.dart';
+import 'safety_layer_service.dart';
 
 /// Admin service for managing users, coach approvals, and global settings
 class AdminService {
@@ -45,6 +47,31 @@ class AdminService {
       final currentUser = supabase.auth.currentUser;
       if (currentUser == null) return false;
 
+      // ✅ VAGUS ADD: safety-layer-check START
+      final isSafetyEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.adminSafetyLayer);
+      if (isSafetyEnabled) {
+        final safetyCheck = await SafetyLayerService.I.checkSafetyRule(
+          action: 'update_user_role',
+          payload: {
+            'user_id': userId,
+            'new_role': role,
+          },
+        );
+
+        if (safetyCheck['allowed'] != true) {
+          final reason = safetyCheck['reason'] as String? ?? 'Blocked by safety layer';
+          debugPrint('❌ Safety layer blocked role update: $reason');
+          throw Exception(reason);
+        }
+
+        if (safetyCheck['requireApproval'] as bool) {
+          final reason = safetyCheck['reason'] as String? ?? 'Requires approval';
+          debugPrint('⚠️ Role update requires approval: $reason');
+          throw Exception(reason);
+        }
+      }
+      // ✅ VAGUS ADD: safety-layer-check END
+
       // Get current role for audit
       final currentUserData = await supabase
           .from('profiles')
@@ -85,6 +112,32 @@ class AdminService {
     try {
       final currentUser = supabase.auth.currentUser;
       if (currentUser == null) return false;
+
+      // ✅ VAGUS ADD: safety-layer-check START
+      final isSafetyEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.adminSafetyLayer);
+      if (isSafetyEnabled && !enabled) {
+        // Only check safety layer when DISABLING (destructive action)
+        final safetyCheck = await SafetyLayerService.I.checkSafetyRule(
+          action: 'disable_user',
+          payload: {
+            'user_id': userId,
+            'enabled': enabled,
+          },
+        );
+
+        if (safetyCheck['allowed'] != true) {
+          final reason = safetyCheck['reason'] as String? ?? 'Blocked by safety layer';
+          debugPrint('❌ Safety layer blocked user disable: $reason');
+          throw Exception(reason);
+        }
+
+        if (safetyCheck['requireApproval'] as bool) {
+          final reason = safetyCheck['reason'] as String? ?? 'Requires approval';
+          debugPrint('⚠️ User disable requires approval: $reason');
+          throw Exception(reason);
+        }
+      }
+      // ✅ VAGUS ADD: safety-layer-check END
 
       // Check which column exists
       final userData = await supabase
@@ -143,6 +196,33 @@ class AdminService {
   /// Reset user AI usage (no-op if not supported)
   Future<bool> resetUserAiUsage(String userId) async {
     try {
+      final currentUser = supabase.auth.currentUser;
+      if (currentUser == null) return false;
+
+      // ✅ VAGUS ADD: safety-layer-check START
+      final isSafetyEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.adminSafetyLayer);
+      if (isSafetyEnabled) {
+        final safetyCheck = await SafetyLayerService.I.checkSafetyRule(
+          action: 'reset_user_ai_usage',
+          payload: {
+            'user_id': userId,
+          },
+        );
+
+        if (safetyCheck['allowed'] != true) {
+          final reason = safetyCheck['reason'] as String? ?? 'Blocked by safety layer';
+          debugPrint('❌ Safety layer blocked AI usage reset: $reason');
+          throw Exception(reason);
+        }
+
+        if (safetyCheck['requireApproval'] as bool) {
+          final reason = safetyCheck['reason'] as String? ?? 'Requires approval';
+          debugPrint('⚠️ AI usage reset requires approval: $reason');
+          throw Exception(reason);
+        }
+      }
+      // ✅ VAGUS ADD: safety-layer-check END
+
       // Check if reset function exists
       await supabase.rpc('reset_user_ai_usage', params: {
         'uid': userId,
@@ -204,6 +284,31 @@ class AdminService {
           .select('user_id')
           .eq('id', requestId)
           .single();
+
+      // ✅ VAGUS ADD: safety-layer-check START
+      final isSafetyEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.adminSafetyLayer);
+      if (isSafetyEnabled) {
+        final safetyCheck = await SafetyLayerService.I.checkSafetyRule(
+          action: 'approve_coach',
+          payload: {
+            'user_id': application['user_id'],
+            'new_role': 'coach',
+          },
+        );
+
+        if (safetyCheck['allowed'] != true) {
+          final reason = safetyCheck['reason'] as String? ?? 'Blocked by safety layer';
+          debugPrint('❌ Safety layer blocked coach approval: $reason');
+          throw Exception(reason);
+        }
+
+        if (safetyCheck['requireApproval'] as bool) {
+          final reason = safetyCheck['reason'] as String? ?? 'Requires approval';
+          debugPrint('⚠️ Coach approval requires approval: $reason');
+          throw Exception(reason);
+        }
+      }
+      // ✅ VAGUS ADD: safety-layer-check END
 
       // Update application status
       await supabase

@@ -5,6 +5,7 @@ import '../../models/supplements/supplement_models.dart';
 import '../../services/supplements/supplement_service.dart';
 import '../../theme/app_theme.dart';
 import '../../services/billing/plan_access_manager.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 /// Full screen showing supplements due today with progress tracking
 /// For coaches: pass clientId to view client's supplements
@@ -392,9 +393,7 @@ class _SupplementsTodayScreenState extends State<SupplementsTodayScreen> {
                 color: AppTheme.accentGreen.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.medication,
-                color: AppTheme.accentGreen,
+              child: const PillIcon(
                 size: 32,
               ),
             ),

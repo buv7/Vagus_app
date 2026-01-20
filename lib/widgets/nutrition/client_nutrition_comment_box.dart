@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
+import '../../widgets/common/save_icon.dart';
 
 class ClientNutritionCommentBox extends StatefulWidget {
   final String comment;
@@ -103,7 +104,7 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
               const Spacer(),
               if (widget.isClientView && !widget.isReadOnly && _hasChanges && widget.onSave != null)
                 IconButton(
-                  icon: const Icon(Icons.save, size: 16),
+                  icon: SaveIcon(size: 16),
                   onPressed: widget.onSave,
                   tooltip: 'Save comment',
                   color: DesignTokens.accentGreen,

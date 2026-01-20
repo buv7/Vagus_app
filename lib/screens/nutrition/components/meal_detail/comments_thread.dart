@@ -5,6 +5,7 @@ import '../../../../models/nutrition/nutrition_plan.dart';
 import '../../../../services/nutrition/locale_helper.dart';
 import '../../../../services/haptics.dart';
 import '../../widgets/shared/nutrition_card.dart';
+import '../../../../widgets/common/save_icon.dart';
 
 /// Thread for coach-client comments and notes on meals
 class CommentsThread extends StatefulWidget {
@@ -489,7 +490,7 @@ class _CommentsThreadState extends State<CommentsThread>
                   flex: 2,
                   child: ElevatedButton.icon(
                     onPressed: _saveComment,
-                    icon: const Icon(Icons.save),
+                    icon: SaveIcon(),
                     label: Text(LocaleHelper.t('save', locale)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.accentGreen,

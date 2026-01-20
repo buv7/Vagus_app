@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class UpcomingSessionsCard extends StatelessWidget {
   final List<Map<String, dynamic>> sessions;
@@ -21,12 +22,13 @@ class UpcomingSessionsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -55,10 +57,10 @@ class UpcomingSessionsCard extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: DesignTokens.space8),
-              const Text(
+              Text(
                 'Upcoming Sessions',
                 style: TextStyle(
-                  color: DesignTokens.neutralWhite,
+                  color: tc.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -70,14 +72,14 @@ class UpcomingSessionsCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: DesignTokens.cardBackground,
+                  color: tc.surfaceAlt,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
-                  border: Border.all(color: DesignTokens.glassBorder),
+                  border: Border.all(color: tc.border),
                 ),
                 child: Text(
                   '${sessions.length}',
-                  style: const TextStyle(
-                    color: DesignTokens.neutralWhite,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -100,7 +102,7 @@ class UpcomingSessionsCard extends StatelessWidget {
           const SizedBox(height: DesignTokens.space16),
           
           // Sessions List
-          ...sessions.map((session) => _buildSessionItem(session)),
+          ...sessions.map((session) => _buildSessionItem(context, session)),
         ],
             ),
           ),
@@ -109,17 +111,18 @@ class UpcomingSessionsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSessionItem(Map<String, dynamic> session) {
+  Widget _buildSessionItem(BuildContext context, Map<String, dynamic> session) {
+    final tc = ThemeColors.of(context);
     final status = session['status'] as String;
-    final statusColor = _getStatusColor(status);
+    final statusColor = _getStatusColor(context, status);
     
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space16),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -155,8 +158,8 @@ class UpcomingSessionsCard extends StatelessWidget {
                   children: [
                     Text(
                       session['title'] ?? 'Session',
-                      style: const TextStyle(
-                        color: AppTheme.neutralWhite,
+                      style: TextStyle(
+                        color: tc.textPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -164,8 +167,8 @@ class UpcomingSessionsCard extends StatelessWidget {
                     const SizedBox(height: DesignTokens.space4),
                     Text(
                       'with ${session['coach'] ?? 'Coach'}',
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 14,
                       ),
                     ),
@@ -183,8 +186,8 @@ class UpcomingSessionsCard extends StatelessWidget {
                 ),
                 child: Text(
                   status,
-                  style: const TextStyle(
-                    color: AppTheme.neutralWhite,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),
@@ -198,16 +201,16 @@ class UpcomingSessionsCard extends StatelessWidget {
           // Session Details
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.calendar_today_outlined,
-                color: AppTheme.lightGrey,
+                color: tc.icon,
                 size: 16,
               ),
               const SizedBox(width: DesignTokens.space8),
               Text(
                 session['date'] ?? 'Unknown',
-                style: const TextStyle(
-                  color: AppTheme.lightGrey,
+                style: TextStyle(
+                  color: tc.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -222,14 +225,14 @@ class UpcomingSessionsCard extends StatelessWidget {
                 session['location']?.contains('Zoom') == true
                     ? Icons.videocam_outlined
                     : Icons.location_on_outlined,
-                color: AppTheme.lightGrey,
+                color: tc.icon,
                 size: 16,
               ),
               const SizedBox(width: DesignTokens.space8),
               Text(
                 session['location'] ?? 'Unknown Location',
-                style: const TextStyle(
-                  color: AppTheme.lightGrey,
+                style: TextStyle(
+                  color: tc.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -240,9 +243,9 @@ class UpcomingSessionsCard extends StatelessWidget {
           
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.access_time_outlined,
-                color: AppTheme.lightGrey,
+                color: tc.icon,
                 size: 16,
               ),
               const SizedBox(width: DesignTokens.space8),
@@ -330,16 +333,17 @@ class UpcomingSessionsCard extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(BuildContext context, String status) {
+    final tc = ThemeColors.of(context);
     switch (status.toLowerCase()) {
       case 'confirmed':
         return AppTheme.accentGreen;
       case 'pending':
-        return AppTheme.mediumGrey;
+        return tc.chipBg;
       case 'cancelled':
         return Colors.red;
       default:
-        return AppTheme.mediumGrey;
+        return tc.chipBg;
     }
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vagus_app/theme/design_tokens.dart';
+import '../../services/config/feature_flags.dart';
+import '../../services/admin/compliance_service.dart';
+import '../../models/admin/admin_models.dart';
 
 class ExportProgressScreen extends StatelessWidget {
   const ExportProgressScreen({super.key});
@@ -113,6 +116,101 @@ class ExportProgressScreen extends StatelessWidget {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 16),
+
+              // ✅ VAGUS ADD: compliance-enhancements START
+              FutureBuilder<bool>(
+                future: FeatureFlags.instance.isEnabled(FeatureFlags.adminCompliance),
+                builder: (context, flagSnapshot) {
+                  if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.description, color: DesignTokens.accentGreen),
+                              SizedBox(width: 8),
+                              Text(
+                                'Compliance Reports',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: DesignTokens.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          FutureBuilder<List<ComplianceReport>>(
+                            future: ComplianceService.I.listReports(
+                              reportType: ReportType.dataExport,
+                              limit: 5,
+                            ),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              }
+
+                              final reports = snapshot.data ?? [];
+                              if (reports.isEmpty) {
+                                return ElevatedButton.icon(
+                                  onPressed: () async {
+                                    try {
+                                      await ComplianceService.I.generateReport(
+                                        reportType: ReportType.dataExport,
+                                      );
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Compliance report generated ✅'),
+                                          ),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Error: $e')),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  label: const Text('Generate Data Export Report'),
+                                );
+                              }
+
+                              return Column(
+                                children: reports.map((report) {
+                                  return ListTile(
+                                    leading: const Icon(Icons.description),
+                                    title: Text(report.reportType.label),
+                                    subtitle: Text('Status: ${report.status.name}'),
+                                    trailing: report.fileUrl != null
+                                        ? IconButton(
+                                            icon: const Icon(Icons.download),
+                                            onPressed: () {
+                                              // TODO: Open download URL
+                                            },
+                                          )
+                                        : null,
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              // ✅ VAGUS ADD: compliance-enhancements END
 
               const SizedBox(height: 16),
 

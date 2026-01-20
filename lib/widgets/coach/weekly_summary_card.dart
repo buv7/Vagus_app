@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 import '../../services/coach/weekly_review_service.dart';
 
 class WeeklySummaryCard extends StatelessWidget {
@@ -9,14 +10,15 @@ class WeeklySummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     Widget tile(String label, String value) {
       return Expanded(
         child: Container(
           decoration: BoxDecoration(
-            color: DesignTokens.cardBackground,
+            color: tc.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: tc.border,
               width: 1,
             ),
             boxShadow: [
@@ -38,8 +40,8 @@ class WeeklySummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: const TextStyle(
-                        color: DesignTokens.textSecondary,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -47,10 +49,10 @@ class WeeklySummaryCard extends StatelessWidget {
                     const SizedBox(height: DesignTokens.space4),
                     Text(
                       value,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
-                        color: DesignTokens.neutralWhite,
+                        color: tc.textPrimary,
                       ),
                     ),
                   ],
@@ -64,10 +66,10 @@ class WeeklySummaryCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -88,18 +90,18 @@ class WeeklySummaryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.analytics_outlined,
                       color: DesignTokens.accentBlue,
                       size: 20,
                     ),
-                    SizedBox(width: DesignTokens.space8),
+                    const SizedBox(width: DesignTokens.space8),
                     Text(
                       'Weekly Summary',
                       style: TextStyle(
-                        color: DesignTokens.neutralWhite,
+                        color: tc.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),

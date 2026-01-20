@@ -3,6 +3,7 @@ import '../../models/supplements/supplement_models.dart';
 import '../../services/supplements/supplement_service.dart';
 import '../../theme/design_tokens.dart';
 import '../../services/billing/plan_access_manager.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 /// Card showing supplements due today with progress tracking
 class SupplementTodayCard extends StatefulWidget {
@@ -141,9 +142,7 @@ class _SupplementTodayCardState extends State<SupplementTodayCard> {
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.medication,
-                  color: DesignTokens.blue600,
+                const PillIcon(
                   size: 24,
                 ),
                 const SizedBox(width: DesignTokens.space12),
@@ -215,9 +214,7 @@ class _SupplementTodayCardState extends State<SupplementTodayCard> {
       padding: const EdgeInsets.all(DesignTokens.space16),
       child: Column(
         children: [
-          const Icon(
-            Icons.medication_outlined,
-            color: DesignTokens.ink500,
+          const PillIcon(
             size: 48,
           ),
           const SizedBox(height: DesignTokens.space8),

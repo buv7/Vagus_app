@@ -4,6 +4,7 @@ import '../../models/supplements/supplement_models.dart';
 import '../../services/supplements/supplement_service.dart';
 import '../../theme/design_tokens.dart';
 import '../../components/supplements/adherence_heatmap.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 /// Screen showing supplement intake history and adherence statistics
 class SupplementHistoryScreen extends StatefulWidget {
@@ -144,9 +145,7 @@ class _SupplementHistoryScreenState extends State<SupplementHistoryScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.medication_outlined,
-            color: DesignTokens.ink500,
+          const PillIcon(
             size: 64,
           ),
           const SizedBox(height: DesignTokens.space16),

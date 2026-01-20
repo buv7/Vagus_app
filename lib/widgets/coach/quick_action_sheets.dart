@@ -3,8 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 // Add Coach Note Bottom Sheet
 class AddCoachNoteBottomSheet extends StatefulWidget {
@@ -150,10 +151,11 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
         minChildSize: 0.5,
         maxChildSize: 0.9,
         builder: (context, scrollController) {
+          final tc = ThemeColors.of(context);
           return Container(
-            decoration: const BoxDecoration(
-              color: AppTheme.primaryDark,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            decoration: BoxDecoration(
+              color: tc.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -169,27 +171,27 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: AppTheme.lightGrey.withValues(alpha: 0.3),
+                          color: tc.textSecondary.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     ),
 
                     // Header
-                    const Padding(
-                      padding: EdgeInsets.all(24),
+                    Padding(
+                      padding: const EdgeInsets.all(24),
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.note_add,
                             color: AppTheme.accentGreen,
                             size: 24,
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Text(
                             'Add Coach Note',
                             style: TextStyle(
-                              color: AppTheme.neutralWhite,
+                              color: tc.textPrimary,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -215,10 +217,10 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Client Selector
-                              const Text(
+                              Text(
                                 'Select Client',
                                 style: TextStyle(
-                                  color: AppTheme.lightGrey,
+                                  color: tc.textSecondary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -226,23 +228,23 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                               const SizedBox(height: 12),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: DesignTokens.cardBackground,
+                                  color: tc.surfaceAlt,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.1),
+                                    color: tc.border,
                                   ),
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
                                     value: _selectedClientId,
                                     isExpanded: true,
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.arrow_drop_down,
-                                      color: AppTheme.lightGrey,
+                                      color: tc.icon,
                                     ),
-                                    dropdownColor: DesignTokens.cardBackground,
-                                    style: const TextStyle(
-                                      color: AppTheme.neutralWhite,
+                                    dropdownColor: tc.surface,
+                                    style: TextStyle(
+                                      color: tc.textPrimary,
                                       fontSize: 16,
                                     ),
                                     items: _clients.map((client) {
@@ -261,8 +263,8 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                                 child: client['avatar_url'] == null
                                                     ? Text(
                                                         (client['name'] ?? 'U')[0].toUpperCase(),
-                                                        style: const TextStyle(
-                                                          color: AppTheme.neutralWhite,
+                                                        style: TextStyle(
+                                                          color: tc.textPrimary,
                                                           fontWeight: FontWeight.bold,
                                                         ),
                                                       )
@@ -275,16 +277,16 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                                   children: [
                                                     Text(
                                                       client['name'] ?? 'Unknown',
-                                                      style: const TextStyle(
-                                                        color: AppTheme.neutralWhite,
+                                                      style: TextStyle(
+                                                        color: tc.textPrimary,
                                                         fontWeight: FontWeight.w600,
                                                       ),
                                                     ),
                                                     if (client['email'] != null)
                                                       Text(
                                                         client['email'],
-                                                        style: const TextStyle(
-                                                          color: AppTheme.lightGrey,
+                                                        style: TextStyle(
+                                                          color: tc.textSecondary,
                                                           fontSize: 12,
                                                         ),
                                                       ),
@@ -308,10 +310,10 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                               const SizedBox(height: 24),
 
                               // Category Selector
-                              const Text(
+                              Text(
                                 'Category',
                                 style: TextStyle(
-                                  color: AppTheme.lightGrey,
+                                  color: tc.textSecondary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -337,12 +339,12 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? AppTheme.accentGreen.withValues(alpha: 0.2)
-                                            : DesignTokens.cardBackground,
+                                            : tc.surfaceAlt,
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color: isSelected
                                               ? AppTheme.accentGreen
-                                              : Colors.white.withValues(alpha: 0.1),
+                                              : tc.border,
                                         ),
                                       ),
                                       child: Row(
@@ -352,7 +354,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                             _categoryIcons[category],
                                             color: isSelected
                                                 ? AppTheme.accentGreen
-                                                : AppTheme.lightGrey,
+                                                : tc.icon,
                                             size: 16,
                                           ),
                                           const SizedBox(width: 8),
@@ -361,7 +363,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                             style: TextStyle(
                                               color: isSelected
                                                   ? AppTheme.accentGreen
-                                                  : AppTheme.lightGrey,
+                                                  : tc.textSecondary,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
@@ -375,10 +377,10 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                               const SizedBox(height: 24),
 
                               // Note Input
-                              const Text(
+                              Text(
                                 'Note Content',
                                 style: TextStyle(
-                                  color: AppTheme.lightGrey,
+                                  color: tc.textSecondary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -386,10 +388,10 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                               const SizedBox(height: 12),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: DesignTokens.cardBackground,
+                                  color: tc.inputFill,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.1),
+                                    color: tc.border,
                                   ),
                                 ),
                                 child: TextField(
@@ -400,16 +402,16 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                   decoration: InputDecoration(
                                     hintText: 'Add details about client progress, concerns, or achievements...',
                                     hintStyle: TextStyle(
-                                      color: AppTheme.lightGrey.withValues(alpha: 0.7),
+                                      color: tc.textSecondary.withValues(alpha: 0.7),
                                     ),
                                     border: InputBorder.none,
                                     contentPadding: const EdgeInsets.all(16),
-                                    counterStyle: const TextStyle(
-                                      color: AppTheme.lightGrey,
+                                    counterStyle: TextStyle(
+                                      color: tc.textSecondary,
                                     ),
                                   ),
-                                  style: const TextStyle(
-                                    color: AppTheme.neutralWhite,
+                                  style: TextStyle(
+                                    color: tc.textPrimary,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -435,10 +437,10 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Cancel',
                                 style: TextStyle(
-                                  color: AppTheme.lightGrey,
+                                  color: tc.textSecondary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -456,7 +458,7 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                   : _saveNote,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.accentGreen,
-                                foregroundColor: AppTheme.neutralWhite,
+                                foregroundColor: tc.chipTextOnSelected,
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -464,12 +466,12 @@ class _AddCoachNoteBottomSheetState extends State<AddCoachNoteBottomSheet> {
                                 elevation: 0,
                               ),
                               child: _saving
-                                  ? const SizedBox(
+                                  ? SizedBox(
                                       width: 20,
                                       height: 20,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: AppTheme.neutralWhite,
+                                        color: tc.chipTextOnSelected,
                                       ),
                                     )
                                   : const Text(
@@ -527,10 +529,11 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
         minChildSize: 0.6,
         maxChildSize: 0.95,
         builder: (context, scrollController) {
+          final tc = ThemeColors.of(context);
           return Container(
-            decoration: const BoxDecoration(
-              color: AppTheme.primaryDark,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            decoration: BoxDecoration(
+              color: tc.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -545,27 +548,25 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: AppTheme.lightGrey.withValues(alpha: 0.3),
+                          color: tc.textSecondary.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     ),
 
                     // Header
-                    const Padding(
-                      padding: EdgeInsets.all(24),
+                    Padding(
+                      padding: const EdgeInsets.all(24),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.medical_services,
-                            color: AppTheme.accentGreen,
+                          const PillIcon(
                             size: 24,
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Text(
                             'Add Supplement',
                             style: TextStyle(
-                              color: AppTheme.neutralWhite,
+                              color: tc.textPrimary,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -575,31 +576,31 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                     ),
 
                     // Coming Soon Content
-                    const Expanded(
+                    Expanded(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.construction,
                               color: AppTheme.accentOrange,
                               size: 64,
                             ),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             Text(
                               'Coming Soon',
                               style: TextStyle(
-                                color: AppTheme.neutralWhite,
+                                color: tc.textPrimary,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Text(
                               'Supplement management is currently\nunder development.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppTheme.lightGrey,
+                                color: tc.textSecondary,
                                 fontSize: 16,
                               ),
                             ),
@@ -617,7 +618,7 @@ class _AddSupplementBottomSheetState extends State<AddSupplementBottomSheet> {
                           onPressed: () => Navigator.pop(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.accentGreen,
-                            foregroundColor: AppTheme.neutralWhite,
+                            foregroundColor: tc.chipTextOnSelected,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -665,10 +666,11 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
         minChildSize: 0.4,
         maxChildSize: 0.8,
         builder: (context, scrollController) {
+          final tc = ThemeColors.of(context);
           return Container(
-            decoration: const BoxDecoration(
-              color: AppTheme.primaryDark,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            decoration: BoxDecoration(
+              color: tc.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -683,27 +685,27 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: AppTheme.lightGrey.withValues(alpha: 0.3),
+                          color: tc.textSecondary.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     ),
 
                     // Header
-                    const Padding(
-                      padding: EdgeInsets.all(24),
+                    Padding(
+                      padding: const EdgeInsets.all(24),
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.upload_file,
                             color: AppTheme.accentGreen,
                             size: 24,
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Text(
                             'Import Program',
                             style: TextStyle(
-                              color: AppTheme.neutralWhite,
+                              color: tc.textPrimary,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -713,31 +715,31 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                     ),
 
                     // Available in existing implementation
-                    const Expanded(
+                    Expanded(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.check_circle,
                               color: AppTheme.accentGreen,
                               size: 64,
                             ),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             Text(
                               'Already Available',
                               style: TextStyle(
-                                color: AppTheme.neutralWhite,
+                                color: tc.textPrimary,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Text(
                               'Program import functionality is already\navailable in the existing implementation.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppTheme.lightGrey,
+                                color: tc.textSecondary,
                                 fontSize: 16,
                               ),
                             ),
@@ -755,7 +757,7 @@ class _ImportProgramBottomSheetState extends State<ImportProgramBottomSheet> {
                           onPressed: () => Navigator.pop(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.accentGreen,
-                            foregroundColor: AppTheme.neutralWhite,
+                            foregroundColor: tc.chipTextOnSelected,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),

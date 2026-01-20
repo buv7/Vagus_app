@@ -6,6 +6,7 @@ import '../../../../services/nutrition/food_catalog_service.dart';
 import '../../../../models/nutrition/food_item.dart';
 import '../../../../widgets/anim/vagus_loader.dart';
 import '../../../../widgets/anim/empty_state.dart';
+import '../../../../widgets/supplements/pill_icon.dart';
 import 'enhanced_food_card.dart';
 
 /// Favorites tab with starred foods and smart categorization
@@ -389,11 +390,13 @@ class _FavoritesTabState extends State<FavoritesTab>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: isSelected ? color : AppTheme.lightGrey,
-              size: 24,
-            ),
+            name == 'Supplements'
+                ? const PillIcon(size: 24)
+                : Icon(
+                    icon,
+                    color: isSelected ? color : AppTheme.lightGrey,
+                    size: 24,
+                  ),
             const SizedBox(height: 4),
             Text(
               name,

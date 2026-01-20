@@ -15,6 +15,7 @@ import '../../widgets/ai/ai_usage_meter.dart';
 import '../../widgets/anim/blocking_overlay.dart';
 import '../supplements/supplement_editor_sheet.dart';
 import '../../widgets/nutrition/animated/animated_glass_text_field.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 class NutritionPlanBuilder extends StatefulWidget {
   final String? clientId;
@@ -1214,7 +1215,7 @@ class _NutritionPlanBuilderState extends State<NutritionPlanBuilder>
       actions: [
         IconButton(
           tooltip: 'Add supplement',
-          icon: const Icon(Icons.local_pharmacy_outlined, color: DesignTokens.neutralWhite),
+          icon: const PillIcon(size: 24),
           onPressed: () async {
             if (!context.mounted) return;
             await Navigator.push(

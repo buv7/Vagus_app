@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
+import '../../../../widgets/supplements/pill_icon.dart';
 
 /// Delightful empty state widgets for various nutrition contexts
 class EmptyStateWidget extends StatelessWidget {
@@ -56,11 +57,13 @@ class EmptyStateWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(
-                      config.icon,
-                      size: 48,
-                      color: config.iconColor,
-                    ),
+                    child: type == EmptyStateType.noSupplements
+                        ? const PillIcon(size: 48)
+                        : Icon(
+                            config.icon,
+                            size: 48,
+                            color: config.iconColor,
+                          ),
                   ),
                 );
               },

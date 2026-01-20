@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/theme_index.dart';
+import '../../theme/theme_colors.dart';
 import '../../services/core/logger.dart';
 
 /// Dialog for requesting account deletion
@@ -80,23 +81,24 @@ class _AccountDeletionDialogState extends State<AccountDeletionDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeColors.of(context);
     return AlertDialog(
-      backgroundColor: DesignTokens.cardBackground,
+      backgroundColor: colors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusL),
       ),
-      title: const Row(
+      title: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.warning_amber_rounded,
             color: errorRed,
             size: 28,
           ),
-          SizedBox(width: spacing2),
+          const SizedBox(width: spacing2),
           Text(
             'Delete Account',
             style: TextStyle(
-              color: DesignTokens.neutralWhite,
+              color: colors.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -108,11 +110,11 @@ class _AccountDeletionDialogState extends State<AccountDeletionDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'This action will permanently delete your account and all associated data.',
               style: TextStyle(
                 fontSize: 14,
-                color: textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: spacing3),
@@ -128,12 +130,12 @@ class _AccountDeletionDialogState extends State<AccountDeletionDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'What will be deleted:',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: DesignTokens.neutralWhite,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: spacing2),
@@ -156,9 +158,9 @@ class _AccountDeletionDialogState extends State<AccountDeletionDialog> {
                         const SizedBox(width: spacing1),
                         Text(
                           item,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
-                            color: textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -174,20 +176,20 @@ class _AccountDeletionDialogState extends State<AccountDeletionDialog> {
                 color: mintAqua.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(radiusM),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.info_outline,
                     color: mintAqua,
                     size: 20,
                   ),
-                  SizedBox(width: spacing2),
+                  const SizedBox(width: spacing2),
                   Expanded(
                     child: Text(
                       'You have 72 hours to cancel this request before deletion is processed.',
                       style: TextStyle(
                         fontSize: 12,
-                        color: DesignTokens.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),
@@ -199,26 +201,26 @@ class _AccountDeletionDialogState extends State<AccountDeletionDialog> {
               controller: _reasonController,
               decoration: InputDecoration(
                 hintText: 'Reason for leaving (optional)',
-                hintStyle: const TextStyle(color: DesignTokens.textSecondary),
+                hintStyle: TextStyle(color: colors.textSecondary),
                 filled: true,
-                fillColor: DesignTokens.primaryDark,
+                fillColor: colors.inputFill,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(radiusM),
                   borderSide: BorderSide(color: primaryAccent.withValues(alpha: 0.3)),
                 ),
               ),
               maxLines: 3,
-              style: const TextStyle(color: DesignTokens.neutralWhite),
+              style: TextStyle(color: colors.textPrimary),
             ),
             const SizedBox(height: spacing3),
             CheckboxListTile(
               value: _confirmed,
               onChanged: (value) => setState(() => _confirmed = value ?? false),
-              title: const Text(
+              title: Text(
                 'I understand this action cannot be undone',
                 style: TextStyle(
                   fontSize: 14,
-                  color: textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
               controlAffinity: ListTileControlAffinity.leading,
@@ -231,25 +233,25 @@ class _AccountDeletionDialogState extends State<AccountDeletionDialog> {
       actions: [
         TextButton(
           onPressed: _loading ? null : () => Navigator.of(context).pop(false),
-          child: const Text(
+          child: Text(
             'Cancel',
-            style: TextStyle(color: DesignTokens.textSecondary),
+            style: TextStyle(color: colors.textSecondary),
           ),
         ),
         ElevatedButton(
           onPressed: (_loading || !_confirmed) ? null : _requestDeletion,
           style: ElevatedButton.styleFrom(
             backgroundColor: errorRed,
-            foregroundColor: DesignTokens.neutralWhite,
+            foregroundColor: colors.textPrimary,
             disabledBackgroundColor: steelGrey,
           ),
           child: _loading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(DesignTokens.neutralWhite),
+                    valueColor: AlwaysStoppedAnimation(colors.textPrimary),
                   ),
                 )
               : const Text('Delete My Account'),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../widgets/branding/vagus_appbar.dart';
@@ -8,6 +9,11 @@ import 'note_version_viewer.dart';
 import 'voice_recorder.dart';
 import '../../widgets/files/attach_to_note_button.dart';
 import '../../services/ai/embedding_helper.dart';
+import '../../services/ai/contextual_memory_service.dart';
+import '../../services/ai/knowledge_action_service.dart';
+import '../../services/config/feature_flags.dart';
+import '../../widgets/notes/knowledge_actions_panel.dart';
+import '../../widgets/common/save_icon.dart';
 
 class CoachNoteScreen extends StatefulWidget {
   final Map<String, dynamic>? existingNote;
@@ -30,6 +36,25 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
   Map<String, List<String>> _linkedPlanIds = {};
   bool _saving = false;
   int _currentVersion = 1;
+
+  // ✅ VAGUS ADD: contextual-memory-helper START
+  Future<List<Map<String, dynamic>>> _loadRelevantNotes() async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) return <Map<String, dynamic>>[];
+      final contextText = '${_titleController.text} ${_bodyController.text}';
+      if (contextText.trim().isEmpty) return <Map<String, dynamic>>[];
+      return await ContextualMemoryService.I.surfaceRelevantNotes(
+        userId: user.id,
+        contextKey: 'note_${widget.existingNote?['id'] ?? 'new'}',
+        contextText: contextText,
+        limit: 3,
+      );
+    } catch (_) {
+      return <Map<String, dynamic>>[];
+    }
+  }
+  // ✅ VAGUS ADD: contextual-memory-helper END
 
   @override
   void initState() {
@@ -103,6 +128,11 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
       // Asynchronously update embedding (don't block the save)
       _updateNoteEmbedding(noteId, '$title $body');
 
+      // ✅ VAGUS ADD: knowledge-action-extraction START
+      // Extract actions from note content (if feature enabled)
+      unawaited(_extractActionsFromNote(noteId, '$title $body'));
+      // ✅ VAGUS ADD: knowledge-action-extraction END
+
       setState(() => _saving = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -157,6 +187,30 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
       debugPrint('Failed to update note embedding: $e');
     });
   }
+
+  // ✅ VAGUS ADD: knowledge-action-extraction START
+  Future<void> _extractActionsFromNote(String noteId, String content) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) return;
+
+      final isEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.knowledgeActionAutomation);
+      if (!isEnabled) return;
+
+      final actions = await KnowledgeActionService.I.extractActionsFromNote(
+        userId: user.id,
+        noteId: noteId,
+        noteContent: content,
+      );
+
+      for (final action in actions) {
+        await KnowledgeActionService.I.createAction(action);
+      }
+    } catch (e) {
+      debugPrint('Failed to extract actions from note: $e');
+    }
+  }
+  // ✅ VAGUS ADD: knowledge-action-extraction END
 
   void _openVersionHistory() {
     // Note version viewer restored in Phase 2
@@ -221,7 +275,7 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
               ),
             ),
           IconButton(
-            icon: const Icon(Icons.save),
+            icon: SaveIcon(),
             onPressed: _saving ? null : _saveNote,
           )
         ],
@@ -300,6 +354,97 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
               noteController: _bodyController,
               clientId: widget.clientId,
             ),
+            const SizedBox(height: 12),
+            
+            // ✅ VAGUS ADD: contextual-memory START
+            FutureBuilder<bool>(
+              future: FeatureFlags.instance.isEnabled(FeatureFlags.knowledgeContextualMemory),
+              builder: (context, flagSnapshot) {
+                if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+                
+                return FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _loadRelevantNotes(),
+                  builder: (context, snapshot) {
+                    final results = snapshot.data ?? [];
+                    if (results.isEmpty) return const SizedBox.shrink();
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Icon(Icons.lightbulb, size: 20),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Related Notes',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            ...results.map((r) {
+                              final note = r['note'] as Map<String, dynamic>;
+                              final score = r['relevance_score'] as double;
+                              return ListTile(
+                                dense: true,
+                                leading: const Icon(Icons.note, size: 16),
+                                title: Text(
+                                  note['title']?.toString() ?? 'Untitled',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                subtitle: Text(
+                                  '${(score * 100).toStringAsFixed(0)}% match',
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                                onTap: () {
+                                  // TODO: Navigate to related note
+                                },
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            // ✅ VAGUS ADD: contextual-memory END
+            
+            const SizedBox(height: 12),
+            
+            // ✅ VAGUS ADD: knowledge-actions START
+            FutureBuilder<bool>(
+              future: FeatureFlags.instance.isEnabled(FeatureFlags.knowledgeActionAutomation),
+              builder: (context, flagSnapshot) {
+                if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+                if (widget.existingNote == null) return const SizedBox.shrink();
+                return FutureBuilder<List<dynamic>>(
+                  future: () async {
+                    try {
+                      final actions = await KnowledgeActionService.I.getActionsForNote(
+                        noteId: widget.existingNote!['id'],
+                      );
+                      return actions;
+                    } catch (_) {
+                      return [];
+                    }
+                  }(),
+                  builder: (context, snapshot) {
+                    final actions = snapshot.data ?? [];
+                    if (actions.isEmpty) return const SizedBox.shrink();
+                    return KnowledgeActionsPanel(
+                      noteId: widget.existingNote!['id'],
+                      actions: actions.cast(),
+                    );
+                  },
+                );
+              },
+            ),
+            // ✅ VAGUS ADD: knowledge-actions END
+            
             const SizedBox(height: 12),
             
             // Action buttons

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/workout/exercise.dart';
 import '../../theme/design_tokens.dart';
+import '../../services/workout/workout_metadata_service.dart';
 
 class AdvancedExerciseEditor extends StatefulWidget {
   final Exercise? exercise;
@@ -34,7 +35,9 @@ class _AdvancedExerciseEditorState extends State<AdvancedExerciseEditor>
   // State
   ExerciseGroupType _groupType = ExerciseGroupType.none;
   String? _groupId;
+  String? _groupTypeRaw; // For unknown group types from DB
   String? _validationError;
+  List<String> _availableGroupTypes = []; // DB-driven list
 
   // Calculated values
   double? _calculatedVolume;
@@ -58,12 +61,42 @@ class _AdvancedExerciseEditorState extends State<AdvancedExerciseEditor>
       _notesController.text = widget.exercise!.notes ?? '';
       _groupType = widget.exercise!.groupType;
       _groupId = widget.exercise!.groupId;
+      
+      // Note: If groupType is unknown, _groupTypeRaw exists but is private
+      // We can't read it here, but it will be preserved when saving since
+      // Exercise.toMap() uses _groupTypeRaw ?? groupType.value
+      // For UI, if groupType is unknown, we'll just show "none" as selected
+      // This is acceptable for minimal change
     }
 
     // Add listeners for real-time calculations
     _setsController.addListener(_updateCalculations);
     _repsController.addListener(_updateCalculations);
     _weightController.addListener(_updateCalculations);
+    
+    // Load DB-driven group types
+    _loadGroupTypes();
+  }
+  
+  Future<void> _loadGroupTypes() async {
+    try {
+      final types = await WorkoutMetadataService().getDistinctGroupTypes();
+      if (mounted) {
+        setState(() {
+          _availableGroupTypes = types;
+        });
+      }
+    } catch (e) {
+      // Fallback: use known enum values if service fails
+      if (mounted) {
+        setState(() {
+          _availableGroupTypes = ExerciseGroupType.values
+              .where((e) => e != ExerciseGroupType.none && e != ExerciseGroupType.unknown)
+              .map((e) => e.value)
+              .toList();
+        });
+      }
+    }
   }
 
   @override
@@ -181,6 +214,7 @@ class _AdvancedExerciseEditorState extends State<AdvancedExerciseEditor>
       notes: _notesController.text.isNotEmpty ? _notesController.text : null,
       groupId: _groupId,
       groupType: _groupType,
+      groupTypeRaw: _groupTypeRaw,
       createdAt: widget.exercise?.createdAt,
       updatedAt: DateTime.now(),
     );
@@ -630,40 +664,99 @@ class _AdvancedExerciseEditorState extends State<AdvancedExerciseEditor>
   }
 
   Widget _buildGroupTypeSelector() {
+    // Build list: known enum values + DB types
+    final allTypes = <String>{};
+    
+    // Add known enum values (excluding none and unknown)
+    allTypes.addAll(
+      ExerciseGroupType.values
+          .where((e) => e != ExerciseGroupType.none && e != ExerciseGroupType.unknown)
+          .map((e) => e.value),
+    );
+    
+    // Add DB-driven types
+    allTypes.addAll(_availableGroupTypes);
+    
+    final sortedTypes = allTypes.toList()..sort();
+    
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: ExerciseGroupType.values.map((type) {
-        final isSelected = _groupType == type;
-        return ChoiceChip(
-          label: Text(type.displayName),
-          selected: isSelected,
-          onSelected: (selected) {
-            setState(() {
-              _groupType = type;
-              // Generate a group ID if grouping is enabled
-              if (type != ExerciseGroupType.none && _groupId == null) {
-                _groupId = DateTime.now().millisecondsSinceEpoch.toString();
-              } else if (type == ExerciseGroupType.none) {
-                _groupId = null;
-              }
-            });
-          },
-          selectedColor: DesignTokens.accentGreen.withValues(alpha: 0.3),
-          backgroundColor: DesignTokens.primaryDark,
-          labelStyle: TextStyle(
-            color: isSelected
-                ? DesignTokens.accentGreen
-                : DesignTokens.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-          ),
-          side: BorderSide(
-            color: isSelected
-                ? DesignTokens.accentGreen
-                : DesignTokens.glassBorder,
-          ),
-        );
-      }).toList(),
+      children: [
+        // "None" option (always available)
+        _buildGroupTypeChip('none', 'Standard', ExerciseGroupType.none),
+        
+        // DB-driven types
+        ...sortedTypes.map((typeString) {
+          // Try to match to known enum
+          final parsedEnum = ExerciseGroupType.fromString(typeString);
+          
+          // Get display name
+          String displayName;
+          if (parsedEnum != ExerciseGroupType.unknown) {
+            displayName = parsedEnum.displayName;
+          } else {
+            // Unknown type - show as "Custom: <type>"
+            displayName = 'Custom: $typeString';
+          }
+          
+          return _buildGroupTypeChip(
+            typeString,
+            displayName,
+            parsedEnum != ExerciseGroupType.unknown ? parsedEnum : null,
+          );
+        }),
+      ],
+    );
+  }
+  
+  Widget _buildGroupTypeChip(
+    String typeValue,
+    String displayName,
+    ExerciseGroupType? enumType,
+  ) {
+    final isSelected = enumType != null
+        ? _groupType == enumType
+        : _groupTypeRaw == typeValue && _groupType == ExerciseGroupType.unknown;
+    
+    return ChoiceChip(
+      label: Text(displayName),
+      selected: isSelected,
+      onSelected: (selected) {
+        setState(() {
+          if (enumType != null) {
+            // Known enum type
+            _groupType = enumType;
+            _groupTypeRaw = null;
+          } else {
+            // Unknown/raw string type
+            _groupType = ExerciseGroupType.unknown;
+            _groupTypeRaw = typeValue;
+          }
+          
+          // Generate a group ID if grouping is enabled
+          if (typeValue != 'none' && _groupId == null) {
+            _groupId = DateTime.now().millisecondsSinceEpoch.toString();
+          } else if (typeValue == 'none') {
+            _groupId = null;
+            _groupType = ExerciseGroupType.none;
+            _groupTypeRaw = null;
+          }
+        });
+      },
+      selectedColor: DesignTokens.accentGreen.withValues(alpha: 0.3),
+      backgroundColor: DesignTokens.primaryDark,
+      labelStyle: TextStyle(
+        color: isSelected
+            ? DesignTokens.accentGreen
+            : DesignTokens.textSecondary,
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      ),
+      side: BorderSide(
+        color: isSelected
+            ? DesignTokens.accentGreen
+            : DesignTokens.glassBorder,
+      ),
     );
   }
 

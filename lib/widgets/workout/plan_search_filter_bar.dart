@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class PlanSearchFilterBar extends StatelessWidget {
   final String searchQuery;
@@ -14,6 +14,7 @@ class PlanSearchFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space20),
       child: Row(
@@ -22,25 +23,25 @@ class PlanSearchFilterBar extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.cardBackground,
+                color: tc.surface,
                 borderRadius: BorderRadius.circular(DesignTokens.radius12),
               ),
               child: TextField(
                 onChanged: onSearchChanged,
-                style: const TextStyle(color: AppTheme.neutralWhite),
+                style: TextStyle(color: tc.textPrimary),
                 decoration: InputDecoration(
                   hintText: 'Search plans...',
-                  hintStyle: const TextStyle(color: AppTheme.lightGrey),
-                  prefixIcon: const Icon(
+                  hintStyle: TextStyle(color: tc.textSecondary),
+                  prefixIcon: Icon(
                     Icons.search,
-                    color: AppTheme.lightGrey,
+                    color: tc.icon,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(DesignTokens.radius12),
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: AppTheme.cardBackground,
+                  fillColor: tc.inputFill,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: DesignTokens.space16,
                     vertical: DesignTokens.space12,
@@ -55,27 +56,27 @@ class PlanSearchFilterBar extends StatelessWidget {
           // Filter Button
           Container(
             decoration: BoxDecoration(
-              color: AppTheme.cardBackground,
+              color: tc.surface,
               borderRadius: BorderRadius.circular(DesignTokens.radius12),
             ),
             child: OutlinedButton.icon(
               onPressed: () {
                 // Handle filter
               },
-              icon: const Icon(
+              icon: Icon(
                 Icons.filter_list,
-                color: AppTheme.neutralWhite,
+                color: tc.icon,
                 size: 16,
               ),
-              label: const Text(
+              label: Text(
                 'Filter',
                 style: TextStyle(
-                  color: AppTheme.neutralWhite,
+                  color: tc.textPrimary,
                   fontSize: 14,
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppTheme.mediumGrey),
+                side: BorderSide(color: tc.border),
                 padding: const EdgeInsets.symmetric(
                   horizontal: DesignTokens.space16,
                   vertical: DesignTokens.space12,

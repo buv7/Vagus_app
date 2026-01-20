@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../models/nutrition/nutrition_plan.dart';
+import '../../../../models/nutrition/digestion_models.dart';
 import '../../../../services/nutrition/locale_helper.dart';
+import '../../../../services/config/feature_flags.dart';
+import '../../../../services/nutrition/chaos_control_service.dart';
+import '../../../../screens/nutrition/digestion_tracking_screen.dart';
 import '../../widgets/shared/nutrition_card.dart';
 import '../../widgets/shared/empty_state_widget.dart';
 import '../meal_detail/meal_detail_modal.dart';
@@ -368,6 +373,106 @@ class _ViewerViewState extends State<ViewerView>
             },
           );
         }),
+
+        // ✅ VAGUS ADD: digestion-tracking START
+        FutureBuilder<bool>(
+          future: () async {
+            try {
+              final flags = await Future.wait([
+                FeatureFlags.instance.isEnabled(FeatureFlags.nutritionDigestionTracking),
+                FeatureFlags.instance.isEnabled(FeatureFlags.nutritionBloatTracking),
+              ]);
+              return flags[0] || flags[1];
+            } catch (_) {
+              return false;
+            }
+          }(),
+          builder: (context, snapshot) {
+            if (!(snapshot.data ?? false)) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(top: DesignTokens.space16),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DigestionTrackingScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.health_and_safety),
+                label: const Text('Log Digestion & Bloat'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.accentOrange.withValues(alpha: 0.2),
+                  foregroundColor: AppTheme.accentOrange,
+                ),
+              ),
+            );
+          },
+        ),
+        // ✅ VAGUS ADD: digestion-tracking END
+
+        // ✅ VAGUS ADD: chaos-control START
+        FutureBuilder<bool>(
+          future: FeatureFlags.instance.isEnabled(FeatureFlags.nutritionChaosControl),
+          builder: (context, flagSnapshot) {
+            if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+            return FutureBuilder<Map<String, dynamic>?>(
+              future: () async {
+                try {
+                  final user = Supabase.instance.client.auth.currentUser;
+                  if (user == null) return {'mode': null};
+                  final activeMode = await ChaosControlService.I.getActiveMode(userId: user.id);
+                  return {
+                    'mode': activeMode?.mode,
+                    'location': activeMode?.location,
+                  };
+                } catch (_) {
+                  return {'mode': null};
+                }
+              }(),
+              builder: (context, modeSnapshot) {
+                final modeData = modeSnapshot.data;
+                final mode = modeData?['mode'] as ChaosMode?;
+                final location = modeData?['location'] as String?;
+                return Padding(
+                  padding: const EdgeInsets.only(top: DesignTokens.space16),
+                  child: Card(
+                    color: AppTheme.primaryDark.withValues(alpha: 0.5),
+                    child: ListTile(
+                      leading: Icon(
+                        mode == ChaosMode.travel
+                            ? Icons.flight
+                            : mode == ChaosMode.chaos
+                                ? Icons.warning
+                                : mode == ChaosMode.restDay
+                                    ? Icons.hotel
+                                    : Icons.check_circle,
+                        color: AppTheme.accentGreen,
+                      ),
+                      title: Text(
+                        mode != null
+                            ? 'Mode: ${mode.label}${location != null ? ' - $location' : ''}'
+                            : 'Normal Mode',
+                        style: const TextStyle(color: AppTheme.neutralWhite),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.tune, color: AppTheme.accentGreen),
+                        onPressed: () {
+                          // TODO: Open chaos control settings/mode selector
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Chaos control settings coming soon')),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+        // ✅ VAGUS ADD: chaos-control END
       ],
     );
   }

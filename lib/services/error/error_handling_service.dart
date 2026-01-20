@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 import '../../services/haptics.dart';
 
 /// Centralized error handling service with user-friendly messaging and recovery
@@ -105,25 +106,26 @@ class ErrorHandlingService {
     String? retryLabel,
     String? cancelLabel,
   }) async {
+    final colors = ThemeColors.of(context);
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.cardDark,
+        backgroundColor: colors.surface,
         title: Text(
           title ?? 'Something went wrong',
-          style: const TextStyle(color: AppTheme.neutralWhite),
+          style: TextStyle(color: colors.textPrimary),
         ),
         content: Text(
           message,
-          style: const TextStyle(color: AppTheme.lightGrey),
+          style: TextStyle(color: colors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(
               cancelLabel ?? 'Cancel',
-              style: const TextStyle(color: AppTheme.lightGrey),
+              style: TextStyle(color: colors.textSecondary),
             ),
           ),
           ElevatedButton(
@@ -353,24 +355,25 @@ class ErrorHandlingService {
     AppError error, {
     VoidCallback? onRetry,
   }) async {
+    final colors = ThemeColors.of(context);
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.cardDark,
-        title: const Row(
+        backgroundColor: colors.surface,
+        title: Row(
           children: [
-            Icon(Icons.wifi_off, color: Colors.red),
-            SizedBox(width: 12),
+            const Icon(Icons.wifi_off, color: Colors.red),
+            const SizedBox(width: 12),
             Text(
               'Connection Problem',
-              style: TextStyle(color: AppTheme.neutralWhite),
+              style: TextStyle(color: colors.textPrimary),
             ),
           ],
         ),
         content: Text(
           error.userMessage,
-          style: const TextStyle(color: AppTheme.lightGrey),
+          style: TextStyle(color: colors.textSecondary),
         ),
         actions: [
           if (onRetry != null)
@@ -379,7 +382,10 @@ class ErrorHandlingService {
                 Navigator.of(context).pop();
                 onRetry();
               },
-              child: const Text('Retry'),
+              child: Text(
+                'Retry',
+                style: TextStyle(color: colors.textSecondary),
+              ),
             ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),

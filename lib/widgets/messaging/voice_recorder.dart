@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import '../anim/mic_ripple.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 
 class VoiceRecorder extends StatefulWidget {
   final Function(File audioFile) onVoiceRecorded;
@@ -22,12 +23,13 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -47,9 +49,13 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-          const Text(
+          Text(
             'Voice Message',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: tc.textPrimary,
+            ),
           ),
           const SizedBox(height: 16),
           Row(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class PerformanceAnalyticsCard extends StatelessWidget {
   final Map<String, dynamic> analytics;
@@ -15,12 +15,13 @@ class PerformanceAnalyticsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -43,11 +44,11 @@ class PerformanceAnalyticsCard extends StatelessWidget {
           // Header
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Performance Analytics',
                   style: TextStyle(
-                    color: DesignTokens.neutralWhite,
+                    color: tc.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -70,10 +71,10 @@ class PerformanceAnalyticsCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Text(
+                child: Text(
                   'Pro Insights',
                   style: TextStyle(
-                    color: AppTheme.primaryDark,
+                    color: tc.textPrimary,
                     fontSize: 9,
                     fontWeight: FontWeight.w600,
                   ),
@@ -86,14 +87,14 @@ class PerformanceAnalyticsCard extends StatelessWidget {
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: DesignTokens.cardBackground,
+                  color: tc.surface,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
-                  border: Border.all(color: DesignTokens.glassBorder),
+                  border: Border.all(color: tc.border),
                 ),
-                child: const Text(
+                child: Text(
                   'Last 7 days',
                   style: TextStyle(
-                    color: DesignTokens.neutralWhite,
+                    color: tc.textPrimary,
                     fontSize: 10,
                   ),
                 ),
@@ -113,36 +114,42 @@ class PerformanceAnalyticsCard extends StatelessWidget {
             childAspectRatio: 2.2, // 2 COLUMNS - LARGER ICONS & VALUES!
             children: [
               _buildSimpleMetricCard(
+                context: context,
                 icon: Icons.people_outline,
                 value: '${analytics['activeClients']}',
                 change: '+${analytics['activeClientsChange']}%',
                 isPositive: true,
               ),
               _buildSimpleMetricCard(
+                context: context,
                 icon: Icons.calendar_today_outlined,
                 value: '${analytics['sessionsCompleted']}',
                 change: '+${analytics['sessionsChange']}%',
                 isPositive: true,
               ),
               _buildSimpleMetricCard(
+                context: context,
                 icon: Icons.chat_bubble_outline,
                 value: analytics['avgResponseTime'],
                 change: '${analytics['responseTimeChange']}h',
                 isPositive: false,
               ),
               _buildSimpleMetricCard(
+                context: context,
                 icon: Icons.star_outline,
                 value: '${analytics['clientSatisfaction']}',
                 change: '+${analytics['satisfactionChange']}',
                 isPositive: true,
               ),
               _buildSimpleMetricCard(
+                context: context,
                 icon: Icons.attach_money_outlined,
                 value: '\$${analytics['revenue']}',
                 change: '+${analytics['revenueChange']}%',
                 isPositive: true,
               ),
               _buildSimpleMetricCard(
+                context: context,
                 icon: Icons.trending_up_outlined,
                 value: '${analytics['planCompliance']}%',
                 change: '+${analytics['complianceChange']}%',
@@ -159,17 +166,19 @@ class PerformanceAnalyticsCard extends StatelessWidget {
   }
 
   Widget _buildSimpleMetricCard({
+    required BuildContext context,
     required IconData icon,
     required String value,
     required String change,
     required bool isPositive,
   }) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -199,8 +208,8 @@ class PerformanceAnalyticsCard extends StatelessWidget {
           // Value in the center
           Text(
             value,
-            style: const TextStyle(
-              color: DesignTokens.neutralWhite,
+            style: TextStyle(
+              color: tc.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),

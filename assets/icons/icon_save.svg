@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Blue circle background - will be colored via ColorFilter -->
+  <circle cx="512" cy="512" r="480" fill="#0080FF" id="circle"/>
+  <!-- Black checkmark - will be colored separately -->
+  <path d="M320 512 L448 640 L704 384" 
+        fill="none" 
+        stroke="#000000" 
+        stroke-width="120" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        id="checkmark"/>
+</svg>

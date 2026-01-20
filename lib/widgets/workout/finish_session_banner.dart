@@ -2,6 +2,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
+import '../../widgets/common/save_icon.dart';
 
 class FinishSessionBanner extends StatelessWidget {
   final String exerciseName;
@@ -132,7 +133,7 @@ class FinishSessionBanner extends StatelessWidget {
               const SizedBox(width: 8),
               FilledButton.tonalIcon(
                 onPressed: onSaveDraft,
-                icon: const Icon(Icons.save_rounded),
+                icon: SaveIcon(),
                 label: const Text('Save draft'),
               ),
               const Spacer(),

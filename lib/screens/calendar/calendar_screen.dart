@@ -7,6 +7,7 @@ import '../../theme/design_tokens.dart';
 import '../../services/supplements/supplement_service.dart';
 import '../../models/supplements/supplement_models.dart';
 import '../../widgets/branding/vagus_appbar.dart';
+import '../../widgets/supplements/pill_icon.dart';
 import 'event_editor.dart';
 import 'dart:async';
 
@@ -272,7 +273,7 @@ class _CalendarScreenState extends State<CalendarScreen> with TickerProviderStat
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.medication, color: Colors.blue),
+              leading: const PillIcon(size: 24),
               title: Text(event.title),
               subtitle: const Text('Supplement reminder'),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'vagus_logo.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 
 class VagusAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
@@ -30,6 +31,7 @@ class VagusAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         bottomLeft: Radius.circular(DesignTokens.radius24),
@@ -39,13 +41,13 @@ class VagusAppBar extends StatelessWidget implements PreferredSizeWidget {
         filter: ImageFilter.blur(sigmaX: DesignTokens.blurSm, sigmaY: DesignTokens.blurSm),
         child: Container(
           decoration: BoxDecoration(
-            color: backgroundColor ?? DesignTokens.cardBackground,
+            color: backgroundColor ?? tc.surface,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(DesignTokens.radius24),
               bottomRight: Radius.circular(DesignTokens.radius24),
             ),
-            border: const Border(
-              bottom: BorderSide(color: DesignTokens.glassBorder, width: 1),
+            border: Border(
+              bottom: BorderSide(color: tc.border, width: 1),
             ),
             boxShadow: [
               BoxShadow(
@@ -58,14 +60,14 @@ class VagusAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: AppBar(
             elevation: 0,
             backgroundColor: Colors.transparent,
-            foregroundColor: foregroundColor ?? DesignTokens.neutralWhite,
+            foregroundColor: foregroundColor ?? tc.icon,
             centerTitle: centerTitle ?? true,
             leading: leading,
             actions: actions,
             bottom: bottom,
-            title: title ?? const VagusLogo(size: 28, white: true),
-            titleTextStyle: const TextStyle(
-              color: DesignTokens.neutralWhite,
+            title: title ?? VagusLogo(size: 28, white: tc.isDark),
+            titleTextStyle: TextStyle(
+              color: tc.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),

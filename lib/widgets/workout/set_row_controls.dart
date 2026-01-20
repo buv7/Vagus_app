@@ -25,6 +25,7 @@ class SetRowControls extends StatefulWidget {
   final VoidCallback? onApplyTarget;          // optional: prefill fields from target
   final bool dense;                           // compact spacing (default true)
   final Function(Map<String, dynamic> extras)? onSetTypeChanged; // optional: callback when set type changes
+  final LocalSetLog? initialExtras;           // Phase 4.6A: Auto-configured extras (for last set)
 
   const SetRowControls({
     super.key,
@@ -38,6 +39,7 @@ class SetRowControls extends StatefulWidget {
     this.onApplyTarget,
     this.dense = true,
     this.onSetTypeChanged,
+    this.initialExtras, // Phase 4.6A
   });
 
   @override
@@ -71,6 +73,12 @@ class _SetRowControlsState extends State<SetRowControls> {
     );
     _rir = widget.initialRir;
     _prefsService = UserPrefsService.instance;
+    
+    // Phase 4.6A: Initialize from auto-config if provided (non-destructive: only if _setExtras is null)
+    if (widget.initialExtras != null && _setExtras == null) {
+      _setExtras = widget.initialExtras;
+    }
+    
     _initializePrefs();
   }
 
@@ -324,7 +332,7 @@ class _SetRowControlsState extends State<SetRowControls> {
       builder: (context) => SetTypeSheet(
         currentWeight: double.tryParse(_wCtr.text.trim()),
         unitLabel: widget.unitLabel,
-        existingExtras: _setExtras,
+        existingExtras: _setExtras ?? widget.initialExtras, // Phase 4.6A: Use auto-config if no manual config
         onApply: (extras) {
           setState(() => _setExtras = extras);
           // Notify parent of set type change for sticky preferences

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 import '../../widgets/messaging/messaging_header.dart';
 import '../../widgets/messaging/message_list_view.dart';
 import '../../widgets/messaging/smart_replies_panel.dart';
@@ -159,15 +160,16 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
   }
 
   void _onMoreOptions() {
+    final colors = ThemeColors.of(context);
     // Show more options
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(DesignTokens.space20),
-        decoration: const BoxDecoration(
-          color: AppTheme.cardBackground,
-          borderRadius: BorderRadius.vertical(
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(DesignTokens.radius16),
           ),
         ),
@@ -175,24 +177,24 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.person_outline, color: AppTheme.neutralWhite),
-              title: const Text('View Client Profile', style: TextStyle(color: AppTheme.neutralWhite)),
+              leading: Icon(Icons.person_outline, color: colors.icon),
+              title: Text('View Client Profile', style: TextStyle(color: colors.textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 // Navigate to client profile
               },
             ),
             ListTile(
-              leading: const Icon(Icons.push_pin_outlined, color: AppTheme.neutralWhite),
-              title: const Text('Pinned Messages', style: TextStyle(color: AppTheme.neutralWhite)),
+              leading: Icon(Icons.push_pin_outlined, color: colors.icon),
+              title: Text('Pinned Messages', style: TextStyle(color: colors.textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 // Navigate to pinned messages
               },
             ),
             ListTile(
-              leading: const Icon(Icons.download_outlined, color: AppTheme.neutralWhite),
-              title: const Text('Export Conversation', style: TextStyle(color: AppTheme.neutralWhite)),
+              leading: Icon(Icons.download_outlined, color: colors.icon),
+              title: Text('Export Conversation', style: TextStyle(color: colors.textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 // Export conversation
@@ -200,15 +202,15 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
             ),
             ListTile(
               leading: const Icon(Icons.upload_outlined, color: AppTheme.accentGreen),
-              title: const Text('Import Program', style: TextStyle(color: AppTheme.neutralWhite)),
+              title: Text('Import Program', style: TextStyle(color: colors.textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 _showImportProgramSheet();
               },
             ),
             ListTile(
-              leading: const Icon(Icons.archive_outlined, color: AppTheme.neutralWhite),
-              title: const Text('Archive Chat', style: TextStyle(color: AppTheme.neutralWhite)),
+              leading: Icon(Icons.archive_outlined, color: colors.icon),
+              title: Text('Archive Chat', style: TextStyle(color: colors.textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 // Archive chat
@@ -251,35 +253,40 @@ class _ModernCoachMessengerScreenState extends State<ModernCoachMessengerScreen>
             
             // Search Bar (if shown)
             if (_showSearch)
-              Container(
-                padding: const EdgeInsets.all(DesignTokens.space16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.cardBackground,
-                    borderRadius: BorderRadius.circular(DesignTokens.radius12),
-                  ),
-                  child: TextField(
-                    style: const TextStyle(color: AppTheme.neutralWhite),
-                    decoration: InputDecoration(
-                      hintText: 'Search in conversation...',
-                      hintStyle: const TextStyle(color: AppTheme.lightGrey),
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: AppTheme.lightGrey,
-                      ),
-                      border: OutlineInputBorder(
+              Builder(
+                builder: (context) {
+                  final colors = ThemeColors.of(context);
+                  return Container(
+                    padding: const EdgeInsets.all(DesignTokens.space16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(DesignTokens.radius12),
-                        borderSide: BorderSide.none,
                       ),
-                      filled: true,
-                      fillColor: AppTheme.cardBackground,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: DesignTokens.space16,
-                        vertical: DesignTokens.space12,
+                      child: TextField(
+                        style: TextStyle(color: colors.textPrimary),
+                        decoration: InputDecoration(
+                          hintText: 'Search in conversation...',
+                          hintStyle: TextStyle(color: colors.textSecondary),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: colors.icon,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: colors.inputFill,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: DesignTokens.space16,
+                            vertical: DesignTokens.space12,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             
             // Messages

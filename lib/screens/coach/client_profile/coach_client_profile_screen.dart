@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/supplements/supplement_service.dart';
 import '../../../models/supplements/supplement_models.dart';
 import '../../../theme/design_tokens.dart';
+import '../../../widgets/supplements/pill_icon.dart';
 import '../../supplements/supplement_editor_sheet.dart';
 import '../../supplements/supplement_occurrence_preview.dart';
 
@@ -330,10 +331,8 @@ class _CoachClientProfileScreenState extends State<CoachClientProfileScreen> {
               padding: const EdgeInsets.all(DesignTokens.space32),
               child: Column(
                 children: [
-                  const Icon(
-                    Icons.medication_outlined,
+                  const PillIcon(
                     size: 64,
-                    color: DesignTokens.ink500,
                   ),
                   const SizedBox(height: DesignTokens.space16),
                                      Text(

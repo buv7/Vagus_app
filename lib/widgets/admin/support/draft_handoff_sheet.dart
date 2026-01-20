@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../services/admin/admin_support_service.dart';
 import '../../../theme/design_tokens.dart';
+import '../../../widgets/common/save_icon.dart';
 
 class DraftHandoffSheet extends StatefulWidget {
   final String ticketId;
@@ -118,7 +119,7 @@ class _DraftHandoffSheetState extends State<DraftHandoffSheet> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    icon: const Icon(Icons.save_outlined),
+                    icon: SaveIcon(),
                     label: const Text('Save draft'),
                     onPressed: _saving ? null : _saveDraftNow,
                   ),
