@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:video_player/video_player.dart';
 import '../../theme/theme_index.dart';
+import '../../theme/theme_colors.dart';
 
 /// Preview attachment in message (image/video/file)
 class AttachmentPreview extends StatefulWidget {
@@ -60,13 +61,14 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return GestureDetector(
       onTap: widget.onTap ?? () => _showFullScreen(context),
       child: Container(
         width: widget.width ?? 200,
         height: widget.height ?? 150,
         decoration: BoxDecoration(
-          color: DesignTokens.cardBackground,
+          color: tc.surface,
           borderRadius: BorderRadius.circular(radiusM),
           border: Border.all(
             color: primaryAccent.withValues(alpha: 0.2),
@@ -100,10 +102,15 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.3),
               ),
-                child: const Icon(
-                  Icons.play_circle_outline,
-                  size: 48,
-                  color: DesignTokens.neutralWhite,
+                child: Builder(
+                  builder: (context) {
+                    final tc = ThemeColors.of(context);
+                    return Icon(
+                      Icons.play_circle_outline,
+                      size: 48,
+                      color: tc.textPrimary,
+                    );
+                  },
                 ),
               ),
             ],
@@ -122,33 +129,38 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
   }
 
   Widget _buildFilePreview() {
-    final extension = widget.fileName?.split('.').last.toUpperCase() ?? 'FILE';
-    
-    return Container(
-      color: DesignTokens.primaryDark,
-      padding: const EdgeInsets.all(spacing3),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            _getFileIcon(extension),
-            size: 48,
-            color: mintAqua,
+    return Builder(
+      builder: (context) {
+        final tc = ThemeColors.of(context);
+        final extension = widget.fileName?.split('.').last.toUpperCase() ?? 'FILE';
+        
+        return Container(
+          color: tc.surfaceAlt,
+          padding: const EdgeInsets.all(spacing3),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                _getFileIcon(extension),
+                size: 48,
+                color: mintAqua,
+              ),
+              const SizedBox(height: spacing2),
+              Text(
+                widget.fileName ?? 'File',
+                style: TextStyle(
+                  color: tc.textPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          const SizedBox(height: spacing2),
-          Text(
-            widget.fileName ?? 'File',
-            style: const TextStyle(
-              color: DesignTokens.neutralWhite,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -171,15 +183,20 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
   }
 
   Widget _buildErrorWidget() {
-    return Container(
-      color: DesignTokens.primaryDark,
-      child: const Center(
-        child: Icon(
-          Icons.broken_image,
-          size: 48,
-          color: steelGrey,
-        ),
-      ),
+    return Builder(
+      builder: (context) {
+        final tc = ThemeColors.of(context);
+        return Container(
+          color: tc.surfaceAlt,
+          child: Center(
+            child: Icon(
+              Icons.broken_image,
+              size: 48,
+              color: tc.textSecondary,
+            ),
+          ),
+        );
+      },
     );
   }
 

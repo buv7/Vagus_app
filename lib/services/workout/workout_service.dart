@@ -59,6 +59,19 @@ class WorkoutService {
 
       final planId = planResponse['id'].toString();
 
+      // Clean up any existing weeks (in case RPC created them or plan was partially created)
+      await _supabase
+          .from('workout_plan_weeks')
+          .delete()
+          .eq('plan_id', planId);
+
+      // Validate no duplicate week numbers
+      final weekNumbers = plan.weeks.map((w) => w.weekNumber).toList();
+      final uniqueWeekNumbers = weekNumbers.toSet();
+      if (weekNumbers.length != uniqueWeekNumbers.length) {
+        throw Exception('Duplicate week numbers found in plan.weeks');
+      }
+
       // Insert weeks, days, and exercises
       for (final week in plan.weeks) {
         final weekResponse = await _supabase
@@ -538,6 +551,27 @@ class WorkoutService {
       throw Exception('Failed to record exercise completion: $e');
     }
   }
+
+  // ✅ VAGUS ADD: transformation-mode-support START
+  // NOTE: When creating a workout session (inserting into workout_sessions table),
+  // add transformation_mode to the insert payload:
+  // payload['transformation_mode'] = (mode ?? 'default');
+  // 
+  // Example usage:
+  // Future<String> createSession({
+  //   required String planId,
+  //   required String dayId,
+  //   String? mode, // Add this parameter
+  // }) async {
+  //   final payload = {
+  //     'plan_id': planId,
+  //     'day_id': dayId,
+  //     'transformation_mode': (mode ?? 'default'), // Add this line
+  //     // ... other fields
+  //   };
+  //   await _supabase.from('workout_sessions').insert(payload);
+  // }
+  // ✅ VAGUS ADD: transformation-mode-support END
 
   /// Fetch exercise history for a specific client and exercise
   Future<List<ExerciseHistoryEntry>> fetchExerciseHistory(

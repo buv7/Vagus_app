@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/workout/cardio_session.dart';
+import '../../models/workout/enhanced_exercise.dart';
 import '../../theme/design_tokens.dart';
 
 class CardioEditorDialog extends StatefulWidget {
@@ -24,6 +25,7 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
   // State
   CardioMachineType _selectedMachine = CardioMachineType.treadmill;
   CardioType _cardioType = CardioType.liss;
+  String? _customCardioType; // Store custom cardio type string when enum is unknown
   String? _validationError;
 
   // Machine-specific controllers
@@ -58,7 +60,15 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
 
       // Load cardio type from settings
       final typeStr = widget.cardioSession!.settings['cardio_type'] as String?;
-      _cardioType = _parseCardioType(typeStr);
+      final parsed = CardioType.fromString(typeStr);
+      if (parsed == CardioType.unknown && typeStr != null) {
+        // Custom/unknown value - preserve raw string
+        _cardioType = CardioType.unknown;
+        _customCardioType = typeStr;
+      } else {
+        _cardioType = parsed;
+        _customCardioType = null;
+      }
 
       _intensityLevel = widget.cardioSession!.settings['intensity'] as String? ?? 'Medium';
       _targetHRController.text = widget.cardioSession!.settings['target_hr']?.toString() ?? '';
@@ -100,20 +110,6 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
     }
   }
 
-  CardioType _parseCardioType(String? typeStr) {
-    switch (typeStr?.toLowerCase()) {
-      case 'miss':
-        return CardioType.miss;
-      case 'hiit':
-        return CardioType.hiit;
-      case 'intervals':
-        return CardioType.intervals;
-      case 'sprints':
-        return CardioType.sprints;
-      default:
-        return CardioType.liss;
-    }
-  }
 
   @override
   void dispose() {
@@ -208,8 +204,8 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
         break;
     }
 
-    // Add cardio type and general settings
-    machineSettings['cardio_type'] = _cardioType.value;
+    // Add cardio type and general settings (preserve custom string if present)
+    machineSettings['cardio_type'] = _customCardioType ?? _cardioType.value;
     machineSettings['intensity'] = _intensityLevel;
 
     if (_targetHRController.text.isNotEmpty) {
@@ -217,7 +213,11 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
     }
 
     // Add interval settings if applicable
-    if (_cardioType == CardioType.hiit || _cardioType == CardioType.intervals) {
+    final cardioTypeValue = _customCardioType ?? _cardioType.value;
+    if (_cardioType == CardioType.hiit || 
+        _cardioType == CardioType.sprintIntervals ||
+        cardioTypeValue.toLowerCase().contains('hiit') ||
+        cardioTypeValue.toLowerCase().contains('interval')) {
       if (_workIntervalController.text.isNotEmpty) {
         machineSettings['work_interval'] = int.tryParse(_workIntervalController.text);
       }
@@ -283,7 +283,10 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
                     const SizedBox(height: 20),
                     _buildMachineSpecificSettings(),
                     if (_cardioType == CardioType.hiit ||
-                        _cardioType == CardioType.intervals) ...[
+                        _cardioType == CardioType.sprintIntervals ||
+                        (_customCardioType != null && (
+                          _customCardioType!.toLowerCase().contains('hiit') ||
+                          _customCardioType!.toLowerCase().contains('interval')))) ...[
                       const SizedBox(height: 20),
                       _buildIntervalSettings(),
                     ],
@@ -368,29 +371,71 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: CardioType.values.map((type) {
-            final isSelected = _cardioType == type;
-            return ChoiceChip(
-              label: Text(type.displayName),
-              selected: isSelected,
+          children: [
+            // Known enum values (excluding unknown)
+            ...CardioType.values.where((type) => type != CardioType.unknown).map((type) {
+              final isSelected = _cardioType == type && _customCardioType == null;
+              return ChoiceChip(
+                label: Text(type.displayName),
+                selected: isSelected,
+                onSelected: (selected) {
+                  setState(() {
+                    _cardioType = type;
+                    _customCardioType = null;
+                  });
+                },
+                selectedColor: DesignTokens.accentOrange.withValues(alpha: 0.3),
+                backgroundColor: DesignTokens.primaryDark,
+                labelStyle: TextStyle(
+                  color: isSelected
+                      ? DesignTokens.accentOrange
+                      : DesignTokens.textSecondary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                side: BorderSide(
+                  color: isSelected
+                      ? DesignTokens.accentOrange
+                      : DesignTokens.glassBorder,
+                ),
+              );
+            }),
+            // Custom value chip (if exists)
+            if (_customCardioType != null)
+              ChoiceChip(
+                label: Text('Custom: $_customCardioType'),
+                selected: true,
+                onSelected: (selected) {
+                  // Keep selected, allow editing via custom dialog
+                  _showCustomCardioTypeDialog();
+                },
+                selectedColor: DesignTokens.accentOrange.withValues(alpha: 0.3),
+                backgroundColor: DesignTokens.primaryDark,
+                labelStyle: const TextStyle(
+                  color: DesignTokens.accentOrange,
+                  fontWeight: FontWeight.w600,
+                ),
+                side: const BorderSide(
+                  color: DesignTokens.accentOrange,
+                ),
+              ),
+            // "Add Custom" chip
+            ChoiceChip(
+              label: const Text('Custom...'),
+              selected: false,
               onSelected: (selected) {
-                setState(() => _cardioType = type);
+                _showCustomCardioTypeDialog();
               },
               selectedColor: DesignTokens.accentOrange.withValues(alpha: 0.3),
               backgroundColor: DesignTokens.primaryDark,
-              labelStyle: TextStyle(
-                color: isSelected
-                    ? DesignTokens.accentOrange
-                    : DesignTokens.textSecondary,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              labelStyle: const TextStyle(
+                color: DesignTokens.textSecondary,
+                fontWeight: FontWeight.normal,
               ),
-              side: BorderSide(
-                color: isSelected
-                    ? DesignTokens.accentOrange
-                    : DesignTokens.glassBorder,
+              side: const BorderSide(
+                color: DesignTokens.glassBorder,
               ),
-            );
-          }).toList(),
+            ),
+          ],
         ),
       ],
     );
@@ -933,31 +978,63 @@ class _CardioEditorDialogState extends State<CardioEditorDialog> {
       ],
     );
   }
-}
 
-// Cardio Type Enum
-enum CardioType {
-  liss('liss'),
-  miss('miss'),
-  hiit('hiit'),
-  intervals('intervals'),
-  sprints('sprints');
-
-  final String value;
-  const CardioType(this.value);
-
-  String get displayName {
-    switch (this) {
-      case CardioType.liss:
-        return 'LISS';
-      case CardioType.miss:
-        return 'MISS';
-      case CardioType.hiit:
-        return 'HIIT';
-      case CardioType.intervals:
-        return 'Intervals';
-      case CardioType.sprints:
-        return 'Sprints';
-    }
+  void _showCustomCardioTypeDialog() {
+    final controller = TextEditingController(text: _customCardioType ?? '');
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: DesignTokens.cardBackground,
+        title: const Text(
+          'Custom Cardio Type',
+          style: TextStyle(color: DesignTokens.neutralWhite),
+        ),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: const TextStyle(color: DesignTokens.neutralWhite),
+          decoration: InputDecoration(
+            labelText: 'Enter custom cardio type',
+            labelStyle: const TextStyle(color: DesignTokens.textSecondary),
+            hintText: 'e.g., myo_cardio, blood_flow_restriction',
+            hintStyle: const TextStyle(color: DesignTokens.textSecondary),
+            filled: true,
+            fillColor: DesignTokens.primaryDark,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: DesignTokens.glassBorder),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: DesignTokens.glassBorder),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: DesignTokens.accentOrange),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final value = controller.text.trim().toLowerCase();
+              if (value.isNotEmpty) {
+                setState(() {
+                  _customCardioType = value;
+                  _cardioType = CardioType.unknown; // Mark as unknown to use custom
+                });
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 }

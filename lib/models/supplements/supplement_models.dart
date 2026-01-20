@@ -59,6 +59,8 @@ class Supplement {
 
   /// Create supplement from database map
   factory Supplement.fromMap(Map<String, dynamic> map) {
+    // Handle both owner_id (new schema) and created_by (old schema)
+    final createdByValue = map['owner_id'] as String? ?? map['created_by'] as String;
     return Supplement(
       id: map['id'] as String,
       name: map['name'] as String,
@@ -68,7 +70,7 @@ class Supplement {
       color: map['color'] as String? ?? '#6C83F7',
       icon: map['icon'] as String? ?? 'medication',
       isActive: map['is_active'] as bool? ?? true,
-      createdBy: map['created_by'] as String,
+      createdBy: createdByValue,
       clientId: map['client_id'] as String?,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
@@ -86,7 +88,8 @@ class Supplement {
       'color': color,
       'icon': icon,
       'is_active': isActive,
-      'created_by': createdBy,
+      'owner_id': createdBy, // Map created_by to owner_id for RLS compatibility
+      'created_by': createdBy, // Keep for backward compatibility if column exists
       'client_id': clientId,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -257,6 +260,8 @@ class SupplementSchedule {
       daysOfWeek = daysList.map((day) => day as int).toList();
     }
 
+    // Handle both owner_id (new schema) and created_by (old schema)
+    final createdByValue = map['owner_id'] as String? ?? map['created_by'] as String;
     return SupplementSchedule(
       id: map['id'] as String,
       supplementId: map['supplement_id'] as String,
@@ -271,7 +276,7 @@ class SupplementSchedule {
           ? DateTime.parse(map['end_date'] as String)
           : null,
       isActive: map['is_active'] as bool? ?? true,
-      createdBy: map['created_by'] as String,
+      createdBy: createdByValue,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );
@@ -299,7 +304,8 @@ class SupplementSchedule {
       'start_date': startDate.toIso8601String().split('T')[0], // Date only
       'end_date': endDate?.toIso8601String().split('T')[0],
       'is_active': isActive,
-      'created_by': createdBy,
+      'owner_id': createdBy, // Map created_by to owner_id for RLS compatibility
+      'created_by': createdBy, // Keep for backward compatibility if column exists
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

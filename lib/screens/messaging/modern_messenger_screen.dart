@@ -957,7 +957,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             CircleAvatar(
               radius: 16,
               backgroundColor: Theme.of(context).colorScheme.surface,
-              child: Text(
+              child: const Text(
                 'A',
                 style: TextStyle(
                   color: Colors.white,

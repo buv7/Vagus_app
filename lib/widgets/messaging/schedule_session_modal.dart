@@ -212,19 +212,7 @@ class _ScheduleSessionModalState extends State<ScheduleSessionModal> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppTheme.accentGreen,
-              onPrimary: AppTheme.primaryDark,
-              surface: AppTheme.cardBackground,
-              onSurface: AppTheme.neutralWhite,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      // Use current app theme instead of forcing dark
     );
     
     if (date != null) {
@@ -236,19 +224,7 @@ class _ScheduleSessionModalState extends State<ScheduleSessionModal> {
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppTheme.accentGreen,
-              onPrimary: AppTheme.primaryDark,
-              surface: AppTheme.cardBackground,
-              onSurface: AppTheme.neutralWhite,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      // Use current app theme instead of forcing dark
     );
     
     if (time != null) {

@@ -21,6 +21,7 @@ import '../../theme/design_tokens.dart';
 import '../../widgets/workout/exercise_picker_dialog.dart';
 import '../../widgets/workout/advanced_exercise_editor.dart';
 import '../../widgets/workout/cardio_editor_dialog.dart';
+import '../../widgets/common/save_icon.dart';
 
 // Screens
 import 'weekly_volume_detail_screen.dart';
@@ -846,7 +847,7 @@ class _RevolutionaryPlanBuilderScreenState
                     // Primary Action: Save Button
                     IconButton(
                       onPressed: _saveManually,
-                      icon: const Icon(Icons.save),
+                      icon: SaveIcon(),
                       color: DesignTokens.accentGreen,
                       tooltip: 'Save',
                       iconSize: 24,
@@ -2545,7 +2546,7 @@ class _RevolutionaryPlanBuilderScreenState
       'muscleGroupVolumes': muscleGroupVolumes, // Enhanced: volume per muscle group
       'dailyVolumes': dailyVolumes,
       'dailyDetails': dailyDetails, // Enhanced: detailed daily breakdown
-      'avgSessionDuration': activeDays > 0 ? totalMinutes / activeDays : 0,
+      'avgSessionDuration': activeDays > 0 ? totalMinutes / activeDays : 0.0, // Always return double
     };
   }
 
@@ -2619,7 +2620,11 @@ class _RevolutionaryPlanBuilderScreenState
 
   Widget _buildVolumeDisplay(Map<String, dynamic> analytics) {
     final dailyVolumes = analytics['dailyVolumes'] as List<double>? ?? [];
-    final totalVolume = analytics['totalVolume'] as double? ?? 0;
+    // Handle both int and double for totalVolume
+    final totalVolumeRaw = analytics['totalVolume'];
+    final totalVolume = totalVolumeRaw is double 
+        ? totalVolumeRaw 
+        : (totalVolumeRaw is int ? totalVolumeRaw.toDouble() : 0.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2699,14 +2704,19 @@ class _RevolutionaryPlanBuilderScreenState
   }
 
   Widget _buildMuscleGroupsDisplay(Map<String, dynamic> analytics) {
-    final muscleGroups = analytics['muscleGroups'] as Map<String, int>? ?? {};
-    final total = muscleGroups.values.fold(0, (a, b) => a + b);
+    // Use muscleGroupVolumes for the breakdown (Map<String, double>)
+    final muscleGroupVolumes = analytics['muscleGroupVolumes'] as Map<String, double>? ?? <String, double>{};
+    // Use muscleGroups for the count (int)
+    final muscleGroupsCount = analytics['muscleGroups'] is int 
+        ? analytics['muscleGroups'] as int 
+        : (analytics['muscleGroups'] as Map<String, int>?)?.length ?? 0;
+    final totalVolume = muscleGroupVolumes.values.fold(0.0, (a, b) => a + b);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$total',
+          '$muscleGroupsCount',
           style: DesignTokens.displaySmall.copyWith(
             color: DesignTokens.accentBlue,
             fontWeight: FontWeight.bold,
@@ -2714,13 +2724,13 @@ class _RevolutionaryPlanBuilderScreenState
         ),
         const SizedBox(height: 4),
         Text(
-          'Total exercises',
+          'Muscle groups',
           style: DesignTokens.bodySmall.copyWith(
             color: DesignTokens.textSecondary,
           ),
         ),
         const SizedBox(height: 16),
-        if (muscleGroups.isEmpty)
+        if (muscleGroupVolumes.isEmpty)
           Text(
             'No exercises yet',
             style: DesignTokens.bodySmall.copyWith(
@@ -2728,8 +2738,8 @@ class _RevolutionaryPlanBuilderScreenState
             ),
           )
         else
-          ...muscleGroups.entries.map((entry) {
-            final percentage = total > 0 ? (entry.value / total * 100) : 0;
+          ...muscleGroupVolumes.entries.map((entry) {
+            final percentage = totalVolume > 0 ? (entry.value / totalVolume * 100) : 0;
             return Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Row(
@@ -2757,7 +2767,11 @@ class _RevolutionaryPlanBuilderScreenState
   }
 
   Widget _buildTonnageDisplay(Map<String, dynamic> analytics) {
-    final tonnage = analytics['totalTonnage'] as double? ?? 0;
+    // Handle both int and double for tonnage
+    final tonnageRaw = analytics['totalTonnage'];
+    final tonnage = tonnageRaw is double 
+        ? tonnageRaw 
+        : (tonnageRaw is int ? tonnageRaw.toDouble() : 0.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2802,7 +2816,11 @@ class _RevolutionaryPlanBuilderScreenState
   Widget _buildTimeCommitmentDisplay(Map<String, dynamic> analytics) {
     final totalMinutes = analytics['totalMinutes'] as int? ?? 0;
     final activeDays = analytics['activeDays'] as int? ?? 0;
-    final avgDuration = analytics['avgSessionDuration'] as double? ?? 0;
+    // Handle both int and double for avgSessionDuration
+    final avgDurationRaw = analytics['avgSessionDuration'];
+    final avgDuration = avgDurationRaw is double 
+        ? avgDurationRaw 
+        : (avgDurationRaw is int ? avgDurationRaw.toDouble() : 0.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2892,17 +2910,7 @@ class _RevolutionaryPlanBuilderScreenState
       initialDate: _startDate ?? DateTime.now(),
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: DesignTokens.accentGreen,
-              surface: DesignTokens.cardBackground,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      // Use current app theme instead of forcing dark
     );
 
     if (date != null) {

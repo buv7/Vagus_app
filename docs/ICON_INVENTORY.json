@@ -1,0 +1,3658 @@
+[
+  {
+    "id": "nav_home",
+    "type": "material",
+    "current": "Icons.home_outlined / Icons.home_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          177,
+          178
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Home screen navigation tab (client)",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_dashboard",
+    "type": "material",
+    "current": "Icons.dashboard_outlined / Icons.dashboard_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          140,
+          141
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Dashboard navigation tab (coach)",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_workouts",
+    "type": "material",
+    "current": "Icons.fitness_center_outlined / Icons.fitness_center_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          152,
+          153,
+          183,
+          184
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Workouts/Plans navigation tab",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_calendar",
+    "type": "material",
+    "current": "Icons.calendar_month_outlined / Icons.calendar_month_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          158,
+          159,
+          189,
+          190
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Calendar navigation tab",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_nutrition",
+    "type": "material",
+    "current": "Icons.restaurant_outlined / Icons.restaurant_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          195,
+          196
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Nutrition hub navigation tab (client)",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_messages",
+    "type": "material",
+    "current": "Icons.chat_outlined / Icons.chat_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          164,
+          165,
+          201,
+          202
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Messages navigation tab",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_clients",
+    "type": "material",
+    "current": "Icons.people_outline / Icons.people_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          146,
+          147
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Clients management tab (coach)",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_admin",
+    "type": "material",
+    "current": "Icons.admin_panel_settings_outlined / Icons.admin_panel_settings_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          130,
+          131
+        ]
+      }
+    ],
+    "context": "Bottom nav tab",
+    "description": "Admin hub navigation tab",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_menu",
+    "type": "material",
+    "current": "Icons.menu",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": [
+          346
+        ]
+      }
+    ],
+    "context": "AppBar leading",
+    "description": "Hamburger menu for side drawer",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_back",
+    "type": "material",
+    "current": "Icons.arrow_back",
+    "files": [],
+    "context": "AppBar leading",
+    "description": "Back navigation button",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_forward",
+    "type": "material",
+    "current": "Icons.arrow_forward",
+    "files": [
+      {
+        "path": "lib/services/navigation/notification_deep_link_handler.dart",
+        "lines": [
+          242
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Forward navigation",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_chevron_left",
+    "type": "material",
+    "current": "Icons.chevron_left",
+    "files": [
+      {
+        "path": "lib/screens/calendar/modern_calendar_viewer.dart",
+        "lines": [
+          248
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Previous month/week navigation",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_chevron_right",
+    "type": "material",
+    "current": "Icons.chevron_right",
+    "files": [
+      {
+        "path": "lib/screens/calendar/modern_calendar_viewer.dart",
+        "lines": [
+          269
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Next month/week navigation",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "nav_keyboard_arrow_down",
+    "type": "material",
+    "current": "Icons.keyboard_arrow_down",
+    "files": [
+      {
+        "path": "lib/screens/dashboard/edit_profile_screen.dart",
+        "lines": [
+          376
+        ]
+      }
+    ],
+    "context": "Dropdown indicator",
+    "description": "Expandable dropdown indicator",
+    "feature_group": "Navigation"
+  },
+  {
+    "id": "workout_fitness_center",
+    "type": "material",
+    "current": "Icons.fitness_center_outlined / Icons.fitness_center_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": []
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Workout plans and exercises",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_play",
+    "type": "material",
+    "current": "Icons.play_arrow",
+    "files": [
+      {
+        "path": "lib/components/workout/rest_timer.dart",
+        "lines": [
+          107
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Start/play workout timer",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_pause",
+    "type": "material",
+    "current": "Icons.pause / Icons.pause_rounded",
+    "files": [
+      {
+        "path": "lib/components/workout/rest_timer.dart",
+        "lines": [
+          107
+        ]
+      },
+      {
+        "path": "lib/components/workout/rest_timer_inline.dart",
+        "lines": [
+          93
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Pause workout timer",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_stop",
+    "type": "material",
+    "current": "Icons.stop",
+    "files": [
+      {
+        "path": "lib/widgets/messaging/voice_recorder.dart",
+        "lines": [
+          145
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Stop workout session",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_add_set",
+    "type": "material",
+    "current": "Icons.add",
+    "files": [
+      {
+        "path": "lib/components/workout/rest_timer.dart",
+        "lines": [
+          113
+        ]
+      },
+      {
+        "path": "lib/components/workout/rest_timer_inline.dart",
+        "lines": [
+          98
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add new set to workout",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_edit",
+    "type": "material",
+    "current": "Icons.edit",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": []
+      }
+    ],
+    "context": "Button",
+    "description": "Edit exercise details",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_delete",
+    "type": "material",
+    "current": "Icons.delete / Icons.delete_outline",
+    "files": [],
+    "context": "Button",
+    "description": "Delete exercise or set",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_close",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": [
+          290
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Close exercise editor",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_error",
+    "type": "material",
+    "current": "Icons.error_outline",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": [
+          304
+        ]
+      }
+    ],
+    "context": "Status indicator",
+    "description": "Exercise error state",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_info",
+    "type": "material",
+    "current": "Icons.info_outline",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": [
+          857
+        ]
+      }
+    ],
+    "context": "Info button",
+    "description": "Exercise information",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_search",
+    "type": "material",
+    "current": "Icons.search",
+    "files": [
+      {
+        "path": "lib/widgets/workout/exercise_picker_dialog.dart",
+        "lines": [
+          434
+        ]
+      }
+    ],
+    "context": "Search field",
+    "description": "Search exercises",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_favorite",
+    "type": "material",
+    "current": "Icons.favorite / Icons.favorite_border",
+    "files": [
+      {
+        "path": "lib/components/workout/exercise_search_filter_sheet.dart",
+        "lines": [
+          148
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Favorite exercise toggle",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_star",
+    "type": "material",
+    "current": "Icons.star / Icons.star_border",
+    "files": [],
+    "context": "Button",
+    "description": "Star/rate exercise",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_tune",
+    "type": "material",
+    "current": "Icons.tune",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": [
+          331
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Advanced exercise settings",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_format_list",
+    "type": "material",
+    "current": "Icons.format_list_numbered",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": [
+          330
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Basic exercise info",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_note",
+    "type": "material",
+    "current": "Icons.note",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": [
+          332
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Exercise notes tab",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_check",
+    "type": "material",
+    "current": "Icons.check",
+    "files": [
+      {
+        "path": "lib/widgets/workout/advanced_exercise_editor.dart",
+        "lines": [
+          574
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Confirm exercise changes",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "workout_construction",
+    "type": "material",
+    "current": "Icons.construction",
+    "files": [
+      {
+        "path": "lib/widgets/coach/quick_actions_grid.dart",
+        "lines": [
+          352
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Workout feature under construction",
+    "feature_group": "Workout"
+  },
+  {
+    "id": "nutrition_restaurant",
+    "type": "material",
+    "current": "Icons.restaurant_outlined / Icons.restaurant_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": []
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Nutrition hub",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_add_food",
+    "type": "material",
+    "current": "Icons.add",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/pantry_screen.dart",
+        "lines": [
+          94
+        ]
+      },
+      {
+        "path": "lib/widgets/nutrition/meal_detail_sheet.dart",
+        "lines": [
+          97
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add food item",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_search",
+    "type": "material",
+    "current": "Icons.search",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/pantry_screen.dart",
+        "lines": [
+          108
+        ]
+      },
+      {
+        "path": "lib/screens/nutrition/recipe_library_screen.dart",
+        "lines": [
+          291
+        ]
+      }
+    ],
+    "context": "Search field",
+    "description": "Search foods/recipes",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_clear_search",
+    "type": "material",
+    "current": "Icons.clear",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/pantry_screen.dart",
+        "lines": [
+          117
+        ]
+      },
+      {
+        "path": "lib/screens/nutrition/recipe_library_screen.dart",
+        "lines": [
+          297
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Clear search input",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_edit_food",
+    "type": "material",
+    "current": "Icons.edit",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/pantry_screen.dart",
+        "lines": [
+          294
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Edit food item",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_delete_food",
+    "type": "material",
+    "current": "Icons.delete",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/pantry_screen.dart",
+        "lines": [
+          304
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Delete food item",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_filter",
+    "type": "material",
+    "current": "Icons.filter_list",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/recipe_library_screen.dart",
+        "lines": [
+          241
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Filter recipes",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_inventory",
+    "type": "material",
+    "current": "Icons.inventory_2_outlined",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/recipe_library_screen.dart",
+        "lines": [
+          247
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Pantry/inventory view",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_close_recipe",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/recipe_library_screen.dart",
+        "lines": [
+          381
+        ]
+      },
+      {
+        "path": "lib/components/nutrition/recipe_quick_swap_sheet.dart",
+        "lines": [
+          179
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Close recipe view",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_qr_scanner",
+    "type": "material",
+    "current": "Icons.qr_code_scanner",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/food_picker_2_0.dart",
+        "lines": [
+          230
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Barcode scanner tab",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_history",
+    "type": "material",
+    "current": "Icons.history",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/food_picker_2_0.dart",
+        "lines": [
+          231
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Recent foods tab",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_favorites",
+    "type": "material",
+    "current": "Icons.favorite",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/food_picker_2_0.dart",
+        "lines": [
+          232
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Favorite foods tab",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_custom",
+    "type": "material",
+    "current": "Icons.add_circle_outline",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/food_picker_2_0.dart",
+        "lines": [
+          233
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Custom foods tab",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_camera",
+    "type": "material",
+    "current": "Icons.camera_alt_outlined",
+    "files": [
+      {
+        "path": "lib/components/nutrition/add_via_photo_button.dart",
+        "lines": [
+          31,
+          41
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add food via photo",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_auto_awesome",
+    "type": "material",
+    "current": "Icons.auto_awesome",
+    "files": [
+      {
+        "path": "lib/components/nutrition/food_label_parser.dart",
+        "lines": [
+          88
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "AI food parsing",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_analytics",
+    "type": "material",
+    "current": "Icons.analytics",
+    "files": [
+      {
+        "path": "lib/components/nutrition/food_label_parser.dart",
+        "lines": [
+          100
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Nutrition analytics",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_check",
+    "type": "material",
+    "current": "Icons.check",
+    "files": [
+      {
+        "path": "lib/components/nutrition/food_label_parser.dart",
+        "lines": [
+          266
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Confirm food selection",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_payments",
+    "type": "material",
+    "current": "Icons.payments_outlined",
+    "files": [
+      {
+        "path": "lib/components/nutrition/cost_summary.dart",
+        "lines": [
+          27
+        ]
+      }
+    ],
+    "context": "Avatar icon",
+    "description": "Cost/payment summary",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_attach_file",
+    "type": "material",
+    "current": "Icons.attach_file",
+    "files": [
+      {
+        "path": "lib/widgets/nutrition/meal_detail_sheet.dart",
+        "lines": [
+          109
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Attach file to meal",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_supplement_pill",
+    "type": "custom",
+    "current": "HalfPillIcon",
+    "files": [
+      {
+        "path": "lib/widgets/supplements/half_pill_icon.dart",
+        "lines": []
+      }
+    ],
+    "context": "Custom icon",
+    "description": "Supplement pill icon (half red, half blue)",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "nutrition_empty_state",
+    "type": "material",
+    "current": "Various (Icons.restaurant, Icons.local_pharmacy_outlined)",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/empty_state_widget.dart",
+        "lines": []
+      }
+    ],
+    "context": "Empty state",
+    "description": "Empty nutrition state icons",
+    "feature_group": "Nutrition"
+  },
+  {
+    "id": "messaging_chat",
+    "type": "material",
+    "current": "Icons.chat_outlined / Icons.chat_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": []
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Messages tab",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_send",
+    "type": "material",
+    "current": "Icons.send",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/widgets/ticket_card.dart",
+        "lines": [
+          227
+        ]
+      },
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          1029
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Send message",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_reply",
+    "type": "material",
+    "current": "Icons.reply",
+    "files": [
+      {
+        "path": "lib/components/messaging/thread_view.dart",
+        "lines": [
+          149
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Reply to message",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_attach",
+    "type": "material",
+    "current": "Icons.attach_file",
+    "files": [
+      {
+        "path": "lib/components/messaging/thread_view.dart",
+        "lines": [
+          243
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Attach file to message",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_pin",
+    "type": "material",
+    "current": "Icons.push_pin",
+    "files": [
+      {
+        "path": "lib/components/messaging/pin_panel.dart",
+        "lines": [
+          97,
+          149
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Pin message",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_close",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [
+      {
+        "path": "lib/components/messaging/translation_toggle.dart",
+        "lines": [
+          224
+        ]
+      },
+      {
+        "path": "lib/components/messaging/pin_panel.dart",
+        "lines": [
+          108
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Close message panel",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_mic",
+    "type": "material",
+    "current": "Icons.mic",
+    "files": [
+      {
+        "path": "lib/widgets/messaging/voice_recorder.dart",
+        "lines": [
+          97
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Voice recording",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_audio",
+    "type": "material",
+    "current": "Icons.audio_file",
+    "files": [
+      {
+        "path": "lib/widgets/messaging/voice_recorder.dart",
+        "lines": [
+          121
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Audio file attachment",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_stop_voice",
+    "type": "material",
+    "current": "Icons.stop",
+    "files": [
+      {
+        "path": "lib/widgets/messaging/voice_recorder.dart",
+        "lines": [
+          145
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Stop voice recording",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_arrow_back",
+    "type": "material",
+    "current": "Icons.arrow_back",
+    "files": [
+      {
+        "path": "lib/components/messaging/thread_view.dart",
+        "lines": [
+          123
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Back to messages list",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "messaging_person",
+    "type": "material",
+    "current": "Icons.person",
+    "files": [
+      {
+        "path": "lib/components/messaging/thread_view.dart",
+        "lines": [
+          217
+        ]
+      }
+    ],
+    "context": "Avatar",
+    "description": "User avatar in message",
+    "feature_group": "Messaging"
+  },
+  {
+    "id": "calendar_month",
+    "type": "material",
+    "current": "Icons.calendar_month_outlined / Icons.calendar_month_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": []
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Calendar tab",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_add",
+    "type": "material",
+    "current": "Icons.add",
+    "files": [
+      {
+        "path": "lib/screens/calendar/calendar_screen.dart",
+        "lines": [
+          1094
+        ]
+      },
+      {
+        "path": "lib/screens/calendar/booking_form.dart",
+        "lines": [
+          517
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add calendar event",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_check",
+    "type": "material",
+    "current": "Icons.check",
+    "files": [
+      {
+        "path": "lib/screens/calendar/calendar_screen.dart",
+        "lines": [
+          289
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Confirm event",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_snooze",
+    "type": "material",
+    "current": "Icons.snooze",
+    "files": [
+      {
+        "path": "lib/screens/calendar/calendar_screen.dart",
+        "lines": [
+          300
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Snooze reminder",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_close",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [
+      {
+        "path": "lib/screens/calendar/calendar_screen.dart",
+        "lines": [
+          312
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Close calendar dialog",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_people",
+    "type": "material",
+    "current": "Icons.people",
+    "files": [
+      {
+        "path": "lib/screens/calendar/booking_form.dart",
+        "lines": [
+          343
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Event participants",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_cancel",
+    "type": "material",
+    "current": "Icons.cancel",
+    "files": [
+      {
+        "path": "lib/screens/calendar/booking_form.dart",
+        "lines": [
+          401
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Cancel booking",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_schedule",
+    "type": "material",
+    "current": "Icons.schedule",
+    "files": [
+      {
+        "path": "lib/screens/calendar/booking_form.dart",
+        "lines": [
+          435
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Schedule event",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_event",
+    "type": "material",
+    "current": "Icons.event",
+    "files": [
+      {
+        "path": "lib/screens/calendar/booking_form.dart",
+        "lines": [
+          363
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Calendar event indicator",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "calendar_check_circle",
+    "type": "material",
+    "current": "Icons.check_circle",
+    "files": [
+      {
+        "path": "lib/screens/calendar/booking_form.dart",
+        "lines": [
+          363
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Completed event",
+    "feature_group": "Calendar"
+  },
+  {
+    "id": "metrics_analytics",
+    "type": "material",
+    "current": "Icons.analytics",
+    "files": [
+      {
+        "path": "lib/components/progress/compliance_stats_card.dart",
+        "lines": [
+          168
+        ]
+      }
+    ],
+    "context": "Metric icon",
+    "description": "Analytics/metrics display",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_refresh",
+    "type": "material",
+    "current": "Icons.refresh",
+    "files": [
+      {
+        "path": "lib/components/progress/compliance_stats_card.dart",
+        "lines": [
+          185
+        ]
+      },
+      {
+        "path": "lib/widgets/ai/ai_usage_meter.dart",
+        "lines": [
+          178
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Refresh metrics data",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_trending_up",
+    "type": "material",
+    "current": "Icons.trending_up",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          229,
+          341
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Trending metrics",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_table",
+    "type": "material",
+    "current": "Icons.table_view",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          246,
+          357
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Table/metrics view",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_download",
+    "type": "material",
+    "current": "Icons.download",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          258
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Download metrics report",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_check_circle",
+    "type": "material",
+    "current": "Icons.check_circle",
+    "files": [
+      {
+        "path": "lib/components/supplements/adherence_heatmap.dart",
+        "lines": [
+          426
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Completed metric",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_cancel",
+    "type": "material",
+    "current": "Icons.cancel",
+    "files": [
+      {
+        "path": "lib/components/supplements/adherence_heatmap.dart",
+        "lines": [
+          428
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Cancelled metric",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_snooze",
+    "type": "material",
+    "current": "Icons.snooze",
+    "files": [
+      {
+        "path": "lib/components/supplements/adherence_heatmap.dart",
+        "lines": [
+          430
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Snoozed metric",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_error",
+    "type": "material",
+    "current": "Icons.error_outline",
+    "files": [
+      {
+        "path": "lib/components/supplements/adherence_heatmap.dart",
+        "lines": [
+          113
+        ]
+      },
+      {
+        "path": "lib/widgets/ai/ai_usage_meter.dart",
+        "lines": [
+          166
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Error state",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_info",
+    "type": "material",
+    "current": "Icons.info_outline",
+    "files": [
+      {
+        "path": "lib/widgets/ai/ai_usage_meter.dart",
+        "lines": [
+          197
+        ]
+      }
+    ],
+    "context": "Info icon",
+    "description": "Information tooltip",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_compare",
+    "type": "material",
+    "current": "Icons.compare_arrows",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          518
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Compare metrics",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_show_chart",
+    "type": "material",
+    "current": "Icons.show_chart",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          522
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Chart visualization",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_priority",
+    "type": "material",
+    "current": "Icons.priority_high",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          526
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "High priority metric",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_lightbulb",
+    "type": "material",
+    "current": "Icons.lightbulb_outline",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          506
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Tip/insight indicator",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_notifications",
+    "type": "material",
+    "current": "Icons.notifications_outlined",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          510
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Reminder notification",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_warning",
+    "type": "material",
+    "current": "Icons.warning",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          498
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Warning indicator",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_alert",
+    "type": "material",
+    "current": "Icons.error",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          502
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Alert indicator",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_success",
+    "type": "material",
+    "current": "Icons.check_circle",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          490
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Success indicator",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "metrics_positive",
+    "type": "material",
+    "current": "Icons.trending_up",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          494
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Positive trend",
+    "feature_group": "Metrics/Progress"
+  },
+  {
+    "id": "admin_panel",
+    "type": "material",
+    "current": "Icons.admin_panel_settings_outlined / Icons.admin_panel_settings_rounded",
+    "files": [
+      {
+        "path": "lib/screens/nav/main_nav.dart",
+        "lines": []
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Admin hub",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_add",
+    "type": "material",
+    "current": "Icons.add",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_playbooks_screen.dart",
+        "lines": [
+          138
+        ]
+      },
+      {
+        "path": "lib/screens/admin/admin_knowledge_screen.dart",
+        "lines": [
+          133
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add admin item",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_delete",
+    "type": "material",
+    "current": "Icons.delete_outline",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_playbooks_screen.dart",
+        "lines": [
+          127
+        ]
+      },
+      {
+        "path": "lib/screens/admin/admin_knowledge_screen.dart",
+        "lines": [
+          186
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Delete admin item",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_edit",
+    "type": "material",
+    "current": "Icons.edit_outlined",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_playbooks_screen.dart",
+        "lines": [
+          201
+        ]
+      },
+      {
+        "path": "lib/screens/admin/admin_escalation_matrix_screen.dart",
+        "lines": [
+          203
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Edit admin item",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_search",
+    "type": "material",
+    "current": "Icons.search",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_knowledge_screen.dart",
+        "lines": [
+          148
+        ]
+      },
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          288
+        ]
+      }
+    ],
+    "context": "Search field",
+    "description": "Admin search",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_play",
+    "type": "material",
+    "current": "Icons.play_arrow",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_playbooks_screen.dart",
+        "lines": [
+          123
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Play/execute action",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_auto_awesome",
+    "type": "material",
+    "current": "Icons.auto_awesome",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_playbooks_screen.dart",
+        "lines": [
+          190
+        ]
+      },
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          1115
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "AI/automation feature",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_refresh",
+    "type": "material",
+    "current": "Icons.refresh",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          143
+        ]
+      },
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          118
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Refresh admin data",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_visibility",
+    "type": "material",
+    "current": "Icons.visibility",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          185
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "View details",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_checklist",
+    "type": "material",
+    "current": "Icons.checklist",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          654
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Checklist view",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_playlist_check",
+    "type": "material",
+    "current": "Icons.playlist_add_check",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          343,
+          860
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Batch operations",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_bolt",
+    "type": "material",
+    "current": "Icons.bolt",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/widgets/ticket_card.dart",
+        "lines": [
+          234
+        ]
+      },
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          873
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Quick action/power feature",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_support_agent",
+    "type": "material",
+    "current": "Icons.support_agent",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          412
+        ]
+      },
+      {
+        "path": "lib/screens/admin/support/widgets/ticket_card.dart",
+        "lines": [
+          28,
+          97
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Support agent indicator",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_priority_high",
+    "type": "material",
+    "current": "Icons.priority_high",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          418
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "High priority ticket",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_open_new",
+    "type": "material",
+    "current": "Icons.open_in_new",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          867,
+          1118
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Open in new window",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_drag_indicator",
+    "type": "material",
+    "current": "Icons.drag_indicator",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          872
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Drag handle",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_inbox",
+    "type": "material",
+    "current": "Icons.inbox_outlined",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          939
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Inbox tab",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_pending",
+    "type": "material",
+    "current": "Icons.pending_outlined",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          949
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Pending tab",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_check_circle_outline",
+    "type": "material",
+    "current": "Icons.check_circle_outline",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          959
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Completed tab",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_close",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          969
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Closed tab",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_warning_amber",
+    "type": "material",
+    "current": "Icons.warning_amber_rounded",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          1262
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Warning indicator",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_security",
+    "type": "material",
+    "current": "Icons.security",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          1280
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Security incident",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_notifications",
+    "type": "material",
+    "current": "Icons.notifications",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          1283
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Push notification incident",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_link",
+    "type": "material",
+    "current": "Icons.link",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          1284
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Deep link incident",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_dashboard",
+    "type": "material",
+    "current": "Icons.dashboard",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          125
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Overview dashboard",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_warning",
+    "type": "material",
+    "current": "Icons.warning",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          127,
+          467
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "Breaches/warnings",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_inbox_ops",
+    "type": "material",
+    "current": "Icons.inbox",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          200
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Inbox operations",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_folder_open",
+    "type": "material",
+    "current": "Icons.folder_open",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          206
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Folder operations",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_timer",
+    "type": "material",
+    "current": "Icons.timer",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          212
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Timer operations",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_person",
+    "type": "material",
+    "current": "Icons.person",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          230
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "User operations",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_check",
+    "type": "material",
+    "current": "Icons.check",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          503
+        ]
+      },
+      {
+        "path": "lib/screens/admin/coach_approval_panel.dart",
+        "lines": [
+          207
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Approve/confirm",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_schedule",
+    "type": "material",
+    "current": "Icons.schedule",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ops_screen.dart",
+        "lines": [
+          513
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Scheduled operations",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_pending_status",
+    "type": "material",
+    "current": "Icons.pending",
+    "files": [
+      {
+        "path": "lib/screens/admin/coach_approval_panel.dart",
+        "lines": [
+          284
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Pending approval status",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_cancel",
+    "type": "material",
+    "current": "Icons.cancel",
+    "files": [
+      {
+        "path": "lib/screens/admin/coach_approval_panel.dart",
+        "lines": [
+          316
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Cancelled status",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_clear",
+    "type": "material",
+    "current": "Icons.clear",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          428
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Clear selection",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "admin_push_pin",
+    "type": "material",
+    "current": "Icons.push_pin / Icons.push_pin_outlined",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_board_screen.dart",
+        "lines": [
+          204
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Pin/unpin board item",
+    "feature_group": "Admin"
+  },
+  {
+    "id": "settings_gear",
+    "type": "material",
+    "current": "Icons.settings",
+    "files": [
+      {
+        "path": "lib/screens/settings/user_settings_screen.dart",
+        "lines": [
+          268,
+          311,
+          453
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Settings menu",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_gift",
+    "type": "material",
+    "current": "Icons.card_giftcard",
+    "files": [
+      {
+        "path": "lib/screens/settings/user_settings_screen.dart",
+        "lines": [
+          354
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Rewards/gifts",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_security",
+    "type": "material",
+    "current": "Icons.security",
+    "files": [
+      {
+        "path": "lib/screens/dashboard/edit_profile_screen.dart",
+        "lines": [
+          415
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Security settings",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_admin_panel",
+    "type": "material",
+    "current": "Icons.admin_panel_settings",
+    "files": [
+      {
+        "path": "lib/screens/dashboard/edit_profile_screen.dart",
+        "lines": [
+          381
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Admin panel access",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_person",
+    "type": "material",
+    "current": "Icons.person / Icons.person_outline",
+    "files": [],
+    "context": "Avatar/icon",
+    "description": "User profile",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_person_add",
+    "type": "material",
+    "current": "Icons.person_add_alt / Icons.person_add_alt_1",
+    "files": [
+      {
+        "path": "lib/screens/account_switch_screen.dart",
+        "lines": [
+          93
+        ]
+      },
+      {
+        "path": "lib/screens/admin/support/widgets/ticket_card.dart",
+        "lines": [
+          32
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add user/person",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_edit",
+    "type": "material",
+    "current": "Icons.edit",
+    "files": [
+      {
+        "path": "lib/screens/coach_profile/coach_profile_screen.dart",
+        "lines": [
+          231
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Edit profile",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_camera",
+    "type": "material",
+    "current": "Icons.camera_alt",
+    "files": [
+      {
+        "path": "lib/screens/coach_profile/coach_profile_screen.dart",
+        "lines": [
+          288
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Change profile photo",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "settings_chevron_right",
+    "type": "material",
+    "current": "Icons.chevron_right",
+    "files": [
+      {
+        "path": "lib/components/settings/export_my_data_button.dart",
+        "lines": [
+          127
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Navigation indicator",
+    "feature_group": "Settings/Profile"
+  },
+  {
+    "id": "file_attach",
+    "type": "material",
+    "current": "Icons.attach_file",
+    "files": [
+      {
+        "path": "lib/widgets/files/attach_to_note_button.dart",
+        "lines": [
+          236
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Attach file",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_folder",
+    "type": "material",
+    "current": "Icons.folder_open",
+    "files": [
+      {
+        "path": "lib/widgets/files/attach_to_note_button.dart",
+        "lines": [
+          246
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Open folder",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_clear",
+    "type": "material",
+    "current": "Icons.clear_all",
+    "files": [
+      {
+        "path": "lib/widgets/files/attach_to_note_button.dart",
+        "lines": [
+          255
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Clear all files",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_visibility",
+    "type": "material",
+    "current": "Icons.visibility",
+    "files": [
+      {
+        "path": "lib/widgets/files/attach_to_note_button.dart",
+        "lines": [
+          206
+        ]
+      },
+      {
+        "path": "lib/widgets/files/inline_file_picker.dart",
+        "lines": [
+          197
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Preview file",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_close",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [
+      {
+        "path": "lib/widgets/files/attach_to_note_button.dart",
+        "lines": [
+          211
+        ]
+      },
+      {
+        "path": "lib/widgets/files/inline_file_picker.dart",
+        "lines": [
+          202
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Close file picker",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_camera",
+    "type": "material",
+    "current": "Icons.camera_alt",
+    "files": [
+      {
+        "path": "lib/widgets/files/inline_file_picker.dart",
+        "lines": [
+          227
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Take photo",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_photo_library",
+    "type": "material",
+    "current": "Icons.photo_library",
+    "files": [
+      {
+        "path": "lib/widgets/files/inline_file_picker.dart",
+        "lines": [
+          235
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Choose from library",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_folder_picker",
+    "type": "material",
+    "current": "Icons.folder",
+    "files": [
+      {
+        "path": "lib/widgets/files/inline_file_picker.dart",
+        "lines": [
+          243
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Choose folder",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_videocam",
+    "type": "material",
+    "current": "Icons.videocam",
+    "files": [
+      {
+        "path": "lib/screens/files/file_manager_screen.dart",
+        "lines": [
+          198
+        ]
+      },
+      {
+        "path": "lib/screens/files/coach_file_feedback_screen.dart",
+        "lines": [
+          827
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Video file type",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_refresh",
+    "type": "material",
+    "current": "Icons.refresh",
+    "files": [
+      {
+        "path": "lib/screens/files/file_manager_screen.dart",
+        "lines": [
+          213
+        ]
+      },
+      {
+        "path": "lib/screens/files/coach_file_feedback_screen.dart",
+        "lines": [
+          440
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Refresh file list",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_search",
+    "type": "material",
+    "current": "Icons.search",
+    "files": [
+      {
+        "path": "lib/screens/files/file_manager_screen.dart",
+        "lines": [
+          243
+        ]
+      },
+      {
+        "path": "lib/screens/files/coach_file_feedback_screen.dart",
+        "lines": [
+          473
+        ]
+      }
+    ],
+    "context": "Search field",
+    "description": "Search files",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_edit",
+    "type": "material",
+    "current": "Icons.edit",
+    "files": [
+      {
+        "path": "lib/screens/files/coach_file_feedback_screen.dart",
+        "lines": [
+          582,
+          672
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Edit file",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_comment",
+    "type": "material",
+    "current": "Icons.comment",
+    "files": [
+      {
+        "path": "lib/screens/files/coach_file_feedback_screen.dart",
+        "lines": [
+          582
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "File comment",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_delete",
+    "type": "material",
+    "current": "Icons.delete",
+    "files": [
+      {
+        "path": "lib/screens/files/file_manager_screen.dart",
+        "lines": [
+          470
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Delete file",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_picture_pdf",
+    "type": "material",
+    "current": "Icons.picture_as_pdf / Icons.picture_as_pdf_outlined",
+    "files": [
+      {
+        "path": "lib/screens/coach/client_weekly_review_screen.dart",
+        "lines": [
+          298
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "PDF file type",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "file_video_library",
+    "type": "material",
+    "current": "Icons.video_library / Icons.video_library_outlined",
+    "files": [],
+    "context": "Icon",
+    "description": "Video library",
+    "feature_group": "Files/Media"
+  },
+  {
+    "id": "music_note",
+    "type": "material",
+    "current": "Icons.music_note",
+    "files": [
+      {
+        "path": "lib/widgets/music/music_attachment_widget.dart",
+        "lines": [
+          114,
+          116,
+          376,
+          381,
+          483,
+          485
+        ]
+      },
+      {
+        "path": "lib/widgets/music/music_play_button.dart",
+        "lines": [
+          105,
+          107
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Music track indicator",
+    "feature_group": "Music/Audio"
+  },
+  {
+    "id": "music_add",
+    "type": "material",
+    "current": "Icons.add",
+    "files": [
+      {
+        "path": "lib/widgets/music/music_attachment_widget.dart",
+        "lines": [
+          55,
+          302,
+          346
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add music track",
+    "feature_group": "Music/Audio"
+  },
+  {
+    "id": "music_close",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [
+      {
+        "path": "lib/widgets/music/music_attachment_widget.dart",
+        "lines": [
+          104,
+          271
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Remove music track",
+    "feature_group": "Music/Audio"
+  },
+  {
+    "id": "music_check",
+    "type": "material",
+    "current": "Icons.check",
+    "files": [
+      {
+        "path": "lib/widgets/music/music_attachment_widget.dart",
+        "lines": [
+          300
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Music selected",
+    "feature_group": "Music/Audio"
+  },
+  {
+    "id": "music_more",
+    "type": "material",
+    "current": "Icons.more_vert",
+    "files": [
+      {
+        "path": "lib/widgets/music/music_play_button.dart",
+        "lines": [
+          59
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Music options menu",
+    "feature_group": "Music/Audio"
+  },
+  {
+    "id": "camera_alt",
+    "type": "material",
+    "current": "Icons.camera_alt / Icons.camera_alt_outlined",
+    "files": [],
+    "context": "Button",
+    "description": "Take photo",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_front",
+    "type": "material",
+    "current": "Icons.camera_front",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/barcode_scan_screen.dart",
+        "lines": [
+          64
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Front camera",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_rear",
+    "type": "material",
+    "current": "Icons.camera_rear",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/barcode_scan_screen.dart",
+        "lines": [
+          66
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Rear camera",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_flash_on",
+    "type": "material",
+    "current": "Icons.flash_on",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/barcode_scan_screen.dart",
+        "lines": [
+          52
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Flash on",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_flash_off",
+    "type": "material",
+    "current": "Icons.flash_off",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/barcode_scan_screen.dart",
+        "lines": [
+          50
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Flash off",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_photo",
+    "type": "material",
+    "current": "Icons.photo_camera",
+    "files": [
+      {
+        "path": "lib/components/nutrition/recipe_step_tile.dart",
+        "lines": [
+          174
+        ]
+      },
+      {
+        "path": "lib/components/checkins/compare_checkins_modal.dart",
+        "lines": [
+          512
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Photo camera",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_keyboard",
+    "type": "material",
+    "current": "Icons.keyboard",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/barcode_scan_screen.dart",
+        "lines": [
+          194
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Manual entry mode",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_qr_code",
+    "type": "material",
+    "current": "Icons.qr_code",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/barcode_scan_screen.dart",
+        "lines": [
+          227
+        ]
+      },
+      {
+        "path": "lib/screens/coach_profile/coach_profile_screen.dart",
+        "lines": [
+          395
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "QR code scanner",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "camera_add_box",
+    "type": "material",
+    "current": "Icons.add_box",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/barcode_scan_screen.dart",
+        "lines": [
+          425
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Add photo box",
+    "feature_group": "Camera/Photo"
+  },
+  {
+    "id": "qr_code",
+    "type": "material",
+    "current": "Icons.qr_code",
+    "files": [
+      {
+        "path": "lib/screens/coach_profile/coach_profile_screen.dart",
+        "lines": [
+          395
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "QR code display",
+    "feature_group": "QR Code"
+  },
+  {
+    "id": "qr_scanner",
+    "type": "material",
+    "current": "Icons.qr_code_scanner",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/food_picker_2_0.dart",
+        "lines": [
+          230
+        ]
+      }
+    ],
+    "context": "Tab icon",
+    "description": "QR code scanner",
+    "feature_group": "QR Code"
+  },
+  {
+    "id": "action_add",
+    "type": "material",
+    "current": "Icons.add",
+    "files": [],
+    "context": "Button",
+    "description": "Add/create action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_delete",
+    "type": "material",
+    "current": "Icons.delete / Icons.delete_outline",
+    "files": [],
+    "context": "Button",
+    "description": "Delete action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_edit",
+    "type": "material",
+    "current": "Icons.edit / Icons.edit_outlined",
+    "files": [],
+    "context": "Button",
+    "description": "Edit action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_save",
+    "type": "material",
+    "current": "Icons.save / Icons.save_outlined",
+    "files": [
+      {
+        "path": "lib/screens/workout/fatigue_recovery_screen.dart",
+        "lines": [
+          89
+        ]
+      },
+      {
+        "path": "lib/widgets/admin/support/draft_handoff_sheet.dart",
+        "lines": [
+          121
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Save action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_close",
+    "type": "material",
+    "current": "Icons.close",
+    "files": [],
+    "context": "Button",
+    "description": "Close/dismiss",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_check",
+    "type": "material",
+    "current": "Icons.check",
+    "files": [],
+    "context": "Button",
+    "description": "Confirm/check",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_search",
+    "type": "material",
+    "current": "Icons.search",
+    "files": [],
+    "context": "Search field",
+    "description": "Search action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_clear",
+    "type": "material",
+    "current": "Icons.clear",
+    "files": [],
+    "context": "Button",
+    "description": "Clear input",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_share",
+    "type": "material",
+    "current": "Icons.share",
+    "files": [
+      {
+        "path": "lib/screens/plans/plans_dashboard_screen.dart",
+        "lines": [
+          1073
+        ]
+      },
+      {
+        "path": "lib/screens/share/share_preview_screen.dart",
+        "lines": [
+          122
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Share action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_copy",
+    "type": "material",
+    "current": "Icons.copy",
+    "files": [
+      {
+        "path": "lib/screens/share/share_preview_screen.dart",
+        "lines": [
+          35
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Copy to clipboard",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_more",
+    "type": "material",
+    "current": "Icons.more_vert",
+    "files": [],
+    "context": "Button",
+    "description": "More options menu",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_refresh",
+    "type": "material",
+    "current": "Icons.refresh",
+    "files": [],
+    "context": "Button",
+    "description": "Refresh/reload",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_visibility",
+    "type": "material",
+    "current": "Icons.visibility",
+    "files": [],
+    "context": "Button",
+    "description": "View/preview",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_info",
+    "type": "material",
+    "current": "Icons.info_outline",
+    "files": [],
+    "context": "Button",
+    "description": "Information tooltip",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_warning",
+    "type": "material",
+    "current": "Icons.warning / Icons.warning_amber_rounded",
+    "files": [],
+    "context": "Icon",
+    "description": "Warning indicator",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_error",
+    "type": "material",
+    "current": "Icons.error / Icons.error_outline",
+    "files": [],
+    "context": "Icon",
+    "description": "Error indicator",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_success",
+    "type": "material",
+    "current": "Icons.check_circle",
+    "files": [],
+    "context": "Icon",
+    "description": "Success indicator",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_play",
+    "type": "material",
+    "current": "Icons.play_arrow / Icons.play_arrow_rounded / Icons.play_circle_outline",
+    "files": [],
+    "context": "Button",
+    "description": "Play action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_pause",
+    "type": "material",
+    "current": "Icons.pause / Icons.pause_rounded",
+    "files": [],
+    "context": "Button",
+    "description": "Pause action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_stop",
+    "type": "material",
+    "current": "Icons.stop",
+    "files": [],
+    "context": "Button",
+    "description": "Stop action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_schedule",
+    "type": "material",
+    "current": "Icons.schedule",
+    "files": [],
+    "context": "Icon",
+    "description": "Schedule/time",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_timer",
+    "type": "material",
+    "current": "Icons.timer",
+    "files": [
+      {
+        "path": "lib/screens/supplements/supplement_editor_sheet.dart",
+        "lines": [
+          636
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Timer",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "action_redo",
+    "type": "material",
+    "current": "Icons.redo",
+    "files": [
+      {
+        "path": "lib/widgets/admin/support/draft_handoff_sheet.dart",
+        "lines": [
+          129
+        ]
+      },
+      {
+        "path": "lib/screens/admin/support/widgets/ticket_card.dart",
+        "lines": [
+          128
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Redo/undo action",
+    "feature_group": "Common Actions"
+  },
+  {
+    "id": "status_check",
+    "type": "material",
+    "current": "Icons.check",
+    "files": [],
+    "context": "Status icon",
+    "description": "Completed/checked",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_check_circle",
+    "type": "material",
+    "current": "Icons.check_circle / Icons.check_circle_outline",
+    "files": [],
+    "context": "Status icon",
+    "description": "Success/completed",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_cancel",
+    "type": "material",
+    "current": "Icons.cancel",
+    "files": [],
+    "context": "Status icon",
+    "description": "Cancelled",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_pending",
+    "type": "material",
+    "current": "Icons.pending / Icons.pending_outlined",
+    "files": [],
+    "context": "Status icon",
+    "description": "Pending status",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_snooze",
+    "type": "material",
+    "current": "Icons.snooze",
+    "files": [],
+    "context": "Status icon",
+    "description": "Snoozed",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_warning",
+    "type": "material",
+    "current": "Icons.warning / Icons.warning_amber_rounded",
+    "files": [],
+    "context": "Status icon",
+    "description": "Warning",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_error",
+    "type": "material",
+    "current": "Icons.error / Icons.error_outline",
+    "files": [],
+    "context": "Status icon",
+    "description": "Error",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_info",
+    "type": "material",
+    "current": "Icons.info / Icons.info_outline",
+    "files": [],
+    "context": "Status icon",
+    "description": "Information",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_priority",
+    "type": "material",
+    "current": "Icons.priority_high",
+    "files": [],
+    "context": "Status icon",
+    "description": "High priority",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_link",
+    "type": "material",
+    "current": "Icons.link",
+    "files": [
+      {
+        "path": "lib/components/feedback/animated_feedback.dart",
+        "lines": [
+          300
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Connected/linked",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_emoji_events",
+    "type": "material",
+    "current": "Icons.emoji_events",
+    "files": [
+      {
+        "path": "lib/services/navigation/notification_deep_link_handler.dart",
+        "lines": [
+          208
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Achievement/milestone",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "status_bedtime",
+    "type": "material",
+    "current": "Icons.bedtime",
+    "files": [
+      {
+        "path": "lib/services/navigation/notification_deep_link_handler.dart",
+        "lines": [
+          140
+        ]
+      }
+    ],
+    "context": "Status icon",
+    "description": "Sleep/bedtime reminder",
+    "feature_group": "Status Indicators"
+  },
+  {
+    "id": "other_star",
+    "type": "material",
+    "current": "Icons.star / Icons.star_border",
+    "files": [],
+    "context": "Button",
+    "description": "Favorite/rating",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_favorite",
+    "type": "material",
+    "current": "Icons.favorite / Icons.favorite_border",
+    "files": [],
+    "context": "Button",
+    "description": "Favorite toggle",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_checkbox",
+    "type": "material",
+    "current": "Icons.check_box / Icons.check_box_outline_blank",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/food_picker_2_0.dart",
+        "lines": [
+          191
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Multi-select checkbox",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_compare",
+    "type": "material",
+    "current": "Icons.compare_arrows",
+    "files": [
+      {
+        "path": "lib/components/checkins/compare_checkins_modal.dart",
+        "lines": [
+          209,
+          416
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Compare items",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_keyboard_up",
+    "type": "material",
+    "current": "Icons.keyboard_arrow_up",
+    "files": [
+      {
+        "path": "lib/components/nutrition/recipe_step_tile.dart",
+        "lines": [
+          216
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Move up",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_keyboard_down",
+    "type": "material",
+    "current": "Icons.keyboard_arrow_down",
+    "files": [
+      {
+        "path": "lib/components/nutrition/recipe_step_tile.dart",
+        "lines": [
+          231
+        ]
+      }
+    ],
+    "context": "Button",
+    "description": "Move down",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_play_circle",
+    "type": "material",
+    "current": "Icons.play_circle_outline",
+    "files": [],
+    "context": "Icon",
+    "description": "Play video/media",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_school",
+    "type": "material",
+    "current": "Icons.school",
+    "files": [],
+    "context": "Icon",
+    "description": "Education/learning",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_restaurant_menu",
+    "type": "material",
+    "current": "Icons.restaurant_menu",
+    "files": [
+      {
+        "path": "lib/screens/learn/learn_coach_screen.dart",
+        "lines": [
+          104
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Nutrition learning",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_chat_bubble",
+    "type": "material",
+    "current": "Icons.chat_bubble_outline",
+    "files": [
+      {
+        "path": "lib/screens/learn/learn_coach_screen.dart",
+        "lines": [
+          154
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Messaging learning",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_people_learn",
+    "type": "material",
+    "current": "Icons.people",
+    "files": [
+      {
+        "path": "lib/screens/learn/learn_coach_screen.dart",
+        "lines": [
+          79
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "People/coaching learning",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_fitness_learn",
+    "type": "material",
+    "current": "Icons.fitness_center",
+    "files": [
+      {
+        "path": "lib/screens/learn/learn_coach_screen.dart",
+        "lines": [
+          129
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Workout learning",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_medication",
+    "type": "material",
+    "current": "Icons.medication / Icons.local_pharmacy_outlined",
+    "files": [],
+    "context": "Icon",
+    "description": "Medication/supplements",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_payments",
+    "type": "material",
+    "current": "Icons.payments_outlined",
+    "files": [
+      {
+        "path": "lib/components/nutrition/cost_summary.dart",
+        "lines": [
+          27
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Payment/cost",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_card_giftcard",
+    "type": "material",
+    "current": "Icons.card_giftcard",
+    "files": [
+      {
+        "path": "lib/screens/settings/user_settings_screen.dart",
+        "lines": [
+          354
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Gift card/rewards",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_construction",
+    "type": "material",
+    "current": "Icons.construction",
+    "files": [
+      {
+        "path": "lib/widgets/coach/quick_actions_grid.dart",
+        "lines": [
+          352
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Under construction",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_auto_awesome",
+    "type": "material",
+    "current": "Icons.auto_awesome",
+    "files": [],
+    "context": "Icon",
+    "description": "AI/automation feature",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_bolt",
+    "type": "material",
+    "current": "Icons.bolt",
+    "files": [],
+    "context": "Icon",
+    "description": "Quick action/power",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_table_view",
+    "type": "material",
+    "current": "Icons.table_view",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          246
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Table view",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_show_chart",
+    "type": "material",
+    "current": "Icons.show_chart",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          522
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Chart view",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_lightbulb",
+    "type": "material",
+    "current": "Icons.lightbulb_outline",
+    "files": [
+      {
+        "path": "lib/screens/nutrition/widgets/shared/nutrition_insights_panel.dart",
+        "lines": [
+          506
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Tip/idea",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_notifications",
+    "type": "material",
+    "current": "Icons.notifications / Icons.notifications_outlined",
+    "files": [],
+    "context": "Icon",
+    "description": "Notification",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_trending_up",
+    "type": "material",
+    "current": "Icons.trending_up",
+    "files": [],
+    "context": "Icon",
+    "description": "Trending/upward trend",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_playlist_add_check",
+    "type": "material",
+    "current": "Icons.playlist_add_check",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          343
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Batch selection",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_checklist",
+    "type": "material",
+    "current": "Icons.checklist",
+    "files": [
+      {
+        "path": "lib/screens/admin/admin_ticket_queue_screen.dart",
+        "lines": [
+          654
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Checklist",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_drag_indicator",
+    "type": "material",
+    "current": "Icons.drag_indicator",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          872
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Drag handle",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_open_in_new",
+    "type": "material",
+    "current": "Icons.open_in_new",
+    "files": [
+      {
+        "path": "lib/screens/admin/support/support_inbox_screen.dart",
+        "lines": [
+          867
+        ]
+      }
+    ],
+    "context": "Icon",
+    "description": "Open external",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_picture_pdf",
+    "type": "material",
+    "current": "Icons.picture_as_pdf / Icons.picture_as_pdf_outlined",
+    "files": [],
+    "context": "Icon",
+    "description": "PDF document",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_edit_note",
+    "type": "material",
+    "current": "Icons.edit_note",
+    "files": [],
+    "context": "Icon",
+    "description": "Edit note",
+    "feature_group": "Other"
+  },
+  {
+    "id": "other_videocam",
+    "type": "material",
+    "current": "Icons.videocam / Icons.videocam_outlined",
+    "files": [],
+    "context": "Icon",
+    "description": "Video call/camera",
+    "feature_group": "Other"
+  }
+]

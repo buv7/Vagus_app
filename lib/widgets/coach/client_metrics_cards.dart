@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 
 class ClientMetricsCards extends StatelessWidget {
   final int totalClients;
@@ -24,6 +25,7 @@ class ClientMetricsCards extends StatelessWidget {
         children: [
           Expanded(
             child: _buildMetricCard(
+              context: context,
               icon: Icons.people_outline,
               label: 'Total Clients',
               value: totalClients.toString(),
@@ -33,6 +35,7 @@ class ClientMetricsCards extends StatelessWidget {
           const SizedBox(width: DesignTokens.space12),
           Expanded(
             child: _buildMetricCard(
+              context: context,
               icon: Icons.people_outline,
               label: 'Active Clients',
               value: activeClients.toString(),
@@ -42,6 +45,7 @@ class ClientMetricsCards extends StatelessWidget {
           const SizedBox(width: DesignTokens.space12),
           Expanded(
             child: _buildMetricCard(
+              context: context,
               icon: Icons.calendar_today_outlined,
               label: 'Sessions Today',
               value: sessionsToday.toString(),
@@ -51,6 +55,7 @@ class ClientMetricsCards extends StatelessWidget {
           const SizedBox(width: DesignTokens.space12),
           Expanded(
             child: _buildMetricCard(
+              context: context,
               icon: Icons.assignment_outlined,
               label: 'Avg Compliance',
               value: '$avgCompliance%',
@@ -63,17 +68,19 @@ class ClientMetricsCards extends StatelessWidget {
   }
 
   Widget _buildMetricCard({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
     required Color color,
   }) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -101,7 +108,7 @@ class ClientMetricsCards extends StatelessWidget {
                 Text(
                   value,
                   style: DesignTokens.titleLarge.copyWith(
-                    color: DesignTokens.neutralWhite,
+                    color: tc.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -109,7 +116,7 @@ class ClientMetricsCards extends StatelessWidget {
                 Text(
                   label,
                   style: DesignTokens.labelSmall.copyWith(
-                    color: DesignTokens.textSecondary,
+                    color: tc.textSecondary,
                   ),
                   textAlign: TextAlign.center,
                 ),

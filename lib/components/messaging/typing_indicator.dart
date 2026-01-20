@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../theme/theme_index.dart';
+import '../../theme/theme_colors.dart';
 
 /// Animated typing indicator showing someone is typing
 class TypingIndicator extends StatefulWidget {
@@ -41,6 +42,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
       return const SizedBox.shrink();
     }
 
+    final tc = ThemeColors.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: spacing3,
@@ -54,7 +56,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
               vertical: spacing2,
             ),
             decoration: BoxDecoration(
-              color: DesignTokens.cardBackground,
+              color: tc.surface,
               borderRadius: BorderRadius.circular(radiusL),
             ),
             child: Row(
@@ -63,9 +65,9 @@ class _TypingIndicatorState extends State<TypingIndicator>
                 if (widget.userName != null) ...[
                   Text(
                     widget.userName!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: DesignTokens.textSecondary,
+                      color: tc.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -132,23 +134,24 @@ class SimpleTypingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: spacing3,
         vertical: spacing2,
       ),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(radiusL),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             'typing',
             style: TextStyle(
               fontSize: 12,
-              color: DesignTokens.textSecondary,
+              color: tc.textSecondary,
               fontStyle: FontStyle.italic,
             ),
           ),

@@ -12,6 +12,7 @@ class EnhancedExercise {
   final List<String> secondaryMuscles;
   final String equipmentRequired;
   final DifficultyLevel difficulty;
+  final String? _difficultyRaw; // Store raw string when enum is unknown (preserves DB value)
 
   // === STANDARD PARAMETERS ===
   final int? sets;
@@ -44,6 +45,7 @@ class EnhancedExercise {
   // Isometric Holds
   final int? isometricHoldSeconds;
   final IsometricPosition? isometricPosition; // top, mid, bottom
+  final String? _isometricPositionRaw; // Store raw string when enum is unknown (preserves DB value)
 
   // Partial Reps
   final PartialRepsConfig? partialReps;
@@ -59,6 +61,7 @@ class EnhancedExercise {
 
   // Pyramid Scheme
   final PyramidScheme? pyramidScheme;
+  final String? _pyramidSchemeRaw; // Store raw string when enum is unknown (preserves DB value)
 
   // Wave Loading
   final WaveLoadingConfig? waveLoading;
@@ -66,11 +69,13 @@ class EnhancedExercise {
   // === GROUPING & PROGRAMMING ===
   final String? groupId; // For supersets, circuits, etc.
   final TrainingMethod trainingMethod;
+  final String? _trainingMethodRaw; // Store raw string when enum is unknown (preserves DB value)
   final int? groupOrder; // Order within the group
 
   // === CARDIO/METABOLIC ===
   final bool isCardio;
   final CardioType? cardioType;
+  final String? _cardioTypeRaw; // Store raw string when enum is unknown (preserves DB value)
   final int? targetHeartRate;
   final String? heartRateZone; // Z1, Z2, Z3, Z4, Z5
   final int? durationMinutes;
@@ -120,6 +125,7 @@ class EnhancedExercise {
     List<String>? secondaryMuscles,
     this.equipmentRequired = 'Barbell',
     this.difficulty = DifficultyLevel.intermediate,
+    String? difficultyRaw,
     this.sets,
     this.reps,
     this.weight,
@@ -137,17 +143,21 @@ class EnhancedExercise {
     this.mechanicalDropsetExercises,
     this.isometricHoldSeconds,
     this.isometricPosition,
+    String? isometricPositionRaw,
     this.partialReps,
     this.forcedReps,
     this.negativeReps,
     this.twentyOneMethod = false,
     this.pyramidScheme,
+    String? pyramidSchemeRaw,
     this.waveLoading,
     this.groupId,
     this.trainingMethod = TrainingMethod.straightSets,
+    String? trainingMethodRaw,
     this.groupOrder,
     this.isCardio = false,
     this.cardioType,
+    String? cardioTypeRaw,
     this.targetHeartRate,
     this.heartRateZone,
     this.durationMinutes,
@@ -174,7 +184,12 @@ class EnhancedExercise {
     this.customData,
     DateTime? createdAt,
     DateTime? updatedAt,
-  })  : primaryMuscles = primaryMuscles ?? [],
+  })  : _difficultyRaw = difficultyRaw,
+        _trainingMethodRaw = trainingMethodRaw,
+        _pyramidSchemeRaw = pyramidSchemeRaw,
+        _isometricPositionRaw = isometricPositionRaw,
+        _cardioTypeRaw = cardioTypeRaw,
+        primaryMuscles = primaryMuscles ?? [],
         secondaryMuscles = secondaryMuscles ?? [],
         createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
@@ -189,7 +204,8 @@ class EnhancedExercise {
       'primary_muscles': primaryMuscles,
       'secondary_muscles': secondaryMuscles,
       'equipment_required': equipmentRequired,
-      'difficulty': difficulty.value,
+      // Preserve raw string if enum is unknown, otherwise use enum value
+      'difficulty': _difficultyRaw ?? difficulty.value,
       if (sets != null) 'sets': sets,
       if (reps != null) 'reps': reps,
       if (weight != null) 'weight': weight,
@@ -206,18 +222,22 @@ class EnhancedExercise {
       if (clusterSetConfig != null) 'cluster_set_config': clusterSetConfig!.toMap(),
       if (mechanicalDropsetExercises != null) 'mechanical_dropset_exercises': mechanicalDropsetExercises,
       if (isometricHoldSeconds != null) 'isometric_hold_seconds': isometricHoldSeconds,
-      if (isometricPosition != null) 'isometric_position': isometricPosition!.value,
+      // Preserve raw string if enum is unknown, otherwise use enum value
+      if (isometricPosition != null) 'isometric_position': _isometricPositionRaw ?? isometricPosition!.value,
       if (partialReps != null) 'partial_reps': partialReps!.toMap(),
       if (forcedReps != null) 'forced_reps': forcedReps,
       if (negativeReps != null) 'negative_reps': negativeReps!.toMap(),
       'twenty_one_method': twentyOneMethod,
-      if (pyramidScheme != null) 'pyramid_scheme': pyramidScheme!.value,
+      // Preserve raw string if enum is unknown, otherwise use enum value
+      if (pyramidScheme != null) 'pyramid_scheme': _pyramidSchemeRaw ?? pyramidScheme!.value,
       if (waveLoading != null) 'wave_loading': waveLoading!.toMap(),
       if (groupId != null) 'group_id': groupId,
-      'training_method': trainingMethod.value,
+      // Preserve raw string if enum is unknown, otherwise use enum value
+      'training_method': _trainingMethodRaw ?? trainingMethod.value,
       if (groupOrder != null) 'group_order': groupOrder,
       'is_cardio': isCardio,
-      if (cardioType != null) 'cardio_type': cardioType!.value,
+      // Preserve raw string if enum is unknown, otherwise use enum value
+      if (cardioType != null) 'cardio_type': _cardioTypeRaw ?? cardioType!.value,
       if (targetHeartRate != null) 'target_heart_rate': targetHeartRate,
       if (heartRateZone != null) 'heart_rate_zone': heartRateZone,
       if (durationMinutes != null) 'duration_minutes': durationMinutes,
@@ -257,6 +277,7 @@ class EnhancedExercise {
     List<String>? secondaryMuscles,
     String? equipmentRequired,
     DifficultyLevel? difficulty,
+    String? difficultyRaw,
     int? sets,
     String? reps,
     double? weight,
@@ -274,17 +295,21 @@ class EnhancedExercise {
     List<String>? mechanicalDropsetExercises,
     int? isometricHoldSeconds,
     IsometricPosition? isometricPosition,
+    String? isometricPositionRaw,
     PartialRepsConfig? partialReps,
     int? forcedReps,
     NegativeRepsConfig? negativeReps,
     bool? twentyOneMethod,
     PyramidScheme? pyramidScheme,
+    String? pyramidSchemeRaw,
     WaveLoadingConfig? waveLoading,
     String? groupId,
     TrainingMethod? trainingMethod,
+    String? trainingMethodRaw,
     int? groupOrder,
     bool? isCardio,
     CardioType? cardioType,
+    String? cardioTypeRaw,
     int? targetHeartRate,
     String? heartRateZone,
     int? durationMinutes,
@@ -320,6 +345,7 @@ class EnhancedExercise {
       secondaryMuscles: secondaryMuscles ?? this.secondaryMuscles,
       equipmentRequired: equipmentRequired ?? this.equipmentRequired,
       difficulty: difficulty ?? this.difficulty,
+      difficultyRaw: difficultyRaw ?? _difficultyRaw,
       sets: sets ?? this.sets,
       reps: reps ?? this.reps,
       weight: weight ?? this.weight,
@@ -337,17 +363,21 @@ class EnhancedExercise {
       mechanicalDropsetExercises: mechanicalDropsetExercises ?? this.mechanicalDropsetExercises,
       isometricHoldSeconds: isometricHoldSeconds ?? this.isometricHoldSeconds,
       isometricPosition: isometricPosition ?? this.isometricPosition,
+      isometricPositionRaw: isometricPositionRaw ?? _isometricPositionRaw,
       partialReps: partialReps ?? this.partialReps,
       forcedReps: forcedReps ?? this.forcedReps,
       negativeReps: negativeReps ?? this.negativeReps,
       twentyOneMethod: twentyOneMethod ?? this.twentyOneMethod,
       pyramidScheme: pyramidScheme ?? this.pyramidScheme,
+      pyramidSchemeRaw: pyramidSchemeRaw ?? _pyramidSchemeRaw,
       waveLoading: waveLoading ?? this.waveLoading,
       groupId: groupId ?? this.groupId,
       trainingMethod: trainingMethod ?? this.trainingMethod,
+      trainingMethodRaw: trainingMethodRaw ?? _trainingMethodRaw,
       groupOrder: groupOrder ?? this.groupOrder,
       isCardio: isCardio ?? this.isCardio,
       cardioType: cardioType ?? this.cardioType,
+      cardioTypeRaw: cardioTypeRaw ?? _cardioTypeRaw,
       targetHeartRate: targetHeartRate ?? this.targetHeartRate,
       heartRateZone: heartRateZone ?? this.heartRateZone,
       durationMinutes: durationMinutes ?? this.durationMinutes,
@@ -496,15 +526,23 @@ enum ExerciseCategory {
   olympic,
   plyometric,
   stabilization,
-  ;
+  unknown; // For unknown values
 
   String get value => name;
 
+  /// Parse string to enum. Returns unknown if value doesn't match known enums.
   static ExerciseCategory fromString(String? value) {
-    return ExerciseCategory.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => ExerciseCategory.compound,
-    );
+    if (value == null || value.isEmpty) {
+      return ExerciseCategory.compound;
+    }
+    
+    try {
+      return ExerciseCategory.values.firstWhere(
+        (e) => e.value == value && e != ExerciseCategory.unknown,
+      );
+    } catch (e) {
+      return ExerciseCategory.unknown;
+    }
   }
 }
 
@@ -513,15 +551,34 @@ enum DifficultyLevel {
   intermediate,
   advanced,
   expert,
-  ;
+  unknown; // For unknown values - raw string stored separately in model
 
   String get value => name;
 
+  /// Parse string to enum. Returns unknown if value doesn't match known enums.
+  /// Caller must check for unknown and preserve raw string separately.
   static DifficultyLevel fromString(String? value) {
-    return DifficultyLevel.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => DifficultyLevel.intermediate,
-    );
+    if (value == null || value.isEmpty) {
+      return DifficultyLevel.intermediate;
+    }
+    
+    // Try to match known enum values (case-insensitive)
+    final lowerValue = value.toLowerCase();
+    try {
+      return DifficultyLevel.values.firstWhere(
+        (e) => e.value.toLowerCase() == lowerValue && e != DifficultyLevel.unknown,
+      );
+    } catch (e) {
+      // Value not found in known enums - return unknown
+      return DifficultyLevel.unknown;
+    }
+  }
+  
+  /// Helper to determine if raw string should be preserved
+  static bool shouldPreserveRaw(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final parsed = fromString(value);
+    return parsed == DifficultyLevel.unknown;
   }
 }
 
@@ -541,7 +598,7 @@ enum TrainingMethod {
   twentyOnes,
   tempoTraining,
   clusterSet,
-  ;
+  unknown; // For unknown values - raw string stored separately in model
 
   String get value => name;
   String get displayName {
@@ -576,14 +633,35 @@ enum TrainingMethod {
         return 'Tempo Training';
       case TrainingMethod.clusterSet:
         return 'Cluster Set';
+      case TrainingMethod.unknown:
+        return 'Unknown';
     }
   }
 
+  /// Parse string to enum. Returns unknown if value doesn't match known enums.
+  /// Caller must check for unknown and preserve raw string separately.
   static TrainingMethod fromString(String? value) {
-    return TrainingMethod.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => TrainingMethod.straightSets,
-    );
+    if (value == null || value.isEmpty) {
+      return TrainingMethod.straightSets;
+    }
+    
+    // Try to match known enum values (case-insensitive)
+    final lowerValue = value.toLowerCase();
+    try {
+      return TrainingMethod.values.firstWhere(
+        (e) => e.value.toLowerCase() == lowerValue && e != TrainingMethod.unknown,
+      );
+    } catch (e) {
+      // Value not found in known enums - return unknown
+      return TrainingMethod.unknown;
+    }
+  }
+  
+  /// Helper to determine if raw string should be preserved
+  static bool shouldPreserveRaw(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final parsed = fromString(value);
+    return parsed == TrainingMethod.unknown;
   }
 }
 
@@ -591,15 +669,34 @@ enum PyramidScheme {
   ascending,
   descending,
   triangle,
-  ;
+  unknown; // For unknown values - raw string stored separately in model
 
   String get value => name;
 
+  /// Parse string to enum. Returns unknown if value doesn't match known enums.
+  /// Caller must check for unknown and preserve raw string separately.
   static PyramidScheme fromString(String? value) {
-    return PyramidScheme.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => PyramidScheme.ascending,
-    );
+    if (value == null || value.isEmpty) {
+      return PyramidScheme.ascending;
+    }
+    
+    // Try to match known enum values (case-insensitive)
+    final lowerValue = value.toLowerCase();
+    try {
+      return PyramidScheme.values.firstWhere(
+        (e) => e.value.toLowerCase() == lowerValue && e != PyramidScheme.unknown,
+      );
+    } catch (e) {
+      // Value not found in known enums - return unknown
+      return PyramidScheme.unknown;
+    }
+  }
+  
+  /// Helper to determine if raw string should be preserved
+  static bool shouldPreserveRaw(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final parsed = fromString(value);
+    return parsed == PyramidScheme.unknown;
   }
 }
 
@@ -607,15 +704,34 @@ enum IsometricPosition {
   top,
   mid,
   bottom,
-  ;
+  unknown; // For unknown values - raw string stored separately in model
 
   String get value => name;
 
+  /// Parse string to enum. Returns unknown if value doesn't match known enums.
+  /// Caller must check for unknown and preserve raw string separately.
   static IsometricPosition fromString(String? value) {
-    return IsometricPosition.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => IsometricPosition.mid,
-    );
+    if (value == null || value.isEmpty) {
+      return IsometricPosition.mid;
+    }
+    
+    // Try to match known enum values (case-insensitive)
+    final lowerValue = value.toLowerCase();
+    try {
+      return IsometricPosition.values.firstWhere(
+        (e) => e.value.toLowerCase() == lowerValue && e != IsometricPosition.unknown,
+      );
+    } catch (e) {
+      // Value not found in known enums - return unknown
+      return IsometricPosition.unknown;
+    }
+  }
+  
+  /// Helper to determine if raw string should be preserved
+  static bool shouldPreserveRaw(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final parsed = fromString(value);
+    return parsed == IsometricPosition.unknown;
   }
 }
 
@@ -626,7 +742,7 @@ enum CardioType {
   sprintIntervals,
   tempo,
   steadyState,
-  ;
+  unknown; // For unknown values - raw string stored separately in model
 
   String get value => name;
   String get displayName {
@@ -643,13 +759,34 @@ enum CardioType {
         return 'Tempo';
       case CardioType.steadyState:
         return 'Steady State';
+      case CardioType.unknown:
+        return 'Unknown';
     }
   }
 
+  /// Parse string to enum. Returns unknown if value doesn't match known enums.
+  /// Caller must check for unknown and preserve raw string separately.
   static CardioType fromString(String? value) {
-    return CardioType.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => CardioType.steadyState,
-    );
+    if (value == null || value.isEmpty) {
+      return CardioType.steadyState;
+    }
+    
+    // Try to match known enum values (case-insensitive)
+    final lowerValue = value.toLowerCase();
+    try {
+      return CardioType.values.firstWhere(
+        (e) => e.value.toLowerCase() == lowerValue && e != CardioType.unknown,
+      );
+    } catch (e) {
+      // Value not found in known enums - return unknown
+      return CardioType.unknown;
+    }
+  }
+  
+  /// Helper to determine if raw string should be preserved
+  static bool shouldPreserveRaw(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final parsed = fromString(value);
+    return parsed == CardioType.unknown;
   }
 }

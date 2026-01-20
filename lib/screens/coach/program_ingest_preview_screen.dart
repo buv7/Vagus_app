@@ -5,6 +5,7 @@ import '../../theme/app_theme.dart';
 import '../../services/coach/program_ingest_service.dart';
 import '../../services/coach/program_apply_service.dart';
 import '../../models/program_ingest/program_ingest_job.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 class ProgramIngestPreviewScreen extends StatefulWidget {
   final String jobId;
@@ -335,7 +336,7 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
                 if (_result!.supplements.isNotEmpty) ...[
                   _buildSection(
                     title: 'Supplements (${_result!.supplements.length})',
-                    icon: Icons.medication,
+                    icon: null, // Using PillIcon in display
                     child: Column(
                       children: _result!.supplements.map((supp) => Container(
                         margin: const EdgeInsets.only(bottom: DesignTokens.space8),
@@ -499,7 +500,7 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
 
   Widget _buildSection({
     required String title,
-    required IconData icon,
+    IconData? icon,
     required Widget child,
   }) {
     return Column(
@@ -507,11 +508,13 @@ class _ProgramIngestPreviewScreenState extends State<ProgramIngestPreviewScreen>
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              color: AppTheme.accentGreen,
-              size: 20,
-            ),
+            title.contains('Supplement')
+                ? const PillIcon(size: 20)
+                : Icon(
+                    icon ?? Icons.info,
+                    color: AppTheme.accentGreen,
+                    size: 20,
+                  ),
             const SizedBox(width: DesignTokens.space8),
             Text(
               title,

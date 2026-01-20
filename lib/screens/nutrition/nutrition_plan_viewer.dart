@@ -18,6 +18,7 @@ import '../../services/nutrition/pantry_service.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../services/nutrition/calendar_bridge.dart';
 import '../../widgets/branding/vagus_appbar.dart';
+import '../../widgets/supplements/pill_icon.dart';
 import 'nutrition_plan_builder.dart';
 import '../../widgets/nutrition/daily_summary_card.dart';
 import '../../widgets/nutrition/nutrition_update_ring.dart';
@@ -868,7 +869,7 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
           actions: [
             // Supplements Button
             IconButton(
-              icon: const Icon(Icons.medication_outlined),
+              icon: const PillIcon(size: 24),
               tooltip: 'Supplements',
               onPressed: () {
                 Navigator.push(
@@ -1015,7 +1016,7 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
           actions: [
             // Supplements Button
             IconButton(
-              icon: const Icon(Icons.medication_outlined),
+              icon: const PillIcon(size: 24),
               tooltip: 'Supplements',
               onPressed: () {
                 Navigator.push(
@@ -1149,7 +1150,7 @@ class _NutritionPlanViewerState extends State<NutritionPlanViewer> {
         actions: [
           // Supplements Button
           IconButton(
-            icon: const Icon(Icons.medication_outlined),
+            icon: const PillIcon(size: 24),
             tooltip: 'Supplements',
             onPressed: () {
               Navigator.push(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class MessagingHeader extends StatelessWidget {
   final Map<String, dynamic> client;
@@ -23,12 +24,13 @@ class MessagingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
             width: 1,
           ),
         ),
@@ -50,9 +52,9 @@ class MessagingHeader extends StatelessWidget {
           // Back Button
           IconButton(
             onPressed: onBack,
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back,
-              color: DesignTokens.neutralWhite,
+              color: tc.icon,
             ),
           ),
           
@@ -64,11 +66,11 @@ class MessagingHeader extends StatelessWidget {
               color: AppTheme.accentGreen,
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 'V',
                 style: TextStyle(
-                  color: AppTheme.primaryDark,
+                  color: tc.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -85,8 +87,8 @@ class MessagingHeader extends StatelessWidget {
               children: [
                 Text(
                   client['name'] ?? 'Unknown',
-                  style: const TextStyle(
-                    color: DesignTokens.neutralWhite,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),

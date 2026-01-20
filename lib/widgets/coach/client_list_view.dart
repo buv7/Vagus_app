@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class ClientListView extends StatefulWidget {
   final List<Map<String, dynamic>> clients;
@@ -41,6 +42,7 @@ class _ClientListViewState extends State<ClientListView> {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space20),
       child: Column(
@@ -57,8 +59,8 @@ class _ClientListViewState extends State<ClientListView> {
               const SizedBox(width: DesignTokens.space8),
               Text(
                 'Clients (${widget.clients.length})',
-                style: const TextStyle(
-                  color: AppTheme.neutralWhite,
+                style: TextStyle(
+                  color: tc.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -68,8 +70,8 @@ class _ClientListViewState extends State<ClientListView> {
               if (widget.clients.isNotEmpty)
                 Text(
                   '${_currentPage + 1} / ${widget.clients.length}',
-                  style: const TextStyle(
-                    color: AppTheme.lightGrey,
+                  style: TextStyle(
+                    color: tc.textSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -81,11 +83,11 @@ class _ClientListViewState extends State<ClientListView> {
           // Client List with PageView
           Expanded(
             child: widget.clients.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
                       'No clients found',
                       style: TextStyle(
-                        color: AppTheme.lightGrey,
+                        color: tc.textSecondary,
                         fontSize: 16,
                       ),
                     ),
@@ -106,7 +108,7 @@ class _ClientListViewState extends State<ClientListView> {
                             padding: const EdgeInsets.symmetric(
                               horizontal: DesignTokens.space8,
                             ),
-                            child: _buildClientCard(client),
+                            child: _buildClientCard(context, client),
                           );
                         },
                       ),
@@ -122,7 +124,7 @@ class _ClientListViewState extends State<ClientListView> {
                             child: Center(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: AppTheme.cardBackground.withValues(alpha: 0.8),
+                                  color: tc.surface.withValues(alpha: 0.8),
                                   shape: BoxShape.circle,
                                 ),
                                 child: IconButton(
@@ -151,7 +153,7 @@ class _ClientListViewState extends State<ClientListView> {
                             child: Center(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: AppTheme.cardBackground.withValues(alpha: 0.8),
+                                  color: tc.surface.withValues(alpha: 0.8),
                                   shape: BoxShape.circle,
                                 ),
                                 child: IconButton(
@@ -192,7 +194,7 @@ class _ClientListViewState extends State<ClientListView> {
                     decoration: BoxDecoration(
                       color: _currentPage == index
                           ? AppTheme.accentGreen
-                          : AppTheme.mediumGrey,
+                          : tc.chipBg,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -205,16 +207,17 @@ class _ClientListViewState extends State<ClientListView> {
     );
   }
 
-  Widget _buildClientCard(Map<String, dynamic> client) {
+  Widget _buildClientCard(BuildContext context, Map<String, dynamic> client) {
+    final tc = ThemeColors.of(context);
     final status = client['status'] as String;
-    final statusColor = _getStatusColor(status);
+    final statusColor = _getStatusColor(context, status);
     final compliance = client['compliance'] as int;
     final complianceColor = _getComplianceColor(compliance);
 
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space14),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(DesignTokens.radius16),
         boxShadow: [
           BoxShadow(
@@ -238,11 +241,11 @@ class _ClientListViewState extends State<ClientListView> {
                   color: AppTheme.accentGreen,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'V',
                     style: TextStyle(
-                      color: AppTheme.primaryDark,
+                      color: tc.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -261,8 +264,8 @@ class _ClientListViewState extends State<ClientListView> {
                       children: [
                         Text(
                           client['name'],
-                          style: const TextStyle(
-                            color: AppTheme.neutralWhite,
+                          style: TextStyle(
+                            color: tc.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -279,8 +282,8 @@ class _ClientListViewState extends State<ClientListView> {
                           ),
                           child: Text(
                             status,
-                            style: const TextStyle(
-                              color: AppTheme.neutralWhite,
+                            style: TextStyle(
+                              color: tc.textPrimary,
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                             ),
@@ -291,16 +294,16 @@ class _ClientListViewState extends State<ClientListView> {
                     const SizedBox(height: DesignTokens.space2),
                     Text(
                       client['email'],
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 12,
                       ),
                     ),
                     const SizedBox(height: DesignTokens.space2),
                     Text(
                       '${client['program']} • Joined ${client['joinDate']}',
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 11,
                       ),
                     ),
@@ -317,13 +320,13 @@ class _ClientListViewState extends State<ClientListView> {
                             vertical: DesignTokens.space2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.mediumGrey,
+                            color: tc.chipBg,
                             borderRadius: BorderRadius.circular(DesignTokens.radius8),
                           ),
                           child: Text(
                             tag,
-                            style: const TextStyle(
-                              color: AppTheme.neutralWhite,
+                            style: TextStyle(
+                              color: tc.textPrimary,
                               fontSize: 9,
                             ),
                           ),
@@ -339,9 +342,9 @@ class _ClientListViewState extends State<ClientListView> {
                 onPressed: () {
                   // Show more options
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.more_vert,
-                  color: AppTheme.lightGrey,
+                  color: tc.icon,
                   size: 20,
                 ),
               ),
@@ -355,13 +358,15 @@ class _ClientListViewState extends State<ClientListView> {
             children: [
               Expanded(
                 child: _buildStatItem(
+                  context: context,
                   label: 'Progress',
                   value: client['progress'],
-                  color: AppTheme.neutralWhite,
+                  color: tc.textPrimary,
                 ),
               ),
               Expanded(
                 child: _buildStatItem(
+                  context: context,
                   label: 'Compliance',
                   value: '$compliance%',
                   color: complianceColor,
@@ -369,13 +374,15 @@ class _ClientListViewState extends State<ClientListView> {
               ),
               Expanded(
                 child: _buildStatItem(
+                  context: context,
                   label: 'Last Active',
                   value: client['lastActive'],
-                  color: AppTheme.lightGrey,
+                  color: tc.textSecondary,
                 ),
               ),
               Expanded(
                 child: _buildStatItem(
+                  context: context,
                   label: 'Next Session',
                   value: client['nextSession'],
                   color: AppTheme.accentGreen,
@@ -393,13 +400,13 @@ class _ClientListViewState extends State<ClientListView> {
                 child: OutlinedButton(
                   onPressed: () => widget.onViewProfile(client), // Fixed Method Calls
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.mediumGrey),
+                    side: BorderSide(color: tc.border),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   ),
-                  child: const Text(
+                  child: Text(
                     'View Profile',
                     style: TextStyle(
-                      color: AppTheme.neutralWhite,
+                      color: tc.textPrimary,
                       fontSize: 12,
                     ),
                   ),
@@ -409,20 +416,20 @@ class _ClientListViewState extends State<ClientListView> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () => widget.onReview(client),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.calendar_today_outlined,
-                    color: AppTheme.neutralWhite,
+                    color: tc.icon,
                     size: 14,
                   ),
-                  label: const Text(
+                  label: Text(
                     'Review',
                     style: TextStyle(
-                      color: AppTheme.neutralWhite,
+                      color: tc.textPrimary,
                       fontSize: 12,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.mediumGrey),
+                    side: BorderSide(color: tc.border),
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space6,
                     ),
@@ -436,20 +443,20 @@ class _ClientListViewState extends State<ClientListView> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () => widget.onMessage(client),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.chat_bubble_outline,
-                    color: AppTheme.neutralWhite,
+                    color: tc.icon,
                     size: 14,
                   ),
-                  label: const Text(
+                  label: Text(
                     'Message',
                     style: TextStyle(
-                      color: AppTheme.neutralWhite,
+                      color: tc.textPrimary,
                       fontSize: 12,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.mediumGrey),
+                    side: BorderSide(color: tc.border),
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space6,
                     ),
@@ -468,17 +475,19 @@ class _ClientListViewState extends State<ClientListView> {
   }
 
   Widget _buildStatItem({
+    required BuildContext context,
     required String label,
     required String value,
     required Color color,
   }) {
+    final tc = ThemeColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppTheme.lightGrey,
+          style: TextStyle(
+            color: tc.textSecondary,
             fontSize: 12,
           ),
         ),
@@ -495,16 +504,17 @@ class _ClientListViewState extends State<ClientListView> {
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(BuildContext context, String status) {
+    final tc = ThemeColors.of(context);
     switch (status.toLowerCase()) {
       case 'active':
         return Colors.green;
       case 'paused':
-        return AppTheme.mediumGrey;
+        return tc.chipBg;
       case 'inactive':
         return Colors.red;
       default:
-        return AppTheme.mediumGrey;
+        return tc.chipBg;
     }
   }
 

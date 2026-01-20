@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import '../../services/share/share_card_service.dart';
 import '../../theme/design_tokens.dart';
+import '../../widgets/common/save_icon.dart';
 
 
 /// Screen for previewing and sharing generated cards
@@ -136,7 +137,7 @@ class _SharePreviewScreenState extends State<SharePreviewScreen> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: _saveToGallery,
-                    icon: const Icon(Icons.save),
+                    icon: SaveIcon(),
                     label: const Text('Save to Gallery'),
                                        style: OutlinedButton.styleFrom(
                      foregroundColor: DesignTokens.blue600,

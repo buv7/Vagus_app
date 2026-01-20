@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../../services/admin/admin_service.dart';
+import '../../widgets/common/save_icon.dart';
 
 class GlobalSettingsPanel extends StatefulWidget {
   const GlobalSettingsPanel({super.key});
@@ -482,7 +483,7 @@ class _GlobalSettingsPanelState extends State<GlobalSettingsPanel> {
                                         height: 16,
                                         child: CircularProgressIndicator(strokeWidth: 2),
                                       )
-                                    : const Icon(Icons.save),
+                                    : SaveIcon(),
                                 label: const Text('Save Changes'),
                               ),
                             ),

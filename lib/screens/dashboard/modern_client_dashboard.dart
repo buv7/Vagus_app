@@ -13,7 +13,16 @@ import '../settings/profile_settings_screen.dart';
 import '../settings/notifications_settings_screen.dart';
 import '../support/help_center_screen.dart';
 import '../../widgets/ads/ad_banner_strip.dart';
+import '../../widgets/common/fatigue_recovery_icon.dart';
 import '../client/client_coach_marketplace.dart';
+import '../fatigue/fatigue_dashboard_screen.dart';
+import '../../services/config/feature_flags.dart';
+import '../../services/retention/dopamine_service.dart';
+import '../../services/retention/daily_missions_service.dart';
+import '../../models/retention/mission_models.dart';
+import '../retention/daily_missions_screen.dart';
+import '../../services/growth/passive_virality_service.dart';
+import '../../services/share/share_card_service.dart';
 
 class ModernClientDashboard extends StatefulWidget {
   const ModernClientDashboard({super.key});
@@ -40,6 +49,23 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   
   // Supplement states
   Map<String, bool> _supplementStates = {};
+
+  // ✅ VAGUS ADD: daily-missions-helper START
+  Future<List<DailyMission>> _loadDailyMissions() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return <DailyMission>[];
+      final missions = await DailyMissionsService.I.getTodayMissions(userId: user.id);
+      if (missions.isEmpty) {
+        await DailyMissionsService.I.generateDailyMissions(userId: user.id);
+        return await DailyMissionsService.I.getTodayMissions(userId: user.id);
+      }
+      return missions;
+    } catch (_) {
+      return <DailyMission>[];
+    }
+  }
+  // ✅ VAGUS ADD: daily-missions-helper END
 
   @override
   void initState() {
@@ -379,6 +405,56 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ✅ VAGUS ADD: daily-dopamine START
+              FutureBuilder<bool>(
+                future: FeatureFlags.instance.isEnabled(FeatureFlags.dailyDopamine),
+                builder: (context, flagSnapshot) {
+                  if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+                  return FutureBuilder<String?>(
+                    future: () async {
+                      try {
+                        final user = Supabase.instance.client.auth.currentUser;
+                        if (user == null) return null;
+                        return await DopamineService.I.triggerDopamineOnOpen(userId: user.id);
+                      } catch (_) {
+                        return null;
+                      }
+                    }(),
+                    builder: (context, snapshot) {
+                      final message = snapshot.data;
+                      if (message == null) return const SizedBox.shrink();
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.orange.shade400, Colors.orange.shade600],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.celebration, color: Colors.white),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                message,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              // ✅ VAGUS ADD: daily-dopamine END
+              
               // Header
               _buildHeader(),
               
@@ -386,6 +462,188 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               
               // Ad Banner Strip
               const AdBannerStrip(audience: 'client'),
+              
+              const SizedBox(height: 24),
+              
+              // ✅ VAGUS ADD: daily-missions START
+              FutureBuilder<bool>(
+                future: FeatureFlags.instance.isEnabled(FeatureFlags.dailyMissions),
+                builder: (context, flagSnapshot) {
+                  if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+                  
+                  return FutureBuilder<List<DailyMission>>(
+                    future: _loadDailyMissions(),
+                    builder: (context, snapshot) {
+                      final missions = snapshot.data ?? [];
+                      if (missions.isEmpty) return const SizedBox.shrink();
+                      
+                      final completedCount = missions.where((m) => m.completed).length;
+                      final totalCount = missions.length;
+                      
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const DailyMissionsScreen(),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.flag, color: Colors.orange),
+                                    const SizedBox(width: 8),
+                                    const Text(
+                                      'Daily Missions',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      '$completedCount/$totalCount',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Colors.orange,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                LinearProgressIndicator(
+                                  value: totalCount > 0 ? completedCount / totalCount : 0,
+                                  backgroundColor: Colors.grey.shade200,
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Tap to view all missions',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              // ✅ VAGUS ADD: daily-missions END
+              
+              // ✅ VAGUS ADD: passive-virality START
+              FutureBuilder<bool>(
+                future: FeatureFlags.instance.isEnabled(FeatureFlags.passiveVirality),
+                builder: (context, flagSnapshot) {
+                  if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+                  
+                  return FutureBuilder<ShareableMomentData?>(
+                    future: () async {
+                      try {
+                        final user = Supabase.instance.client.auth.currentUser;
+                        if (user == null) return null;
+                        return await PassiveViralityService.I.detectShareableMoments(userId: user.id);
+                      } catch (_) {
+                        return null;
+                      }
+                    }(),
+                    builder: (context, snapshot) {
+                      final moment = snapshot.data;
+                      if (moment == null) return const SizedBox.shrink();
+
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        color: Colors.blue.shade50,
+                        child: InkWell(
+                          onTap: () async {
+                            try {
+                              final user = Supabase.instance.client.auth.currentUser;
+                              if (user == null) return;
+
+                              // Generate share card
+                              final shareData = ShareDataModel(
+                                title: moment.title,
+                                subtitle: moment.subtitle,
+                                metrics: moment.metrics,
+                              );
+
+                              // Generate share asset (for future use when share sheet is implemented)
+                              // ignore: unused_local_variable
+                              final shareAsset = await ShareCardService().buildStory(
+                                ShareTemplate.minimal,
+                                shareData,
+                              );
+
+                              // Log viral event
+                              await PassiveViralityService.I.triggerPassiveShare(
+                                userId: user.id,
+                                moment: moment,
+                                source: 'dashboard_suggestion',
+                              );
+
+                              // TODO: Open native share sheet with shareAsset
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Share card generated! (Share sheet coming soon)')),
+                              );
+                            } catch (e) {
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error: $e')),
+                              );
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.share, color: Colors.blue),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Shareable Moment',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        moment.title,
+                                        style: TextStyle(
+                                          color: Colors.grey.shade700,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.arrow_forward_ios, size: 16),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              // ✅ VAGUS ADD: passive-virality END
               
               const SizedBox(height: 24),
               
@@ -603,6 +861,19 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               },
             ),
             _buildMenuTile(
+              iconWidget: FatigueRecoveryIcon(size: 24),
+              title: 'Fatigue Dashboard',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FatigueDashboardScreen(),
+                  ),
+                );
+              },
+            ),
+            _buildMenuTile(
               icon: Icons.logout,
               title: 'Sign Out',
               textColor: Colors.red,
@@ -620,13 +891,14 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildMenuTile({
-    required IconData icon,
+    IconData? icon,
+    Widget? iconWidget,
     required String title,
     required VoidCallback onTap,
     Color? textColor,
   }) {
     return ListTile(
-      leading: Icon(icon, color: textColor ?? Colors.white70),
+      leading: iconWidget ?? (icon != null ? Icon(icon, color: textColor ?? Colors.white70) : null),
       title: Text(
         title,
         style: TextStyle(

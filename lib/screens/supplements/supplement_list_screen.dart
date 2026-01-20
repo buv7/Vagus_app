@@ -3,6 +3,7 @@ import '../../models/supplements/supplement_models.dart';
 import '../../services/supplements/supplement_service.dart';
 import '../../theme/design_tokens.dart';
 import '../../services/billing/plan_access_manager.dart';
+import '../../widgets/supplements/pill_icon.dart';
 import 'supplement_history_screen.dart';
 
 /// Screen showing all supplements with management options
@@ -470,9 +471,7 @@ class _SupplementListScreenState extends State<SupplementListScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.medication_outlined,
-            color: DesignTokens.ink500,
+          const PillIcon(
             size: 64,
           ),
           const SizedBox(height: DesignTokens.space16),
@@ -527,9 +526,7 @@ class _SupplementListScreenState extends State<SupplementListScreen> {
                 color: Color(int.parse(supplement.color.replaceAll('#', '0xFF'))),
                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
               ),
-              child: const Icon(
-                Icons.medication,
-                color: Colors.white,
+              child: const PillIcon(
                 size: 24,
               ),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class CoachInboxCard extends StatelessWidget {
   final List<Map<String, dynamic>> inboxItems;
@@ -21,12 +22,13 @@ class CoachInboxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -55,10 +57,10 @@ class CoachInboxCard extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: DesignTokens.space8),
-              const Text(
+              Text(
                 'Coach Inbox',
                 style: TextStyle(
-                  color: DesignTokens.neutralWhite,
+                  color: tc.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -75,8 +77,8 @@ class CoachInboxCard extends StatelessWidget {
                 ),
                 child: Text(
                   '${inboxItems.length}',
-                  style: const TextStyle(
-                    color: DesignTokens.neutralWhite,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -85,10 +87,10 @@ class CoachInboxCard extends StatelessWidget {
               const Spacer(),
               TextButton(
                 onPressed: onBulkSelect,
-                child: const Text(
+                child: Text(
                   'Bulk Select',
                   style: TextStyle(
-                    color: AppTheme.neutralWhite,
+                    color: tc.textPrimary,
                     fontSize: 14,
                   ),
                 ),
@@ -99,7 +101,7 @@ class CoachInboxCard extends StatelessWidget {
           const SizedBox(height: DesignTokens.space16),
           
           // Inbox Items
-          ...inboxItems.map((item) => _buildInboxItem(item)),
+          ...inboxItems.map((item) => _buildInboxItem(context, item)),
         ],
             ),
           ),
@@ -108,17 +110,18 @@ class CoachInboxCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInboxItem(Map<String, dynamic> item) {
+  Widget _buildInboxItem(BuildContext context, Map<String, dynamic> item) {
+    final tc = ThemeColors.of(context);
     final status = item['status'] as String;
-    final statusColor = _getStatusColor(status);
+    final statusColor = _getStatusColor(context, status);
     
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space12),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -156,11 +159,11 @@ class CoachInboxCard extends StatelessWidget {
                   color: AppTheme.accentGreen,
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'V',
                     style: TextStyle(
-                      color: AppTheme.primaryDark,
+                      color: tc.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -179,8 +182,8 @@ class CoachInboxCard extends StatelessWidget {
                       children: [
                         Text(
                           item['clientName'],
-                          style: const TextStyle(
-                            color: AppTheme.neutralWhite,
+                          style: TextStyle(
+                            color: tc.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -197,8 +200,8 @@ class CoachInboxCard extends StatelessWidget {
                           ),
                           child: Text(
                             status,
-                            style: const TextStyle(
-                              color: AppTheme.neutralWhite,
+                            style: TextStyle(
+                              color: tc.textPrimary,
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
@@ -209,8 +212,8 @@ class CoachInboxCard extends StatelessWidget {
                     const SizedBox(height: DesignTokens.space4),
                     Text(
                       item['message'],
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 14,
                       ),
                     ),
@@ -221,8 +224,8 @@ class CoachInboxCard extends StatelessWidget {
               // Time
               Text(
                 item['time'],
-                style: const TextStyle(
-                  color: AppTheme.lightGrey,
+                style: TextStyle(
+                  color: tc.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -236,6 +239,7 @@ class CoachInboxCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildActionButton(
+                  context: context,
                   icon: Icons.chat_bubble_outline,
                   label: 'Msg',
                   onPressed: () => onMessage(item['id']),
@@ -244,6 +248,7 @@ class CoachInboxCard extends StatelessWidget {
               const SizedBox(width: DesignTokens.space2),
               Expanded(
                 child: _buildActionButton(
+                  context: context,
                   icon: Icons.phone_outlined,
                   label: 'Call',
                   onPressed: () => onQuickCall(item['id']),
@@ -252,6 +257,7 @@ class CoachInboxCard extends StatelessWidget {
               const SizedBox(width: DesignTokens.space2),
               Expanded(
                 child: _buildActionButton(
+                  context: context,
                   icon: Icons.check_outlined,
                   label: 'Done',
                   onPressed: () => onMarkReviewed(item['id']),
@@ -262,9 +268,9 @@ class CoachInboxCard extends StatelessWidget {
                 onPressed: () {
                   // Handle delete
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.delete_outline,
-                  color: AppTheme.lightGrey,
+                  color: tc.icon,
                   size: 16,
                 ),
                 padding: const EdgeInsets.all(DesignTokens.space4),
@@ -284,26 +290,28 @@ class CoachInboxCard extends StatelessWidget {
   }
 
   Widget _buildActionButton({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required VoidCallback onPressed,
   }) {
+    final tc = ThemeColors.of(context);
     return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(
         icon,
-        color: AppTheme.neutralWhite,
+        color: tc.icon,
         size: 14,
       ),
       label: Text(
         label,
-        style: const TextStyle(
-          color: AppTheme.neutralWhite,
+        style: TextStyle(
+          color: tc.textPrimary,
           fontSize: 10,
         ),
       ),
       style: TextButton.styleFrom(
-        backgroundColor: AppTheme.mediumGrey,
+        backgroundColor: tc.surfaceAlt,
         padding: const EdgeInsets.symmetric(
           horizontal: DesignTokens.space8,
           vertical: DesignTokens.space4,
@@ -315,7 +323,8 @@ class CoachInboxCard extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(BuildContext context, String status) {
+    final tc = ThemeColors.of(context);
     switch (status.toLowerCase()) {
       case 'urgent':
         return Colors.red;
@@ -324,7 +333,7 @@ class CoachInboxCard extends StatelessWidget {
       case 'info':
         return AppTheme.accentGreen;
       default:
-        return AppTheme.mediumGrey;
+        return tc.chipBg;
     }
   }
 }

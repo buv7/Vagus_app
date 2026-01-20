@@ -1,5 +1,10 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../config/feature_flags.dart';
+import '../nutrition/adherence_psychology_service.dart';
+import '../nutrition/digestion_tracking_service.dart';
+import '../retention/death_spiral_prevention_service.dart';
 
 /// Enum for streak sources
 enum StreakSource {
@@ -73,6 +78,27 @@ class StreakService {
 
       // Debug logging for analytics
       debugPrint('📊 ANALYTICS: Streak recomputed - User: $user, Date: $todayDate');
+      
+      // ✅ VAGUS ADD: death-spiral-prevention START
+      // Check if death spiral prevention is enabled and trigger if needed
+      // Check YESTERDAY for missed day (not today, as today might still be in progress)
+      final isPreventionEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.deathSpiralPrevention);
+      if (isPreventionEnabled) {
+        final yesterday = todayDate.subtract(const Duration(days: 1));
+        final yesterdayCompliant = await _supabase.rpc('is_day_compliant', params: {
+          'p_user_id': user,
+          'p_date': yesterday.toIso8601String().split('T')[0],
+        });
+        
+        if (yesterdayCompliant == false) {
+          // Yesterday was missed - trigger prevention
+          unawaited(DeathSpiralPreventionService.I.detectMissedDay(
+            userId: user,
+            date: yesterday,
+          ));
+        }
+      }
+      // ✅ VAGUS ADD: death-spiral-prevention END
     } catch (e) {
       debugPrint('Failed to recompute streak: $e');
       rethrow;
@@ -99,6 +125,42 @@ class StreakService {
       return {'current_count': 0, 'longest_count': 0, 'shield_active': false};
     }
   }
+
+  // ✅ VAGUS ADD: nutrition-psychology START
+  /// Get nutrition psychology insights (adherence score, risk flags, nudges)
+  Future<Map<String, dynamic>?> getNutritionPsychologyInsights({String? userId}) async {
+    try {
+      final user = userId ?? _supabase.auth.currentUser?.id;
+      if (user == null) return null;
+
+      // Check if feature is enabled
+      final isEnabled = await FeatureFlags.instance.isEnabled(FeatureFlags.nutritionPsychology);
+      if (!isEnabled) return null;
+
+      final adherenceService = AdherencePsychologyService.I;
+      final trends = await DigestionTrackingService.I.getBloatTrends(userId: user, days: 7);
+      
+      final adherenceScore = await adherenceService.getAdherenceScore(userId: user, days: 7);
+      final riskFlags = await adherenceService.getRiskFlags(userId: user, days: 7);
+      
+      final nudge = adherenceService.getMotivationNudge(
+        adherenceScore: adherenceScore,
+        avgBloat: trends['avgBloat'] as double,
+        avgCompliance: trends['avgCompliance'] as double,
+      );
+
+      return {
+        'adherence_score': adherenceScore,
+        'risk_flags': riskFlags,
+        'motivation_nudge': nudge,
+        'trends': trends,
+      };
+    } catch (e) {
+      debugPrint('Failed to get nutrition psychology insights: $e');
+      return null;
+    }
+  }
+  // ✅ VAGUS ADD: nutrition-psychology END
 
   /// Check if a specific day is compliant
   Future<bool> isDayCompliant({

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'dart:math' as math;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
 import 'package:video_player/video_player.dart';
@@ -17,6 +18,10 @@ import '../../services/workout/exercise_history_service.dart';
 import '../../widgets/workout/exercise_history_card.dart';
 import '../../widgets/workout/auto_progression_tip.dart';
 import '../../services/workout/exercise_local_log_service.dart';
+import '../../services/workout/intensifier_rule_engine.dart';
+import '../../services/workout/fatigue_engine.dart';
+import '../../models/workout/intensifier_models.dart';
+import '../../models/workout/fatigue_score.dart';
 import 'package:flutter/services.dart';
 import '../../widgets/workout/set_row_controls.dart';
 import '../../widgets/workout/session_summary_footer.dart';
@@ -108,6 +113,19 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
 
   // Quick note state
   late final TextEditingController _quickNoteCtr;
+  
+  // Phase 4.6A/4.7: Intensifier rule engine
+  IntensifierRuleEngine? _ruleEngine;
+  String? _intensifierApplyScope; // 'off' | 'last_set' | 'all_sets'
+  String? _intensifierName; // Name for UI hint
+  
+  // Phase 4.7: Execution state tracking
+  SetExecutionState _executionState = SetExecutionState();
+  
+  // Phase 4.8: Fatigue accumulation
+  final FatigueEngine _fatigueEngine = FatigueEngine();
+  final List<FatigueScore> _exerciseFatigueScores = []; // Per-set fatigue for current exercise
+  FatigueScore _sessionFatigue = FatigueScore.zero; // Accumulated session fatigue
 
   // Group tracking state
   final Map<String /*exerciseKey*/, int /*completed*/> _groupCompleted = {}; // Tracks per-exercise completed set count for the *current session* (local only)
@@ -128,6 +146,15 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
     _setupVideoIfAny();
     _loadCatalogData();
     _prefillFromLastLog();
+    _parseIntensifierRules(); // Phase 4.7: Parse rules and initialize engine
+    
+    // Phase 4.7: Load execution metadata if exists (session continuity)
+    final exKey = _exerciseKey(_exercise);
+    final clientId = _clientId ?? 'demo_client_id';
+    _loadExecutionMetadata(exKey, clientId);
+    
+    // Phase 4.8: Reset exercise fatigue on load
+    _resetExerciseFatigue();
   }
 
   Future<void> _initializePrefs() async {
@@ -275,9 +302,16 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
     setState(() {
       _index = newIndex;
       _catalogLoaded = false; // Reset catalog data for new exercise
+      _executionState.reset(); // Phase 4.7: Reset execution state when exercise changes
+      _resetExerciseFatigue(); // Phase 4.8: Reset exercise fatigue
     });
     _setupVideoIfAny();
     _loadCatalogData();
+    _parseIntensifierRules(); // Phase 4.7: Re-initialize engine for new exercise
+    // Load execution metadata for new exercise
+    final exKey = _exerciseKey(_exercise);
+    final clientId = _clientId ?? 'demo_client_id';
+    _loadExecutionMetadata(exKey, clientId);
   }
 
   int _resolveRestSeconds(Map<String, dynamic> exercise) {
@@ -1094,6 +1128,7 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
       // also hide any inline timers
       final key = _exerciseKey(ex);
       _showInlineRestForSet[key]?.clear();
+      _executionState.reset(); // Phase 4.7: Reset execution state
     });
     Haptics.warning();
     if (mounted) {
@@ -1406,6 +1441,8 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
                           _setScratch.clear();
                           final key = _exerciseKey(exercise);
                           _showInlineRestForSet[key]?.clear();
+                          _executionState.reset(); // Phase 4.7: Reset execution state
+                          _resetExerciseFatigue(); // Phase 4.8: Reset exercise fatigue
                         });
                         Haptics.warning();
                         if (mounted) {
@@ -1442,40 +1479,125 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
           final exKey = _exerciseKey(exercise);
           final showRestTimer = _showInlineRestForSet[exKey]?[index] == true;
           
+          // Phase 4.7: Get directive from rule engine
+          final directive = _getDirectiveForSet(index, setsPlanned);
+          final autoConfigExtras = _directiveToLocalSetLog(directive);
+          final autoConfigName = directive?.ruleName ?? _intensifierName;
+          final shouldShowHint = directive != null && autoConfigName != null;
+          
           return Column(
             children: [
+              // Phase 4.6A: Auto-config hint (shown when auto-config is active for this set)
+              if (shouldShowHint)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.blue.withValues(alpha: 0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.auto_awesome, size: 12, color: Colors.blue),
+                      const SizedBox(width: 4),
+                      Text(
+                        '⚡ Intensifier applied: $autoConfigName',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               SetRowControls(
                 setIndex: setIndex,
                 initialWeight: _setScratch[index]?.w,
                 initialReps: _setScratch[index]?.r,
                 initialRir: _setScratch[index]?.rir ?? 2.0,
                 unitLabel: unitLabel,
+                initialExtras: autoConfigExtras, // Phase 4.6A: Pass auto-config
                 onLog: ({required double? weight, required int? reps, required double rir, LocalSetLog? extras}) async {
                   // Update scratch data
                   _setScratch[index] = (w: weight, r: reps, rir: rir);
                   
+                  // Phase 4.7: Update execution state based on logged set
+                  _updateExecutionState(index, extras);
+                  
                   // Log to local service
                   final clientId = _clientId ?? 'demo_client_id';
+                  final logEntry = LocalSetLog(
+                    date: DateTime.now(),
+                    weight: weight,
+                    reps: reps,
+                    rir: rir,
+                    unit: unitLabel,
+                    setType: extras?.setType,
+                    dropWeights: extras?.dropWeights,
+                    dropPercents: extras?.dropPercents,
+                    rpBursts: extras?.rpBursts,
+                    rpRestSec: extras?.rpRestSec,
+                    clusterSize: extras?.clusterSize,
+                    clusterRestSec: extras?.clusterRestSec,
+                    clusterTotalReps: extras?.clusterTotalReps,
+                    amrap: extras?.amrap,
+                  );
+                  
+                  // Phase 4.8: Calculate fatigue for this set
+                  final setExecutionData = SetExecutionData.fromLocalSetLog(
+                    logEntry,
+                    failed: false, // TODO: Detect failure from execution metadata
+                    actualRestSec: null, // TODO: Track actual rest time
+                    expectedRestSec: exercise['rest_seconds'] as int?,
+                  );
+                  
+                  // Get intensifier execution data
+                  IntensifierExecution? intensifierExec;
+                  if (_ruleEngine != null && _intensifierName != null) {
+                    // Get rules from exercise notes
+                    Map<String, dynamic>? rules;
+                    try {
+                      final notes = exercise['notes'] as String?;
+                      if (notes != null) {
+                        final jsonData = jsonDecode(notes) as Map<String, dynamic>?;
+                        rules = jsonData?['intensifier_rules'] as Map<String, dynamic>?;
+                      }
+                    } catch (_) {
+                      // Ignore parsing errors
+                    }
+                    
+                    intensifierExec = IntensifierExecution.fromState(
+                      _executionState.toExecutionMetadata(),
+                      rules,
+                      _intensifierName,
+                    );
+                  }
+                  
+                  final setFatigue = _fatigueEngine.scoreSet(
+                    set: setExecutionData,
+                    intensifier: intensifierExec,
+                  );
+                  
+                  // Accumulate fatigue
+                  _exerciseFatigueScores.add(setFatigue);
+                  _sessionFatigue = _sessionFatigue + setFatigue;
+                  
                   await ExerciseLocalLogService.instance.add(
                     clientId,
                     exKey,
-                    LocalSetLog(
-                      date: DateTime.now(),
-                      weight: weight,
-                      reps: reps,
-                      rir: rir,
-                      unit: unitLabel,
-                      setType: extras?.setType,
-                      dropWeights: extras?.dropWeights,
-                      dropPercents: extras?.dropPercents,
-                      rpBursts: extras?.rpBursts,
-                      rpRestSec: extras?.rpRestSec,
-                      clusterSize: extras?.clusterSize,
-                      clusterRestSec: extras?.clusterRestSec,
-                      clusterTotalReps: extras?.clusterTotalReps,
-                      amrap: extras?.amrap,
-                    ),
+                    logEntry,
                   );
+                  
+                  // Phase 4.8: Persist fatigue metadata (for session aggregation)
+                  await _persistFatigueMetadata(exKey, clientId, setFatigue);
+                  
+                  // Phase 4.7: Persist execution metadata (if engine active)
+                  if (_ruleEngine != null) {
+                    await _persistExecutionMetadata(exKey, clientId);
+                  }
                   
                   // Refresh history
                   _refreshHistoryFor(exercise);
@@ -1546,6 +1668,11 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
                   }
                 },
                 onSetTypeChanged: (extras) async {
+                  // Phase 4.7: Mark user override if set type changed manually
+                  if (extras['setType'] != null) {
+                    _executionState.markUserOverride(index);
+                  }
+                  
                   // Save sticky preferences when set type changes
                   final sticky = <String, dynamic>{
                     'unit': _unit,
@@ -1844,6 +1971,206 @@ class _ExerciseDetailSheetState extends State<ExerciseDetailSheet> with SingleTi
           ),
       ],
     );
+  }
+  
+  // Phase 4.7: Parse intensifier rules and initialize engine
+  void _parseIntensifierRules() {
+    try {
+      final exercise = _exercise;
+      final notes = exercise['notes'] as String?;
+      if (notes == null || notes.isEmpty) {
+        _ruleEngine = null;
+        _intensifierApplyScope = null;
+        _intensifierName = null;
+        _executionState.reset();
+        return;
+      }
+      
+      // Try to parse as JSON
+      final jsonData = jsonDecode(notes) as Map<String, dynamic>?;
+      if (jsonData == null) {
+        _ruleEngine = null;
+        _intensifierApplyScope = null;
+        _intensifierName = null;
+        _executionState.reset();
+        return;
+      }
+      
+      final intensifierRules = jsonData['intensifier_rules'] as Map<String, dynamic>?;
+      final applyScope = jsonData['intensifier_apply_scope'] as String? ?? 'last_set';
+      final intensifierName = jsonData['intensifier'] as String?;
+      
+      // Phase 4.7: Initialize rule engine
+      if (intensifierRules != null && applyScope != 'off') {
+        final setsPlanned = _setsPlannedFor(exercise);
+        _ruleEngine = IntensifierRuleEngine(
+          rules: intensifierRules,
+          applyScope: applyScope,
+          totalSets: setsPlanned,
+          intensifierName: intensifierName,
+        );
+        _intensifierApplyScope = applyScope;
+        _intensifierName = intensifierName;
+      } else {
+        _ruleEngine = null;
+        _intensifierApplyScope = applyScope;
+        _intensifierName = intensifierName;
+      }
+      
+      // Reset execution state when rules change
+      _executionState.reset();
+    } catch (e) {
+      // Safe: if parsing fails, just don't initialize engine
+      debugPrint('Error parsing intensifier rules: $e');
+      _ruleEngine = null;
+      _intensifierApplyScope = null;
+      _intensifierName = null;
+      _executionState.reset();
+    }
+  }
+  
+  // Phase 4.7: Get directive from rule engine for a specific set
+  IntensifierSetDirective? _getDirectiveForSet(int setIndex, int totalSets) {
+    if (_ruleEngine == null) {
+      return null;
+    }
+    
+    return _ruleEngine!.getDirectiveForSet(
+      setIndex: setIndex,
+      state: _executionState,
+      userOverridden: _executionState.isUserOverridden(setIndex),
+    );
+  }
+  
+  // Phase 4.7: Convert directive to LocalSetLog (backward compatibility)
+  LocalSetLog? _directiveToLocalSetLog(IntensifierSetDirective? directive) {
+    if (directive == null) return null;
+    return directive.toLocalSetLog(unit: _unit);
+  }
+  
+  // Phase 4.7: Update execution state when a set is logged
+  void _updateExecutionState(int setIndex, LocalSetLog? extras) {
+    if (extras == null) return;
+    
+    // Track rest-pause bursts
+    if (extras.setType == SetType.restPause && extras.rpBursts != null) {
+      _executionState.completedBursts += extras.rpBursts!.length;
+      _executionState.currentBurstIndex += extras.rpBursts!.length;
+    }
+    
+    // Track cluster sets
+    if (extras.setType == SetType.cluster) {
+      _executionState.completedClusters++;
+      _executionState.currentClusterIndex++;
+    }
+    
+    // Track myo-reps activation set
+    if (extras.setType == SetType.restPause && 
+        extras.rpBursts != null && 
+        extras.rpBursts!.length == 1 &&
+        _ruleEngine != null) {
+      // Check if this was activation set (single burst, high reps)
+      final firstBurst = extras.rpBursts!.first;
+      if (firstBurst >= 15) { // Activation set typically 15+ reps
+        _executionState.activationSetCompleted = true;
+      }
+    }
+    
+    // Track drop sets
+    if (extras.setType == SetType.drop && extras.dropPercents != null) {
+      _executionState.dropsUsed += extras.dropPercents!.length;
+      if (extras.dropWeights != null) {
+        _executionState.dropWeightsUsed.addAll(extras.dropWeights!);
+      }
+    }
+    
+    // Store runtime metadata
+    _executionState.runtime['set_$setIndex'] = {
+      'set_type': extras.setType?.name,
+      'reps': extras.reps,
+      'weight': extras.weight,
+      'logged_at': DateTime.now().toIso8601String(),
+    };
+  }
+  
+  // Phase 4.7: Persist execution metadata to SharedPreferences (session-only)
+  Future<void> _persistExecutionMetadata(String exKey, String clientId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final metadataKey = 'intensifier_execution::$exKey::$clientId';
+      final metadata = _executionState.toExecutionMetadata();
+      await prefs.setString(metadataKey, jsonEncode(metadata));
+    } catch (e) {
+      debugPrint('Error persisting execution metadata: $e');
+      // Non-critical: execution continues even if persistence fails
+    }
+  }
+  
+  // Phase 4.7: Load execution metadata (if exists)
+  Future<void> _loadExecutionMetadata(String exKey, String clientId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final metadataKey = 'intensifier_execution::$exKey::$clientId';
+      final metadataJson = prefs.getString(metadataKey);
+      if (metadataJson != null) {
+        final metadata = jsonDecode(metadataJson) as Map<String, dynamic>;
+        _executionState = SetExecutionState.fromExecutionMetadata(metadata);
+      }
+    } catch (e) {
+      debugPrint('Error loading execution metadata: $e');
+      // Non-critical: start fresh if load fails
+      _executionState.reset();
+    }
+  }
+  
+  // Phase 4.8: Persist fatigue metadata (per-set and session aggregate)
+  Future<void> _persistFatigueMetadata(
+    String exKey,
+    String clientId,
+    FatigueScore setFatigue,
+  ) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Store per-set fatigue (for exercise aggregation)
+      final setFatigueKey = 'fatigue_set::$exKey::$clientId';
+      final existingSetsJson = prefs.getString(setFatigueKey);
+      List<Map<String, dynamic>> sets = [];
+      if (existingSetsJson != null) {
+        sets = List<Map<String, dynamic>>.from(
+          jsonDecode(existingSetsJson) as List,
+        );
+      }
+      sets.add(setFatigue.toJson());
+      await prefs.setString(setFatigueKey, jsonEncode(sets));
+      
+      // Update session aggregate
+      final sessionKey = 'fatigue_session::$clientId';
+      final sessionJson = prefs.getString(sessionKey);
+      FatigueScore sessionFatigue = _sessionFatigue;
+      if (sessionJson != null) {
+        final existing = FatigueScore.fromJson(
+          jsonDecode(sessionJson) as Map<String, dynamic>,
+        );
+        sessionFatigue = existing + setFatigue;
+      }
+      await prefs.setString(sessionKey, jsonEncode(sessionFatigue.toJson()));
+    } catch (e) {
+      debugPrint('Error persisting fatigue metadata: $e');
+      // Non-critical: fatigue calculation continues even if persistence fails
+    }
+  }
+  
+  // Phase 4.8: Get exercise fatigue (sum of all sets)
+  // Note: Currently unused but kept for future use
+  @pragma('vm:entry-point')
+  FatigueScore _getExerciseFatigue() {
+    return _fatigueEngine.scoreExercise(_exerciseFatigueScores);
+  }
+  
+  // Phase 4.8: Reset fatigue when exercise changes
+  void _resetExerciseFatigue() {
+    _exerciseFatigueScores.clear();
   }
 }
 

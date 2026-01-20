@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../services/messages_service.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -73,10 +74,10 @@ class MessageBubble extends StatelessWidget {
                   maxWidth: MediaQuery.of(context).size.width * 0.7,
                 ),
                 decoration: BoxDecoration(
-                  color: DesignTokens.cardBackground,
+                  color: ThemeColors.of(context).surface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: ThemeColors.of(context).border,
                     width: 1,
                   ),
                   boxShadow: [

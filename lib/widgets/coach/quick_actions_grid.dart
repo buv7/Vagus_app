@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 import '../../screens/plans/plans_dashboard_screen.dart';
 import '../../screens/workout/coach_workout_dashboard_screen.dart';
 import '../../screens/nutrition/coach_nutrition_dashboard.dart';
@@ -11,6 +12,8 @@ import '../../screens/analytics/analytics_reports_screen.dart';
 import '../../screens/calendar/availability_publisher.dart';
 import '../../screens/coach/intake_form_builder_screen.dart';
 import '../../widgets/coach/quick_action_sheets.dart';
+import '../../screens/fatigue/coach_fatigue_dashboard_screen.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 class QuickActionsGrid extends StatefulWidget {
   final VoidCallback? onImportProgram;
@@ -58,12 +61,13 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: tc.border,
           width: 1,
         ),
         boxShadow: [
@@ -84,23 +88,28 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
           // Header
-          const Row(
-            children: [
-              Icon(
-                Icons.add_circle_outline,
-                color: AppTheme.accentGreen,
-                size: 20,
-              ),
-              SizedBox(width: DesignTokens.space8),
-              Text(
-                'Quick Actions',
-                style: TextStyle(
-                  color: AppTheme.neutralWhite,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+          Builder(
+            builder: (context) {
+              final tc = ThemeColors.of(context);
+              return Row(
+                children: [
+                  const Icon(
+                    Icons.add_circle_outline,
+                    color: AppTheme.accentGreen,
+                    size: 20,
+                  ),
+                  const SizedBox(width: DesignTokens.space8),
+                  Text(
+                    'Quick Actions',
+                    style: TextStyle(
+                      color: tc.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
 
           const SizedBox(height: DesignTokens.space20),
@@ -115,6 +124,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
             childAspectRatio: 1.1,
             children: [
               _buildActionCard(
+                context: context,
                 icon: Icons.fitness_center_outlined,
                 title: 'New Workout Plan',
                 subtitle: 'Create a custom workout plan',
@@ -122,6 +132,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.accentGreen,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.view_list_outlined,
                 title: 'View Workout Plans',
                 subtitle: 'Manage client workouts',
@@ -129,6 +140,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.accentGreen,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.restaurant_outlined,
                 title: 'Nutrition Plans',
                 subtitle: 'View & manage nutrition',
@@ -136,6 +148,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.accentOrange,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.note_add_outlined,
                 title: 'Add Coach Note',
                 subtitle: 'Quick note for a client',
@@ -144,6 +157,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 disabled: !_hasActiveClients,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.chat_bubble_outline,
                 title: 'Open Messages',
                 subtitle: 'View client conversations',
@@ -152,6 +166,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 badge: _unreadMessages > 0 ? _unreadMessages.toString() : null,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.medical_services_outlined,
                 title: 'Add Supplement',
                 subtitle: 'Add supplement to client plan',
@@ -160,6 +175,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 disabled: !_hasActiveClients,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.folder_special_outlined,
                 title: 'Templates',
                 subtitle: 'Manage plan templates',
@@ -167,6 +183,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.lightGrey,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.assignment_outlined,
                 title: 'Intake Forms',
                 subtitle: 'Manage client intake forms',
@@ -174,6 +191,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.accentGreen,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.calendar_today_outlined,
                 title: 'Publish Availability',
                 subtitle: 'Set your available time slots',
@@ -181,6 +199,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.lightGrey,
               ),
               _buildActionCard(
+                context: context,
                 icon: Icons.analytics_outlined,
                 title: 'View Analytics',
                 subtitle: 'View performance metrics',
@@ -188,6 +207,16 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 color: AppTheme.accentOrange,
               ),
               _buildActionCard(
+                context: context,
+                icon: Icons.trending_up_outlined,
+                title: 'Fatigue Dashboard',
+                subtitle: 'View client fatigue data',
+                onTap: () => _navigateToFatigueDashboard(context),
+                color: AppTheme.accentGreen,
+                disabled: !_hasActiveClients,
+              ),
+              _buildActionCard(
+                context: context,
                 icon: Icons.upload_outlined,
                 title: 'Import Program',
                 subtitle: 'Import workout program',
@@ -243,6 +272,14 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const AnalyticsReportsScreen()),
+    );
+  }
+
+  void _navigateToFatigueDashboard(BuildContext context) {
+    _onActionTap();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CoachFatigueDashboardScreen()),
     );
   }
 
@@ -304,19 +341,20 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
   }
 
   void _showComingSoonDialog(BuildContext context, String feature) {
+    final tc = ThemeColors.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.primaryDark,
+        backgroundColor: tc.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.construction, color: AppTheme.accentOrange, size: 24),
-            SizedBox(width: 12),
+            const Icon(Icons.construction, color: AppTheme.accentOrange, size: 24),
+            const SizedBox(width: 12),
             Text(
               'Coming Soon',
               style: TextStyle(
-                color: AppTheme.neutralWhite,
+                color: tc.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -325,8 +363,8 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
         ),
         content: Text(
           '$feature is currently under development. Stay tuned for updates!',
-          style: const TextStyle(
-            color: AppTheme.lightGrey,
+          style: TextStyle(
+            color: tc.textSecondary,
             fontSize: 16,
           ),
         ),
@@ -348,6 +386,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
   }
 
   Widget _buildActionCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String subtitle,
@@ -356,6 +395,7 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
     String? badge,
     bool disabled = false,
   }) {
+    final tc = ThemeColors.of(context);
     // Determine glow color based on card type
     final Color glowColor = _getGlowColor(color);
 
@@ -364,11 +404,11 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
       child: Container(
         decoration: BoxDecoration(
           color: disabled
-            ? DesignTokens.cardBackground.withValues(alpha: 0.5)
-            : DesignTokens.cardBackground,
+            ? tc.surface.withValues(alpha: 0.5)
+            : tc.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withValues(alpha: disabled ? 0.05 : 0.1),
+            color: tc.border,
             width: 1,
           ),
           boxShadow: [
@@ -391,11 +431,13 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        icon,
-                        color: disabled ? color.withValues(alpha: 0.4) : color,
-                        size: 24,
-                      ),
+                      title == 'Add Supplement'
+                          ? const PillIcon(size: 24)
+                          : Icon(
+                              icon,
+                              color: disabled ? color.withValues(alpha: 0.4) : color,
+                              size: 24,
+                            ),
                       const Spacer(),
                       if (badge != null)
                         Container(
@@ -409,8 +451,8 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                           ),
                           child: Text(
                             badge,
-                            style: const TextStyle(
-                              color: AppTheme.neutralWhite,
+                            style: TextStyle(
+                              color: tc.textPrimary,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -423,8 +465,8 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                     title,
                     style: TextStyle(
                       color: disabled
-                        ? DesignTokens.neutralWhite.withValues(alpha: 0.4)
-                        : DesignTokens.neutralWhite,
+                        ? tc.textPrimary.withValues(alpha: 0.4)
+                        : tc.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -434,8 +476,8 @@ class _QuickActionsGridState extends State<QuickActionsGrid> {
                     disabled ? 'Requires active clients' : subtitle,
                     style: TextStyle(
                       color: disabled
-                        ? DesignTokens.textSecondary.withValues(alpha: 0.6)
-                        : DesignTokens.textSecondary,
+                        ? tc.textSecondary.withValues(alpha: 0.6)
+                        : tc.textSecondary,
                       fontSize: 12,
                     ),
                   ),

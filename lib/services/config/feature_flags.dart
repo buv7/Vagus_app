@@ -112,6 +112,40 @@ class FeatureFlags {
   static const String collaboration = 'nutrition_v2_collaboration';
   static const String sustainability = 'nutrition_v2_sustainability';
 
+  // Workout Enhancements
+  static const String workoutFatigueTracking = 'workout_fatigue_tracking';
+  static const String workoutRecoveryScores = 'workout_recovery_scores';
+  static const String workoutReadinessIndicators = 'workout_readiness_indicators';
+  static const String workoutTransformationModes = 'workout_transformation_modes';
+  static const String workoutPsychology = 'workout_psychology';
+
+  // Nutrition Enhancements
+  static const String nutritionDigestionTracking = 'nutrition_digestion_tracking';
+  static const String nutritionBloatTracking = 'nutrition_bloat_tracking';
+  static const String nutritionChaosControl = 'nutrition_chaos_control';
+  static const String nutritionTravelMode = 'nutrition_travel_mode';
+  static const String nutritionPsychology = 'nutrition_psychology';
+
+  // Knowledge Brain Enhancements
+  static const String knowledgeContextualMemory = 'knowledge_contextual_memory';
+  static const String knowledgeActionAutomation = 'knowledge_action_automation';
+  static const String knowledgeSharing = 'knowledge_sharing';
+
+  // Retention Enhancements
+  static const String dailyMissions = 'retention_daily_missions';
+  static const String deathSpiralPrevention = 'retention_death_spiral_prevention';
+  static const String dailyDopamine = 'retention_daily_dopamine';
+
+  // Admin Enhancements
+  static const String metaAdmin = 'admin_meta_admin';
+  static const String adminCompliance = 'admin_compliance';
+  static const String adminSafetyLayer = 'admin_safety_layer';
+
+  // Viral Enhancements
+  static const String passiveVirality = 'viral_passive_virality';
+  static const String antiCringeSafeguards = 'viral_anti_cringe_safeguards';
+  static const String viralAnalytics = 'viral_analytics';
+
   // Existing general flags
   static const String streaks = 'show_streaks';
   static const String announcements = 'enable_announcements';
@@ -382,6 +416,40 @@ class FeatureFlags {
       mealPrep: false,
       gamification: false,
       restaurantMode: false,
+      
+      // Workout Enhancements (default OFF)
+      workoutFatigueTracking: false,
+      workoutRecoveryScores: false,
+      workoutReadinessIndicators: false,
+      workoutTransformationModes: false,
+      workoutPsychology: false,
+      
+      // Nutrition Enhancements (default OFF)
+      nutritionDigestionTracking: false,
+      nutritionBloatTracking: false,
+      nutritionChaosControl: false,
+      nutritionTravelMode: false,
+      nutritionPsychology: false,
+      
+      // Knowledge Brain Enhancements (default OFF)
+      knowledgeContextualMemory: false,
+      knowledgeActionAutomation: false,
+      knowledgeSharing: false,
+      
+      // Retention Enhancements (default OFF)
+      dailyMissions: false,
+      deathSpiralPrevention: false,
+      dailyDopamine: false,
+      
+      // Admin Enhancements (default OFF)
+      metaAdmin: false,
+      adminCompliance: false,
+      adminSafetyLayer: false,
+      
+      // Viral Enhancements (default OFF)
+      passiveVirality: false,
+      antiCringeSafeguards: false,
+      viralAnalytics: false,
     };
   }
 

@@ -27,6 +27,10 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
   String _selectedFilter = 'all'; // all, workout, nutrition, templates
   String _searchQuery = '';
 
+  // Selection mode
+  bool _isSelectionMode = false;
+  Set<String> _selectedPlanIds = {};
+
   // Stats
   int _totalPlans = 0;
   int _activeClients = 0;
@@ -80,8 +84,15 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
         }
       }
 
-      // Attach client profile data to plans
-      for (var plan in [...workoutPlans, ...nutritionPlans]) {
+      // Attach client profile data to plans and mark plan types
+      for (var plan in workoutPlans) {
+        plan['plan_type'] = 'workout'; // Mark workout plans
+        if (plan['client_id'] != null && clientProfiles.containsKey(plan['client_id'])) {
+          plan['client_profile'] = clientProfiles[plan['client_id']];
+        }
+      }
+      for (var plan in nutritionPlans) {
+        plan['plan_type'] = 'nutrition'; // Mark nutrition plans
         if (plan['client_id'] != null && clientProfiles.containsKey(plan['client_id'])) {
           plan['client_profile'] = clientProfiles[plan['client_id']];
         }
@@ -185,32 +196,51 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
 
                 const SizedBox(height: 32),
 
-                // Create Buttons
+                // Selection mode toggle and create buttons row
                 Row(
                   children: [
-                    Expanded(
-                      child: _buildCreateButton(
-                        icon: Icons.fitness_center,
-                        label: LocaleHelper.t('create_workout_plan', 'Create Workout Plan'),
-                        gradient: const LinearGradient(
-                          colors: [DesignTokens.accentGreen, Color(0xFF00B383)],
+                    if (!_isSelectionMode) ...[
+                      Expanded(
+                        child: _buildCreateButton(
+                          icon: Icons.fitness_center,
+                          label: LocaleHelper.t('create_workout_plan', 'Create Workout Plan'),
+                          gradient: const LinearGradient(
+                            colors: [DesignTokens.accentGreen, Color(0xFF00B383)],
+                          ),
+                          onTap: () => _navigateToWorkoutBuilder(),
                         ),
-                        onTap: () => _navigateToWorkoutBuilder(),
                       ),
-                    ),
-
-                    const SizedBox(width: 16),
-
-                    Expanded(
-                      child: _buildCreateButton(
-                        icon: Icons.restaurant,
-                        label: LocaleHelper.t('create_nutrition_plan', 'Create Nutrition Plan'),
-                        gradient: const LinearGradient(
-                          colors: [DesignTokens.accentOrange, Color(0xFFFF8A00)],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildCreateButton(
+                          icon: Icons.restaurant,
+                          label: LocaleHelper.t('create_nutrition_plan', 'Create Nutrition Plan'),
+                          gradient: const LinearGradient(
+                            colors: [DesignTokens.accentOrange, Color(0xFFFF8A00)],
+                          ),
+                          onTap: () => _navigateToNutritionBuilder(),
                         ),
-                        onTap: () => _navigateToNutritionBuilder(),
                       ),
-                    ),
+                    ] else ...[
+                      Expanded(
+                        child: Text(
+                          '${_selectedPlanIds.length} ${_selectedPlanIds.length == 1 ? 'plan' : 'plans'} selected',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: DesignTokens.neutralWhite,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: _exitSelectionMode,
+                        icon: const Icon(Icons.close, color: DesignTokens.textSecondary),
+                        label: const Text(
+                          'Cancel',
+                          style: TextStyle(color: DesignTokens.textSecondary),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
 
@@ -299,6 +329,16 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
 
                       const SizedBox(width: 12),
 
+                      // Selection Mode Toggle
+                      IconButton(
+                        onPressed: _toggleSelectionMode,
+                        icon: Icon(
+                          _isSelectionMode ? Icons.done : Icons.checklist,
+                          color: _isSelectionMode ? DesignTokens.accentGreen : DesignTokens.neutralWhite,
+                        ),
+                        tooltip: _isSelectionMode ? 'Exit selection mode' : 'Select plans',
+                      ),
+
                       // View Toggle
                       IconButton(
                         onPressed: () {
@@ -316,6 +356,12 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
             ),
           ),
         ),
+
+        // Bulk Actions Bar (when plans are selected)
+        if (_isSelectionMode && _selectedPlanIds.isNotEmpty)
+          SliverToBoxAdapter(
+            child: _buildBulkActionsBar(),
+          ),
 
         // Plans Grid/List
         _filteredPlans.isEmpty
@@ -486,15 +532,24 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
     final isWorkout = plan['weeks'] != null; // workout plans have weeks
     final clientName = plan['client_profile']?['full_name'] ?? 'No client assigned';
     final clientAvatar = plan['client_profile']?['avatar_url'];
+    final planId = plan['id']?.toString() ?? '';
+    final isSelected = _selectedPlanIds.contains(planId);
 
     return InkWell(
-      onTap: () => _editPlan(plan),
+      onTap: _isSelectionMode
+          ? () => _togglePlanSelection(planId)
+          : () => _editPlan(plan),
       borderRadius: BorderRadius.circular(16),
       child: Container(
         decoration: BoxDecoration(
-          color: DesignTokens.cardBackground,
+          color: isSelected
+              ? DesignTokens.accentGreen.withValues(alpha: 0.2)
+              : DesignTokens.cardBackground,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: DesignTokens.glassBorder),
+          border: Border.all(
+            color: isSelected ? DesignTokens.accentGreen : DesignTokens.glassBorder,
+            width: isSelected ? 2 : 1,
+          ),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
@@ -509,33 +564,71 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
                   // Header
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(6), // Reduced from 8
-                        decoration: BoxDecoration(
-                          color: isWorkout
-                              ? DesignTokens.accentGreen.withValues(alpha: 0.2)
-                              : DesignTokens.accentOrange.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
+                      // Selection checkbox (when in selection mode)
+                      if (_isSelectionMode) ...[
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: isSelected ? DesignTokens.accentGreen : Colors.transparent,
+                            border: Border.all(
+                              color: isSelected ? DesignTokens.accentGreen : DesignTokens.textSecondary,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  color: DesignTokens.neutralWhite,
+                                  size: 14,
+                                )
+                              : null,
                         ),
-                        child: Icon(
-                          isWorkout ? Icons.fitness_center : Icons.restaurant,
-                          color: isWorkout ? DesignTokens.accentGreen : DesignTokens.accentOrange,
-                          size: 18, // Reduced from 20
+                        const SizedBox(width: 8),
+                      ] else ...[
+                        Container(
+                          padding: const EdgeInsets.all(6), // Reduced from 8
+                          decoration: BoxDecoration(
+                            color: isWorkout
+                                ? DesignTokens.accentGreen.withValues(alpha: 0.2)
+                                : DesignTokens.accentOrange.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            isWorkout ? Icons.fitness_center : Icons.restaurant,
+                            color: isWorkout ? DesignTokens.accentGreen : DesignTokens.accentOrange,
+                            size: 18, // Reduced from 20
+                          ),
                         ),
-                      ),
+                      ],
                       const Spacer(),
-                      PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert, color: DesignTokens.textSecondary),
-                        color: DesignTokens.cardBackground,
-                        onSelected: (value) => _handlePlanAction(value, plan),
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                          const PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
-                          const PopupMenuItem(value: 'template', child: Text('Save as Template')),
-                          const PopupMenuItem(value: 'assign', child: Text('Assign to Client')),
-                          const PopupMenuItem(value: 'archive', child: Text('Archive')),
-                        ],
-                      ),
+                      if (!_isSelectionMode)
+                        PopupMenuButton<String>(
+                          icon: const Icon(Icons.more_vert, color: DesignTokens.textSecondary),
+                          color: DesignTokens.cardBackground,
+                          onSelected: (value) => _handlePlanAction(value, plan),
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                            const PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
+                            const PopupMenuItem(value: 'template', child: Text('Save as Template')),
+                            const PopupMenuItem(value: 'assign', child: Text('Assign to Client')),
+                            const PopupMenuItem(value: 'archive', child: Text('Archive')),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.delete, size: 18, color: DesignTokens.danger),
+                                  SizedBox(width: 12),
+                                  Text(
+                                    'Delete',
+                                    style: TextStyle(color: DesignTokens.danger),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
 
@@ -543,7 +636,7 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
 
                   // Plan Name
                   Text(
-                    plan['name'] ?? 'Untitled Plan',
+                    plan['name'] ?? plan['title'] ?? 'Untitled Plan',
                     style: const TextStyle(
                       fontSize: 13, // Reduced from 14
                       color: DesignTokens.neutralWhite,
@@ -595,49 +688,87 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
   Widget _buildPlanListItem(Map<String, dynamic> plan) {
     final isWorkout = plan['weeks'] != null;
     final clientName = plan['client_profile']?['full_name'] ?? 'No client assigned';
+    final planId = plan['id']?.toString() ?? '';
+    final isSelected = _selectedPlanIds.contains(planId);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: DesignTokens.glassBorder),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isWorkout ? Icons.fitness_center : Icons.restaurant,
-            color: isWorkout ? DesignTokens.accentGreen : DesignTokens.accentOrange,
+    return InkWell(
+      onTap: _isSelectionMode
+          ? () => _togglePlanSelection(planId)
+          : () => _editPlan(plan),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? DesignTokens.accentGreen.withValues(alpha: 0.2)
+              : DesignTokens.cardBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? DesignTokens.accentGreen : DesignTokens.glassBorder,
+            width: isSelected ? 2 : 1,
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  plan['name'] ?? 'Untitled Plan',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: DesignTokens.neutralWhite,
-                    fontWeight: FontWeight.bold,
+        ),
+        child: Row(
+          children: [
+            // Selection checkbox (when in selection mode)
+            if (_isSelectionMode) ...[
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: isSelected ? DesignTokens.accentGreen : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected ? DesignTokens.accentGreen : DesignTokens.textSecondary,
+                    width: 2,
                   ),
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  clientName,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: DesignTokens.textSecondary,
+                child: isSelected
+                    ? const Icon(
+                        Icons.check,
+                        color: DesignTokens.neutralWhite,
+                        size: 14,
+                      )
+                    : null,
+              ),
+              const SizedBox(width: 16),
+            ] else ...[
+              Icon(
+                isWorkout ? Icons.fitness_center : Icons.restaurant,
+                color: isWorkout ? DesignTokens.accentGreen : DesignTokens.accentOrange,
+              ),
+              const SizedBox(width: 16),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    plan['name'] ?? plan['title'] ?? 'Untitled Plan',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: DesignTokens.neutralWhite,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    clientName,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: DesignTokens.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: () => _editPlan(plan),
-            icon: const Icon(Icons.edit, color: DesignTokens.textSecondary),
-          ),
-        ],
+            if (!_isSelectionMode)
+              IconButton(
+                onPressed: () => _editPlan(plan),
+                icon: const Icon(Icons.edit, color: DesignTokens.textSecondary),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -744,6 +875,398 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
           const SnackBar(content: Text('Archive plan - Coming soon')),
         );
         break;
+      case 'delete':
+        _deletePlan(plan);
+        break;
+    }
+  }
+
+  Future<void> _deletePlan(Map<String, dynamic> plan) async {
+    final planId = plan['id']?.toString();
+    if (planId == null) return;
+
+    // Determine plan type from the plan's plan_type marker (set during load)
+    // Fallback to checking lists if marker is missing
+    final planTypeMarker = plan['plan_type'] as String?;
+    final isWorkout = planTypeMarker == 'workout' || 
+        (planTypeMarker == null && _workoutPlans.any((p) => p['id']?.toString() == planId));
+    final planType = isWorkout ? 'workout' : 'nutrition';
+    final planName = plan['name'] ?? plan['title'] ?? 'Untitled Plan';
+
+    // Check if plan is assigned to any clients
+    bool isAssigned = false;
+    try {
+      final assignments = await supabase
+          .from('plan_assignments')
+          .select('id')
+          .eq('plan_id', planId)
+          .eq('plan_type', planType)
+          .limit(1);
+
+      isAssigned = assignments.isNotEmpty;
+    } catch (e) {
+      debugPrint('Error checking plan assignments: $e');
+      // Continue with deletion even if check fails
+    }
+
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: DesignTokens.cardBackground,
+        title: const Text(
+          'Delete plan?',
+          style: TextStyle(color: DesignTokens.neutralWhite),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'This will permanently delete "$planName" and all its weeks/days/exercises. This can\'t be undone.',
+              style: const TextStyle(color: DesignTokens.textSecondary),
+            ),
+            if (isAssigned) ...[
+              const SizedBox(height: 12),
+              Text(
+                '⚠️ This plan is assigned to a client; they will lose access immediately.',
+                style: const TextStyle(
+                  color: DesignTokens.warn,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: DesignTokens.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignTokens.danger,
+              foregroundColor: DesignTokens.neutralWhite,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // Perform deletion in proper order (children first, then parent)
+    try {
+      // Delete related records first (plan_assignments and plan_ratings don't have CASCADE)
+      // These are safe to delete even if they don't exist
+      try {
+        await supabase
+            .from('plan_assignments')
+            .delete()
+            .eq('plan_id', planId)
+            .eq('plan_type', planType);
+      } catch (e) {
+        debugPrint('Warning: Could not delete plan_assignments: $e');
+        // Continue with deletion even if this fails
+      }
+
+      try {
+        await supabase
+            .from('plan_ratings')
+            .delete()
+            .eq('plan_id', planId)
+            .eq('plan_type', planType);
+      } catch (e) {
+        debugPrint('Warning: Could not delete plan_ratings: $e');
+        // Continue with deletion even if this fails
+      }
+
+      // Delete the plan itself (this will cascade to workout_weeks, workout_days, etc. if they have FK constraints)
+      if (isWorkout) {
+        await supabase.from('workout_plans').delete().eq('id', planId);
+      } else {
+        await supabase.from('nutrition_plans').delete().eq('id', planId);
+      }
+
+      // Reload plans to update UI
+      await _loadPlans();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Plan deleted'),
+            backgroundColor: DesignTokens.success,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error deleting plan: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete plan: ${e.toString()}'),
+            backgroundColor: DesignTokens.danger,
+          ),
+        );
+      }
+    }
+  }
+
+  // ==================== SELECTION MODE METHODS ====================
+
+  void _toggleSelectionMode() {
+    setState(() {
+      _isSelectionMode = !_isSelectionMode;
+      if (!_isSelectionMode) {
+        _selectedPlanIds.clear();
+      }
+    });
+  }
+
+  void _exitSelectionMode() {
+    setState(() {
+      _isSelectionMode = false;
+      _selectedPlanIds.clear();
+    });
+  }
+
+  void _togglePlanSelection(String planId) {
+    setState(() {
+      if (_selectedPlanIds.contains(planId)) {
+        _selectedPlanIds.remove(planId);
+      } else {
+        _selectedPlanIds.add(planId);
+      }
+    });
+  }
+
+  Widget _buildBulkActionsBar() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: DesignTokens.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: DesignTokens.accentGreen.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '${_selectedPlanIds.length} ${_selectedPlanIds.length == 1 ? 'plan' : 'plans'} selected',
+              style: const TextStyle(
+                color: DesignTokens.neutralWhite,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Share button
+          ElevatedButton.icon(
+            onPressed: _selectedPlanIds.isNotEmpty ? _bulkSharePlans : null,
+            icon: const Icon(Icons.share, size: 18),
+            label: const Text('Share'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignTokens.accentBlue,
+              foregroundColor: DesignTokens.neutralWhite,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Delete button
+          ElevatedButton.icon(
+            onPressed: _selectedPlanIds.isNotEmpty ? _bulkDeletePlans : null,
+            icon: const Icon(Icons.delete, size: 18),
+            label: const Text('Delete'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignTokens.danger,
+              foregroundColor: DesignTokens.neutralWhite,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _bulkDeletePlans() async {
+    if (_selectedPlanIds.isEmpty) return;
+
+    final count = _selectedPlanIds.length;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: DesignTokens.cardBackground,
+        title: const Text(
+          'Delete plans?',
+          style: TextStyle(color: DesignTokens.neutralWhite),
+        ),
+        content: Text(
+          'This will permanently delete $count ${count == 1 ? 'plan' : 'plans'} and all their weeks/days/exercises. This can\'t be undone.',
+          style: const TextStyle(color: DesignTokens.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: DesignTokens.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignTokens.danger,
+              foregroundColor: DesignTokens.neutralWhite,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // Get plans to delete with their types
+    final plansToDelete = <Map<String, String>>[];
+    for (final planId in _selectedPlanIds) {
+      final plan = _filteredPlans.firstWhere(
+        (p) => p['id']?.toString() == planId,
+        orElse: () => {},
+      );
+      if (plan.isNotEmpty) {
+        final planTypeMarker = plan['plan_type'] as String?;
+        final isWorkout = planTypeMarker == 'workout' ||
+            (planTypeMarker == null &&
+                _workoutPlans.any((p) => p['id']?.toString() == planId));
+        plansToDelete.add({
+          'id': planId,
+          'type': isWorkout ? 'workout' : 'nutrition',
+        });
+      }
+    }
+
+    int successCount = 0;
+    int failCount = 0;
+
+    for (final planInfo in plansToDelete) {
+      final planId = planInfo['id'];
+      final planType = planInfo['type'];
+      
+      // Skip if id or type is null (shouldn't happen, but safety check)
+      if (planId == null || planType == null) {
+        failCount++;
+        continue;
+      }
+
+      try {
+        // Delete related records first
+        try {
+          await supabase
+              .from('plan_assignments')
+              .delete()
+              .eq('plan_id', planId)
+              .eq('plan_type', planType);
+        } catch (e) {
+          debugPrint('Warning: Could not delete plan_assignments: $e');
+        }
+
+        try {
+          await supabase
+              .from('plan_ratings')
+              .delete()
+              .eq('plan_id', planId)
+              .eq('plan_type', planType);
+        } catch (e) {
+          debugPrint('Warning: Could not delete plan_ratings: $e');
+        }
+
+        // Delete the plan
+        if (planType == 'workout') {
+          await supabase.from('workout_plans').delete().eq('id', planId);
+        } else {
+          await supabase.from('nutrition_plans').delete().eq('id', planId);
+        }
+
+        successCount++;
+      } catch (e) {
+        debugPrint('Error deleting plan $planId: $e');
+        failCount++;
+      }
+    }
+
+    // Reload plans and exit selection mode
+    await _loadPlans();
+    _exitSelectionMode();
+
+    if (mounted) {
+      if (failCount == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$successCount ${successCount == 1 ? 'plan' : 'plans'} deleted'),
+            backgroundColor: DesignTokens.success,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '$successCount deleted, $failCount failed',
+            ),
+            backgroundColor: DesignTokens.warn,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _bulkSharePlans() async {
+    if (_selectedPlanIds.isEmpty) return;
+
+    // Get selected plans
+    final selectedPlans = _filteredPlans
+        .where((plan) => _selectedPlanIds.contains(plan['id']?.toString()))
+        .toList();
+
+    if (selectedPlans.isEmpty) return;
+
+    // For now, share plans by exporting their details
+    // In a full implementation, this could generate share cards or export as files
+    try {
+      final planNames = selectedPlans
+          .map((p) => p['name'] ?? p['title'] ?? 'Untitled Plan')
+          .join(', ');
+
+      // TODO: Implement proper share functionality (export as JSON, generate share cards, etc.)
+      // For now, show a message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Sharing ${selectedPlans.length} ${selectedPlans.length == 1 ? 'plan' : 'plans'}: $planNames'),
+            backgroundColor: DesignTokens.info,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+
+        // Close selection mode after sharing
+        _exitSelectionMode();
+      }
+    } catch (e) {
+      debugPrint('Error sharing plans: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share plans: ${e.toString()}'),
+            backgroundColor: DesignTokens.danger,
+          ),
+        );
+      }
     }
   }
 }

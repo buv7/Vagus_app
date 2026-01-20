@@ -1,4 +1,45 @@
-<!-- 289421e1-5df7-4fa5-a446-9a0760720793 98bd4f58-9eb3-4278-a0bf-eea6b8fad837 -->
+---
+name: Vagus App - Complete Sprint Plan
+overview: ""
+todos:
+  - id: b850c184-bdb6-42b0-99d7-cdb17ebe4f85
+    content: "Sprint 0: Stabilization & Scaffolding - Set up feature flags, logging, error handling, and verify dependencies"
+    status: pending
+  - id: 51ab9882-4805-4ba2-80f8-be701fff7faf
+    content: "Sprint 1: Auth System Completion - Password reset, email verification, biometrics, device management, become coach flow"
+    status: pending
+  - id: 43164ec4-4029-4fd2-b220-efb8fc61741b
+    content: "Sprint 2: AI Core Integration - Implement OpenRouter client, model registry, caching, rate limiting, and feature-specific AI services"
+    status: pending
+  - id: 64205546-ecdb-4dd0-bab5-bdbee727e6ca
+    content: "Sprint 3: Files & Media 1.0 - File previews, tagging, comments, versioning, and attachment features"
+    status: pending
+  - id: 1f43fb84-df51-4d89-a1e5-7bc76f99c6cd
+    content: "Sprint 4: Coach Notes Voice + Versioning - Voice transcription, version history viewer, duplicate detection"
+    status: pending
+  - id: 7fa0f127-555a-4bdb-8111-1562a6f6df2a
+    content: "Sprint 5: Client Dashboard Compliance & Analytics - Progress tracking, charts, compliance metrics, check-in calendar"
+    status: pending
+  - id: 6a2f9d5a-fb78-44b6-ba90-716cc877cfb2
+    content: "Sprint 6: Messaging Power Features - Threads, smart replies, read receipts, pinning, search, translations"
+    status: pending
+  - id: bde66e97-a476-4692-bba5-089ad9ed2444
+    content: "Sprint 7: Calendar & Booking - Full calendar system with recurring events, booking flow, AI tagging"
+    status: pending
+  - id: ca9250a9-abc2-4edc-a10a-62fe69569cb2
+    content: "Sprint 8: Admin Panels Expansion - Complete admin toolset for user management, moderation, analytics"
+    status: pending
+  - id: dcd95e94-473d-484d-bbef-b9b312c4bbc2
+    content: "Sprint 9: Monetization & Plan Gating - Billing screens, subscription management, plan access control"
+    status: pending
+  - id: e9400e2d-9106-4c5f-9503-8c50b615fa24
+    content: "Sprint 10: Settings, Themes, i18n - User settings screen, theme toggle, language selector, data export"
+    status: pending
+  - id: 8cc3137e-52da-4ce0-ad15-022a6ff934fa
+    content: "Sprint 11: QA, Tests, Performance & Launch - Unit tests, performance optimization, monitoring, production readiness"
+    status: pending
+---
+
 # Vagus App - Complete Sprint Plan
 
 ## Overview
@@ -445,18 +486,3 @@ This plan implements 11 sprints to take Vagus from RC (0.9.0) to production-read
 - ✅ Clean CI/CD pipeline
 - ✅ Production deployment successful
 - ✅ User feedback positive
-
-### To-dos
-
-- [ ] Sprint 0: Stabilization & Scaffolding - Set up feature flags, logging, error handling, and verify dependencies
-- [ ] Sprint 1: Auth System Completion - Password reset, email verification, biometrics, device management, become coach flow
-- [ ] Sprint 2: AI Core Integration - Implement OpenRouter client, model registry, caching, rate limiting, and feature-specific AI services
-- [ ] Sprint 3: Files & Media 1.0 - File previews, tagging, comments, versioning, and attachment features
-- [ ] Sprint 4: Coach Notes Voice + Versioning - Voice transcription, version history viewer, duplicate detection
-- [ ] Sprint 5: Client Dashboard Compliance & Analytics - Progress tracking, charts, compliance metrics, check-in calendar
-- [ ] Sprint 6: Messaging Power Features - Threads, smart replies, read receipts, pinning, search, translations
-- [ ] Sprint 7: Calendar & Booking - Full calendar system with recurring events, booking flow, AI tagging
-- [ ] Sprint 8: Admin Panels Expansion - Complete admin toolset for user management, moderation, analytics
-- [ ] Sprint 9: Monetization & Plan Gating - Billing screens, subscription management, plan access control
-- [ ] Sprint 10: Settings, Themes, i18n - User settings screen, theme toggle, language selector, data export
-- [ ] Sprint 11: QA, Tests, Performance & Launch - Unit tests, performance optimization, monitoring, production readiness

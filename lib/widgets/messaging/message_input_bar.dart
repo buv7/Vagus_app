@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class MessageInputBar extends StatelessWidget {
   final TextEditingController controller;
@@ -21,12 +22,13 @@ class MessageInputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
             width: 1,
           ),
         ),
@@ -48,18 +50,18 @@ class MessageInputBar extends StatelessWidget {
           // Attachment Button
           IconButton(
             onPressed: onAttachment,
-            icon: const Icon(
+            icon: Icon(
               Icons.attach_file,
-              color: AppTheme.lightGrey,
+              color: tc.icon,
             ),
           ),
           
           // Voice Button
           IconButton(
             onPressed: onVoice,
-            icon: const Icon(
+            icon: Icon(
               Icons.mic,
-              color: AppTheme.lightGrey,
+              color: tc.icon,
             ),
           ),
           
@@ -67,10 +69,10 @@ class MessageInputBar extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: DesignTokens.cardBackground,
+                color: tc.inputFill,
                 borderRadius: BorderRadius.circular(DesignTokens.radius12),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: tc.border,
                   width: 1,
                 ),
                 boxShadow: [
@@ -87,16 +89,16 @@ class MessageInputBar extends StatelessWidget {
                   filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                   child: TextField(
                 controller: controller,
-                style: const TextStyle(color: DesignTokens.neutralWhite),
+                style: TextStyle(color: tc.textPrimary),
                 decoration: InputDecoration(
                   hintText: 'Type your message...',
-                  hintStyle: const TextStyle(color: DesignTokens.textSecondary),
+                  hintStyle: TextStyle(color: tc.textSecondary),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(DesignTokens.radius12),
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: DesignTokens.cardBackground,
+                  fillColor: tc.inputFill,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: DesignTokens.space16,
                     vertical: DesignTokens.space12,
@@ -113,9 +115,9 @@ class MessageInputBar extends StatelessWidget {
           // Calendar Button
           IconButton(
             onPressed: onCalendar,
-            icon: const Icon(
+            icon: Icon(
               Icons.calendar_today,
-              color: AppTheme.lightGrey,
+              color: tc.icon,
             ),
           ),
           
@@ -128,9 +130,9 @@ class MessageInputBar extends StatelessWidget {
             ),
             child: IconButton(
               onPressed: onSend,
-              icon: const Icon(
+              icon: Icon(
                 Icons.send,
-                color: AppTheme.primaryDark,
+                color: tc.chipTextOnSelected,
               ),
             ),
           ),

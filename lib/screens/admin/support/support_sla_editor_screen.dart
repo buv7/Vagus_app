@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../services/admin/admin_support_service.dart';
+import '../../../widgets/common/save_icon.dart';
 
 class SupportSlaEditorScreen extends StatefulWidget {
   const SupportSlaEditorScreen({super.key});
@@ -60,7 +61,7 @@ class _SupportSlaEditorScreenState extends State<SupportSlaEditorScreen> {
         actions: [
           IconButton(
             onPressed: _saveAll,
-            icon: const Icon(Icons.save),
+            icon: SaveIcon(),
             tooltip: 'Save All',
           ),
         ],
@@ -133,7 +134,7 @@ class _SupportSlaEditorScreenState extends State<SupportSlaEditorScreen> {
                 const Spacer(),
                 IconButton(
                   onPressed: () => _savePriority(priority),
-                  icon: const Icon(Icons.save),
+                  icon: SaveIcon(),
                   tooltip: 'Save',
                 ),
               ],

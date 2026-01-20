@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/supplements/pill_icon.dart';
 
 /// Supplement chip for displaying supplement information
 class SupplementChip extends StatelessWidget {
@@ -24,7 +25,7 @@ class SupplementChip extends StatelessWidget {
         label,
         style: const TextStyle(fontSize: 12),
       ),
-      avatar: const Icon(Icons.medication_outlined, size: 16),
+      avatar: const PillIcon(size: 16),
       onPressed: onTap,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: VisualDensity.compact,

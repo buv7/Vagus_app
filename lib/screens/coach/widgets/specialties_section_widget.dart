@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../models/coach_profile.dart';
 import '../../../theme/design_tokens.dart';
+import '../../../widgets/supplements/pill_icon.dart';
 
 class SpecialtiesSectionWidget extends StatefulWidget {
   final CoachProfile? profile;
@@ -47,7 +48,7 @@ class _SpecialtiesSectionWidgetState extends State<SpecialtiesSectionWidget>
         SpecialtyItem('Weight Management', Icons.monitor_weight, DesignTokens.accentBlue),
         SpecialtyItem('Sports Nutrition', Icons.sports_soccer, DesignTokens.accentOrange),
         SpecialtyItem('Meal Prep', Icons.lunch_dining, DesignTokens.accentPink),
-        SpecialtyItem('Supplements', Icons.medication, DesignTokens.accentBlue),
+        SpecialtyItem('Supplements', null, DesignTokens.accentBlue), // Using PillIcon in display
         SpecialtyItem('Hydration', Icons.local_drink, DesignTokens.accentGreen),
       ],
     ),
@@ -310,7 +311,7 @@ class _SpecialtiesSectionWidgetState extends State<SpecialtiesSectionWidget>
 
   Widget _buildSpecialtyChip(
     String specialty,
-    IconData icon,
+    IconData? icon,
     Color color, {
     required bool isSelected,
     required bool isReadOnly,
@@ -345,7 +346,9 @@ class _SpecialtiesSectionWidgetState extends State<SpecialtiesSectionWidget>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                specialty == 'Supplements'
+                    ? const PillIcon(size: 16)
+                    : Icon(
                   icon,
                   size: 16,
                   color: isSelected
@@ -374,7 +377,7 @@ class _SpecialtiesSectionWidgetState extends State<SpecialtiesSectionWidget>
     );
   }
 
-  Widget _buildRemovableChip(String specialty, IconData icon, Color color) {
+  Widget _buildRemovableChip(String specialty, IconData? icon, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DesignTokens.space12,
@@ -388,7 +391,9 @@ class _SpecialtiesSectionWidgetState extends State<SpecialtiesSectionWidget>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: color),
+          specialty == 'Supplements'
+              ? const PillIcon(size: 16)
+              : Icon(icon ?? Icons.star, size: 16, color: color),
           const SizedBox(width: DesignTokens.space6),
           Text(
             specialty,
@@ -564,7 +569,7 @@ class SpecialtyCategory {
 
 class SpecialtyItem {
   final String name;
-  final IconData icon;
+  final IconData? icon; // Nullable to support custom widgets like PillIcon
   final Color color;
 
   const SpecialtyItem(this.name, this.icon, this.color);

@@ -3,6 +3,7 @@ import 'dart:ui';
 import '../../models/nutrition/recipe.dart';
 import '../../models/nutrition/money.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 import 'pantry_match_chip.dart';
 import 'cost_chip.dart';
 
@@ -34,6 +35,7 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final tc = ThemeColors.of(context);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(DesignTokens.radius20),
@@ -41,10 +43,10 @@ class RecipeCard extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: DesignTokens.blurMd, sigmaY: DesignTokens.blurMd),
         child: Container(
           decoration: BoxDecoration(
-            color: DesignTokens.cardBackground,
+            color: tc.surface,
             borderRadius: BorderRadius.circular(DesignTokens.radius20),
             border: Border.all(
-              color: isSelected ? DesignTokens.accentGreen : DesignTokens.glassBorder,
+              color: isSelected ? DesignTokens.accentGreen : tc.border,
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected

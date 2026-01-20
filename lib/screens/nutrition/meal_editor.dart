@@ -543,6 +543,24 @@ class _MealEditorState extends State<MealEditor> {
     widget.onMealChanged(updatedMeal);
   }
 
+  /// Convert FoodItem from nutrition_plan.dart to FoodItem from food_item.dart
+  fi.FoodItem _convertToFoodItem(FoodItem item) {
+    return fi.FoodItem(
+      id: null,
+      name: item.name,
+      protein: item.protein,
+      carbs: item.carbs,
+      fat: item.fat,
+      kcal: item.kcal,
+      sodium: item.sodium,
+      potassium: item.potassium,
+      amount: item.amount,
+      unit: 'g', // Default unit since nutrition_plan.FoodItem doesn't have unit
+      estimated: item.estimated,
+      source: 'meal',
+    );
+  }
+
   void _removeItem(int index) async {
     if (widget.isReadOnly) return;
 
@@ -569,7 +587,8 @@ class _MealEditorState extends State<MealEditor> {
 
     if (shouldSave) {
       try {
-        await PantryService().saveLeftoverFromFoodItem(item as fi.FoodItem, userId: Supabase.instance.client.auth.currentUser?.id ?? '');
+        final convertedItem = _convertToFoodItem(item);
+        await PantryService().saveLeftoverFromFoodItem(convertedItem, userId: Supabase.instance.client.auth.currentUser?.id ?? '');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(LocaleHelper.t('leftover_saved', Localizations.localeOf(context).languageCode))),

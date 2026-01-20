@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/ai/messaging_ai.dart';
 import '../../services/config/feature_flags.dart';
 import '../../theme/theme_index.dart';
+import '../../theme/theme_colors.dart';
 
 /// Smart reply suggestions powered by AI
 ///
@@ -82,31 +83,32 @@ class _SmartReplyButtonsState extends State<SmartReplyButtons> {
       return const SizedBox.shrink();
     }
 
+    final tc = ThemeColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 12.0,
         vertical: 8.0,
       ),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground.withValues(alpha: 0.5),
+        color: tc.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(radiusM),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome,
                 size: 14,
                 color: mintAqua,
               ),
-              SizedBox(width: spacing1),
+              const SizedBox(width: spacing1),
               Text(
                 'Quick replies',
                 style: TextStyle(
                   fontSize: 12,
-                  color: DesignTokens.textSecondary,
+                  color: tc.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -138,31 +140,36 @@ class _SmartReplyButtonsState extends State<SmartReplyButtons> {
   }
 
   Widget _buildReplyChip(String text) {
-    return InkWell(
-      onTap: () => widget.onReplySelected(text),
-      borderRadius: BorderRadius.circular(radiusL),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: spacing3,
-          vertical: spacing2,
-        ),
-        decoration: BoxDecoration(
-          color: DesignTokens.primaryDark,
+    return Builder(
+      builder: (context) {
+        final tc = ThemeColors.of(context);
+        return InkWell(
+          onTap: () => widget.onReplySelected(text),
           borderRadius: BorderRadius.circular(radiusL),
-          border: Border.all(
-            color: mintAqua.withValues(alpha: 0.3),
-            width: 1,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: spacing3,
+              vertical: spacing2,
+            ),
+            decoration: BoxDecoration(
+              color: tc.surfaceAlt,
+              borderRadius: BorderRadius.circular(radiusL),
+              border: Border.all(
+                color: mintAqua.withValues(alpha: 0.3),
+                width: 1,
+              ),
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                color: tc.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: DesignTokens.neutralWhite,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
