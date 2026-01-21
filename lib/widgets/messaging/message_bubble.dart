@@ -61,8 +61,8 @@ class MessageBubble extends StatelessWidget {
           if (!isOwnMessage) ...[
             CircleAvatar(
               radius: 16,
-              backgroundColor: Colors.grey[300],
-              child: const Icon(Icons.person, size: 16),
+              backgroundColor: ThemeColors.of(context).avatarBg,
+              child: Icon(Icons.person, size: 16, color: ThemeColors.of(context).avatarIcon),
             ),
             const SizedBox(width: 8),
           ],
@@ -244,8 +244,8 @@ class MessageBubble extends StatelessWidget {
             const SizedBox(width: 8),
             CircleAvatar(
               radius: 16,
-              backgroundColor: Colors.blue[300],
-              child: const Icon(Icons.person, size: 16, color: Colors.white),
+              backgroundColor: ThemeColors.of(context).avatarBg,
+              child: Icon(Icons.person, size: 16, color: ThemeColors.of(context).avatarIcon),
             ),
           ],
         ],

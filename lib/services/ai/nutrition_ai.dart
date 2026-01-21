@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/nutrition/food_item.dart';
+import 'food_vision_service.dart';
 
 /// AI-powered nutrition estimation service
 class NutritionAI {
@@ -8,6 +9,7 @@ class NutritionAI {
   factory NutritionAI() => _instance;
   NutritionAI._internal();
 
+  final FoodVisionService _foodVisionService = FoodVisionService();
   
   // Cache for estimations
   final Map<String, _CachedEstimation> _estimationCache = {};
@@ -16,7 +18,7 @@ class NutritionAI {
   final Map<String, DateTime> _rateLimitMap = {};
   final Duration _rateLimitWindow = const Duration(minutes: 1);
 
-  /// Estimate nutrition from food photo
+  /// Estimate nutrition from food photo using Google Gemini AI
   Future<FoodItem?> estimateFromPhoto(Uint8List imageBytes, {String? locale}) async {
     try {
       // Check rate limiting
@@ -24,8 +26,16 @@ class NutritionAI {
         throw Exception('Rate limit exceeded for photo estimation');
       }
 
-      // For now, return a basic estimation
-      // In a real implementation, this would call an AI service
+      // Use FoodVisionService for AI-powered food recognition
+      final result = await _foodVisionService.analyzeImage(imageBytes, locale: locale);
+      
+      if (result != null) {
+        debugPrint('✅ AI food recognition successful: ${result.name}');
+        return result;
+      }
+
+      // Fallback estimation if AI fails
+      debugPrint('⚠️ AI recognition failed, using fallback');
       return FoodItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: 'Estimated Food Item',
@@ -38,12 +48,17 @@ class NutritionAI {
         amount: 100.0,
         unit: 'g',
         estimated: true,
-        source: 'photo',
+        source: 'fallback',
       );
     } catch (e) {
       debugPrint('Error estimating nutrition from photo: $e');
       return null;
     }
+  }
+  
+  /// Check if AI services are properly configured
+  Future<bool> isAIConfigured() async {
+    return await _foodVisionService.isConfigured();
   }
 
   /// Auto-fill suggestions from text input

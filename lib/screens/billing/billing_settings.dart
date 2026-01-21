@@ -1,6 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../services/billing/billing_service.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
 import 'invoice_history_viewer.dart';
 
 class BillingSettings extends StatefulWidget {
@@ -24,9 +25,7 @@ class _BillingSettingsState extends State<BillingSettings> {
   }
 
   Future<void> _loadData() async {
-    setState(() {
-      _loading = true;
-    });
+    setState(() => _loading = true);
 
     try {
       final subscription = await _billingService.getMySubscription();
@@ -38,9 +37,7 @@ class _BillingSettingsState extends State<BillingSettings> {
         _loading = false;
       });
     } catch (e) {
-      setState(() {
-        _loading = false;
-      });
+      setState(() => _loading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error loading billing data: $e')),
@@ -53,10 +50,12 @@ class _BillingSettingsState extends State<BillingSettings> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cancel Subscription'),
+        backgroundColor: DesignTokens.accentBlue.withValues(alpha: 0.9),
+        title: const Text('Cancel Subscription', style: TextStyle(color: Colors.white)),
         content: const Text(
           'Your subscription will remain active until the end of the current billing period. '
           'You can resume it anytime before then.',
+          style: TextStyle(color: Colors.white70),
         ),
         actions: [
           TextButton(
@@ -66,7 +65,7 @@ class _BillingSettingsState extends State<BillingSettings> {
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Cancel at Period End'),
+            child: const Text('Cancel at Period End', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -105,17 +104,7 @@ class _BillingSettingsState extends State<BillingSettings> {
 
   Widget _buildSubscriptionCard() {
     if (_subscription == null) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: const Color(0xFF2C2F33),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-            width: 1,
-          ),
-        ),
+      return _buildGlassmorphicCard(
         child: Row(
           children: [
             Icon(
@@ -141,17 +130,7 @@ class _BillingSettingsState extends State<BillingSettings> {
     final periodEnd = _subscription!['period_end'] as String?;
     final cancelAtPeriodEnd = _subscription!['cancel_at_period_end'] as bool? ?? false;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2F33),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
+    return _buildGlassmorphicCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -160,9 +139,9 @@ class _BillingSettingsState extends State<BillingSettings> {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.credit_card,
-                    color: AppTheme.accentGreen,
+                    color: Colors.white.withValues(alpha: 0.9),
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -177,10 +156,18 @@ class _BillingSettingsState extends State<BillingSettings> {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: status == 'active' ? AppTheme.accentGreen : AppTheme.accentOrange,
+                  color: status == 'active' 
+                      ? const Color(0xFF00D4AA).withValues(alpha: 0.3)
+                      : Colors.orange.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: status == 'active' 
+                        ? const Color(0xFF00D4AA)
+                        : Colors.orange,
+                    width: 1,
+                  ),
                 ),
                 child: Text(
                   status.toUpperCase(),
@@ -205,24 +192,24 @@ class _BillingSettingsState extends State<BillingSettings> {
           if (cancelAtPeriodEnd)
             Container(
               margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.accentOrange.withValues(alpha: 0.1),
+                color: Colors.orange.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppTheme.accentOrange.withValues(alpha: 0.3),
+                  color: Colors.orange.withValues(alpha: 0.4),
                   width: 1,
                 ),
               ),
-              child: const Row(
+              child: Row(
                 children: [
                   Icon(
                     Icons.warning,
-                    color: AppTheme.accentOrange,
+                    color: Colors.orange.withValues(alpha: 0.9),
                     size: 16,
                   ),
-                  SizedBox(width: 8),
-                  Text(
+                  const SizedBox(width: 8),
+                  const Text(
                     'Will cancel at period end',
                     style: TextStyle(
                       color: Colors.white,
@@ -238,42 +225,30 @@ class _BillingSettingsState extends State<BillingSettings> {
             children: [
               if (cancelAtPeriodEnd)
                 Expanded(
-                  child: ElevatedButton(
+                  child: _buildGlassmorphicButton(
                     onPressed: _resumeSubscription,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.accentGreen,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    color: const Color(0xFF00D4AA),
                     child: const Text(
                       'Resume',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                 )
               else
                 Expanded(
-                  child: ElevatedButton(
+                  child: _buildGlassmorphicButton(
                     onPressed: _cancelAtPeriodEnd,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    color: Colors.red,
                     child: const Text(
                       'Cancel at Period End',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -286,32 +261,22 @@ class _BillingSettingsState extends State<BillingSettings> {
   }
 
   Widget _buildInvoicesCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2F33),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
+    return _buildGlassmorphicCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 children: [
                   Icon(
                     Icons.receipt,
-                    color: AppTheme.accentGreen,
+                    color: Colors.white.withValues(alpha: 0.9),
                     size: 20,
                   ),
-                  SizedBox(width: 8),
-                  Text(
+                  const SizedBox(width: 8),
+                  const Text(
                     'Invoices',
                     style: TextStyle(
                       fontSize: 18,
@@ -323,13 +288,16 @@ class _BillingSettingsState extends State<BillingSettings> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                  ),
                 ),
                 child: TextButton(
                   onPressed: _viewInvoices,
                   style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.accentGreen,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   ),
                   child: const Text(
@@ -348,8 +316,11 @@ class _BillingSettingsState extends State<BillingSettings> {
               margin: const EdgeInsets.only(top: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: DesignTokens.accentBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                ),
               ),
               child: Row(
                 children: [
@@ -382,18 +353,17 @@ class _BillingSettingsState extends State<BillingSettings> {
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A1C1E),
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    width: 1,
+                    color: DesignTokens.accentBlue.withValues(alpha: 0.25),
                   ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.receipt,
-                      color: AppTheme.accentGreen,
+                      color: Colors.white.withValues(alpha: 0.8),
                       size: 16,
                     ),
                     const SizedBox(width: 12),
@@ -412,7 +382,7 @@ class _BillingSettingsState extends State<BillingSettings> {
                           Text(
                             '$status • $createdAt',
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color: Colors.white.withValues(alpha: 0.6),
                               fontSize: 12,
                             ),
                           ),
@@ -422,18 +392,16 @@ class _BillingSettingsState extends State<BillingSettings> {
                     if (externalId != null)
                       Container(
                         decoration: BoxDecoration(
-                          color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.open_in_new,
-                            color: AppTheme.accentGreen,
+                            color: Colors.white.withValues(alpha: 0.8),
                             size: 16,
                           ),
                           onPressed: () async {
-                            // This would typically open the Stripe invoice URL
-                            // For now, just show a message
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -454,6 +422,93 @@ class _BillingSettingsState extends State<BillingSettings> {
     );
   }
 
+  Widget _buildGlassmorphicCard({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.topLeft,
+                radius: 2.0,
+                colors: [
+                  DesignTokens.accentBlue.withValues(alpha: 0.25),
+                  DesignTokens.accentBlue.withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.35),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicButton({
+    required VoidCallback onPressed,
+    required Widget child,
+    Color? color,
+  }) {
+    final baseColor = color ?? DesignTokens.accentBlue;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 2.0,
+              colors: [
+                baseColor.withValues(alpha: 0.4),
+                baseColor.withValues(alpha: 0.2),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: baseColor.withValues(alpha: 0.5),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: baseColor.withValues(alpha: 0.25),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Center(child: child),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -461,12 +516,12 @@ class _BillingSettingsState extends State<BillingSettings> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: Colors.white,
+        foregroundColor: theme.brightness == Brightness.dark ? Colors.white : const Color(0xFF0B1220),
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Billing & Upgrade',
           style: TextStyle(
-            color: Colors.white,
+            color: theme.brightness == Brightness.dark ? Colors.white : const Color(0xFF0B1220),
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -475,13 +530,16 @@ class _BillingSettingsState extends State<BillingSettings> {
           Container(
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
-              color: AppTheme.accentGreen.withValues(alpha: 0.1),
+              color: DesignTokens.accentBlue.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+              ),
             ),
             child: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.refresh,
-                color: AppTheme.accentGreen,
+                color: theme.brightness == Brightness.dark ? Colors.white : DesignTokens.accentBlue,
               ),
               onPressed: _loadData,
               tooltip: 'Refresh',
@@ -490,9 +548,9 @@ class _BillingSettingsState extends State<BillingSettings> {
         ],
       ),
       body: _loading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(
-                color: AppTheme.accentGreen,
+                color: DesignTokens.accentBlue,
               ),
             )
           : SingleChildScrollView(

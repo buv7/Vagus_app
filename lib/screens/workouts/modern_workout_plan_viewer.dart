@@ -114,13 +114,14 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   void _showPlanSelector() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.cardBackground,
+      backgroundColor: DesignTokens.cardBg(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Container(
+      builder: (sheetContext) => Container(
         padding: const EdgeInsets.all(DesignTokens.space16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -128,7 +129,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             Text(
               'Select Workout Plan',
               style: DesignTokens.titleMedium.copyWith(
-                color: Colors.white,
+                color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -137,13 +138,13 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
               title: Text(
                 plan['name'] ?? 'Unnamed Plan',
                 style: DesignTokens.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
               subtitle: Text(
                 '${(plan['weeks'] as List<dynamic>?)?.length ?? 0} weeks',
                 style: DesignTokens.bodySmall.copyWith(
-                  color: Colors.white70,
+                  color: isDark ? Colors.white70 : Colors.black54,
                 ),
               ),
               trailing: _selectedPlan == plan['id']?.toString()
@@ -155,7 +156,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                   _selectedPlan = plan['id']?.toString() ?? '';
                   _totalWeeks = (plan['weeks'] as List<dynamic>?)?.length ?? 8;
                 });
-                Navigator.pop(context);
+                Navigator.pop(sheetContext);
               },
             )),
           ],
@@ -173,81 +174,102 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
       drawer: const VagusSideMenu(isClient: true),
       body: SafeArea(
         child: _isLoading 
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: AppTheme.accentGreen,
-                ),
+            ? Column(
+                children: [
+                  _buildBackHeader(),
+                  const Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppTheme.accentGreen,
+                      ),
+                    ),
+                  ),
+                ],
               )
             : _error != null
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                          size: 48,
-                        ),
-                        const SizedBox(height: DesignTokens.space16),
-                        const Text(
-                          'Error loading workout plans',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                ? Column(
+                    children: [
+                      _buildBackHeader(),
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 48,
+                              ),
+                              const SizedBox(height: DesignTokens.space16),
+                              Text(
+                                'Error loading workout plans',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: DesignTokens.textColor(context),
+                                ),
+                              ),
+                              const SizedBox(height: DesignTokens.space8),
+                              Text(
+                                _error!,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: DesignTokens.textColorSecondary(context),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: DesignTokens.space16),
+                              ElevatedButton(
+                                onPressed: _loadWorkoutPlans,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.accentGreen,
+                                  foregroundColor: AppTheme.primaryDark,
+                                ),
+                                child: const Text('Retry'),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: DesignTokens.space8),
-                        Text(
-                          _error!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.white70,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: DesignTokens.space16),
-                        ElevatedButton(
-                          onPressed: _loadWorkoutPlans,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.accentGreen,
-                            foregroundColor: AppTheme.primaryDark,
-                          ),
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )
                 : _workoutPlans.isEmpty
-                    ? const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.fitness_center_outlined,
-                              color: Colors.white70,
-                              size: 48,
-                            ),
-                            SizedBox(height: DesignTokens.space16),
-                            Text(
-                              'No workout plans found',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
+                    ? Column(
+                        children: [
+                          _buildBackHeader(),
+                          Expanded(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.fitness_center_outlined,
+                                    color: DesignTokens.textColorSecondary(context),
+                                    size: 48,
+                                  ),
+                                  const SizedBox(height: DesignTokens.space16),
+                                  Text(
+                                    'No workout plans found',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: DesignTokens.textColor(context),
+                                    ),
+                                  ),
+                                  const SizedBox(height: DesignTokens.space8),
+                                  Text(
+                                    'Your coach will create workout plans for you',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: DesignTokens.textColorSecondary(context),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(height: DesignTokens.space8),
-                            Text(
-                              'Your coach will create workout plans for you',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       )
                     : SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -278,20 +300,18 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildBackHeader() {
     return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(
         children: [
-          // Hamburger menu
-          Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white, size: 24),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
+          // Back arrow
+          IconButton(
+            icon: Icon(Icons.arrow_back, color: DesignTokens.iconColor(context), size: 24),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            onPressed: () => Navigator.of(context).pop(),
           ),
 
           const SizedBox(width: 8),
@@ -301,7 +321,39 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             child: Text(
               'Workouts',
               style: DesignTokens.titleLarge.copyWith(
-                color: Colors.white,
+                color: DesignTokens.textColor(context),
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          // Back arrow
+          IconButton(
+            icon: Icon(Icons.arrow_back, color: DesignTokens.iconColor(context), size: 24),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Title
+          Expanded(
+            child: Text(
+              'Workouts',
+              style: DesignTokens.titleLarge.copyWith(
+                color: DesignTokens.textColor(context),
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
               ),
@@ -322,9 +374,9 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
           vertical: 10,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.cardBackground,
+          color: DesignTokens.cardBg(context),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+          border: Border.all(color: DesignTokens.borderColor(context)),
         ),
         child: Row(
           children: [
@@ -332,7 +384,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
               child: Text(
                 _currentPlan?['name'] ?? 'No workout plan',
                 style: DesignTokens.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: DesignTokens.textColor(context),
                   fontSize: 14,
                 ),
                 maxLines: 1,
@@ -340,9 +392,9 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
               ),
             ),
             if (_workoutPlans.length > 1)
-              const Icon(
+              Icon(
                 Icons.keyboard_arrow_down,
-                color: Colors.white,
+                color: DesignTokens.iconColor(context),
                 size: 20,
               ),
           ],
@@ -352,12 +404,14 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   Widget _buildProgramOverviewCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: DesignTokens.cardBg(context),
         borderRadius: BorderRadius.circular(12),
+        border: isDark ? null : Border.all(color: DesignTokens.borderColor(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,7 +423,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                 child: Text(
                   _currentPlan?['name'] ?? 'No workout plan',
                   style: DesignTokens.titleMedium.copyWith(
-                    color: Colors.white,
+                    color: DesignTokens.textColor(context),
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -383,13 +437,13 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: DesignTokens.textColor(context).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   'Week $_currentWeek',
                   style: DesignTokens.bodySmall.copyWith(
-                    color: Colors.white70,
+                    color: DesignTokens.textColorSecondary(context),
                     fontSize: 11,
                   ),
                 ),
@@ -403,7 +457,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
           Text(
             '$_totalWeeks week program • Created by Coach',
             style: DesignTokens.bodySmall.copyWith(
-              color: Colors.white70,
+              color: DesignTokens.textColorSecondary(context),
               fontSize: 12,
             ),
           ),
@@ -424,7 +478,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: DesignTokens.borderColor(context),
                         width: 6,
                       ),
                     ),
@@ -448,7 +502,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                         Text(
                           '$_currentProgress',
                           style: DesignTokens.titleLarge.copyWith(
-                            color: Colors.white,
+                            color: DesignTokens.textColor(context),
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
@@ -456,7 +510,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                         Text(
                           '/$_targetProgress',
                           style: DesignTokens.bodySmall.copyWith(
-                            color: Colors.white70,
+                            color: DesignTokens.textColorSecondary(context),
                             fontSize: 11,
                           ),
                         ),
@@ -480,7 +534,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             child: Text(
               'Week $_currentWeek of $_totalWeeks • ${(_completionPercentage * 100).round()}% Complete',
               style: DesignTokens.bodySmall.copyWith(
-                color: Colors.white70,
+                color: DesignTokens.textColorSecondary(context),
                 fontSize: 11,
               ),
             ),
@@ -522,9 +576,9 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(
+        Icon(
           Icons.chevron_left,
-          color: Colors.white70,
+          color: DesignTokens.textColorSecondary(context),
           size: 20,
         ),
         const SizedBox(width: 8),
@@ -546,7 +600,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
               child: Text(
                 'W$weekNumber',
                 style: DesignTokens.bodySmall.copyWith(
-                  color: isSelected ? AppTheme.primaryDark : Colors.white70,
+                  color: isSelected ? AppTheme.primaryDark : DesignTokens.textColorSecondary(context),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
@@ -554,9 +608,9 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
           );
         }),
         const SizedBox(width: 8),
-        const Icon(
+        Icon(
           Icons.chevron_right,
-          color: Colors.white70,
+          color: DesignTokens.textColorSecondary(context),
           size: 20,
         ),
       ],
@@ -569,6 +623,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
     if (text == 'PDF') action = 'Export PDF';
     if (text == 'Edit') action = 'Edit Plan';
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () => _handleActionButton(action),
       child: Container(
@@ -577,10 +632,12 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
           vertical: 8,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.primaryDark.withValues(alpha: 0.3),
+          color: isDark 
+              ? AppTheme.primaryDark.withValues(alpha: 0.3)
+              : DesignTokens.textColor(context).withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: DesignTokens.borderColor(context),
           ),
         ),
         child: Row(
@@ -588,7 +645,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
           children: [
             Icon(
               icon,
-              color: Colors.white,
+              color: DesignTokens.textColor(context),
               size: 14,
             ),
             const SizedBox(width: 4),
@@ -596,7 +653,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
               child: Text(
                 text,
                 style: DesignTokens.bodySmall.copyWith(
-                  color: Colors.white,
+                  color: DesignTokens.textColor(context),
                   fontSize: 11,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -675,21 +732,23 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   Widget _buildWorkoutCard(Map<String, dynamic> workout) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () => _openWorkoutDetails(workout),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppTheme.cardBackground,
+          color: DesignTokens.cardBg(context),
           borderRadius: BorderRadius.circular(12),
+          border: isDark ? null : Border.all(color: DesignTokens.borderColor(context)),
         ),
         child: Row(
           children: [
             // Arrow icon
-            const Icon(
+            Icon(
               Icons.chevron_right,
-              color: Colors.white70,
+              color: DesignTokens.textColorSecondary(context),
               size: 20,
             ),
 
@@ -703,30 +762,30 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                   Text(
                     workout['name'],
                     style: DesignTokens.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: DesignTokens.textColor(context),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.calendar_today,
-                        color: Colors.white70,
+                        color: DesignTokens.textColorSecondary(context),
                         size: 12,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         workout['day'],
                         style: DesignTokens.bodySmall.copyWith(
-                          color: Colors.white70,
+                          color: DesignTokens.textColorSecondary(context),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '${workout['sets']} • ${workout['duration']}',
                         style: DesignTokens.bodySmall.copyWith(
-                          color: Colors.white70,
+                          color: DesignTokens.textColorSecondary(context),
                         ),
                       ),
                     ],
@@ -739,16 +798,16 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
             Row(
               children: [
                 if (workout['attachments'] > 0) ...[
-                  const Icon(
+                  Icon(
                     Icons.attach_file,
-                    color: Colors.white70,
+                    color: DesignTokens.textColorSecondary(context),
                     size: 16,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '${workout['attachments']}',
                     style: DesignTokens.bodySmall.copyWith(
-                      color: Colors.white70,
+                      color: DesignTokens.textColorSecondary(context),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -775,18 +834,19 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
   }
 
   void _openWorkoutDetails(Map<String, dynamic> workout) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
+      builder: (sheetContext) => DraggableScrollableSheet(
         initialChildSize: 0.9,
         minChildSize: 0.5,
         maxChildSize: 0.95,
-        builder: (context, scrollController) => Container(
-          decoration: const BoxDecoration(
-            color: AppTheme.cardBackground,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        builder: (_, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: isDark ? AppTheme.cardBackground : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
             children: [
@@ -796,7 +856,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white30,
+                  color: isDark ? Colors.white30 : Colors.black26,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -812,7 +872,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                           Text(
                             workout['name'],
                             style: DesignTokens.titleMedium.copyWith(
-                              color: Colors.white,
+                              color: isDark ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -820,35 +880,36 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                           Text(
                             '${workout['day']} • ${workout['duration']}',
                             style: DesignTokens.bodySmall.copyWith(
-                              color: Colors.white70,
+                              color: isDark ? Colors.white70 : Colors.black54,
                             ),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.pop(sheetContext),
+                      icon: Icon(Icons.close, color: isDark ? Colors.white : Colors.black),
                     ),
                   ],
                 ),
               ),
-              const Divider(color: Colors.white24, height: 1),
+              Divider(color: isDark ? Colors.white24 : Colors.black12, height: 1),
               // Exercise list
               Expanded(
                 child: ListView.builder(
                   controller: scrollController,
                   padding: const EdgeInsets.all(20),
                   itemCount: (workout['exercises'] as List?)?.length ?? 0,
-                  itemBuilder: (context, index) {
+                  itemBuilder: (listContext, index) {
                     final exercises = workout['exercises'] as List;
                     final exercise = exercises[index] as Map<String, dynamic>;
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryDark,
+                        color: isDark ? AppTheme.primaryDark : const Color(0xFFF5F5F5),
                         borderRadius: BorderRadius.circular(12),
+                        border: isDark ? null : Border.all(color: const Color(0xFFE5E7EB)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -856,7 +917,7 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                           Text(
                             exercise['name'] ?? 'Exercise ${index + 1}',
                             style: DesignTokens.bodyMedium.copyWith(
-                              color: Colors.white,
+                              color: isDark ? Colors.white : Colors.black,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -866,16 +927,19 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
                               _buildExerciseDetail(
                                 'Sets',
                                 exercise['sets']?.toString() ?? '0',
+                                isDark,
                               ),
                               const SizedBox(width: 16),
                               _buildExerciseDetail(
                                 'Reps',
                                 exercise['reps']?.toString() ?? '0',
+                                isDark,
                               ),
                               const SizedBox(width: 16),
                               _buildExerciseDetail(
                                 'Rest',
                                 exercise['rest']?.toString() ?? '60s',
+                                isDark,
                               ),
                             ],
                           ),
@@ -892,14 +956,14 @@ class _ModernWorkoutPlanViewerState extends State<ModernWorkoutPlanViewer> {
     );
   }
 
-  Widget _buildExerciseDetail(String label, String value) {
+  Widget _buildExerciseDetail(String label, String value, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: DesignTokens.bodySmall.copyWith(
-            color: Colors.white70,
+            color: isDark ? Colors.white70 : Colors.black54,
             fontSize: 11,
           ),
         ),

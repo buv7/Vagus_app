@@ -9,15 +9,15 @@ import '../workouts/modern_workout_plan_viewer.dart';
 import '../plans/plans_dashboard_screen.dart';
 import '../calendar/modern_calendar_viewer.dart';
 import '../nutrition/nutrition_hub_screen.dart';
-import '../messaging/modern_messenger_screen.dart';
 import '../messaging/modern_client_messages_screen.dart';
+import '../messaging/client_chat_list_screen.dart';
 import '../coach/modern_client_management_screen.dart';
 import '../admin/admin_hub_screen.dart';
 import '../../widgets/fab/simple_glassmorphism_fab.dart';
 import '../../widgets/fab/camera_glassmorphism_fab.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/messaging/messaging_wrapper.dart';
+import '../../theme/theme_colors.dart';
 import '../../widgets/navigation/vagus_side_menu.dart';
 
 class MainNav extends StatefulWidget {
@@ -201,14 +201,10 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
           icon: Icons.chat_outlined,
           activeIcon: Icons.chat_rounded,
           label: 'Messages',
-          screen: MessagingWrapper(
+          screen: ClientChatListScreen(
             onShowBottomNav: showBottomNavigation,
             onHideBottomNav: hideBottomNavigation,
-            child: const ModernMessengerScreen(),
           ),
-          onEnter: () {
-            hideBottomNavigation();
-          },
         ),
       ];
     }
@@ -341,14 +337,17 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(
-              Icons.menu,
-              color: Colors.white,
-              size: 24,
-            ),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+          builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            return IconButton(
+              icon: Icon(
+                Icons.menu,
+                color: isDark ? Colors.white : const Color(0xFF0B1220),
+                size: 24,
+              ),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            );
+          },
         ),
       ),
       extendBodyBehindAppBar: !isAdmin,
@@ -382,28 +381,35 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
             child: SafeArea(
               child: ClipRRect(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
                     height: 80,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                      // Glassmorphism style matching FAB
+                      gradient: RadialGradient(
+                        center: Alignment.topCenter,
+                        radius: 2.0,
                         colors: [
-                          Color.lerp(DesignTokens.primaryDark, DesignTokens.accentBlue, 0.15)!.withValues(alpha: 0.95),
-                          Color.lerp(DesignTokens.primaryDark, DesignTokens.accentBlue, 0.1)!.withValues(alpha: 0.98),
+                          DesignTokens.accentBlue.withValues(alpha: 0.25),
+                          DesignTokens.accentBlue.withValues(alpha: 0.08),
                         ],
                       ),
                       border: Border(
                         top: BorderSide(
-                          color: DesignTokens.accentBlue.withValues(alpha: 0.3),
-                          width: 1,
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                          width: 2,
                         ),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: DesignTokens.accentBlue.withValues(alpha: 0.1),
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.3),
                           blurRadius: 20,
+                          spreadRadius: 0,
+                          offset: const Offset(0, -8),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
                           spreadRadius: 0,
                           offset: const Offset(0, -4),
                         ),
@@ -465,22 +471,24 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Icon with active state
+                  // Icon with active state - white like FAB
                   Icon(
                     isActive ? tab.activeIcon : tab.icon,
                     color: isActive 
-                        ? AppTheme.accentGreen
-                        : AppTheme.lightGrey,
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.6),
                     size: 20,
                   ),
                   
                   const SizedBox(height: DesignTokens.space2),
                   
-                  // Label with active state
+                  // Label with active state - white like FAB
                   Text(
                     tab.label,
                     style: TextStyle(
-                      color: isActive ? AppTheme.neutralWhite : AppTheme.lightGrey,
+                      color: isActive 
+                          ? Colors.white 
+                          : Colors.white.withValues(alpha: 0.6),
                       fontSize: 10,
                       fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                     ),

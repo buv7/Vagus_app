@@ -143,6 +143,7 @@ class _ViewerViewState extends State<ViewerView>
 
   Widget _buildPlanHeader(String locale) {
     final plan = widget.currentPlan!;
+    final theme = Theme.of(context);
 
     return NutritionCard(
       child: Column(
@@ -174,8 +175,8 @@ class _ViewerViewState extends State<ViewerView>
                   children: [
                     Text(
                       plan.name,
-                      style: const TextStyle(
-                        color: AppTheme.neutralWhite,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -194,8 +195,10 @@ class _ViewerViewState extends State<ViewerView>
                           ),
                           child: Text(
                             _getPlanTypeLabel(plan.lengthType, locale),
-                            style: const TextStyle(
-                              color: AppTheme.primaryDark,
+                            style: TextStyle(
+                              color: theme.brightness == Brightness.dark 
+                                  ? AppTheme.primaryDark 
+                                  : Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -209,25 +212,25 @@ class _ViewerViewState extends State<ViewerView>
                               vertical: DesignTokens.space4,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentGreen.withValues(alpha: 0.2),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(DesignTokens.radius8),
                               border: Border.all(
-                                color: AppTheme.accentGreen.withValues(alpha: 0.5),
+                                color: theme.colorScheme.primary.withValues(alpha: 0.5),
                               ),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   Icons.auto_awesome,
                                   size: 10,
-                                  color: AppTheme.accentGreen,
+                                  color: theme.colorScheme.primary,
                                 ),
-                                SizedBox(width: DesignTokens.space4),
+                                const SizedBox(width: DesignTokens.space4),
                                 Text(
                                   'AI Generated',
                                   style: TextStyle(
-                                    color: AppTheme.accentGreen,
+                                    color: theme.colorScheme.primary,
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -245,12 +248,12 @@ class _ViewerViewState extends State<ViewerView>
               if (widget.userRole == 'coach' && widget.onEditPlan != null)
                 IconButton(
                   onPressed: widget.onEditPlan,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.edit,
-                    color: AppTheme.accentGreen,
+                    color: theme.colorScheme.primary,
                   ),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppTheme.accentGreen.withValues(alpha: 0.1),
+                    backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius8),
                     ),
@@ -267,7 +270,7 @@ class _ViewerViewState extends State<ViewerView>
               _buildMetadataChip(
                 Icons.calendar_today,
                 _formatDate(plan.createdAt),
-                AppTheme.lightGrey,
+                theme.colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: DesignTokens.space8),
               _buildMetadataChip(
@@ -321,6 +324,8 @@ class _ViewerViewState extends State<ViewerView>
   }
 
   Widget _buildMealsSection(String locale) {
+    final theme = Theme.of(context);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -328,8 +333,8 @@ class _ViewerViewState extends State<ViewerView>
           children: [
             Text(
               LocaleHelper.t('todays_meals', locale),
-              style: const TextStyle(
-                color: AppTheme.neutralWhite,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -337,8 +342,8 @@ class _ViewerViewState extends State<ViewerView>
             const Spacer(),
             Text(
               '${widget.currentPlan!.meals.length} ${LocaleHelper.t('meals', locale)}',
-              style: const TextStyle(
-                color: AppTheme.lightGrey,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),
@@ -435,10 +440,13 @@ class _ViewerViewState extends State<ViewerView>
                 final modeData = modeSnapshot.data;
                 final mode = modeData?['mode'] as ChaosMode?;
                 final location = modeData?['location'] as String?;
+                final isDark = theme.brightness == Brightness.dark;
                 return Padding(
                   padding: const EdgeInsets.only(top: DesignTokens.space16),
                   child: Card(
-                    color: AppTheme.primaryDark.withValues(alpha: 0.5),
+                    color: isDark 
+                        ? AppTheme.primaryDark.withValues(alpha: 0.5) 
+                        : theme.colorScheme.surfaceContainerHighest,
                     child: ListTile(
                       leading: Icon(
                         mode == ChaosMode.travel
@@ -448,16 +456,16 @@ class _ViewerViewState extends State<ViewerView>
                                 : mode == ChaosMode.restDay
                                     ? Icons.hotel
                                     : Icons.check_circle,
-                        color: AppTheme.accentGreen,
+                        color: theme.colorScheme.primary,
                       ),
                       title: Text(
                         mode != null
                             ? 'Mode: ${mode.label}${location != null ? ' - $location' : ''}'
                             : 'Normal Mode',
-                        style: const TextStyle(color: AppTheme.neutralWhite),
+                        style: TextStyle(color: theme.colorScheme.onSurface),
                       ),
                       trailing: IconButton(
-                        icon: const Icon(Icons.tune, color: AppTheme.accentGreen),
+                        icon: Icon(Icons.tune, color: theme.colorScheme.primary),
                         onPressed: () {
                           // TODO: Open chaos control settings/mode selector
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -478,14 +486,16 @@ class _ViewerViewState extends State<ViewerView>
   }
 
   Widget _buildQuickActions(String locale) {
+    final theme = Theme.of(context);
+    
     return NutritionCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             LocaleHelper.t('quick_actions', locale),
-            style: const TextStyle(
-              color: AppTheme.neutralWhite,
+            style: TextStyle(
+              color: theme.colorScheme.onSurface,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

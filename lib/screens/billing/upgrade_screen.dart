@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/theme_index.dart';
+import '../../theme/theme_colors.dart';
 
 /// Upgrade screen showing available subscription plans
 class UpgradeScreen extends StatefulWidget {
@@ -122,7 +123,8 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   }
 
   Widget _buildHeader() {
-    return const Column(
+    final tc = context.tc;
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -130,15 +132,15 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: DesignTokens.neutralWhite,
+            color: tc.textPrimary,
           ),
         ),
-        SizedBox(height: spacing2),
+        const SizedBox(height: spacing2),
         Text(
           'Unlock the full power of Vagus with premium features',
           style: TextStyle(
             fontSize: 16,
-            color: DesignTokens.textSecondary,
+            color: tc.textSecondary,
           ),
         ),
       ],
@@ -146,26 +148,27 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   }
 
   Widget _buildCurrentPlanBanner() {
+    final tc = context.tc;
     return Container(
       padding: const EdgeInsets.all(spacing3),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            mintAqua.withValues(alpha: 0.2),
-            mintAqua.withValues(alpha: 0.05),
+            tc.accent.withValues(alpha: 0.2),
+            tc.accent.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(radiusM),
         border: Border.all(
-          color: mintAqua.withValues(alpha: 0.3),
+          color: tc.accent.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.info_outline,
-            color: mintAqua,
+            color: tc.accent,
             size: 24,
           ),
           const SizedBox(width: spacing2),
@@ -175,18 +178,18 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
               children: [
                 Text(
                   'Current Plan: ${_getPlanDisplayName(_currentPlan)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: DesignTokens.neutralWhite,
+                    color: tc.textPrimary,
                   ),
                 ),
                 if (_currentPlan == 'free')
-                  const Text(
+                  Text(
                     'Upgrade to unlock premium features',
                     style: TextStyle(
                       fontSize: 14,
-                      color: DesignTokens.textSecondary,
+                      color: tc.textSecondary,
                     ),
                   ),
               ],
@@ -206,27 +209,21 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     required String planId,
     bool isPopular = false,
   }) {
+    final tc = context.tc;
+    
+    // Popular card uses premium gradient, otherwise regular surface
     return Container(
-      decoration: BoxDecoration(
-        gradient: isPopular
-            ? LinearGradient(
-                colors: [
-                  mintAqua.withValues(alpha: 0.1),
-                  DesignTokens.primaryDark,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        color: isPopular ? null : DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(radiusL),
-        border: Border.all(
-          color: isPopular
-              ? mintAqua
-              : primaryAccent.withValues(alpha: 0.2),
-          width: isPopular ? 2 : 1,
-        ),
-      ),
+      decoration: isPopular 
+          ? tc.premiumCardDecoration
+          : BoxDecoration(
+              color: tc.surface,
+              borderRadius: BorderRadius.circular(radiusL),
+              border: Border.all(
+                color: tc.border,
+                width: 1,
+              ),
+              boxShadow: tc.cardShadow,
+            ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -236,19 +233,19 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                 horizontal: spacing2,
                 vertical: spacing1,
               ),
-              decoration: const BoxDecoration(
-                color: mintAqua,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: tc.accent,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(radiusL),
                   bottomRight: Radius.circular(radiusM),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'MOST POPULAR',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: DesignTokens.primaryDark,
+                  color: tc.textOnDark,
                 ),
               ),
             ),
@@ -259,10 +256,11 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: DesignTokens.neutralWhite,
+                    // On premium gradient: use dark text, otherwise theme text
+                    color: isPopular ? tc.textOnGradient : tc.textPrimary,
                   ),
                 ),
                 const SizedBox(height: spacing2),
@@ -271,10 +269,10 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                   children: [
                     Text(
                       price,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
-                        color: mintAqua,
+                        color: isPopular ? tc.textOnGradient : tc.accent,
                       ),
                     ),
                     const SizedBox(width: spacing1),
@@ -282,16 +280,16 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Text(
                         '/ $period',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
-                          color: DesignTokens.textSecondary,
+                          color: isPopular ? tc.textOnGradientSecondary : tc.textSecondary,
                         ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: spacing4),
-                ...features.map((feature) => _buildFeatureItem(feature)),
+                ...features.map((f) => _buildFeatureItem(f, isPopular: isPopular)),
                 const SizedBox(height: spacing4),
                 SizedBox(
                   width: double.infinity,
@@ -301,9 +299,11 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                         : () => _handleUpgrade(planId),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isCurrentPlan
-                          ? steelGrey
-                          : mintAqua,
-                      foregroundColor: DesignTokens.primaryDark,
+                          ? tc.textDisabled
+                          : (isPopular ? tc.buttonOnGradient : tc.accent),
+                      foregroundColor: isCurrentPlan 
+                          ? tc.textSecondary
+                          : (isPopular ? tc.buttonTextOnGradient : tc.textOnDark),
                       padding: const EdgeInsets.symmetric(
                         vertical: spacing3,
                       ),
@@ -329,23 +329,24 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     );
   }
 
-  Widget _buildFeatureItem(String feature) {
+  Widget _buildFeatureItem(String feature, {bool isPopular = false}) {
+    final tc = context.tc;
     return Padding(
       padding: const EdgeInsets.only(bottom: spacing2),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.check_circle,
             size: 20,
-            color: mintAqua,
+            color: isPopular ? tc.iconOnGradient : tc.accent,
           ),
           const SizedBox(width: spacing2),
           Expanded(
             child: Text(
               feature,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: DesignTokens.neutralWhite,
+                color: isPopular ? tc.textOnGradient : tc.textPrimary,
               ),
             ),
           ),
@@ -368,11 +369,12 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   }
 
   Future<void> _handleUpgrade(String planId) async {
+    final tc = context.tc;
     // TODO: Integrate with payment gateway (Stripe, RevenueCat, etc.)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Upgrade to $planId - Payment integration pending'),
-        backgroundColor: mintAqua,
+        backgroundColor: tc.accent,
       ),
     );
 

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../auth/modern_login_screen.dart';
+import '../auth/premium_login_screen.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 import '../progress/modern_progress_tracker.dart';
+import '../progress/progress_gallery.dart';
 import '../workouts/modern_workout_plan_viewer.dart';
 import '../nutrition/nutrition_hub_screen.dart';
 import '../messaging/modern_messenger_screen.dart';
@@ -23,6 +25,8 @@ import '../../models/retention/mission_models.dart';
 import '../retention/daily_missions_screen.dart';
 import '../../services/growth/passive_virality_service.dart';
 import '../../services/share/share_card_service.dart';
+import '../../services/health/health_service.dart';
+import '../settings/health_connections_screen.dart';
 
 class ModernClientDashboard extends StatefulWidget {
   const ModernClientDashboard({super.key});
@@ -46,6 +50,10 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   Map<String, dynamic>? _progressData;
   Map<String, dynamic>? _streakData;
   Map<String, dynamic>? _rankData;
+  
+  // Health data from health platforms
+  Map<String, dynamic>? _healthData;
+  bool _hasHealthSources = false;
   
   // Supplement states
   Map<String, bool> _supplementStates = {};
@@ -88,7 +96,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
         if (mounted) {
           unawaited(Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const ModernLoginScreen()),
+            MaterialPageRoute(builder: (context) => const PremiumLoginScreen()),
           ));
         }
         return;
@@ -112,6 +120,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
         _loadProgressData(),
         _loadStreakData(),
         _loadRankData(),
+        _loadHealthData(),
       ]));
 
       // Wait for all futures to complete with timeout
@@ -359,6 +368,50 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
       };
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<void> _loadHealthData() async {
+    if (!mounted) return;
+    
+    try {
+      final healthService = HealthService();
+      
+      // Check if user has connected health sources
+      final sources = await healthService.getConnectedSources();
+      final hasHealthSources = sources.isNotEmpty;
+      
+      // Get today's health summary from database
+      final today = DateTime.now();
+      final dailySummary = await healthService.getDailySummary(today);
+      
+      if (mounted) {
+        setState(() {
+          _hasHealthSources = hasHealthSources;
+          _healthData = dailySummary ?? {
+            'steps': 0,
+            'active_kcal': 0,
+            'exercise_minutes': 0,
+            'stand_hours': 0,
+            'distance_km': 0.0,
+          };
+        });
+      }
+    } on TimeoutException {
+      debugPrint('Timeout loading health data');
+    } catch (e) {
+      debugPrint('Error loading health data: $e');
+      if (mounted) {
+        setState(() {
+          _healthData = {
+            'steps': 0,
+            'active_kcal': 0,
+            'exercise_minutes': 0,
+            'stand_hours': 0,
+            'distance_km': 0.0,
+          };
+        });
+      }
     }
   }
 
@@ -677,6 +730,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   Widget _buildHeader() {
     final userName = _profile?['name']?.toString() ?? 'User';
     final avatarUrl = _profile?['avatar_url']?.toString();
+    final tc = context.tc;
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -689,16 +743,16 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               children: [
                 Text(
                   'Welcome back, $userName!',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
+                Text(
                   'Ready to crush your fitness goals today?',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: tc.textSecondary,
                     fontSize: 14,
                   ),
                 ),
@@ -709,9 +763,9 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           // Search coaches button
           IconButton(
             onPressed: _goToCoachSearch,
-            icon: const Icon(
+            icon: Icon(
               Icons.search,
-              color: Colors.white70,
+              color: tc.iconSecondary,
               size: 24,
             ),
             tooltip: 'Search Coaches',
@@ -724,15 +778,16 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               children: [
                 CircleAvatar(
                   radius: 20,
+                  backgroundColor: tc.avatarBg,
                   backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty 
                       ? NetworkImage(avatarUrl) 
                       : null,
                   child: avatarUrl == null || avatarUrl.isEmpty 
-                      ? const Icon(Icons.person, color: Colors.white) 
+                      ? Icon(Icons.person, color: tc.avatarIcon) 
                       : null,
                 ),
                 const SizedBox(width: 8),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.white70),
+                Icon(Icons.keyboard_arrow_down, color: tc.iconSecondary),
               ],
             ),
           ),
@@ -741,168 +796,183 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
     );
   }
 
-  void _showProfileMenu(BuildContext context) {
+  void _showProfileMenu(BuildContext parentContext) {
+    final tc = parentContext.tc;
     showModalBottomSheet(
-      context: context,
+      context: parentContext,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF2A2D2E),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 20),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.white38,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            
-            // Profile info
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
+      builder: (sheetContext) => ThemeColors.wrap(
+        context: parentContext,
+        child: Builder(
+          builder: (ctx) {
+            final sheetTc = ctx.tc;
+            return Container(
+              decoration: sheetTc.modalDecoration,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundImage: _profile?['avatar_url'] != null 
-                        ? NetworkImage(_profile!['avatar_url']) 
-                        : null,
-                    child: _profile?['avatar_url'] == null 
-                        ? const Icon(Icons.person, color: Colors.white) 
-                        : null,
+                  // Handle bar
+                  Container(
+                    margin: const EdgeInsets.only(top: 12, bottom: 20),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: sheetTc.textDisabled,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  
+                  // Profile info
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
                       children: [
-                        Text(
-                          _profile?['name']?.toString() ?? 'User',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: sheetTc.avatarBg,
+                          backgroundImage: _profile?['avatar_url'] != null 
+                              ? NetworkImage(_profile!['avatar_url']) 
+                              : null,
+                          child: _profile?['avatar_url'] == null 
+                              ? Icon(Icons.person, color: sheetTc.avatarIcon) 
+                              : null,
                         ),
-                        Text(
-                          _profile?['email']?.toString() ?? '',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _profile?['name']?.toString() ?? 'User',
+                                style: TextStyle(
+                                  color: sheetTc.textPrimary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                _profile?['email']?.toString() ?? '',
+                                style: TextStyle(
+                                  color: sheetTc.textSecondary,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Menu items
+                  _buildMenuTile(
+                    context: ctx,
+                    icon: Icons.person_outline,
+                    title: 'Profile Settings',
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      Navigator.push(
+                        parentContext,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfileSettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildMenuTile(
+                    context: ctx,
+                    icon: Icons.notifications_outlined,
+                    title: 'Notifications',
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      Navigator.push(
+                        parentContext,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationsSettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildMenuTile(
+                    context: ctx,
+                    icon: Icons.star_outline,
+                    title: 'Upgrade to Pro',
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      Navigator.push(
+                        parentContext,
+                        MaterialPageRoute(
+                          builder: (context) => const UpgradeScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildMenuTile(
+                    context: ctx,
+                    icon: Icons.help_outline,
+                    title: 'Help & Support',
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      Navigator.push(
+                        parentContext,
+                        MaterialPageRoute(
+                          builder: (context) => const HelpCenterScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildMenuTile(
+                    context: ctx,
+                    iconWidget: FatigueRecoveryIcon(size: 24),
+                    title: 'Fatigue Dashboard',
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      Navigator.push(
+                        parentContext,
+                        MaterialPageRoute(
+                          builder: (context) => const FatigueDashboardScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildMenuTile(
+                    context: ctx,
+                    icon: Icons.logout,
+                    title: 'Sign Out',
+                    textColor: sheetTc.danger,
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _logout();
+                    },
+                  ),
+                  
+                  const SizedBox(height: 30),
                 ],
               ),
-            ),
-            
-            const SizedBox(height: 30),
-            
-            // Menu items
-            _buildMenuTile(
-              icon: Icons.person_outline,
-              title: 'Profile Settings',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProfileSettingsScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildMenuTile(
-              icon: Icons.notifications_outlined,
-              title: 'Notifications',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationsSettingsScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildMenuTile(
-              icon: Icons.star_outline,
-              title: 'Upgrade to Pro',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UpgradeScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildMenuTile(
-              icon: Icons.help_outline,
-              title: 'Help & Support',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HelpCenterScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildMenuTile(
-              iconWidget: FatigueRecoveryIcon(size: 24),
-              title: 'Fatigue Dashboard',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FatigueDashboardScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildMenuTile(
-              icon: Icons.logout,
-              title: 'Sign Out',
-              textColor: Colors.red,
-              onTap: () {
-                Navigator.pop(context);
-                _logout();
-              },
-            ),
-            
-            const SizedBox(height: 30),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 
   Widget _buildMenuTile({
+    required BuildContext context,
     IconData? icon,
     Widget? iconWidget,
     required String title,
     required VoidCallback onTap,
     Color? textColor,
   }) {
+    final tc = context.tc;
     return ListTile(
-      leading: iconWidget ?? (icon != null ? Icon(icon, color: textColor ?? Colors.white70) : null),
+      leading: iconWidget ?? (icon != null ? Icon(icon, color: textColor ?? tc.iconSecondary) : null),
       title: Text(
         title,
         style: TextStyle(
-          color: textColor ?? Colors.white,
+          color: textColor ?? tc.textPrimary,
           fontSize: 16,
         ),
       ),
@@ -917,7 +987,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
       if (mounted) {
         unawaited(Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const ModernLoginScreen()),
+          MaterialPageRoute(builder: (context) => const PremiumLoginScreen()),
           (route) => false,
         ));
       }
@@ -945,24 +1015,23 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   Widget _buildProfileCard() {
     final userName = _profile?['name']?.toString() ?? 'User';
     final avatarUrl = _profile?['avatar_url']?.toString();
+    final tc = context.tc;
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: tc.cardDecoration,
       child: Row(
         children: [
           // Profile image
           CircleAvatar(
             radius: 30,
+            backgroundColor: tc.avatarBg,
             backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty 
                 ? NetworkImage(avatarUrl) 
                 : null,
             child: avatarUrl == null || avatarUrl.isEmpty 
-                ? const Icon(Icons.person, size: 30, color: Colors.white) 
+                ? Icon(Icons.person, size: 30, color: tc.avatarIcon) 
                 : null,
           ),
           
@@ -975,16 +1044,16 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               children: [
                 Text(
                   userName,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
+                Text(
                   'Premium Client',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: tc.textSecondary,
                     fontSize: 14,
                   ),
                 ),
@@ -995,18 +1064,18 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.grey[800],
+                      color: tc.surfaceAlt,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.person, color: Colors.white70, size: 16),
+                        Icon(Icons.person, color: tc.iconSecondary, size: 16),
                         const SizedBox(width: 4),
                         Text(
                           'Coach: ${_coachProfile!['name'] ?? 'Unknown'}',
-                          style: const TextStyle(
-                            color: Colors.white70,
+                          style: TextStyle(
+                            color: tc.textSecondary,
                             fontSize: 12,
                           ),
                         ),
@@ -1023,8 +1092,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                     const SizedBox(width: 4),
                     Text(
                       '${_streakData?['current_streak'] ?? 0} Day Streak',
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: tc.textSecondary,
                         fontSize: 12,
                       ),
                     ),
@@ -1048,20 +1117,18 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildProgressMetricsCard() {
+    final tc = context.tc;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: tc.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Progress Metrics',
             style: TextStyle(
-              color: Colors.white,
+              color: tc.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -1077,8 +1144,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                   children: [
                     Text(
                       '${_progressData?['weight'] ?? '0.0'} lbs',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: tc.textPrimary,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1090,8 +1157,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                               ? Icons.trending_up 
                               : Icons.trending_down, 
                           color: (_progressData?['weight_change'] ?? 0) >= 0 
-                              ? Colors.red 
-                              : Colors.green, 
+                              ? tc.danger 
+                              : tc.success, 
                           size: 16
                         ),
                         const SizedBox(width: 4),
@@ -1099,8 +1166,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                           '${(_progressData?['weight_change'] ?? 0) >= 0 ? '+' : ''}${_progressData?['weight_change'] ?? 0} lbs this week',
                           style: TextStyle(
                             color: (_progressData?['weight_change'] ?? 0) >= 0 
-                                ? Colors.red 
-                                : Colors.green,
+                                ? tc.danger 
+                                : tc.success,
                             fontSize: 12,
                           ),
                         ),
@@ -1116,15 +1183,15 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                 children: [
                   Text(
                     'Goal: ${_progressData?['goal_weight'] ?? '0'} lbs',
-                    style: const TextStyle(
-                      color: Colors.grey,
+                    style: TextStyle(
+                      color: tc.textSecondary,
                       fontSize: 12,
                     ),
                   ),
                   Text(
                     '${((_progressData?['goal_weight'] ?? 0) - (_progressData?['weight'] ?? 0)).toStringAsFixed(1)} lbs to go',
-                    style: const TextStyle(
-                      color: Colors.grey,
+                    style: TextStyle(
+                      color: tc.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -1140,16 +1207,16 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             children: [
               Text(
                 'Waist ${_progressData?['waist'] ?? '0.0"'}',
-                style: const TextStyle(
-                  color: Colors.white70,
+                style: TextStyle(
+                  color: tc.textSecondary,
                   fontSize: 14,
                 ),
               ),
               const SizedBox(width: 16),
               Text(
                 'Chest ${_progressData?['chest'] ?? '0.0"'}',
-                style: const TextStyle(
-                  color: Colors.white70,
+                style: TextStyle(
+                  color: tc.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -1163,15 +1230,23 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () {
-                // Add progress photo functionality
+                final user = Supabase.instance.client.auth.currentUser;
+                if (user != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProgressGallery(userId: user.id),
+                    ),
+                  );
+                }
               },
-              icon: const Icon(Icons.camera_alt, color: Colors.white),
-              label: const Text(
+              icon: Icon(Icons.camera_alt, color: tc.textOnDark),
+              label: Text(
                 'Add Progress Photo',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: tc.textOnDark),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[600],
+                backgroundColor: tc.info,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -1185,20 +1260,18 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildSupplementsCard() {
+    final tc = context.tc;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: tc.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Supplements Today',
             style: TextStyle(
-              color: Colors.white,
+              color: tc.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -1207,10 +1280,10 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           
           // Display real supplements
           if (_supplements.isEmpty)
-            const Text(
+            Text(
               'No supplements scheduled for today',
               style: TextStyle(
-                color: Colors.grey,
+                color: tc.textSecondary,
                 fontSize: 14,
               ),
             )
@@ -1281,9 +1354,10 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildSupplementItem(String name, String time, bool isTaken, {VoidCallback? onTap}) {
+    final tc = context.tc;
     return Row(
       children: [
-        const Icon(Icons.access_time, color: Colors.grey, size: 16),
+        Icon(Icons.access_time, color: tc.iconSecondary, size: 16),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -1291,16 +1365,16 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             children: [
               Text(
                 name,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: tc.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
                 time,
-                style: const TextStyle(
-                  color: Colors.grey,
+                style: TextStyle(
+                  color: tc.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -1313,12 +1387,12 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: tc.success,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.check,
-              color: Colors.white,
+              color: tc.textOnDark,
               size: 16,
             ),
           )
@@ -1328,13 +1402,13 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.blue[600],
+                color: tc.info,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Text(
+              child: Text(
                 'Mark Taken',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: tc.textOnDark,
                   fontSize: 12,
                 ),
               ),
@@ -1346,13 +1420,14 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
 
 
   Widget _buildHorizontalScrollSection() {
+    final tc = context.tc;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Today\'s Overview',
           style: TextStyle(
-            color: Colors.white,
+            color: tc.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -1367,6 +1442,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             children: [
               _buildHealthRingsCard(),
               const SizedBox(width: 16),
+              _buildStepsCard(),
+              const SizedBox(width: 16),
               _buildStreakCard(),
               const SizedBox(width: 16),
               _buildRankCard(),
@@ -1380,58 +1457,265 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildHealthRingsCard() {
-    return Container(
-      width: 280,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
-          width: 1,
+    final tc = context.tc;
+    
+    // Get real health data or use defaults
+    final activeKcal = (_healthData?['active_kcal'] as num?)?.toInt() ?? 0;
+    final exerciseMins = (_healthData?['exercise_minutes'] as num?)?.toInt() ?? 0;
+    final standHours = (_healthData?['stand_hours'] as num?)?.toInt() ?? 0;
+    
+    // Calculate progress (goals: 500 kcal, 30 min, 12 hours)
+    final activityProgress = (activeKcal / 500).clamp(0.0, 1.0);
+    final exerciseProgress = (exerciseMins / 30).clamp(0.0, 1.0);
+    final standProgress = (standHours / 12).clamp(0.0, 1.0);
+    
+    return GestureDetector(
+      onTap: () {
+        // Navigate to health connections if no data
+        if (!_hasHealthSources) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HealthConnectionsScreen()),
+          );
+        }
+      },
+      child: Container(
+        width: 280,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: tc.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: tc.accent.withValues(alpha: 0.2),
+            width: 1,
+          ),
         ),
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.favorite, color: AppTheme.accentGreen, size: 20),
-              SizedBox(width: 8),
-              Text(
-                'Health Rings',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.favorite, color: tc.accent, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Health Rings',
+                    style: TextStyle(
+                      color: tc.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (!_hasHealthSources)
+                  Icon(Icons.link_off, color: tc.textSecondary, size: 16),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Health rings with real data
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _HealthRingWidget(
+                  label: 'Activity',
+                  progress: activityProgress,
+                  color: AppTheme.accentGreen,
+                  value: '$activeKcal',
+                ),
+                _HealthRingWidget(
+                  label: 'Exercise',
+                  progress: exerciseProgress,
+                  color: DesignTokens.accentBlue,
+                  value: '$exerciseMins',
+                ),
+                _HealthRingWidget(
+                  label: 'Stand',
+                  progress: standProgress,
+                  color: DesignTokens.accentPink,
+                  value: '$standHours',
+                ),
+              ],
+            ),
+            
+            // Connect prompt if no health sources
+            if (!_hasHealthSources) ...[
+              const SizedBox(height: 8),
+              Center(
+                child: Text(
+                  'Tap to connect health app',
+                  style: TextStyle(
+                    color: tc.textSecondary,
+                    fontSize: 10,
+                  ),
                 ),
               ),
             ],
-          ),
-          
-        SizedBox(height: 16),
-        
-        // Health rings
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _HealthRingWidget(label: 'Activity', progress: 0.75, color: AppTheme.accentGreen, value: '450'),
-            _HealthRingWidget(label: 'Exercise', progress: 0.60, color: DesignTokens.accentBlue, value: '30'),
-            _HealthRingWidget(label: 'Stand', progress: 0.90, color: DesignTokens.accentPink, value: '12'),
           ],
         ),
-        ],
+      ),
+    );
+  }
+
+  Widget _buildStepsCard() {
+    final tc = context.tc;
+    
+    // Get real steps data
+    final steps = (_healthData?['steps'] as num?)?.toInt() ?? 0;
+    final distanceKm = (_healthData?['distance_km'] as num?)?.toDouble() ?? 0.0;
+    
+    // Goal: 10,000 steps
+    const stepsGoal = 10000;
+    final progress = (steps / stepsGoal).clamp(0.0, 1.0);
+    
+    // Format steps with thousands separator
+    String formatSteps(int value) {
+      if (value >= 1000) {
+        return '${(value / 1000).toStringAsFixed(1)}k';
+      }
+      return value.toString();
+    }
+    
+    return GestureDetector(
+      onTap: () {
+        if (!_hasHealthSources) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HealthConnectionsScreen()),
+          );
+        }
+      },
+      child: Container(
+        width: 200,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: tc.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppTheme.accentGreen.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.directions_walk, color: AppTheme.accentGreen, size: 18),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Steps',
+                    style: TextStyle(
+                      color: tc.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (!_hasHealthSources)
+                  Icon(Icons.link_off, color: tc.textSecondary, size: 14),
+              ],
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // Steps count with ring
+            Center(
+              child: SizedBox(
+                width: 72,
+                height: 72,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 72,
+                      height: 72,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 6,
+                        backgroundColor: AppTheme.accentGreen.withValues(alpha: 0.2),
+                        valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          formatSteps(steps),
+                          style: TextStyle(
+                            color: tc.textPrimary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'steps',
+                          style: TextStyle(
+                            color: tc.textSecondary,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 6),
+            
+            // Distance and goal info
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    '${distanceKm.toStringAsFixed(1)} km',
+                    style: TextStyle(
+                      color: tc.textSecondary,
+                      fontSize: 11,
+                    ),
+                  ),
+                  Text(
+                    'Goal: ${formatSteps(stepsGoal)}',
+                    style: TextStyle(
+                      color: tc.textSecondary,
+                      fontSize: 9,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Connect prompt if no health sources
+            if (!_hasHealthSources) ...[
+              const Spacer(),
+              Center(
+                child: Text(
+                  'Connect health app',
+                  style: TextStyle(
+                    color: tc.info,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
 
 
   Widget _buildStreakCard() {
+    final tc = context.tc;
     return Container(
       width: 280,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: DesignTokens.accentPurple.withValues(alpha: 0.2),
@@ -1441,14 +1725,14 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.local_fire_department, color: DesignTokens.accentPurple, size: 20),
-              SizedBox(width: 8),
+              const Icon(Icons.local_fire_department, color: DesignTokens.accentPurple, size: 20),
+              const SizedBox(width: 8),
               Text(
                 'Streak',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: tc.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1464,16 +1748,16 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               children: [
                 Text(
                   '${_userStats?['current_streak'] ?? 0}',
-                  style: const TextStyle(
-                    color: AppTheme.accentOrange,
+                  style: TextStyle(
+                    color: tc.warning,
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
+                Text(
                   'days',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: tc.textSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -1481,7 +1765,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                 Text(
                   'Longest: ${_userStats?['longest_streak'] ?? 0} days',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: tc.textSecondary,
                     fontSize: 10,
                   ),
                   textAlign: TextAlign.center,
@@ -1495,28 +1779,29 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildRankCard() {
+    final tc = context.tc;
     return Container(
       width: 280,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.accentOrange.withValues(alpha: 0.2),
+          color: tc.warning.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.emoji_events, color: DesignTokens.accentBlue, size: 20),
-              SizedBox(width: 8),
+              Icon(Icons.emoji_events, color: tc.info, size: 20),
+              const SizedBox(width: 8),
               Text(
                 'Rank & Level',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: tc.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1534,14 +1819,14 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [DesignTokens.accentBlue, DesignTokens.accentBlue.withValues(alpha: 0.7)],
+                      colors: [tc.info, tc.info.withValues(alpha: 0.7)],
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     _userStats?['rank'] ?? 'Bronze Tier',
-                    style: const TextStyle(
-                      color: AppTheme.primaryDark,
+                    style: TextStyle(
+                      color: tc.textOnDark,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1550,8 +1835,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                 const SizedBox(height: 8),
                 Text(
                   'Level ${_userStats?['level'] ?? 1}',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -1560,7 +1845,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                 Text(
                   '${_userStats?['xp'] ?? 0} / ${(_userStats?['xp'] ?? 0) + (_userStats?['xp_to_next'] ?? 0)} XP',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: tc.textSecondary,
                     fontSize: 10,
                   ),
                   textAlign: TextAlign.center,
@@ -1568,8 +1853,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                 const SizedBox(height: 6),
                 LinearProgressIndicator(
                   value: (_userStats?['xp'] ?? 0) / ((_userStats?['xp'] ?? 0) + (_userStats?['xp_to_next'] ?? 1)),
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  valueColor: const AlwaysStoppedAnimation<Color>(DesignTokens.accentBlue),
+                  backgroundColor: tc.border,
+                  valueColor: AlwaysStoppedAnimation<Color>(tc.info),
                 ),
               ],
             ),
@@ -1580,28 +1865,29 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildAIUsageCard() {
+    final tc = context.tc;
     return Container(
       width: 280,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
+          color: tc.accent.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.psychology, color: AppTheme.accentGreen, size: 20),
-              SizedBox(width: 8),
+              Icon(Icons.psychology, color: tc.accent, size: 20),
+              const SizedBox(width: 8),
               Text(
                 'AI Usage',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: tc.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1615,32 +1901,32 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   '45 / 100',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: tc.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
+                Text(
                   'requests this month',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: tc.textSecondary,
                     fontSize: 8,
                   ),
                 ),
                 const SizedBox(height: 4),
                 LinearProgressIndicator(
                   value: 0.45,
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentGreen),
+                  backgroundColor: tc.border,
+                  valueColor: AlwaysStoppedAnimation<Color>(tc.accent),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '55 remaining',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: tc.textSecondary,
                     fontSize: 8,
                   ),
                 ),
@@ -1657,8 +1943,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.accentGreen,
-                      foregroundColor: Colors.white,
+                      backgroundColor: tc.accent,
+                      foregroundColor: tc.textOnDark,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -1708,27 +1994,28 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildQuickActionsCard() {
+    final tc = context.tc;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
+          color: tc.accent.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.flash_on, color: AppTheme.accentGreen, size: 20),
-              SizedBox(width: 8),
+              Icon(Icons.flash_on, color: tc.accent, size: 20),
+              const SizedBox(width: 8),
               Text(
                 'Quick Actions',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: tc.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1787,26 +2074,27 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildQuickActionButton(String label, IconData icon, VoidCallback onTap) {
+    final tc = context.tc;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppTheme.primaryDark.withValues(alpha: 0.3),
+          color: tc.surfaceAlt,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppTheme.accentGreen.withValues(alpha: 0.3),
+            color: tc.accent.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppTheme.accentGreen, size: 24),
+            Icon(icon, color: tc.accent, size: 24),
             const SizedBox(height: 8),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: tc.textPrimary,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
@@ -1819,27 +2107,28 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildRecentActivityCard() {
+    final tc = context.tc;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
+          color: tc.accent.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.history, color: AppTheme.accentGreen, size: 20),
-              SizedBox(width: 8),
+              Icon(Icons.history, color: tc.accent, size: 20),
+              const SizedBox(width: 8),
               Text(
                 'Recent Activity',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: tc.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1857,6 +2146,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
   }
 
   Widget _buildActivityItem(Map<String, dynamic> activity) {
+    final tc = context.tc;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -1881,8 +2171,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               children: [
                 Text(
                   activity['title'] as String,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: tc.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1890,7 +2180,7 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                 Text(
                   activity['time'] as String,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: tc.textSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -1919,6 +2209,7 @@ class _HealthRingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = context.tc;
     return Column(
       children: [
         SizedBox(
@@ -1939,8 +2230,8 @@ class _HealthRingWidget extends StatelessWidget {
               ),
               Text(
                 value,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: tc.textPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1952,7 +2243,7 @@ class _HealthRingWidget extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: tc.textSecondary,
             fontSize: 10,
           ),
         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/theme_colors.dart';
 
 class MessagingHeader extends StatelessWidget {
@@ -34,13 +33,7 @@ class MessagingHeader extends StatelessWidget {
             width: 1,
           ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
-            blurRadius: 20,
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: tc.cardShadow,
       ),
       child: ClipRRect(
         child: BackdropFilter(
@@ -63,14 +56,14 @@ class MessagingHeader extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppTheme.accentGreen,
+              color: tc.accent,
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
             ),
             child: Center(
               child: Text(
-                'V',
+                (client['name'] ?? 'U').toString().substring(0, 1).toUpperCase(),
                 style: TextStyle(
-                  color: tc.textPrimary,
+                  color: tc.textOnDark,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -99,16 +92,16 @@ class MessagingHeader extends StatelessWidget {
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
+                      decoration: BoxDecoration(
+                        color: tc.success,
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: DesignTokens.space4),
-                    const Text(
+                    Text(
                       'Online',
                       style: TextStyle(
-                        color: DesignTokens.textSecondary,
+                        color: tc.textSecondary,
                         fontSize: 12,
                       ),
                     ),
@@ -121,30 +114,30 @@ class MessagingHeader extends StatelessWidget {
           // Action Buttons
           IconButton(
             onPressed: onSearch,
-            icon: const Icon(
+            icon: Icon(
               Icons.search,
-              color: DesignTokens.neutralWhite,
+              color: tc.icon,
             ),
           ),
           IconButton(
             onPressed: onCall,
-            icon: const Icon(
+            icon: Icon(
               Icons.phone,
-              color: DesignTokens.neutralWhite,
+              color: tc.icon,
             ),
           ),
           IconButton(
             onPressed: onVideoCall,
-            icon: const Icon(
+            icon: Icon(
               Icons.videocam,
-              color: DesignTokens.neutralWhite,
+              color: tc.icon,
             ),
           ),
           IconButton(
             onPressed: onMoreOptions,
-            icon: const Icon(
+            icon: Icon(
               Icons.more_vert,
-              color: DesignTokens.neutralWhite,
+              color: tc.icon,
             ),
           ),
         ],

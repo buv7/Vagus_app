@@ -197,6 +197,8 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     if (_loading) {
       return Scaffold(
@@ -251,13 +253,12 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
       );
     }
 
-    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: VagusAppBar(
         title: Text(LocaleHelper.t('nutrition', locale)),
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: AppTheme.neutralWhite,
+        foregroundColor: theme.colorScheme.onSurface,
         actions: [
           // Mode switch button (for coaches)
           if (_userRole == 'coach')
@@ -266,7 +267,7 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
                 _resolvedMode == NutritionHubMode.builder
                   ? Icons.visibility
                   : Icons.edit,
-                color: AppTheme.neutralWhite,
+                color: theme.colorScheme.onSurface,
               ),
               tooltip: _resolvedMode == NutritionHubMode.builder
                 ? 'Switch to View Mode'
@@ -277,7 +278,7 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
           // Plan selector
           if (_plans.length > 1)
             PopupMenuButton<String>(
-              icon: const Icon(Icons.list_alt, color: AppTheme.neutralWhite),
+              icon: Icon(Icons.list_alt, color: theme.colorScheme.onSurface),
               tooltip: 'Select Plan',
               onSelected: _onPlanSelected,
               itemBuilder: (context) => _plans.map((plan) =>
@@ -290,8 +291,8 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
                         Container(
                           width: 8,
                           height: 8,
-                          decoration: const BoxDecoration(
-                            color: AppTheme.accentGreen,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -302,19 +303,21 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
             ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppTheme.primaryDark,
-              AppTheme.primaryDark.withValues(alpha: 0.95),
-            ],
-          ),
-        ),
-        child: _buildContent(),
-      ),
+      body: isDark
+        ? Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppTheme.primaryDark,
+                  AppTheme.primaryDark.withValues(alpha: 0.95),
+                ],
+              ),
+            ),
+            child: _buildContent(),
+          )
+        : _buildContent(),
     );
   }
 
@@ -351,6 +354,8 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
 
   Widget _buildEmptyState() {
     final locale = Localizations.localeOf(context).languageCode;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Center(
       child: Padding(
@@ -362,17 +367,17 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: AppTheme.cardBackground,
+                color: isDark ? AppTheme.cardBackground : theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(60),
                 border: Border.all(
-                  color: AppTheme.mediumGrey.withValues(alpha: 0.3),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.restaurant_menu,
                 size: 48,
-                color: AppTheme.accentGreen,
+                color: theme.colorScheme.primary,
               ),
             ),
 
@@ -380,8 +385,8 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
 
             Text(
               LocaleHelper.t('no_nutrition_plans', locale),
-              style: const TextStyle(
-                color: AppTheme.neutralWhite,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -394,8 +399,8 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
               _userRole == 'coach'
                 ? LocaleHelper.t('create_first_plan_coach', locale)
                 : LocaleHelper.t('coach_will_create_plan', locale),
-              style: const TextStyle(
-                color: AppTheme.lightGrey,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
@@ -417,8 +422,8 @@ class _NutritionHubScreenState extends State<NutritionHubScreen>
                   icon: const Icon(Icons.add_circle_outline),
                   label: Text(LocaleHelper.t('create_nutrition_plan', locale)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accentGreen,
-                    foregroundColor: AppTheme.primaryDark,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space16,
                       horizontal: DesignTokens.space24,
