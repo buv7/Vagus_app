@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/theme_colors.dart';
 
 class SmartRepliesPanel extends StatelessWidget {
   final Function(String) onReplySelected;
@@ -13,6 +13,7 @@ class SmartRepliesPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tc = ThemeColors.of(context);
     final smartReplies = [
       'Great job! Keep up the excellent work 💪',
       'Let\'s schedule a check-in session to review your progress',
@@ -23,20 +24,14 @@ class SmartRepliesPanel extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
+        color: tc.surface,
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
             width: 1,
           ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
-            blurRadius: 20,
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: tc.cardShadow,
       ),
       child: ClipRRect(
         child: BackdropFilter(
@@ -47,18 +42,18 @@ class SmartRepliesPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          const Row(
+          Row(
             children: [
               Icon(
                 Icons.psychology_outlined,
-                color: AppTheme.accentGreen,
+                color: tc.accent,
                 size: 16,
               ),
-              SizedBox(width: DesignTokens.space8),
+              const SizedBox(width: DesignTokens.space8),
               Text(
                 'Smart Replies',
                 style: TextStyle(
-                  color: DesignTokens.neutralWhite,
+                  color: tc.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -77,19 +72,12 @@ class SmartRepliesPanel extends StatelessWidget {
                 onTap: () => onReplySelected(reply),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: DesignTokens.cardBackground,
+                    color: tc.surfaceAlt,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: tc.border,
                       width: 1,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: DesignTokens.accentBlue.withValues(alpha: 0.2),
-                        blurRadius: 12,
-                        spreadRadius: 0,
-                      ),
-                    ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
@@ -102,8 +90,8 @@ class SmartRepliesPanel extends StatelessWidget {
                         ),
                         child: Text(
                     reply,
-                    style: const TextStyle(
-                      color: DesignTokens.neutralWhite,
+                    style: TextStyle(
+                      color: tc.textPrimary,
                       fontSize: 12,
                     ),
                         ),

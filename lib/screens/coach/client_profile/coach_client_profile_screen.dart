@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/supplements/supplement_service.dart';
 import '../../../models/supplements/supplement_models.dart';
 import '../../../theme/design_tokens.dart';
+import '../../../theme/theme_colors.dart';
 import '../../../widgets/supplements/pill_icon.dart';
 import '../../supplements/supplement_editor_sheet.dart';
 import '../../supplements/supplement_occurrence_preview.dart';
@@ -215,8 +216,9 @@ class _CoachClientProfileScreenState extends State<CoachClientProfileScreen> {
           children: [
             CircleAvatar(
               radius: 30,
+              backgroundColor: ThemeColors.of(context).avatarBg,
               backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-              child: avatar == null ? const Icon(Icons.person, size: 30) : null,
+              child: avatar == null ? Icon(Icons.person, size: 30, color: ThemeColors.of(context).avatarIcon) : null,
             ),
             const SizedBox(width: DesignTokens.space16),
             Expanded(

@@ -56,6 +56,8 @@ dependencies:
   animated_text_kit: ^4.2.2
   simple_animations: ^5.0.2
   flutter_svg: ^2.0.10+1
+  health: ^13.1.4  # Cross-platform health data access (Apple Health, Google Health Connect)
+  google_generative_ai: ^0.4.6  # Google Gemini AI for food recognition
 
 dev_dependencies:
   flutter_test:
@@ -83,7 +85,6 @@ flutter:
     - assets/anim/empty_box.json
     - assets/anim/typing_dots.json
     - assets/anim/mic_ripple.riv
-    - assets/html/neural_login.html
     - assets/seeds/exercise_knowledge_seed_en.json
 
 flutter_native_splash:

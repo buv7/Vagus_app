@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
 import '../../widgets/common/save_icon.dart';
@@ -60,56 +59,63 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isClient = widget.isClientView;
+    
     return Container(
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(20),
+        color: isClient
+            ? DesignTokens.accentGreen.withValues(alpha: isDark ? 0.1 : 0.08)
+            : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.shade50),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: DesignTokens.accentGreen,
-          width: 2,
+          color: isClient
+              ? DesignTokens.accentGreen.withValues(alpha: 0.2)
+              : (isDark ? DesignTokens.glassBorder : Colors.grey.shade200),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
-            blurRadius: 20,
-            spreadRadius: 0,
-          ),
-        ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(
-            padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
-                widget.isClientView ? Icons.comment : Icons.feedback,
+                isClient ? Icons.comment_rounded : Icons.note_rounded,
                 size: 16,
-                color: widget.isClientView ? DesignTokens.accentGreen : DesignTokens.textSecondary,
+                color: isClient
+                    ? DesignTokens.accentGreen
+                    : (isDark ? DesignTokens.textSecondary : Colors.grey.shade600),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 6),
               Text(
-                widget.isClientView ? 'Client Comment' : 'Coach Notes',
+                isClient ? 'Your Comment' : 'Coach Notes',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: widget.isClientView ? DesignTokens.accentGreen : DesignTokens.textSecondary,
+                  color: isClient
+                      ? DesignTokens.accentGreen
+                      : (isDark ? DesignTokens.textSecondary : Colors.grey.shade700),
                 ),
               ),
               const Spacer(),
-              if (widget.isClientView && !widget.isReadOnly && _hasChanges && widget.onSave != null)
-                IconButton(
-                  icon: SaveIcon(size: 16),
+              if (isClient && !widget.isReadOnly && _hasChanges && widget.onSave != null)
+                TextButton.icon(
                   onPressed: widget.onSave,
-                  tooltip: 'Save comment',
-                  color: DesignTokens.accentGreen,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                  icon: SaveIcon(size: 14),
+                  label: const Text(
+                    'Save',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: DesignTokens.accentGreen,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: Size.zero,
+                    backgroundColor: DesignTokens.accentGreen.withValues(alpha: 0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -117,25 +123,26 @@ class _ClientNutritionCommentBoxState extends State<ClientNutritionCommentBox> {
           TextFormField(
             controller: _controller,
             enabled: !widget.isReadOnly,
-            maxLines: 3,
+            maxLines: 2,
             decoration: InputDecoration(
-              hintText: widget.isClientView
+              hintText: isClient
                   ? 'Add your comment or feedback...'
                   : 'Add notes for the client...',
-              hintStyle: const TextStyle(color: DesignTokens.textTertiary),
+              hintStyle: TextStyle(
+                color: isDark ? DesignTokens.textTertiary : Colors.grey.shade400,
+              ),
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
               isDense: true,
             ),
             style: TextStyle(
               fontSize: 14,
-              color: widget.isReadOnly ? DesignTokens.textSecondary : DesignTokens.textPrimary,
+              color: widget.isReadOnly
+                  ? (isDark ? DesignTokens.textSecondary : Colors.grey.shade500)
+                  : (isDark ? DesignTokens.neutralWhite : Colors.grey.shade800),
             ),
           ),
         ],
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -7,6 +7,13 @@ import '../../screens/notes/coach_note_screen.dart';
 import '../../screens/files/upload_photos_screen.dart';
 import '../../screens/nutrition/meal_editor.dart';
 import '../../models/nutrition/nutrition_plan.dart';
+import '../../screens/workout/revolutionary_plan_builder_screen.dart';
+import '../../screens/workout/cardio_log_screen.dart';
+import '../../screens/workout/fatigue_recovery_screen.dart';
+import '../../screens/workouts/modern_workout_plan_viewer.dart';
+import '../../screens/calling/call_management_screen.dart';
+import '../../screens/dashboard/notes/note_list_screen.dart';
+import '../../widgets/calling/schedule_call_dialog.dart';
 
 class SimpleGlassmorphismFAB extends StatefulWidget {
   final bool isCoach;
@@ -117,9 +124,7 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
   void _navigateToAction(FABAction action) {
     switch (action.route) {
       case '/workouts/add':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Workout add feature coming soon!')),
-        );
+        _handleWorkoutTap();
         break;
       case '/nutrition/add':
         _handleMealTap();
@@ -142,12 +147,212 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
     }
   }
 
+  void _handleWorkoutTap() {
+    // Show bottom sheet with workout options - different for coach vs client
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              // Glassmorphism style matching side menu
+              gradient: RadialGradient(
+                center: Alignment.topLeft,
+                radius: 2.0,
+                colors: [
+                  DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  DesignTokens.accentBlue.withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, -8),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Handle bar
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Title
+                  Text(
+                    widget.isCoach ? 'Workout Options' : 'My Workout',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Different options based on coach vs client
+                  if (widget.isCoach) ...[
+                    // COACH OPTIONS
+                    _buildSheetMenuItem(
+                      icon: Icons.fitness_center,
+                      iconColor: DesignTokens.accentBlue,
+                      title: 'Create Workout Plan',
+                      subtitle: 'Build a new workout plan from scratch',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RevolutionaryPlanBuilderScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildSheetMenuItem(
+                      icon: Icons.directions_run,
+                      iconColor: DesignTokens.accentOrange,
+                      title: 'Log Cardio Session',
+                      subtitle: 'Track running, cycling, or other cardio',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CardioLogScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ] else ...[
+                    // CLIENT OPTIONS
+                    _buildSheetMenuItem(
+                      icon: Icons.fitness_center,
+                      iconColor: DesignTokens.accentBlue,
+                      title: 'View My Workout',
+                      subtitle: 'See your coach-assigned workout plan',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ModernWorkoutPlanViewer(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildSheetMenuItem(
+                      icon: Icons.directions_run,
+                      iconColor: DesignTokens.accentOrange,
+                      title: 'Log Cardio Session',
+                      subtitle: 'Track running, cycling, or other cardio',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CardioLogScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildSheetMenuItem(
+                      icon: Icons.health_and_safety,
+                      iconColor: DesignTokens.accentGreen,
+                      title: 'Log Recovery Status',
+                      subtitle: 'Track fatigue, sleep & readiness',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FatigueRecoveryScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSheetMenuItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: iconColor.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: iconColor.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Icon(
+          icon,
+          color: iconColor,
+        ),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.6),
+          fontSize: 12,
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+      hoverColor: DesignTokens.accentBlue.withValues(alpha: 0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      onTap: onTap,
+    );
+  }
+
   void _handleNoteTap() {
     if (widget.isCoach) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Coach notes coming soon!')),
+      // Coach: Navigate to notes list screen where they can create new notes
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const NoteListScreen()),
       );
     } else {
+      // Client: Navigate to create a new note
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CoachNoteScreen()),
@@ -175,9 +380,9 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
       );
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MealEditor(
+        MaterialPageRoute(builder: (context) => MealEditorScreen(
           meal: newMeal,
-          onMealChanged: (meal) {
+          onMealSaved: (meal) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Meal saved: ${meal.label}')),
             );
@@ -188,18 +393,111 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
   }
 
   void _showScheduleCallModal() {
-    showDialog(
+    // Show bottom sheet with call options - glassmorphic style
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: true,
-      builder: (context) => AlertDialog(
-        title: const Text('Schedule Call'),
-        content: const Text('Call scheduling feature coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+      backgroundColor: Colors.transparent,
+      builder: (context) => ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              // Glassmorphism style matching side menu
+              gradient: RadialGradient(
+                center: Alignment.topLeft,
+                radius: 2.0,
+                colors: [
+                  DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  DesignTokens.accentBlue.withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, -8),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Handle bar
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Title
+                  const Text(
+                    'Schedule Call',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Option: Quick Schedule
+                  _buildSheetMenuItem(
+                    icon: Icons.schedule,
+                    iconColor: DesignTokens.accentBlue,
+                    title: 'Quick Schedule',
+                    subtitle: 'Schedule a new call session',
+                    onTap: () async {
+                      final navigator = Navigator.of(context);
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+                      navigator.pop();
+                      // Show the schedule call dialog
+                      final result = await showDialog(
+                        context: this.context,
+                        builder: (ctx) => const ScheduleCallDialog(),
+                      );
+                      if (result != null && mounted) {
+                        scaffoldMessenger.showSnackBar(
+                          const SnackBar(
+                            content: Text('Call scheduled successfully!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  // Option: View All Calls
+                  _buildSheetMenuItem(
+                    icon: Icons.call,
+                    iconColor: Colors.purple,
+                    title: 'Manage Calls',
+                    subtitle: 'View scheduled, active & recent calls',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CallManagementScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
           ),
-        ],
+        ),
       ),
     );
   }

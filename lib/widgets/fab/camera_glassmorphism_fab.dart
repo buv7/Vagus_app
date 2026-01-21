@@ -4,9 +4,15 @@ import 'package:flutter/services.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_tokens.dart';
 import '../../screens/progress/progress_gallery.dart';
-import '../../screens/files/upload_photos_screen.dart';
+import '../../screens/nutrition/food_snap_screen.dart';
 import '../../services/ocr/ocr_cardio_service.dart';
+import '../../services/nutrition/nutrition_service.dart';
+import '../../models/nutrition/food_item.dart';
+import '../../widgets/ocr/ocr_cardio_preview_dialog.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+/// Image source type for OCR capture
+enum ImageSourceType { camera, gallery }
 
 class CameraGlassmorphismFAB extends StatefulWidget {
   final bool isCoach;
@@ -113,8 +119,11 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
 
   void _handleOCRCardio() async {
     try {
+      // Show source selection dialog
+      final source = await _showImageSourceDialog();
+      if (source == null || !mounted) return;
+      
       // Show loading indicator
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Row(
@@ -128,35 +137,51 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
                 ),
               ),
               SizedBox(width: 12),
-              Text('Processing cardio workout...'),
+              Text('Capturing and analyzing workout...'),
             ],
           ),
           backgroundColor: AppTheme.accentGreen,
-          duration: Duration(seconds: 3),
+          duration: Duration(seconds: 10),
         ),
       );
 
       // Import the OCR service
       final ocrService = OCRCardioService();
       
-      // Process the workout image
-      final workoutData = await ocrService.processWorkoutImage();
+      // Capture and process the image (without saving yet)
+      final workoutData = await ocrService.captureAndProcess(
+        fromCamera: source == ImageSourceType.camera,
+      );
+      
       if (!mounted) return;
-      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       
       if (workoutData != null) {
-        // Show success message
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Text('✅ Cardio workout logged successfully! ${workoutData.sport} - ${workoutData.distance}${workoutData.distanceUnit}'),
-            backgroundColor: Colors.green,
-          ),
+        // Show preview dialog for user to verify/edit data
+        final savedData = await showOCRCardioPreviewDialog(
+          context: context,
+          data: workoutData,
+          onRetake: () => _handleOCRCardio(), // Recursive call to retake
         );
+        
+        if (savedData != null && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '✅ ${savedData.sport ?? 'Cardio'} workout logged! '
+                '${savedData.distance?.toStringAsFixed(1) ?? ''} ${savedData.distanceUnit ?? ''} '
+                '${savedData.durationMinutes ?? 0}min ${savedData.calories?.toStringAsFixed(0) ?? ''} kcal',
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       } else {
         // Show error message
-        scaffoldMessenger.showSnackBar(
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('❌ Failed to process workout image. Please try again.'),
+            content: Text('❌ Capture cancelled or failed. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -172,14 +197,238 @@ class CameraGlassmorphismFABState extends State<CameraGlassmorphismFAB>
       );
     }
   }
-
-  void _handleOCRMeal() {
-    // Navigate to upload photos screen for meal photo
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const UploadPhotosScreen(),
+  
+  /// Show dialog to select image source (camera or gallery)
+  Future<ImageSourceType?> _showImageSourceDialog() async {
+    return showDialog<ImageSourceType>(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? DesignTokens.darkBackground : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            'Capture Cardio Display',
+            style: TextStyle(
+              color: isDark ? Colors.white : DesignTokens.textColor(context),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Take a photo of your cardio machine display or select an existing photo.',
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : DesignTokens.textColorSecondary(context),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSourceOption(
+                      context: context,
+                      icon: Icons.camera_alt,
+                      label: 'Camera',
+                      onTap: () => Navigator.pop(context, ImageSourceType.camera),
+                      isDark: isDark,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildSourceOption(
+                      context: context,
+                      icon: Icons.photo_library,
+                      label: 'Gallery',
+                      onTap: () => Navigator.pop(context, ImageSourceType.gallery),
+                      isDark: isDark,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildSourceOption({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: DesignTokens.accentBlue.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 36,
+              color: DesignTokens.accentBlue,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _handleOCRMeal() async {
+    // Navigate to FoodSnapScreen for AI-powered meal photo analysis
+    final result = await Navigator.of(context).push<FoodItem>(
+      MaterialPageRoute(
+        builder: (context) => FoodSnapScreen(
+          onFoodItemCreated: (foodItem) {
+            // This callback is used when the user wants to save the food item
+            Navigator.of(context).pop(foodItem);
+          },
+        ),
+      ),
+    );
+    
+    if (!mounted) return;
+    
+    if (result != null) {
+      // Food item was captured and returned
+      // Show success and offer to add to a meal
+      _showFoodItemCapturedDialog(result);
+    }
+  }
+  
+  void _showFoodItemCapturedDialog(FoodItem foodItem) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Food Captured!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              foodItem.name,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildMacroChip('Calories', foodItem.kcal.toStringAsFixed(0)),
+                _buildMacroChip('Protein', '${foodItem.protein.toStringAsFixed(1)}g'),
+                _buildMacroChip('Carbs', '${foodItem.carbs.toStringAsFixed(1)}g'),
+                _buildMacroChip('Fat', '${foodItem.fat.toStringAsFixed(1)}g'),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Would you like to add this to your nutrition log?',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await _addFoodToNutritionLog(foodItem);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.accentGreen,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Add to Log'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildMacroChip(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Future<void> _addFoodToNutritionLog(FoodItem foodItem) async {
+    try {
+      final nutritionService = NutritionService();
+      
+      // Get today's date
+      final today = DateTime.now();
+      final dateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+      
+      // Add to nutrition log (this will create or update the daily entry)
+      await nutritionService.logFoodItem(
+        foodItem: foodItem,
+        date: dateKey,
+        mealType: _determineMealType(),
+      );
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ ${foodItem.name} added to your nutrition log!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Failed to add food: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  String _determineMealType() {
+    final hour = DateTime.now().hour;
+    if (hour < 10) return 'breakfast';
+    if (hour < 14) return 'lunch';
+    if (hour < 17) return 'snack';
+    return 'dinner';
   }
 
   void _handleProgressPhoto() {

@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../models/live_session.dart';
 import '../../services/simple_calling_service.dart';
 import '../../widgets/calling/call_session_card.dart';
 import '../../widgets/calling/schedule_call_dialog.dart';
+import '../../theme/design_tokens.dart';
 import 'simple_call_screen.dart';
 
 class CallManagementScreen extends StatefulWidget {
@@ -149,22 +151,51 @@ class _CallManagementScreenState extends State<CallManagementScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? DesignTokens.darkBackground : DesignTokens.scaffoldBg(context),
       appBar: AppBar(
-        title: const Text('Live Calls'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        backgroundColor: isDark ? DesignTokens.darkBackground : Colors.white,
+        foregroundColor: isDark ? Colors.white : DesignTokens.textColor(context),
+        elevation: 0,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.call,
+                color: DesignTokens.accentBlue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Live Calls',
+              style: TextStyle(
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh, color: isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.iconColor(context)),
             onPressed: _loadSessions,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          indicatorColor: DesignTokens.accentBlue,
+          indicatorWeight: 3,
+          labelColor: isDark ? Colors.white : DesignTokens.accentBlue,
+          unselectedLabelColor: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context),
+          labelStyle: const TextStyle(fontWeight: FontWeight.w600),
           tabs: const [
             Tab(text: 'Scheduled'),
             Tab(text: 'Active'),
@@ -173,7 +204,7 @@ class _CallManagementScreenState extends State<CallManagementScreen>
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: DesignTokens.accentBlue))
           : _errorMessage != null
               ? _buildErrorState()
               : TabBarView(
@@ -184,43 +215,125 @@ class _CallManagementScreenState extends State<CallManagementScreen>
                     _buildRecentTab(),
                   ],
                 ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _scheduleNewCall,
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add_call, color: Colors.white),
+      floatingActionButton: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              DesignTokens.accentBlue.withValues(alpha: 0.3),
+              DesignTokens.accentBlue.withValues(alpha: 0.1),
+            ],
+          ),
+          border: Border.all(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _scheduleNewCall,
+                borderRadius: BorderRadius.circular(28),
+                child: const Center(
+                  child: Icon(Icons.add_call, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildErrorState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
+      child: Container(
+        margin: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: isDark 
+            ? DesignTokens.accentPink.withValues(alpha: 0.1)
+            : Colors.red.shade50,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark 
+              ? DesignTokens.accentPink.withValues(alpha: 0.3)
+              : Colors.red.shade200,
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Error loading calls',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _errorMessage!,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: DesignTokens.accentPink.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline,
+                size: 48,
+                color: DesignTokens.accentPink,
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: _loadSessions,
-            child: const Text('Retry'),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              'Error loading calls',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _errorMessage!,
+              style: TextStyle(
+                color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Container(
+              decoration: BoxDecoration(
+                color: DesignTokens.accentBlue,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _loadSessions,
+                  borderRadius: BorderRadius.circular(12),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    child: Text(
+                      'Retry',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -311,31 +424,57 @@ class _CallManagementScreenState extends State<CallManagementScreen>
     required String title,
     required String subtitle,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 64,
-            color: Colors.grey[400],
+      child: Container(
+        margin: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: isDark 
+            ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+            : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark 
+              ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+              : DesignTokens.borderColor(context),
           ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.grey[600],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 48,
+                color: DesignTokens.accentBlue,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[500],
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: TextStyle(
+                color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

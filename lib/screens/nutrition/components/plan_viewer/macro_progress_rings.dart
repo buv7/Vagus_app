@@ -67,6 +67,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
     final summary = widget.plan.dailySummary;
+    final theme = Theme.of(context);
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
@@ -82,8 +83,8 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                   children: [
                     Text(
                       LocaleHelper.t('daily_progress', locale),
-                      style: const TextStyle(
-                        color: AppTheme.neutralWhite,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -95,13 +96,13 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                         vertical: DesignTokens.space4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(DesignTokens.radius8),
                       ),
                       child: Text(
                         '${_calculateOverallProgress()}%',
-                        style: const TextStyle(
-                          color: AppTheme.accentGreen,
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -258,14 +259,18 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
     final percentage = ((current / target) * 100).round();
     final remaining = target - current;
     final isOverTarget = current > target;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryDark.withValues(alpha: 0.3),
+        color: isDark 
+            ? AppTheme.primaryDark.withValues(alpha: 0.3)
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(DesignTokens.radius12),
         border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.3),
+          color: theme.colorScheme.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -274,12 +279,12 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.accentGreen.withValues(alpha: 0.2),
+              color: theme.colorScheme.primary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.local_fire_department,
-              color: AppTheme.accentGreen,
+              color: theme.colorScheme.primary,
               size: 24,
             ),
           ),
@@ -292,8 +297,8 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
               children: [
                 Text(
                   LocaleHelper.t('calories', locale),
-                  style: const TextStyle(
-                    color: AppTheme.lightGrey,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -303,16 +308,16 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                   children: [
                     Text(
                       current.toStringAsFixed(0),
-                      style: const TextStyle(
-                        color: AppTheme.neutralWhite,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       ' / ${target.toStringAsFixed(0)} kcal',
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 14,
                       ),
                     ),
@@ -321,9 +326,9 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                 const SizedBox(height: DesignTokens.space8),
                 LinearProgressIndicator(
                   value: (current / target).clamp(0.0, 1.0),
-                  backgroundColor: AppTheme.mediumGrey.withValues(alpha: 0.3),
+                  backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    isOverTarget ? Colors.orange : AppTheme.accentGreen,
+                    isOverTarget ? Colors.orange : theme.colorScheme.primary,
                   ),
                 ),
               ],
@@ -337,7 +342,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
               Text(
                 '$percentage%',
                 style: TextStyle(
-                  color: isOverTarget ? Colors.orange : AppTheme.accentGreen,
+                  color: isOverTarget ? Colors.orange : theme.colorScheme.primary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -348,7 +353,7 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
                   ? '+${(current - target).toStringAsFixed(0)}'
                   : '${remaining.toStringAsFixed(0)} left',
                 style: TextStyle(
-                  color: isOverTarget ? Colors.orange : AppTheme.lightGrey,
+                  color: isOverTarget ? Colors.orange : theme.colorScheme.onSurfaceVariant,
                   fontSize: 10,
                 ),
               ),
@@ -360,10 +365,12 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
   }
 
   Widget _buildTargetsInfo(String locale) {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: AppTheme.mediumGrey.withValues(alpha: 0.1),
+        color: theme.colorScheme.outline.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radius8),
       ),
       child: Column(
@@ -371,16 +378,16 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.info_outline,
-                color: AppTheme.lightGrey,
+                color: theme.colorScheme.onSurfaceVariant,
                 size: 16,
               ),
               const SizedBox(width: DesignTokens.space8),
               Text(
                 LocaleHelper.t('daily_targets', locale),
-                style: const TextStyle(
-                  color: AppTheme.lightGrey,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -393,8 +400,8 @@ class _MacroProgressRingsState extends State<MacroProgressRings>
             'C: ${_defaultTargets['carbs']!.toStringAsFixed(0)}g • '
             'F: ${_defaultTargets['fat']!.toStringAsFixed(0)}g • '
             'Cal: ${_defaultTargets['calories']!.toStringAsFixed(0)}kcal',
-            style: const TextStyle(
-              color: AppTheme.lightGrey,
+            style: TextStyle(
+              color: theme.colorScheme.onSurfaceVariant,
               fontSize: 10,
             ),
           ),
