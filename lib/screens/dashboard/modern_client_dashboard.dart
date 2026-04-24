@@ -7,7 +7,7 @@ import '../../theme/design_tokens.dart';
 import '../../theme/theme_colors.dart';
 import '../progress/modern_progress_tracker.dart';
 import '../progress/progress_gallery.dart';
-import '../workouts/modern_workout_plan_viewer.dart';
+import '../workout/modern_workout_plan_viewer.dart';
 import '../nutrition/nutrition_hub_screen.dart';
 import '../messaging/modern_messenger_screen.dart';
 import '../billing/upgrade_screen.dart';

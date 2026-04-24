@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:vagus_app/screens/workouts/modern_workout_plan_viewer.dart';
+import 'package:vagus_app/screens/workout/modern_workout_plan_viewer.dart';
 
 class CoachWorkoutDashboardScreen extends StatefulWidget {
   const CoachWorkoutDashboardScreen({super.key});

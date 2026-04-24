@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../dashboard/modern_client_dashboard.dart';
 import '../dashboard/modern_coach_dashboard.dart';
-import '../workouts/modern_workout_plan_viewer.dart';
+import '../workout/modern_workout_plan_viewer.dart';
 import '../plans/plans_dashboard_screen.dart';
 import '../calendar/modern_calendar_viewer.dart';
 import '../nutrition/nutrition_hub_screen.dart';
