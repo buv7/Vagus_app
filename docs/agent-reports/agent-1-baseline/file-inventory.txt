@@ -1,0 +1,80 @@
+File inventory (generated 2026-04-24)
+=====================================
+
+Totals under lib/
+-----------------
+.dart files:            650
+lib/ size on disk:      9.7 MB (9,932 KB)
+
+Top-level lib/ folders (dart file count | size)
+-----------------------------------------------
+  216 files    4524 KB   lib/screens/
+  159 files    2058 KB   lib/services/
+  147 files    1820 KB   lib/widgets/
+   51 files     468 KB   lib/components/
+   50 files     450 KB   lib/models/
+   13 files      96 KB   lib/utils/
+    8 files      93 KB   lib/theme/
+    3 files      24 KB   lib/data/
+    1 files     316 KB   lib/archive/   (mostly .disabled / .old files, not .dart)
+    1 files       8 KB   lib/config/
+
+Plus:
+    lib/main.dart (root)
+
+lib/screens/ subfolders (33 folders + 1 root file)
+--------------------------------------------------
+   42  lib/screens/nutrition/
+   38  lib/screens/admin/
+   18  lib/screens/coach/
+   17  lib/screens/workout/
+   12  lib/screens/settings/
+   11  lib/screens/messaging/
+    9  lib/screens/auth/
+    6  lib/screens/supplements/
+    6  lib/screens/notes/
+    6  lib/screens/dashboard/
+    6  lib/screens/coach_profile/
+    5  lib/screens/progress/
+    5  lib/screens/calendar/
+    4  lib/screens/calling/
+    4  lib/screens/billing/
+    3  lib/screens/files/
+    3  lib/screens/client/
+    2  lib/screens/share/
+    2  lib/screens/learn/
+    2  lib/screens/fatigue/
+    2  lib/screens/coaches/
+    1  lib/screens/workouts/
+    1  lib/screens/support/
+    1  lib/screens/streaks/
+    1  lib/screens/splash/
+    1  lib/screens/retention/
+    1  lib/screens/rank/
+    1  lib/screens/plans/
+    1  lib/screens/nav/
+    1  lib/screens/menu/
+    1  lib/screens/intake/
+    1  lib/screens/business/
+    1  lib/screens/analytics/
+
+Root-level screen files:
+    lib/screens/account_switch_screen.dart
+
+Supabase migrations
+-------------------
+supabase/migrations/ entries:   171
+  SQL migrations (*.sql):       majority
+  Disabled (*.sql.bak / .disabled): several present in listing
+Earliest: 0001_init_progress_system.sql
+Latest numbered: 0017_health_ocr_v1.sql (sequential) — plus many
+later-dated files (gap is expected: Supabase lets you mix numeric
+prefixes with date prefixes).
+
+Notes
+-----
+- lib/archive/ has only 1 .dart file but 316K of disabled/legacy code
+  using .disabled / .old suffixes — these do not compile and are
+  excluded from flutter analyze.
+- 18 screen folders contain exactly 1 .dart file. Combined with the
+  route map (8 redirects), many of these look like stubs or placeholders.

@@ -1,0 +1,93 @@
+Orphan screen candidates (generated 2026-04-24)
+================================================
+
+Method
+------
+For each of the 216 .dart files under lib/screens/, counted how many
+OTHER .dart files under lib/ (excluding lib/archive/) import either
+  - its relative path (e.g. "screens/coach/widgets/foo.dart"), or
+  - its basename (e.g. "foo.dart").
+
+A screen with zero hits is not imported by any other source file in
+lib/ and is a strong orphan candidate. Note: this heuristic does NOT
+count references from test/ or dynamic route tables that use strings;
+a file with 0 hits may still be reachable via Navigator.pushNamed or
+route generators, so treat the list as candidates, not proof.
+
+Summary
+-------
+  Total screen files:          216
+  0 external imports:           61
+  1 external import:            95   (often just main.dart)
+  <=1 external import:         156   (72% of all screens)
+  2+ external imports:          60
+
+Most-imported screens (likely live, heavy touch-points)
+-------------------------------------------------------
+   10 lib/screens/nutrition/nutrition_plan_viewer.dart
+    8 lib/screens/auth/auth_gate.dart
+    5 x4  (various dashboard/workout screens)
+
+Zero-reference screen files (61 orphan candidates)
+--------------------------------------------------
+lib/screens/admin/admin_announcements_screen.dart
+lib/screens/admin/admin_approval_panel.dart
+lib/screens/admin/meta_admin_screen.dart
+lib/screens/admin/viral_analytics_screen.dart
+lib/screens/admin/widgets/incident_timeline.dart
+lib/screens/admin/workout_knowledge_admin_screen.dart
+lib/screens/auth/enable_biometrics_dialog.dart
+lib/screens/auth/password_reset_screen.dart
+lib/screens/calendar/booking_form.dart
+lib/screens/calling/calling_demo_screen.dart
+lib/screens/calling/modern_live_calls_screen.dart
+lib/screens/client/intake_form_fill_screen.dart
+lib/screens/coach/affiliates/coach_affiliates_screen.dart
+lib/screens/coach/client_profile/coach_client_profile_screen.dart
+lib/screens/coach/client_weekly_review_screen.dart
+lib/screens/coach/coach_notes_screen.dart
+lib/screens/coach/coach_search_screen.dart
+lib/screens/coach/intake/coach_forms_screen.dart
+lib/screens/coach/my_coach_screen.dart
+lib/screens/coach/widgets/bio_section_widget.dart
+lib/screens/coach/widgets/media_gallery_widget.dart
+lib/screens/coach/widgets/profile_completeness_widget.dart
+lib/screens/coach/widgets/profile_header_widget.dart
+lib/screens/coach/widgets/profile_hero_section_widget.dart
+lib/screens/coach/widgets/specialties_section_widget.dart
+lib/screens/coach_profile/widgets/profile_editor.dart
+lib/screens/coach_profile/widgets/profile_header.dart
+lib/screens/coaches/coach_qr_scanner_screen.dart
+lib/screens/coaches/qr_scanner_screen.dart
+lib/screens/dashboard/home_screen.dart
+lib/screens/intake/intake_wizard_screen.dart
+lib/screens/menu/modern_coach_menu_screen.dart
+lib/screens/messaging/admin_support_inbox_screen.dart
+lib/screens/messaging/modern_coach_messenger_screen.dart
+lib/screens/notes/note_file_picker.dart
+lib/screens/nutrition/widgets/shared/advanced_food_picker.dart
+lib/screens/nutrition/widgets/shared/ai_food_suggestions_panel.dart
+lib/screens/nutrition/widgets/shared/animated_circular_progress_rings.dart
+lib/screens/nutrition/widgets/shared/daily_nutrition_dashboard.dart
+lib/screens/nutrition/widgets/shared/food_picker_2_0.dart
+(full list of 0-ref and 1-ref files in /tmp/screen-refs.txt during run;
+ see REPORT.md for guidance on follow-up verification.)
+
+Notable observations
+--------------------
+- Two QR scanner screens side-by-side with zero external refs:
+  lib/screens/coaches/coach_qr_scanner_screen.dart
+  lib/screens/coaches/qr_scanner_screen.dart
+  Likely duplicate/legacy pair.
+
+- lib/screens/dashboard/home_screen.dart has zero refs — the app's
+  actual home is AuthGate -> AnimatedSplashScreen. home_screen.dart
+  appears to be an old entrypoint.
+
+- Two messaging screens with "modern_" prefix (modern_coach_menu_screen,
+  modern_coach_messenger_screen, modern_live_calls_screen) all have
+  zero refs, suggesting an in-progress redesign that was never wired in.
+
+- Two profile-editor trees exist (screens/coach/widgets/* and
+  screens/coach_profile/widgets/*) both with zero refs — redundant
+  implementations.
