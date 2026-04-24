@@ -28,12 +28,12 @@ import 'weekly_volume_detail_screen.dart';
 
 /// Revolutionary Workout Plan Builder - The centerpiece of VAGUS
 /// A premium, feature-rich workout plan creation and editing experience
-class RevolutionaryPlanBuilderScreen extends StatefulWidget {
+class WorkoutPlanBuilderScreen extends StatefulWidget {
   final String? planId;
   final String? clientId;
   final bool isTemplate;
 
-  const RevolutionaryPlanBuilderScreen({
+  const WorkoutPlanBuilderScreen({
     super.key,
     this.planId,
     this.clientId,
@@ -41,12 +41,12 @@ class RevolutionaryPlanBuilderScreen extends StatefulWidget {
   });
 
   @override
-  State<RevolutionaryPlanBuilderScreen> createState() =>
-      _RevolutionaryPlanBuilderScreenState();
+  State<WorkoutPlanBuilderScreen> createState() =>
+      _WorkoutPlanBuilderScreenState();
 }
 
-class _RevolutionaryPlanBuilderScreenState
-    extends State<RevolutionaryPlanBuilderScreen>
+class _WorkoutPlanBuilderScreenState
+    extends State<WorkoutPlanBuilderScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
 
   // ==================== SERVICES ====================

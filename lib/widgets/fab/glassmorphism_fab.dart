@@ -8,7 +8,7 @@ import '../../screens/notes/coach_note_screen.dart';
 import '../../screens/files/upload_photos_screen.dart';
 import '../../screens/nutrition/meal_editor.dart';
 import '../../models/nutrition/nutrition_plan.dart';
-import '../../screens/workout/revolutionary_plan_builder_screen.dart';
+import '../../screens/workout/workout_plan_builder_screen.dart';
 import '../../screens/workout/cardio_log_screen.dart';
 import '../../screens/calling/call_management_screen.dart';
 import '../../screens/dashboard/notes/note_list_screen.dart';
@@ -251,7 +251,7 @@ class _GlassmorphismFABState extends State<GlassmorphismFAB>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const RevolutionaryPlanBuilderScreen(),
+                      builder: (context) => const WorkoutPlanBuilderScreen(),
                     ),
                   );
                 },

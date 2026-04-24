@@ -7,7 +7,7 @@ import '../../screens/notes/coach_note_screen.dart';
 import '../../screens/files/upload_photos_screen.dart';
 import '../../screens/nutrition/meal_editor.dart';
 import '../../models/nutrition/nutrition_plan.dart';
-import '../../screens/workout/revolutionary_plan_builder_screen.dart';
+import '../../screens/workout/workout_plan_builder_screen.dart';
 import '../../screens/workout/cardio_log_screen.dart';
 import '../../screens/workout/fatigue_recovery_screen.dart';
 import '../../screens/workout/modern_workout_plan_viewer.dart';
@@ -220,7 +220,7 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const RevolutionaryPlanBuilderScreen(),
+                            builder: (context) => const WorkoutPlanBuilderScreen(),
                           ),
                         );
                       },

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
 import '../../services/nutrition/locale_helper.dart';
-import '../workout/revolutionary_plan_builder_screen.dart';
+import '../workout/workout_plan_builder_screen.dart';
 import '../nutrition/nutrition_plan_builder.dart';
 
 class PlansDashboardScreen extends StatefulWidget {
@@ -809,7 +809,7 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const RevolutionaryPlanBuilderScreen(),
+        builder: (_) => const WorkoutPlanBuilderScreen(),
       ),
     ).then((_) => _loadPlans()); // Reload when returning
   }
@@ -830,7 +830,7 @@ class _PlansDashboardScreenState extends State<PlansDashboardScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => RevolutionaryPlanBuilderScreen(
+          builder: (_) => WorkoutPlanBuilderScreen(
             planId: plan['id'],
           ),
         ),
