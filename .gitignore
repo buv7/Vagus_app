@@ -46,11 +46,16 @@ app.*.map.json
 
 # Environment variables - NEVER COMMIT
 .env
+.env.backup
+.env.problematic
 .env.local
 .env.*.local
 *.env
 supabase_connection.env
 node_modules/
+
+# Analyzer scratch output
+.analyzer.*.txt
 
 # Archived code - exclude from analysis
 ARCHIVE/
