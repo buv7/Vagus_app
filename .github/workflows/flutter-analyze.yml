@@ -1,0 +1,45 @@
+name: Flutter Analyze
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: flutter analyze (fail on errors)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: flutter --version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run analyzer
+        id: analyze
+        run: |
+          set -o pipefail
+          # Capture full analyzer output; do not fail yet — we want to count errors.
+          flutter analyze 2>&1 | tee analyze.txt
+
+      - name: Enforce zero errors
+        run: |
+          # Count lines that start with "error -" (matches the analyzer output format).
+          errors=$(grep -cE '^\s*error\b' analyze.txt || true)
+          echo "Analyzer error count: ${errors}"
+          if [ "${errors}" -gt 0 ]; then
+            echo "::error::flutter analyze reported ${errors} error(s). Failing the job."
+            grep -E '^\s*error\b' analyze.txt || true
+            exit 1
+          fi
+          echo "No analyzer errors."

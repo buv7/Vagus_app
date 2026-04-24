@@ -1,4 +1,4 @@
-name: Supabase Auto Deploy (Fixed v3)
+name: Supabase Auto Deploy
 
 on:
   push:
