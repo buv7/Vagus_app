@@ -1,0 +1,14 @@
+{
+  "errors": [
+    {
+      "text": "Error",
+      "stack": "Error\n    at Object.n (http://localhost:8080/main.dart.js:3864:20)\n    at http://localhost:8080/main.dart.js:127767:15\n    at cJY.a (http://localhost:8080/main.dart.js:5226:63)\n    at cJY.$2 (http://localhost:8080/main.dart.js:74536:14)\n    at cIF.$1 (http://localhost:8080/main.dart.js:74530:21)\n    at aOv.a9A (http://localhost:8080/main.dart.js:75795:34)\n    at c47.$0 (http://localhost:8080/main.dart.js:75008:11)\n    at Object.Ne (http://localhost:8080/main.dart.js:5372:40)\n    at b1.BP (http://localhost:8080/main.dart.js:74914:3)\n    at c4_.$0 (http://localhost:8080/main.dart.js:74971:13)"
+    }
+  ],
+  "warnings": [
+    "[.WebGL-0x3f2410875200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x3f2410875200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x3f2410875200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x3f2410875200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+}

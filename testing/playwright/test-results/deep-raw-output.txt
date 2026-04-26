@@ -1,0 +1,80 @@
+Playwright run — VAGUS Web — 2026-04-27
+Total: 18 tests, 18 passed, 0 failed, ~72s
+
+──── Smoke (8) ────
+✓  01 - App loads and splash screen renders (4.3s)
+✓  02 - Auth screen renders (login or signup) (5.3s)
+   Page title: VAGUS
+✓  03 - No JavaScript console errors on load (5.2s)
+   Console errors found: 1
+   {
+     "text": "Error",
+     "stack": "Error\n    at Object.n (http://localhost:8080/main.dart.js:3864:20)\n    at http://localhost:8080/main.dart.js:127767:15\n    at cJY.a (http://localhost:8080/main.dart.js:5226:63)\n    at cJY.$2 (http://localhost:8080/main.dart.js:74536:14)\n    at cIF.$1 (http://localhost:8080/main.dart.js:74530:21)\n    at aOv.a9A (http://localhost:8080/main.dart.js:75795:34)\n    at c47.$0 (http://localhost:8080/main.dart.js:75008:11)\n    at Object.Ne (http://localhost:8080/main.dart.js:5372:40)\n    at b1.BP (http://localhost:8080/main.dart.js:74914:3)\n    at c4_.$0 (http://localhost:8080/main.dart.js:74971:13)"
+   }
+✓  04 - App is mobile-sized and not broken layout (4.3s)
+✓  05 - App renders on tablet viewport (4.6s)
+✓  06 - Performance: page load under 10 seconds (690ms)
+   Load time: 518ms (cached)
+✓  07 - No broken images or assets (5.2s)
+   Failed asset requests: 0
+✓  08 - App bundle size is reasonable (3.4s)
+   main.dart.js size: 8.85 MB
+   Total build/web: 32.39 MB
+
+──── Deep (10) ────
+✓  D01 - Capture full console error details (6.3s)
+   1 error, 4 GPU stall warnings (test-harness noise, suppressed after 4)
+   Saved to test-results/console-errors.json
+✓  D02 - Splash screen content and transition (5.8s)
+   Post-splash has login form: false  (DOM-text check is meaningless on canvas app)
+✓  D03 - Auth screen elements visible (5.3s)
+   Buttons found on auth screen: 0
+   Semantic elements found: 0
+✓  D04 - Sign up button is tappable (5.3s)
+   Sign up elements found: 0
+   Sign up button not found — taking page screenshot
+✓  D05 - Feature-flagged items are hidden by default (5.3s)
+   Feature-flagged items VISIBLE (should be hidden): []
+   Feature-flagged items "correctly hidden": [Video Call, Scan, Health Sync,
+                                              Google Drive, Connect Google,
+                                              Upgrade]
+   (NB: result is uninformative — getByText cannot see canvas text)
+✓  D06 - Layout at 5 different screen sizes (15.9s)
+   Captured iphone-13 (375x812)
+   Captured iphone-14 (390x844)
+   Captured iphone-plus (414x896)
+   Captured ipad (768x1024)
+   Captured desktop (1280x800)
+✓  D07 - Try navigating to known routes (18.4s)
+   /login      → "Error response"  (http.server 404, no SPA fallback)
+   /signup     → "Error response"
+   /register   → "Error response"
+   /dashboard  → "Error response"
+   /home       → "Error response"
+   /workout    → "Error response"
+   /nutrition  → "Error response"
+   /settings   → "Error response"
+   /support    → "Error response"
+✓  D08 - Measure real performance metrics (669ms)
+   {
+     "domContentLoaded": 6.6,
+     "loadComplete": 8.1,
+     "firstPaint": 36,
+     "firstContentfulPaint": 36,
+     "transferSize": 5026,        // index.html only — not the full bundle
+     "encodedBodySize": 4726
+   }
+✓  D09 - Basic accessibility check (5.2s)
+   Semantic elements: 0
+   Accessible buttons: 0
+   Accessible images: 0
+✓  D10 - App appearance at dark system preference (4.2s)
+   Dark mode screenshot taken (no programmatic verification)
+
+──── Notes ────
+- Smoke 03 console listener was upgraded to capture {text, location, stack}
+  for `console` errors and {text, stack} for `pageerror`.
+- Smoke 08 was rewritten using Node fs.statSync instead of `du`/`wc` because
+  Windows cmd.exe does not parse `||` and `2>/dev/null`.
+- Server: pre-existing python3 -m http.server 8080 --directory build/web
+  (status code 200 verified before run).

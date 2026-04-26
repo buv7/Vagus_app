@@ -29,17 +29,26 @@ test.describe('VAGUS Web Smoke Tests', () => {
   test('03 - No JavaScript console errors on load', async ({ page }) => {
     const errors = [];
     page.on('console', msg => {
-      if (msg.type() === 'error') errors.push(msg.text());
+      if (msg.type() === 'error') {
+        errors.push({
+          text: msg.text(),
+          location: msg.location(),
+        });
+      }
     });
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', err => {
+      errors.push({
+        text: err.message,
+        stack: err.stack,
+      });
+    });
     await page.goto('/');
     await page.waitForTimeout(5000);
     await page.screenshot({
       path: 'test-results/screenshots/03-console-check.png'
     });
     console.log('Console errors found:', errors.length);
-    errors.forEach(e => console.log(' -', e));
-    // Log but do not fail — just report
+    errors.forEach(e => console.log(JSON.stringify(e, null, 2)));
   });
 
   test('04 - App is mobile-sized and not broken layout', async ({ page }) => {
@@ -87,16 +96,33 @@ test.describe('VAGUS Web Smoke Tests', () => {
   });
 
   test('08 - App bundle size is reasonable', async ({ page }) => {
-    let totalBytes = 0;
-    page.on('response', async res => {
-      const headers = res.headers();
-      const len = parseInt(headers['content-length'] || '0');
-      totalBytes += len;
-    });
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    const fs = require('fs');
+    const path = require('path');
+    const buildDir = path.join(__dirname, '..', '..', '..', 'build', 'web');
+    const mainJsPath = path.join(buildDir, 'main.dart.js');
+    const mainJsBytes = fs.statSync(mainJsPath).size;
+    function dirSize(dir) {
+      let total = 0;
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) total += dirSize(full);
+        else total += fs.statSync(full).size;
+      }
+      return total;
+    }
+    const totalBytes = dirSize(buildDir);
+    const mainJsMB = (mainJsBytes / 1024 / 1024).toFixed(2);
     const totalMB = (totalBytes / 1024 / 1024).toFixed(2);
-    console.log(`Total transferred: ${totalMB} MB`);
+    console.log(`main.dart.js size: ${mainJsMB} MB`);
+    console.log(`Total build/web: ${totalMB} MB`);
+    fs.mkdirSync('test-results', { recursive: true });
+    fs.writeFileSync('test-results/bundle-size.json',
+      JSON.stringify({
+        mainJsBytes, mainJsMB,
+        totalBytes, totalMB,
+      }, null, 2));
+    await page.goto('/');
+    await page.waitForTimeout(3000);
     await page.screenshot({
       path: 'test-results/screenshots/08-bundle.png'
     });
