@@ -1,0 +1,34 @@
+Sources count: 2373
+Has mappings: true len: 3411861
+Has names: true count: 64338
+First 30 sources:
+0 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/interceptors.dart
+1 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_helper.dart
+2 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/native_helper.dart
+3 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_array.dart
+4 org-dartlang-sdk:///dart-sdk/lib/core/comparable.dart
+5 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_string.dart
+6 org-dartlang-sdk:///lib/_engine/engine/browser_detection.dart
+7 org-dartlang-sdk:///lib/ui_web/ui_web/browser_detection.dart
+8 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/regexp_helper.dart
+9 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/late_helper.dart
+10 org-dartlang-sdk:///dart-sdk/lib/_internal/js_shared/lib/js_util_patch.dart
+11 org-dartlang-sdk:///lib/_engine/engine/canvaskit/canvaskit_api.dart
+12 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/native_typed_data.dart
+13 org-dartlang-sdk:///lib/ui/geometry.dart
+14 org-dartlang-sdk:///lib/ui/painting.dart
+15 org-dartlang-sdk:///dart-sdk/lib/internal/cast.dart
+16 org-dartlang-sdk:///lib/ui/text.dart
+17 org-dartlang-sdk:///lib/_engine/engine/configuration.dart
+18 org-dartlang-sdk:///dart-sdk/lib/internal/iterable.dart
+19 org-dartlang-sdk:///dart-sdk/lib/_internal/js_shared/lib/js_interop_patch.dart
+20 org-dartlang-sdk:///lib/_engine/engine/canvaskit/canvaskit_canvas.dart
+21 org-dartlang-sdk:///lib/_engine/engine/canvaskit/picture_recorder.dart
+22 org-dartlang-sdk:///lib/_engine/engine/canvaskit/color_filter.dart
+23 org-dartlang-sdk:///lib/_engine/engine/canvaskit/native_memory.dart
+24 org-dartlang-sdk:///lib/_engine/engine/canvaskit/display_canvas_factory.dart
+25 org-dartlang-sdk:///lib/_engine/engine/canvaskit/embedded_views.dart
+26 org-dartlang-sdk:///lib/_engine/engine/canvaskit/fonts.dart
+27 org-dartlang-sdk:///lib/_engine/engine/canvaskit/image.dart
+28 org-dartlang-sdk:///dart-sdk/lib/collection/list.dart
+29 org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/math_patch.dart

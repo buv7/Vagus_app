@@ -1,0 +1,42 @@
+=== Unguarded plugin/init calls in main.dart (after kIsWeb filter) ===
+67:  await EnvConfig.init();           # dotenv → AssetBundle (HTTP on web, OK)
+70:  await Supabase.initialize(...)    # has web support, OK
+76:  Supabase.instance.client.auth.currentSession  # OK on web
+86:  await NotificationHelper.instance.init();  # ALREADY GUARDED with kIsWeb
+118: DeepLinkService().initialize(...) # ALREADY GUARDED with kIsWeb
+135: DeepLinkService().dispose();      # ALREADY GUARDED with kIsWeb
+
+=== Pubspec native-only plugins ===
+local_auth: ^2.3.0                  # NO WEB IMPLEMENTATION  ← culprit
+device_info_plus: ^10.1.0           # has web impl
+flutter_local_notifications: ^18.0.0 # NO WEB → guarded in main.dart
+permission_handler: ^11.3.1         # NO WEB → not called at startup
+app_links: ^6.4.0                   # NO WEB → guarded in main.dart
+flutter_inappwebview: ^6.0.0        # NO WEB → not called at startup
+health: ^13.1.4                     # NO WEB → not called at startup
+just_audio: ^0.9.36                 # has web impl
+shared_preferences: ^2.2.3          # has web impl
+flutter_secure_storage              # has limited web impl
+
+=== Cross-reference of crash chain ===
+Crash stack maps to MethodChannel._invokeMethod throwing MissingPluginException
+("No implementation found for method X on channel Y") at main.dart.js:127578.
+
+Cold-load path:
+  main() → Supabase.initialize → runApp
+  → AnimatedSplashScreen (1.2s) → pushReplacement
+  → AuthGate.initState → _initializeApp → user==null
+  → setState _role='unauthenticated'
+  → build() returns PremiumLoginScreen
+  → PremiumLoginScreen.initState (line 43) → _checkBiometricAvailability()
+  → BiometricAuthService.isBiometricAvailable()
+  → await _localAuth.canCheckBiometrics  ← MethodChannel call, NO WEB IMPL
+  → throws MissingPluginException
+  → catch block only handles PlatformException → exception escapes
+  → uncaught Future error → Playwright captures as top-level Error
+
+ROOT CAUSE: lib/services/auth/biometric_auth_service.dart
+  - isBiometricAvailable() calls local_auth without kIsWeb guard
+  - getAvailableBiometrics() same
+  - authenticateWithBiometrics() same
+  - secure storage calls also unguarded (flutter_secure_storage may throw on web)

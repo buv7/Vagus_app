@@ -1,0 +1,53 @@
+=== JS line 3864 ===
+  col 1 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_helper.dart : 1353 : 0 name=wrapException
+  col 5 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_helper.dart : 1355 : 2 name=wrapException
+  col 12 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_helper.dart : 1355 : 9 name=wrapException
+  col 19 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_helper.dart : 1354 : 18 name=wrapException
+  col 31 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/js_helper.dart : 1356 : 0 name=wrapException
+=== JS line 5226 ===
+  col 1 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 339 : 18 name=_wrapJsFunctionForAsync
+=== JS line 5372 ===
+  col 5 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 978 : 15 name=_Future._propagateToListeners
+  col 11 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 979 : 10 name=_Future._propagateToListeners
+  col 24 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 949 : 32 name=_Future._propagateToListeners
+  col 39 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 980 : 12 name=_Future._propagateToListeners
+  col 49 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 983 : 10 name=_Future._propagateToListeners
+  col 62 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 958 : 24 name=_Future._propagateToListeners
+  col 77 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 984 : 12 name=_Future._propagateToListeners
+=== JS line 74420 ===
+  col 2 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 364 : 45 name=_wrapJsFunctionForAsync.<anonymous function>
+  col 8 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 365 : 4 name=_wrapJsFunctionForAsync.<anonymous function>
+  col 12 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 365 : 22 name=_wrapJsFunctionForAsync.<anonymous function>
+  col 19 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 366 : 3 name=_wrapJsFunctionForAsync.<anonymous function>
+=== JS line 74414 ===
+  col 2 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 313 : 6 name=_awaitOnObject.<anonymous function>
+  col 6 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 313 : 18 name=_awaitOnObject.<anonymous function>
+  col 27 -> org-dartlang-sdk:///dart-sdk/lib/_internal/js_runtime/lib/async_patch.dart : 313 : 66 name=_awaitOnObject.<anonymous function>
+=== JS line 74798 ===
+  col 0 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 723 : 4 name=_Future._completeWithValue
+  col 9 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 724 : 2 name=_Future._completeWithValue
+=== JS line 74855 ===
+  col 2 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 806 : 28 name=_Future._asyncCompleteWithValue.<anonymous function>
+  col 5 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 807 : 6 name=_Future._asyncCompleteWithValue.<anonymous function>
+  col 19 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 807 : 25 name=_Future._asyncCompleteWithValue.<anonymous function>
+  col 22 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 808 : 5 name=_Future._asyncCompleteWithValue.<anonymous function>
+=== JS line 74892 ===
+  col 0 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 224 : 11 name=_Future._propagateToListeners.handleValueCallback
+  col 1 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 951 : 12 name=_Future._propagateToListeners.handleValueCallback
+  col 5 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 189 : 21 name=_FutureListener.handleValue
+  col 7 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 189 : 28 name=_FutureListener.handleValue
+  col 15 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 198 : 47 name=_FutureListener.handleValue
+  col 22 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 951 : 56 name=_Future._propagateToListeners.handleValueCallback
+  col 49 -> org-dartlang-sdk:///dart-sdk/lib/async/future_impl.dart : 950 : 10 name=_Future._propagateToListeners.handleValueCallback
+=== JS line 75656 ===
+  col 3 -> org-dartlang-sdk:///dart-sdk/lib/async/zone.dart : 1848 : 4 name=_RootZone.runUnary
+  col 9 -> org-dartlang-sdk:///dart-sdk/lib/async/zone.dart : 1849 : 52 name=_RootZone.runUnary
+  col 13 -> org-dartlang-sdk:///dart-sdk/lib/async/zone.dart : 1849 : 23 name=_RootZone.runUnary
+  col 20 -> org-dartlang-sdk:///dart-sdk/lib/async/zone.dart : 1849 : 33 name=_RootZone.runUnary
+  col 24 -> org-dartlang-sdk:///dart-sdk/lib/async/zone.dart : 1849 : 45 name=_RootZone.runUnary
+  col 38 -> org-dartlang-sdk:///dart-sdk/lib/async/zone.dart : 1851 : 2 name=_RootZone.runUnary
+=== JS line 127578 ===
+  col 6 -> ../../../../../../../src/flutter/packages/flutter/lib/src/services/platform_channel.dart : 368 : 6 name=MethodChannel._invokeMethod
+  col 16 -> ../../../../../../../src/flutter/packages/flutter/lib/src/services/platform_channel.dart : 368 : 12 name=MethodChannel._invokeMethod
+  col 81 -> ../../../../../../../src/flutter/packages/flutter/lib/src/services/platform_channel.dart : 370 : 40 name=MethodChannel._invokeMethod
+  col 95 -> ../../../../../../../src/flutter/packages/flutter/lib/src/services/platform_channel.dart : 370 : 11 name=MethodChannel._invokeMethod
