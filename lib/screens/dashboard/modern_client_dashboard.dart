@@ -19,6 +19,7 @@ import '../../widgets/common/fatigue_recovery_icon.dart';
 import '../client/client_coach_marketplace.dart';
 import '../fatigue/fatigue_dashboard_screen.dart';
 import '../../services/config/feature_flags.dart';
+import '../../services/feature_flags_service.dart';
 import '../../services/retention/dopamine_service.dart';
 import '../../services/retention/daily_missions_service.dart';
 import '../../models/retention/mission_models.dart';
@@ -1440,10 +1441,15 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              _buildHealthRingsCard(),
-              const SizedBox(width: 16),
-              _buildStepsCard(),
-              const SizedBox(width: 16),
+              // Health Rings + Steps cards are the entry points to
+              // Apple Health / Google Fit / Health Connect setup and
+              // are gated until the sync backend is production-ready.
+              if (FeatureFlagsService.healthSyncEnabled) ...[
+                _buildHealthRingsCard(),
+                const SizedBox(width: 16),
+                _buildStepsCard(),
+                const SizedBox(width: 16),
+              ],
               _buildStreakCard(),
               const SizedBox(width: 16),
               _buildRankCard(),

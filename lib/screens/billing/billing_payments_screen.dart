@@ -95,30 +95,9 @@ class _BillingPaymentsScreenState extends State<BillingPaymentsScreen> {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      // Return mock payment data
-      return [
-        {
-          'id': '1',
-          'amount': 29.99,
-          'status': 'completed',
-          'created_at': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-          'description': 'Pro Coach Plan - Monthly',
-        },
-        {
-          'id': '2',
-          'amount': 29.99,
-          'status': 'completed',
-          'created_at': DateTime.now().subtract(const Duration(days: 31)).toIso8601String(),
-          'description': 'Pro Coach Plan - Monthly',
-        },
-        {
-          'id': '3',
-          'amount': 29.99,
-          'status': 'completed',
-          'created_at': DateTime.now().subtract(const Duration(days: 61)).toIso8601String(),
-          'description': 'Pro Coach Plan - Monthly',
-        },
-      ];
+      // No payments / table missing — show the empty state rather than
+      // fabricating a payment history the user never actually had.
+      return const <Map<String, dynamic>>[];
     }
   }
 

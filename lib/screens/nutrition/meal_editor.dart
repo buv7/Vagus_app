@@ -9,6 +9,7 @@ import '../../models/nutrition/food_item.dart' as fi;
 import '../../widgets/nutrition/macro_table_row.dart';
 import '../../components/nutrition/recipe_item_tile.dart';
 import '../../components/nutrition/recipe_quick_swap_sheet.dart';
+import '../../services/feature_flags_service.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../services/nutrition/nutrition_service.dart';
 import '../../services/nutrition/preferences_service.dart';
@@ -1188,16 +1189,19 @@ class _MealEditorState extends State<MealEditor> {
                 _addViaPhoto();
               },
             ),
-            _buildMenuOption(
-              icon: Icons.qr_code_scanner_rounded,
-              label: LocaleHelper.t('scan_barcode', language),
-              color: DesignTokens.accentOrange,
-              isDark: isDark,
-              onTap: () {
-                Navigator.pop(context);
-                _scanBarcode();
-              },
-            ),
+            // OCR / barcode scanning gated until the barcode backend is
+            // production-ready.
+            if (FeatureFlagsService.ocrEnabled)
+              _buildMenuOption(
+                icon: Icons.qr_code_scanner_rounded,
+                label: LocaleHelper.t('scan_barcode', language),
+                color: DesignTokens.accentOrange,
+                isDark: isDark,
+                onTap: () {
+                  Navigator.pop(context);
+                  _scanBarcode();
+                },
+              ),
             const SizedBox(height: 8),
           ],
         ),
@@ -1376,16 +1380,21 @@ class _MealEditorState extends State<MealEditor> {
                 onTap: _addViaPhoto,
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildQuickActionButton(
-                icon: Icons.qr_code_scanner_rounded,
-                label: LocaleHelper.t('scan_barcode', language),
-                color: DesignTokens.accentOrange,
-                isDark: isDark,
-                onTap: _scanBarcode,
+            // OCR / barcode scanning gated until the barcode backend is
+            // production-ready.
+            if (FeatureFlagsService.ocrEnabled) ...[
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildQuickActionButton(
+                  icon: Icons.qr_code_scanner_rounded,
+                  label: LocaleHelper.t('scan_barcode', language),
+                  color: DesignTokens.accentOrange,
+                  isDark: isDark,
+                  onTap: _scanBarcode,
+                ),
               ),
-            ),
+            ] else
+              const Spacer(),
           ],
         ),
       ],

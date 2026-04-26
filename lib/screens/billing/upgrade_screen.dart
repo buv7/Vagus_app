@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../services/feature_flags_service.dart';
 import '../../theme/theme_index.dart';
 import '../../theme/theme_colors.dart';
+import '../../widgets/common/coming_soon_screen.dart';
 
 /// Upgrade screen showing available subscription plans
 class UpgradeScreen extends StatefulWidget {
@@ -369,6 +371,20 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   }
 
   Future<void> _handleUpgrade(String planId) async {
+    // Stripe / payment gateway integration is gated until it's
+    // production-ready. With the flag off we route to a Coming Soon
+    // screen instead of pretending the upgrade succeeded.
+    if (!FeatureFlagsService.stripeEnabled) {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const ComingSoonScreen(
+            featureName: 'Plan Upgrades',
+          ),
+        ),
+      );
+      return;
+    }
+
     final tc = context.tc;
     // TODO: Integrate with payment gateway (Stripe, RevenueCat, etc.)
     ScaffoldMessenger.of(context).showSnackBar(

@@ -15,6 +15,45 @@ class FeatureFlagsService {
   final Map<String, bool> _localOverrides = {};
 
   // ============================================================
+  // HONESTY-PASS FEATURE FLAGS (dart-define, default false)
+  // ============================================================
+  // These gate features whose backing services are currently stubs,
+  // mocks, or otherwise not production-ready. All default to false
+  // so production builds hide the entry UI unless explicitly enabled.
+  // Toggle per build with e.g.
+  //   flutter run --dart-define=CALLING_ENABLED=true
+
+  /// Voice/video calling (Agora/WebRTC) — currently a stubbed service.
+  static const bool callingEnabled = bool.fromEnvironment(
+    'CALLING_ENABLED',
+    defaultValue: false,
+  );
+
+  /// OCR / barcode scanning for nutrition labels.
+  static const bool ocrEnabled = bool.fromEnvironment(
+    'OCR_ENABLED',
+    defaultValue: false,
+  );
+
+  /// Apple Health / Google Fit / Health Connect sync.
+  static const bool healthSyncEnabled = bool.fromEnvironment(
+    'HEALTH_SYNC_ENABLED',
+    defaultValue: false,
+  );
+
+  /// Google Sheets / Drive / Calendar integrations.
+  static const bool googleAppsEnabled = bool.fromEnvironment(
+    'GOOGLE_APPS_ENABLED',
+    defaultValue: false,
+  );
+
+  /// Stripe / payment-gateway powered billing actions.
+  static const bool stripeEnabled = bool.fromEnvironment(
+    'STRIPE_ENABLED',
+    defaultValue: false,
+  );
+
+  // ============================================================
   // NUTRITION V2.0 FEATURE FLAGS
   // ============================================================
 

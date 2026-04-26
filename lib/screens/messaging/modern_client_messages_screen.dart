@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/theme_colors.dart';
 import '../../services/coach/coach_messaging_service.dart';
+import '../../services/feature_flags_service.dart';
 import '../../services/simple_calling_service.dart';
 import '../../services/messages_service.dart';
 import '../../models/live_session.dart';
@@ -337,23 +338,26 @@ class _ModernClientMessagesScreenState extends State<ModernClientMessagesScreen>
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Action Icons
-            IconButton(
-              onPressed: () => _makeCall(conversation),
-              icon: Icon(
-                Icons.phone,
-                color: tc.iconSecondary,
-                size: 20,
+            // Action Icons — calling hidden behind feature flag until the
+            // calling backend is production-ready.
+            if (FeatureFlagsService.callingEnabled) ...[
+              IconButton(
+                onPressed: () => _makeCall(conversation),
+                icon: Icon(
+                  Icons.phone,
+                  color: tc.iconSecondary,
+                  size: 20,
+                ),
               ),
-            ),
-            IconButton(
-              onPressed: () => _makeVideoCall(conversation),
-              icon: Icon(
-                Icons.videocam,
-                color: tc.iconSecondary,
-                size: 20,
+              IconButton(
+                onPressed: () => _makeVideoCall(conversation),
+                icon: Icon(
+                  Icons.videocam,
+                  color: tc.iconSecondary,
+                  size: 20,
+                ),
               ),
-            ),
+            ],
             PopupMenuButton<String>(
               icon: Icon(
                 Icons.more_vert,

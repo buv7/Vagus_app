@@ -1,16 +1,53 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../services/ai/ai_usage_service.dart';
 import '../../services/navigation/app_navigator.dart';
 import '../../theme/design_tokens.dart';
 
-class AiUsageScreen extends StatelessWidget {
+class AiUsageScreen extends StatefulWidget {
   const AiUsageScreen({super.key});
+
+  @override
+  State<AiUsageScreen> createState() => _AiUsageScreenState();
+}
+
+class _AiUsageScreenState extends State<AiUsageScreen> {
+  bool _loading = true;
+  String? _error;
+  Map<String, dynamic>? _usage;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final data = await AIUsageService.instance.getCurrentUsage();
+      if (!mounted) return;
+      setState(() {
+        _usage = data;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -25,99 +62,162 @@ class AiUsageScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: _loading ? null : _load,
+          ),
+        ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildGlassmorphicCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.psychology, size: 22, color: Colors.white.withValues(alpha: 0.9)),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'AI Usage & Quotas',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
+        child: _buildBody(),
+      ),
+    );
+  }
 
-                          _buildQuotaItem(
-                            featureLabel: 'Notes AI',
-                            icon: Icons.note,
-                            current: 45,
-                            total: 100,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildQuotaItem(
-                            featureLabel: 'Nutrition AI',
-                            icon: Icons.restaurant,
-                            current: 23,
-                            total: 50,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildQuotaItem(
-                            featureLabel: 'Workout AI',
-                            icon: Icons.fitness_center,
-                            current: 67,
-                            total: 75,
-                            showLimitWarning: true,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildQuotaItem(
-                            featureLabel: 'Messaging AI',
-                            icon: Icons.chat,
-                            current: 12,
-                            total: 200,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildQuotaItem(
-                            featureLabel: 'Transcription',
-                            icon: Icons.mic,
-                            current: 8,
-                            total: 25,
+  Widget _buildBody() {
+    if (_loading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(DesignTokens.accentBlue),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return _buildError(_error!);
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildGlassmorphicCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.psychology, size: 22, color: Colors.white.withValues(alpha: 0.9)),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'AI Usage & Quotas',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      if (_usage == null)
+                        _buildEmpty()
+                      else
+                        _buildQuotaItem(
+                          featureLabel: 'Requests this month',
+                          icon: Icons.auto_awesome,
+                          current: _intVal(_usage!['requests_this_month']),
+                          total: _intVal(_usage!['monthly_limit'], fallback: 100),
+                        ),
+                      if (_usage != null) ...[
+                        const SizedBox(height: 16),
+                        _buildQuotaItem(
+                          featureLabel: 'Tokens used',
+                          icon: Icons.token,
+                          current: _intVal(_usage!['tokens_used']),
+                          total: _intVal(_usage!['tokens_limit'], fallback: 0),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
-
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: _buildGlassmorphicButton(
-                onPressed: () => AppNavigator.billingUpgrade(context),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.star, color: Colors.white.withValues(alpha: 0.9), size: 20),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Upgrade to Pro',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: _buildGlassmorphicButton(
+            onPressed: () => AppNavigator.billingUpgrade(context),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.star, color: Colors.white.withValues(alpha: 0.9), size: 20),
+                const SizedBox(width: 8),
+                const Text(
+                  'Upgrade to Pro',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmpty() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: Column(
+        children: [
+          Icon(Icons.inbox_outlined, size: 48, color: Colors.white.withValues(alpha: 0.5)),
+          const SizedBox(height: 12),
+          Text(
+            'No usage data yet',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Start using AI features to see your quota here.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.6),
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildError(String message) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: DesignTokens.danger, size: 48),
+            const SizedBox(height: 12),
+            const Text(
+              'Unable to load AI usage',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: DesignTokens.mediumGrey),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: _load,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
             ),
           ],
         ),
@@ -125,12 +225,18 @@ class AiUsageScreen extends StatelessWidget {
     );
   }
 
+  int _intVal(dynamic v, {int fallback = 0}) {
+    if (v == null) return fallback;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return int.tryParse(v.toString()) ?? fallback;
+  }
+
   Widget _buildQuotaItem({
     required String featureLabel,
     required IconData icon,
     required int current,
     required int total,
-    bool showLimitWarning = false,
   }) {
     final double percentage = total == 0 ? 0 : current / total;
     final bool isWarning = percentage >= 0.8;
@@ -139,7 +245,7 @@ class AiUsageScreen extends StatelessWidget {
     Color progressColor;
     if (isDanger) {
       progressColor = Colors.red;
-    } else if (isWarning || showLimitWarning) {
+    } else if (isWarning) {
       progressColor = Colors.orange;
     } else {
       progressColor = const Color(0xFF00D4AA);
@@ -163,7 +269,7 @@ class AiUsageScreen extends StatelessWidget {
               ),
             ),
             Text(
-              '$current/$total',
+              total > 0 ? '$current/$total' : '$current',
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 12,
@@ -175,16 +281,16 @@ class AiUsageScreen extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(6),
           child: LinearProgressIndicator(
-            value: percentage,
+            value: total == 0 ? null : percentage.clamp(0.0, 1.0),
             minHeight: 6,
             backgroundColor: Colors.white.withValues(alpha: 0.15),
             valueColor: AlwaysStoppedAnimation<Color>(progressColor),
           ),
         ),
-        if (isWarning || showLimitWarning) ...[
+        if (isWarning) ...[
           const SizedBox(height: 6),
           Text(
-            isDanger ? '⚠️ Almost at limit!' : '⚠️ Getting close to limit',
+            isDanger ? 'Almost at limit!' : 'Getting close to limit',
             style: TextStyle(
               color: progressColor,
               fontWeight: FontWeight.w600,

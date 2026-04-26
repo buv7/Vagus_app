@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../services/feature_flags_service.dart';
 import '../../theme/design_tokens.dart';
 import '../../screens/notes/coach_note_screen.dart';
 import '../../screens/files/upload_photos_screen.dart';
@@ -35,33 +36,37 @@ class _SimpleGlassmorphismFABState extends State<SimpleGlassmorphismFAB>
   late AnimationController _animationController;
   late Animation<double> _rotationAnimation;
 
-  // Action items configuration
-  final List<FABAction> _actions = const [
-    FABAction(
+  // Action items configuration.
+  // "Schedule Call" is gated behind [FeatureFlagsService.callingEnabled]
+  // — the calling backend is still a stub, so the entry is hidden in
+  // production builds.
+  final List<FABAction> _actions = [
+    const FABAction(
       icon: Icons.fitness_center,
       label: 'Add Workout',
       route: '/workouts/add',
     ),
-    FABAction(
+    const FABAction(
       icon: Icons.restaurant,
       label: 'Add Meal',
       route: '/nutrition/add',
     ),
-    FABAction(
+    const FABAction(
       icon: Icons.camera_alt,
       label: 'Add Progress Photo',
       route: '/progress/photo',
     ),
-    FABAction(
+    const FABAction(
       icon: Icons.note_add,
       label: 'Add Note',
       route: '/notes/add',
     ),
-    FABAction(
-      icon: Icons.phone,
-      label: 'Schedule Call',
-      isModal: true,
-    ),
+    if (FeatureFlagsService.callingEnabled)
+      const FABAction(
+        icon: Icons.phone,
+        label: 'Schedule Call',
+        isModal: true,
+      ),
   ];
 
   @override

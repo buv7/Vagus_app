@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../services/feature_flags_service.dart';
 import '../../services/settings/settings_controller.dart';
 import '../../services/settings/reduce_motion.dart';
 import '../../components/settings/theme_toggle.dart';
@@ -364,37 +365,39 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                         ),
                       ),
 
-                      // Google Integrations Card
-                      _buildGlassmorphicCard(
-                        context: context,
-                        icon: Icons.cloud,
-                        title: 'Google Integration',
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Export data to Sheets and attach files from Drive',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7),
-                                fontSize: 14,
+                      // Google Integrations Card — gated until the
+                      // Google Sheets/Drive OAuth backend is production-ready.
+                      if (FeatureFlagsService.googleAppsEnabled)
+                        _buildGlassmorphicCard(
+                          context: context,
+                          icon: Icons.cloud,
+                          title: 'Google Integration',
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Export data to Sheets and attach files from Drive',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            _buildGlassmorphicButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const GoogleIntegrationsScreen(),
-                                  ),
-                                );
-                              },
-                              icon: Icons.settings,
-                              label: 'Google (Sheets & Drive)',
-                            ),
-                          ],
+                              const SizedBox(height: 12),
+                              _buildGlassmorphicButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const GoogleIntegrationsScreen(),
+                                    ),
+                                  );
+                                },
+                                icon: Icons.settings,
+                                label: 'Google (Sheets & Drive)',
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
                       // Earn Rewards Card
                       _buildGlassmorphicCard(

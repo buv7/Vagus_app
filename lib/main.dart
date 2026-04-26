@@ -27,6 +27,12 @@ import 'screens/calendar/calendar_screen.dart';
 import 'screens/progress/client_check_in_calendar.dart';
 import 'screens/files/file_manager_screen.dart';
 import 'screens/account_switch_screen.dart';
+import 'screens/settings/ai_usage_screen.dart';
+import 'screens/settings/data_export_screen.dart';
+import 'screens/settings/devices_screen.dart';
+import 'screens/settings/profile_edit_screen.dart';
+import 'screens/support/support_screen.dart';
+import 'screens/coaches/coach_application_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -163,13 +169,13 @@ class _VagusMainAppState extends State<VagusMainApp> {
             '/billing': (context) => const BillingSettings(),
             '/admin': (context) => const AdminScreen(),
 
-            // Redirects for side menu items
-            '/profile/edit': (context) => const UserSettingsScreen(),
-            '/devices': (context) => const UserSettingsScreen(),
-            '/ai-usage': (context) => const AdminScreen(),
-            '/export': (context) => const UserSettingsScreen(),
-            '/apply-coach': (context) => const AdminScreen(),
-            '/support': (context) => const UserSettingsScreen(),
+            // Side menu items
+            '/profile/edit': (context) => const ProfileEditScreen(),
+            '/devices': (context) => const DevicesScreen(),
+            '/ai-usage': (context) => const AiUsageScreen(),
+            '/export': (context) => const DataExportScreen(),
+            '/apply-coach': (context) => const CoachApplicationScreen(),
+            '/support': (context) => const SupportScreen(),
           },
         );
       },
