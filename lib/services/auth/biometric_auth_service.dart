@@ -13,11 +13,15 @@ class BiometricAuthService {
 
   /// Check if biometric authentication is available on this device
   Future<bool> isBiometricAvailable() async {
+    if (kIsWeb) return false;
     try {
       final bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
       final bool isDeviceSupported = await _localAuth.isDeviceSupported();
-      
+
       return canCheckBiometrics && isDeviceSupported;
+    } on MissingPluginException catch (e) {
+      debugPrint('Biometric plugin missing: $e');
+      return false;
     } on PlatformException catch (e) {
       debugPrint('Biometric availability check failed: $e');
       return false;
@@ -26,8 +30,12 @@ class BiometricAuthService {
 
   /// Get the list of available biometric types
   Future<List<BiometricType>> getAvailableBiometrics() async {
+    if (kIsWeb) return const <BiometricType>[];
     try {
       return await _localAuth.getAvailableBiometrics();
+    } on MissingPluginException catch (e) {
+      debugPrint('Biometric plugin missing: $e');
+      return const <BiometricType>[];
     } on PlatformException catch (e) {
       debugPrint('Failed to get available biometrics: $e');
       return [];
@@ -36,6 +44,7 @@ class BiometricAuthService {
 
   /// Check if biometric login is enabled for the current user
   Future<bool> getBiometricEnabled() async {
+    if (kIsWeb) return false;
     try {
       final String? enabled = await _secureStorage.read(key: _bioEnabledKey);
       return enabled == 'true';
@@ -47,12 +56,13 @@ class BiometricAuthService {
 
   /// Set biometric login enabled/disabled and store user email
   Future<void> setBiometricEnabled(bool enabled, {String? userEmail}) async {
+    if (kIsWeb) return;
     try {
       await _secureStorage.write(
         key: _bioEnabledKey,
         value: enabled.toString(),
       );
-      
+
       if (enabled && userEmail != null) {
         await _secureStorage.write(
           key: _bioUserEmailKey,
@@ -67,6 +77,7 @@ class BiometricAuthService {
 
   /// Get the stored user email for biometric login
   Future<String?> getStoredUserEmail() async {
+    if (kIsWeb) return null;
     try {
       return await _secureStorage.read(key: _bioUserEmailKey);
     } catch (e) {
@@ -77,6 +88,7 @@ class BiometricAuthService {
 
   /// Authenticate user with biometrics
   Future<bool> authenticateWithBiometrics({String reason = 'Please authenticate to log in'}) async {
+    if (kIsWeb) return false;
     try {
       final bool isAvailable = await isBiometricAvailable();
       if (!isAvailable) {
@@ -93,6 +105,9 @@ class BiometricAuthService {
       );
 
       return didAuthenticate;
+    } on MissingPluginException catch (e) {
+      debugPrint('Biometric plugin missing: $e');
+      return false;
     } on PlatformException catch (e) {
       debugPrint('Biometric authentication failed: $e');
       return false;
@@ -101,6 +116,7 @@ class BiometricAuthService {
 
   /// Clear all stored biometric data
   Future<void> clearBiometricData() async {
+    if (kIsWeb) return;
     try {
       await _secureStorage.delete(key: _bioEnabledKey);
       await _secureStorage.delete(key: _bioUserEmailKey);
@@ -111,6 +127,7 @@ class BiometricAuthService {
 
   /// Get a user-friendly description of available biometrics
   Future<String> getBiometricDescription() async {
+    if (kIsWeb) return 'No biometric authentication available';
     try {
       final List<BiometricType> availableBiometrics = await getAvailableBiometrics();
       
