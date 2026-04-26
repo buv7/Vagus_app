@@ -1,0 +1,151 @@
+=== Bundle Audit — Mon, Apr 27, 2026  1:03:46 AM ===
+
+=== STEP 3A: Fonts declared in pubspec.yaml ===
+(no fonts: section)
+
+=== STEP 3A: fontFamily references in code (unique) ===
+lib/screens/admin/ai_config_panel.dart:205:                  fontFamily: 'monospace',
+lib/screens/admin/ai_config_panel.dart:248:                fontFamily: 'monospace',
+lib/screens/coach/affiliates/coach_affiliates_screen.dart:302:                                fontFamily: 'monospace',
+lib/screens/coach/affiliates/coach_affiliates_screen.dart:329:                          fontFamily: 'monospace',
+lib/screens/coach/intake/coach_forms_screen.dart:783:                                fontFamily: 'monospace',
+lib/screens/coach/intake/coach_forms_screen.dart:800:                                    fontFamily: 'monospace',
+lib/screens/settings/data_export_screen.dart:180:                  fontFamily: 'monospace',
+lib/screens/settings/earn_rewards_screen.dart:189:                          fontFamily: 'monospace',
+lib/screens/settings/health_connections_screen.dart:645:                  fontFamily: 'monospace',
+lib/utils/error_handler.dart:142:                    fontFamily: 'monospace',
+lib/widgets/growth/invite_card.dart:178:                    fontFamily: 'monospace',
+lib/widgets/growth/referral_code_input.dart:164:            fontFamily: 'monospace',
+
+=== STEP 3B: Asset files >500KB ===
+-rw-r--r-- 1 alhas 197612 1956888 Dec 21 12:57 assets/seeds/exercise_knowledge_seed_en.json
+
+=== STEP 3B: Top-level asset folder sizes ===
+1.9M	assets/seeds/
+224K	assets/branding/
+24K	assets/anim/
+8.0K	assets/nutrition/
+8.0K	assets/foods/
+8.0K	assets/exercises/
+5.0K	assets/icons/
+0	assets/html/
+
+Total assets/ size:
+2.2M	assets/
+
+=== STEP 3C: pubspec dependencies ===
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  supabase_flutter: ^2.9.1
+  flutter_localizations:
+    sdk: flutter
+  image_picker: ^1.1.0
+  uuid: ^4.3.3
+  intl: ^0.20.2
+  csv: ^5.0.2
+  path_provider: ^2.1.2
+  fl_chart: ^0.66.0
+  video_player: ^2.8.3
+  just_audio: ^0.9.36
+  url_launcher: ^6.2.5
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.2.3
+  mobile_scanner: ^3.5.5
+  file_picker: ^6.1.1
+  pdf: ^3.11.3
+  printing: ^5.12.0
+  pdfx: ^2.6.0
+  photo_view: ^0.15.0
+  local_auth: ^2.3.0
+  device_info_plus: ^10.1.0
+  package_info_plus: ^8.0.2
+  http: ^1.2.0
+  collection: ^1.18.0
+  crypto: ^3.0.3
+  flutter_local_notifications: ^18.0.0
+  timezone: ^0.9.2
+  lottie: ^2.7.0
+  rive: ^0.13.13
+  provider: ^6.0.5
+  share_plus: ^10.0.2
+  equatable: ^2.0.5
+  # flutter_webrtc: ^0.11.7  # Temporarily disabled due to compatibility issues
+  permission_handler: ^11.3.1
+  qr_flutter: ^4.1.0
+  app_links: ^6.4.0
+  flutter_dotenv: ^5.1.0
+  flutter_inappwebview: ^6.0.0
+  glassmorphism: ^3.0.0
+  shimmer: ^3.0.0
+  animated_text_kit: ^4.2.2
+  simple_animations: ^5.0.2
+  flutter_svg: ^2.0.10+1
+  health: ^13.1.4  # Cross-platform health data access (Apple Health, Google Health Connect)
+  google_generative_ai: ^0.4.6  # Google Gemini AI for food recognition
+dev_dependencies:
+
+=== STEP 3D: dart:mirrors / reflectable usage ===
+(none — good)
+
+=== STEP 3E: deferred loading usage ===
+deferred loading instances: 0
+
+=== SUMMARY ===
+
+Total assets/: 2.2 MB (raw, pre-gzip)
+Largest single asset: assets/seeds/exercise_knowledge_seed_en.json (1.9 MB)
+
+Fonts:
+- No fonts: section in pubspec.yaml — app uses platform default
+  font + 'monospace' (system) only.
+- 12 fontFamily: 'monospace' references — system font, no bundled
+  asset cost.
+- No bundled font files.
+
+Dynamic dispatch / reflection:
+- dart:mirrors / reflectable: NONE. dart2js can fully tree-shake.
+
+Deferred loading:
+- 0 instances. Entire app is in main bundle. Largest opportunity.
+
+Heavyweight packages (with web-meaningful tree-shaking concerns):
+- supabase_flutter (~ large; auth + db + functions + storage + realtime)
+- pdf, printing, pdfx — three PDF libs, all likely still in bundle
+- flutter_inappwebview — heavy on web
+- mobile_scanner — has a web build but bundles barcode WASM
+- rive + lottie — two animation engines
+- fl_chart, video_player, just_audio, photo_view, glassmorphism,
+  shimmer, animated_text_kit, simple_animations — UI/media stack
+- google_generative_ai
+- health — no web impl; should be tree-shaken if unused on web,
+  but only if call sites are kIsWeb-guarded.
+- flutter_local_notifications, app_links, local_auth, permission_handler,
+  device_info_plus — mobile-only plugins. Their .dart facades stay
+  in the bundle but plugin web stubs are usually small.
+
+8.85 MB main.dart.js verdict:
+- For an app this dependency-rich (Supabase + 3 PDF libs + 2 animation
+  engines + scanner + WebView + chart + video/audio + AI), 8.85 MB
+  CanvasKit-build js is on the heavier side but not unreasonable.
+- A vanilla Flutter web hello-world is ~1.5–2 MB. The remaining ~7 MB
+  is the dependency surface area.
+
+Obvious wins (NO changes made — documenting only):
+1. Deferred loading. Splitting admin / coach-only / nutrition /
+   workout / messaging routes via 'deferred as' would slash initial
+   bundle by megabytes.
+2. Drop one of pdf vs pdfx. Three PDF-related packages (pdf, printing,
+   pdfx) is likely overkill for one app.
+3. Drop one of rive vs lottie. Two animation runtimes.
+4. Lazy-load the 1.9 MB exercise_knowledge_seed_en.json — fetch from
+   network or move to Supabase storage rather than bundle as asset.
+5. Confirm health/local_auth/permission_handler call sites have
+   kIsWeb guards so dart2js can tree-shake their bodies on web.
+6. Switch to HTML renderer (--web-renderer html) for ~3 MB savings
+   if CanvasKit features are not required.
+
+Recommendation: 8.85 MB is plausible but not optimal. Top single
+intervention is deferred-route loading; second is consolidating
+PDF and animation packages.
