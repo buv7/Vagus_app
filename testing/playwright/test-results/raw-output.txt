@@ -1,0 +1,18 @@
+Running 8 tests using 1 worker
+
+  ✓  1 tests\vagus_smoke.spec.js:5:3 › VAGUS Web Smoke Tests › 01 - App loads and splash screen renders (4.5s)
+Page title: VAGUS
+  ✓  2 tests\vagus_smoke.spec.js:17:3 › VAGUS Web Smoke Tests › 02 - Auth screen renders (login or signup) (5.3s)
+Console errors found: 1
+ - Error
+  ✓  3 tests\vagus_smoke.spec.js:29:3 › VAGUS Web Smoke Tests › 03 - No JavaScript console errors on load (5.2s)
+  ✓  4 tests\vagus_smoke.spec.js:45:3 › VAGUS Web Smoke Tests › 04 - App is mobile-sized and not broken layout (4.3s)
+  ✓  5 tests\vagus_smoke.spec.js:55:3 › VAGUS Web Smoke Tests › 05 - App renders on tablet viewport (4.5s)
+Load time: 516ms
+  ✓  6 tests\vagus_smoke.spec.js:65:3 › VAGUS Web Smoke Tests › 06 - Performance: page load under 10 seconds (666ms)
+Failed asset requests: 0
+  ✓  7 tests\vagus_smoke.spec.js:77:3 › VAGUS Web Smoke Tests › 07 - No broken images or assets (5.2s)
+Total transferred: 0.01 MB
+  ✓  8 tests\vagus_smoke.spec.js:89:3 › VAGUS Web Smoke Tests › 08 - App bundle size is reasonable (669ms)
+
+  8 passed (31.6s)
