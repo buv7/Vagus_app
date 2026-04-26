@@ -1,0 +1,17 @@
+=== Supabase init ===
+44:  await Supabase.initialize(
+
+=== Platform channel calls with no web guard ===
+
+=== Plugins that likely have no web impl ===
+  file_picker: ^6.1.1
+  flutter_local_notifications: ^18.0.0
+  app_links: ^6.4.0
+  health: ^13.1.4  # Cross-platform health data access (Apple Health, Google Health Connect)
+
+=== Web-unsafe calls in main.dart ===
+
+=== Packages with known no-web support ===
+  flutter_local_notifications: ^18.0.0
+  # flutter_webrtc: ^0.11.7  # Temporarily disabled due to compatibility issues
+  health: ^13.1.4  # Cross-platform health data access (Apple Health, Google Health Connect)

@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +41,28 @@ import 'screens/coaches/coach_application_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Enable semantics on web for accessibility + test automation.
+  // Flutter web does not build the semantics tree by default.
+  if (kIsWeb) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
+
+  // Surface framework errors to the console instead of swallowing them.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    if (kIsWeb) {
+      debugPrint('FlutterError: ${details.exception}');
+      debugPrint('Stack: ${details.stack}');
+    }
+  };
+
+  // Catch unhandled async / zone errors.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('PlatformDispatcher error: $error');
+    debugPrint('Stack: $stack');
+    return false; // let Flutter handle normally
+  };
+
   // Load environment variables from .env file
   await EnvConfig.init();
 
@@ -54,8 +80,11 @@ void main() async {
   // OneSignal notifications disabled - service archived
   // await OneSignalService.instance.init();
 
-  // Initialize local notifications for calendar reminders
-  await NotificationHelper.instance.init();
+  // Initialize local notifications for calendar reminders.
+  // flutter_local_notifications has no web implementation — skip on web.
+  if (!kIsWeb) {
+    await NotificationHelper.instance.init();
+  }
 
   // Initialize settings controller
   final settings = SettingsController();
@@ -85,9 +114,12 @@ class _VagusMainAppState extends State<VagusMainApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeDeepLinks();
-    });
+    // app_links plugin uses platform channels not available on web.
+    if (!kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _initializeDeepLinks();
+      });
+    }
   }
 
   void _initializeDeepLinks() {
@@ -99,7 +131,9 @@ class _VagusMainAppState extends State<VagusMainApp> {
 
   @override
   void dispose() {
-    DeepLinkService().dispose();
+    if (!kIsWeb) {
+      DeepLinkService().dispose();
+    }
     super.dispose();
   }
 
