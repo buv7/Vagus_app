@@ -28,7 +28,8 @@ android {
         applicationId = "com.example.vagus_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // minSdk set to 26 for health plugin (Google Health Connect) compatibility
+        minSdk = 26
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

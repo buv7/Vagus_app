@@ -1,0 +1,639 @@
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\nutrition_state_manager.dart.disabled:428:    // TODO: Load cached nutrition plan and recent meals
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\nutrition_state_manager.dart.disabled:469:      quantity: (json['quantity'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:109:    final allItems = _generateMockFoodItems(query, filters);
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:167:      // TODO: Implement actual image preloading
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:388:  List<FoodItem> _generateMockFoodItems(String? query, List<String>? filters) {
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:389:    // Mock data generation for demonstration
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:396:        kcal: (100 + (i * 10) % 300).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:397:        protein: (5 + (i * 2) % 25).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:398:        carbs: (10 + (i * 3) % 40).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:399:        fat: (2 + (i) % 15).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:416:    // Mock search implementation
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:417:    return _generateMockFoodItems(query, null);
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:485:      calories: (json['calories'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:486:      protein: (json['protein'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:487:      carbs: (json['carbs'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:488:      fat: (json['fat'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:489:      fiber: (json['fiber'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:490:      sodium: (json['sodium'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\unused_cache\performance_service.dart.old:491:      potassium: (json['potassium'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\offline_operation_queue.dart.disabled:214:    // TODO: Implement actual API call to update meal
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\offline_operation_queue.dart.disabled:220:    // TODO: Implement actual API call to add food item
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\offline_operation_queue.dart.disabled:226:    // TODO: Implement actual API call to create custom food
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\offline_operation_queue.dart.disabled:232:    // TODO: Implement actual API call to delete food item
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\offline_operation_queue.dart.disabled:238:    // TODO: Implement actual API call to update nutrition plan
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\voice_interface_service.dart.disabled:218:      quantity: json['quantity'] != null ? (json['quantity'] as num).toDouble() : null,
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\voice_interface_service.dart.disabled:225:          ? (json['confidence'] as num).toDouble()
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:86:      carbonFootprintKg: (json['carbon_footprint_kg'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:87:      waterUsageLiters: (json['water_usage_liters'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:88:      landUseM2: (json['land_use_m2'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:140:      totalCarbonFootprintKg: (json['total_carbon_footprint_kg'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:141:      totalWaterUsageLiters: (json['total_water_usage_liters'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:206:          ? (json['fair_trade_precentage'] as num).toDouble()
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:254:      quantityGrams: (json['quantity_grams'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:259:      estimatedCost: (json['estimated_cost'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:260:      carbonWasted: (json['carbon_wasted'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:311:      carbonSavingsKg: (json['carbon_savings_kg'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:312:      waterSavingsLiters: (json['water_savings_liters'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:313:      costDifference: (json['cost_difference'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:520:        totalCarbon += 5.0; // Mock value
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\sustainability_service.dart.disabled:521:        totalWater += 1000.0; // Mock value
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\safe_network_image.dart.disabled:200:    // TODO: Implement BlurHash decoding
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\safe_network_image.dart.disabled:292:    // TODO: Implement URL transformation for optimization
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\safe_network_image.dart.disabled:376:  // TODO: Implement custom cache manager that only loads from cache
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\safe_network_image.dart.disabled:439:    return originalUrl; // TODO: Implement actual transformation
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\safe_database_service.dart.disabled:417:    // TODO: Integrate with proper logging service (Sentry, Firebase Crashlytics)
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\client\coach_profile_view_screen.dart:262:                        // TODO: Navigate to messaging
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workouts\modern_workout_plan_viewer.dart:699:    // Fallback to mock data if no real data
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\workout\volume_summary_card.dart:135:                    ((e.value['volume'] ?? 0).toDouble()).toStringAsFixed(1), 
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\workout\volume_summary_card.dart:152:    final maxVolume = top.map((e) => (e.value['volume'] ?? 0).toDouble()).fold<double>(0, (p, v) => v > p ? v : p);
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\workout\volume_summary_card.dart:187:            final volume = (top[i].value['volume'] ?? 0).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\billing\billing_payments_screen.dart:69:      // Return mock subscription data
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\billing\billing_payments_screen.dart:98:      // Return mock payment data
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:110:      calories: (json['calories'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:111:      protein: (json['protein'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:112:      carbs: (json['carbs'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:113:      fat: (json['fat'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:114:      fiber: json['fiber'] != null ? (json['fiber'] as num).toDouble() : null,
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:115:      sodium: json['sodium'] != null ? (json['sodium'] as num).toDouble() : null,
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:116:      servingSize: (json['serving_size'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:182:      estimatedCalories: (json['estimated_calories'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:183:      estimatedProtein: (json['estimated_protein'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:184:      estimatedCarbs: (json['estimated_carbs'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:185:      estimatedFat: (json['estimated_fat'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:186:      confidenceScore: (json['confidence_score'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:305:          ? (json['macro_adjustment_percent'] as num).toDouble()
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:362:      latitude: (json['latitude'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:363:      longitude: (json['longitude'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\archive\disabled\restaurant_service.dart.disabled:365:          ? (json['radius_meters'] as num).toDouble()
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\billing\upgrade_screen.dart:373:    // TODO: Integrate with payment gateway (Stripe, RevenueCat, etc.)
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\analytics\analytics_reports_screen.dart:80:      // Calculate growth (mock data for now)
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\analytics\analytics_reports_screen.dart:98:      // Return mock data if database queries fail
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\calling\simple_call_screen.dart:207:          // Mock video placeholder
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\coach\coach_search_screen.dart:155:              // TODO: QR code scanner navigation
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\calling\modern_live_calls_screen.dart:27:  // Mock data as fallback
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\calling\modern_live_calls_screen.dart:28:  final List<Map<String, dynamic>> _mockUpcomingCalls = [
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\calling\modern_live_calls_screen.dart:58:  final List<Map<String, dynamic>> _mockCallHistory = [
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\calling\modern_live_calls_screen.dart:137:          // Use mock data as fallback
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\calling\modern_live_calls_screen.dart:138:          _upcomingCalls = _mockUpcomingCalls;
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\calling\modern_live_calls_screen.dart:139:          _callHistory = _mockCallHistory;
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\set_type_sheet.dart:316:          value: _rpRestSec.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\set_type_sheet.dart:386:          value: _clusterRestSec.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\admin\ticket_models.dart:72:  final bool notifySlack;                   // stubbed to analytics log
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\coach\affiliates\coach_affiliates_screen.dart:195:                // TODO: Open URL
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\workout_analytics_screen.dart:1152:    // TODO: Implement export functionality (PDF, image, share)
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\coach_profile_stats.dart:29:      rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\coach_profile_stats.dart:33:      successRate: (map['success_rate'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:441:├── exercise_history_chart.dart         📝 TODO (reference: progress_chart_widget.dart)
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:442:├── muscle_group_selector.dart          📝 TODO
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:443:├── workout_timer_widget.dart           📝 TODO (reference: rest_timer_widget.dart)
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:444:├── exercise_search_widget.dart         📝 TODO
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:445:├── ai_workout_generator_dialog.dart    📝 TODO (reference: ai_workout_generator_dialog.dart in screens)
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:446:├── workout_attachment_viewer.dart      📝 TODO
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:447:├── client_workout_comment_box.dart     📝 TODO (copy pattern from nutrition)
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:448:├── workout_version_history_viewer.dart 📝 TODO
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:449:├── exercise_demo_player.dart           📝 TODO
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\README.md:450:└── set_rep_input_widget.dart           📝 TODO
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\share\share_preview_screen.dart:173:      // TODO: Implement native share functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\share\share_preview_screen.dart:203:      // TODO: Implement save to gallery functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\admin_analytics_screen.dart:67:    final data = roles.map((r) => countByRole(r).toDouble()).toList();
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\admin_analytics_screen.dart:136:                  value: active.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\admin_analytics_screen.dart:144:                  value: disabled.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\workout_summary.dart:25:      totalVolume: (map['total_volume'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:50:  // Mock data as fallback
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:51:  final List<Map<String, dynamic>> _mockMessages = [
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:228:          // Use mock data as fallback
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:229:          _messages = _mockMessages.map((mock) => Message(
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:230:            id: mock['id'] ?? 'mock_${DateTime.now().millisecondsSinceEpoch}',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:231:            threadId: 'mock_thread',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:232:            senderId: mock['sender'] == 'user' ? 'user_id' : 'coach_id',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:233:            text: mock['content'] ?? '',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:235:            reactions: Map<String, String>.from(mock['reactions'] ?? {}),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_messenger_screen.dart:236:            createdAt: mock['timestamp'] ?? DateTime.now(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\load_suggestion_bar.dart:52:        _barWeight = (sticky['barWeight'] as num).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\announcements\announcement.dart:94:      ctr: (map['ctr'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_coach_messenger_screen.dart:65:    // Mock data for now - replace with actual message loading
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\admin_ops_screen.dart:554:        // TODO: Implement acknowledge
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\admin_ops_screen.dart:557:        // TODO: Implement extend
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\admin_ops_screen.dart:560:        // TODO: Implement escalate
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\knowledge\knowledge_models.dart:59:          .map((e) => (e as num).toDouble())
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\intensifier_models.dart:117:        ?.map((e) => (e as num).toDouble())
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\progress_chart_widget.dart:140:      final index = entry.key.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\progress_chart_widget.dart:217:          maxX: (spots.length - 1).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\progress_chart_widget.dart:251:      final index = entry.key.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\progress_chart_widget.dart:309:          maxX: (spots.length - 1).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\progress_chart_widget.dart:332:      final index = entry.key.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\progress_chart_widget.dart:390:          maxX: (spots.length - 1).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\progress_chart_widget.dart:413:      final index = entry.key.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_client_messages_screen.dart:1438:        // TODO: Send attachment through MessagesService
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_client_messages_screen.dart:1451:        // TODO: Send attachment through MessagesService
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_client_messages_screen.dart:1466:        // TODO: Send attachment through MessagesService
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\modern_client_messages_screen.dart:1479:        // TODO: Send attachment through MessagesService
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\share\face_blur_overlay.dart:62:    // TODO: Implement actual face detection
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\exercise_picker_dialog.dart:895:      return 'Exercise library table not found.\nPlease run migration:\n20251002000000_remove_mock_data_infrastructure.sql';
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\growth\referrals_models.dart:129:      bountyUsd: (json['bounty_usd'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\growth\referrals_models.dart:175:      amount: (json['amount'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\offline_sync_manager.dart:162:      weightUsed: (item.data['weight_used'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\message_settings_screen.dart:27:  bool _autoDownloadMedia = true;
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\message_settings_screen.dart:69:          _autoDownloadMedia = response['auto_download_media'] ?? true;
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\message_settings_screen.dart:102:        'auto_download_media': _autoDownloadMedia,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\message_settings_screen.dart:265:                    value: _autoDownloadMedia,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\message_settings_screen.dart:266:                    onChanged: (v) => setState(() => _autoDownloadMedia = v),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\fatigue_score.dart:17:      local: (json['local'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\fatigue_score.dart:18:      systemic: (json['systemic'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\fatigue_score.dart:19:      connective: (json['connective'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\fatigue_score.dart:125:      weight: (json['weight'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\fatigue_score.dart:127:      rir: (json['rir'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\fatigue_score.dart:134:          ?.map((e) => (e as num).toDouble())
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\dashboard\modern_coach_dashboard.dart:368:            weightData.putIfAbsent(userId, () => []).add(weight.toDouble());
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\exercise_completion_widget.dart:496:          value: value.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\exercise_completion_widget.dart:497:          min: min.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\exercise_completion_widget.dart:498:          max: max.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\widgets\exercise_completion_widget.dart:578:      weightUsed: (map['weight_used'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\settings\profile_settings_screen.dart:208:                                      // TODO: Implement image picker
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\fatigue_models.dart:145:      overallRecovery: (json['overall_recovery'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\exercise_detail_sheet.dart:894:    // For demonstration, use a mock client ID
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\exercise_detail_sheet.dart:1000:    // TODO: Implement proper set type info retrieval from stored logs
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\exercise_detail_sheet.dart:1552:                    failed: false, // TODO: Detect failure from execution metadata
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\workout\exercise_detail_sheet.dart:1553:                    actualRestSec: null, // TODO: Track actual rest time
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\messaging\client_threads_screen.dart:251:              // TODO: Implement search functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\dashboard\modern_client_dashboard.dart:325:      // Add mock recent activities for now
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\dashboard\modern_client_dashboard.dart:649:                              // TODO: Open native share sheet with shareAsset
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\dashboard\modern_client_dashboard.dart:1566:    final distanceKm = (_healthData?['distance_km'] as num?)?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\weekly_volume_detail_screen.dart:2162:                setsChange.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\weekly_volume_detail_screen.dart:2171:                daysChange.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\weekly_volume_detail_screen.dart:2350:                      (index) => FlSpot(index.toDouble(), _weeklyVolumes[index]),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\settings\notification_preferences_screen.dart:155:                          value: _preferences!.reminderMinutesBefore.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\exercise_library_models.dart:269:      similarityScore: (map['similarity_score'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\cardio_session.dart:249:      speed: (map['speed'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\cardio_session.dart:250:      incline: (map['incline'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\cardio_session.dart:338:      incline: (map['incline'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\exercise.dart:92:      weight: (map['weight'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\workout\exercise.dart:96:      tonnage: (map['tonnage'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\settings\music_settings_screen.dart:405:                              // TODO: Navigate to billing screen
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\settings\music_settings_screen.dart:466:    RangeValues rangeValues = RangeValues(minBpm.toDouble(), maxBpm.toDouble());
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:150:  // TODO: Implement Intent-based shortcuts when Flutter 3.19+ is available
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:198:    // TODO: Load from exercise_library table
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:924:                        // TODO: Handle menu actions
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:994:                // TODO: Show templates
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:1005:                // TODO: Show settings
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:2627:        : (totalVolumeRaw is int ? totalVolumeRaw.toDouble() : 0.0);
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:2677:                      widthFactor: percentage.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:2774:        : (tonnageRaw is int ? tonnageRaw.toDouble() : 0.0);
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\revolutionary_plan_builder_screen.dart:2823:        : (avgDurationRaw is int ? avgDurationRaw.toDouble() : 0.0);
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\price_editor_screen.dart:404:          (price['cost_per_unit'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\coach_profile\coach_profile_screen.dart:300:                    // TODO: Implement image picker
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\workout\fatigue_recovery_screen.dart:116:              value: value.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\settings\health_connections_screen.dart:44:      // TODO: Implement when health service is connected to database
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\settings\health_connections_screen.dart:45:      debugPrint('Loading connected sources - stubbed');
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\settings\health_connections_screen.dart:303:    // TODO: Get actual last sync time from database
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\support\support_inbox_screen.dart:534:        options: ['admin1', 'admin2', 'admin3'], // TODO: Get from service
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\support\support_inbox_screen.dart:679:    // TODO: Get from service
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\support\support_inbox_screen.dart:1317:            userId: 'unknown', // TODO: get actual user ID from ticket
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\support\support_inbox_screen.dart:1319:              // TODO: insert text into reply composer
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\coach_profile\widgets\profile_content.dart:196:    // Mock stats data - would come from profile in production
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\support\widgets\ticket_card.dart:67:    // TODO: Check existing claim in DB; default false for now
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\admin\support\widgets\ticket_card.dart:141:                              // TODO: Get actual teammates from presence service
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\progress\modern_progress_tracker.dart:31:  // Mock data as fallback
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\progress\modern_progress_tracker.dart:32:  final List<Map<String, dynamic>> _mockProgressPhotos = [
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\progress\modern_progress_tracker.dart:161:          // Use mock data as fallback
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\progress\modern_progress_tracker.dart:162:          _progressPhotos = _mockProgressPhotos;
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\plans\plans_dashboard_screen.dart:855:        // TODO: Implement duplicate
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\plans\plans_dashboard_screen.dart:861:        // TODO: Implement save as template
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\plans\plans_dashboard_screen.dart:867:        // TODO: Implement assign to client
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\plans\plans_dashboard_screen.dart:873:        // TODO: Implement archive
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\plans\plans_dashboard_screen.dart:1246:      // TODO: Implement proper share functionality (export as JSON, generate share cards, etc.)
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\files\upload_photos_screen.dart:535:            // TODO: Navigate to file previewer
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\files\upload_photos_screen.dart:626:                  // TODO: Navigate to file previewer
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\files\upload_photos_screen.dart:648:                  // TODO: Implement share functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\files\coach_file_feedback_screen.dart:609:                    // TODO: Navigate to file previewer
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\files\file_manager_screen.dart:602:                  // TODO: Open file with appropriate app
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:47:      // show mock data instead of crashing
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:58:        // If database function doesn't exist, show mock data
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:62:            _supplements = _getMockSupplements();
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:77:  List<SupplementDueToday> _getMockSupplements() {
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:78:    // Return mock supplement data when database functions are not available
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:81:        supplementId: 'mock-1',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:98:        supplementId: 'mock-2',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:114:        supplementId: 'mock-3',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:143:      // For mock data, just show success message
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:144:      if (supplement.supplementId.startsWith('mock-')) {
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:195:      // For mock data, just show success message
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplements_today_screen.dart:196:      if (supplement.supplementId.startsWith('mock-')) {
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\notes\coach_note_screen.dart:519:                                // TODO: Navigate to related note
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplement_list_screen.dart:251:                    // TODO: Navigate to edit supplement
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplement_list_screen.dart:421:          // TODO: Navigate to add supplement screen
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\supplements\supplement_list_screen.dart:495:              // TODO: Navigate to add supplement screen
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\progress\metrics_card.dart:94:      deltas['weight'] = ((latest['weight_kg'] as num) - (previous['weight_kg'] as num)).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\progress\metrics_card.dart:97:      deltas['body_fat'] = ((latest['body_fat_percent'] as num) - (previous['body_fat_percent'] as num)).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\progress\metrics_card.dart:100:      deltas['waist'] = ((latest['waist_cm'] as num) - (previous['waist_cm'] as num)).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\progress\metrics_card.dart:174:                DateTime.parse(m['date']).millisecondsSinceEpoch.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\progress\metrics_card.dart:175:                (m['weight_kg'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\notes\voice_recorder.dart:37:      final audio = await picker.pickVideo(source: ImageSource.gallery); // TODO: Change to audio picker
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\food_snap_screen.dart:655:    // TODO: Implement food item editing dialog
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\meal_editor.dart:179:      // TODO: Get current user ID from auth service
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\meal_editor.dart:878:          // TODO: Implement smart replacement with low-sodium alternatives
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:23:          return Micros(m.map((k, v) => MapEntry(k, (v as num).toDouble())));
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:29:      return Micros(src.map((k, v) => MapEntry(k, (v as num).toDouble())));
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:245:        amount: (m['amount'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:247:        calories: (m['calories'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:248:        protein: (m['protein'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:249:        carbs: (m['carbs'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:250:        fat: (m['fat'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:251:        sodiumMg: (m['sodium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:252:        potassiumMg: (m['potassium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:254:        costPerUnit: (m['cost_per_unit'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:468:        servings: (m['servings'] as num?)?.toDouble() ?? 1.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:469:        servingSize: (m['serving_size'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:471:        calories: (m['calories'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:472:        protein: (m['protein'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:473:        carbs: (m['carbs'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:474:        fat: (m['fat'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:475:        sodiumMg: (m['sodium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\recipe.dart:476:        potassiumMg: (m['potassium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\digestion_tracking_screen.dart:116:              value: _bloatLevel.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\digestion_tracking_screen.dart:181:              value: _complianceScore.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\pantry_screen.dart:22:  String _currentUserId = ''; // TODO: Get from auth service
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\pantry_screen.dart:40:      // TODO: Get current user ID from auth service
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\health\health_rings.dart:214:      final activeKcal = _todayData!['active_kcal']?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\health\health_rings.dart:215:      final sleepMinutes = _todayData!['sleep_minutes']?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\recipe_library_screen.dart:88:      // TODO: Get current user ID from auth service
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\recipe_library_screen.dart:636:              _coverageFor(recipe.id, 'current_user_id'), // TODO: Get actual user ID
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\recipe_library_screen.dart:670:              _coverageFor(recipe.id, 'current_user_id'), // TODO: Get actual user ID
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\recipe_library_screen.dart:705:    // TODO: Navigate to recipe viewer screen
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\recipe_library_screen.dart:712:    // TODO: Navigate to recipe editor screen
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:67:      key: Key(meal.label), // TODO: Use meal.id when added to Meal model
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:150:                                  value: false, // TODO: Add checkedInAt to Meal model
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:165:                                _formatTime(DateTime.now()), // TODO: Use meal.createdAt
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:169:                                _getMealTypeIcon('meal'), // TODO: Use meal.mealType
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:216:    // TODO: Add photo_url field to Meal model when implementing meal photos
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:229:        _getMealTypeIcon('meal'), // TODO: Use meal.mealType when added
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:312:    // TODO: Implement when Meal model includes items with macros
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:317:    // TODO: Implement when Meal model includes items with macros
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:322:    // TODO: Implement when Meal model includes items with macros
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\meal_timeline_card.dart:327:    // TODO: Implement when Meal model includes items with macros
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:146:        sodium: item.sodiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:147:        potassium: item.potassiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:187:        sodium: item.sodiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:188:        potassium: item.potassiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:202:        sodium: item.sodiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:203:        potassium: item.potassiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\advanced_food_picker.dart:756:    // TODO: Implement barcode scanner
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\nutrition\macro_table_row.dart:140:        // TODO: Implement these callbacks
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\pantry_item.dart:31:      amount: (map['amount'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:68:    // TODO: Load scan history from storage
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:608:    // TODO: Implement flash toggle
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:613:    // TODO: Implement camera focus
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\barcode_scanner_tab.dart:702:              // TODO: Open custom food creator with barcode
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\components\plan_viewer\viewer_view.dart:470:                          // TODO: Open chaos control settings/mode selector
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\components\plan_viewer\viewer_view.dart:597:    // TODO: Implement PDF export
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\components\plan_viewer\viewer_view.dart:604:    // TODO: Implement grocery list generation
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\components\plan_viewer\viewer_view.dart:611:    // TODO: Implement calendar integration
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\components\plan_viewer\viewer_view.dart:618:    // TODO: Implement plan sharing
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:247:      amount: (map['amount'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:248:      protein: (map['protein'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:249:      carbs: (map['carbs'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:250:      fat: (map['fat'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:251:      kcal: (map['kcal'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:252:      sodium: (map['sodium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:253:      potassium: (map['potassium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:255:      servings: (map['servings'] as num?)?.toDouble() ?? 1.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:256:      costPerUnit: (map['cost_per_unit'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:332:      totalProtein: (map['totalProtein'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:333:      totalCarbs: (map['totalCarbs'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:334:      totalFat: (map['totalFat'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:335:      totalKcal: (map['totalKcal'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:336:      totalSodium: (map['totalSodium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:337:      totalPotassium: (map['totalPotassium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:372:      totalProtein: (map['totalProtein'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:373:      totalCarbs: (map['totalCarbs'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:374:      totalFat: (map['totalFat'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:375:      totalKcal: (map['totalKcal'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:376:      totalSodium: (map['totalSodium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\nutrition_plan.dart:377:      totalPotassium: (map['totalPotassium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\custom_foods_tab.dart:1120:    // TODO: Implement image picker (camera or gallery)
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\growth\referral_code_input.dart:59:      // TODO: Call backend to validate code
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\money.dart:128:      (map['amount'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:641:    // TODO: Implement nutrition export (image/PDF)
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\detailed_nutrition_modal.dart:653:    // TODO: Add food to current meal
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\meal.dart:87:      quantity: (json['quantity'] ?? 1.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\meal.dart:108:      protein: (nutrition?['protein'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\meal.dart:109:      carbs: (nutrition?['carbs'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\meal.dart:110:      fat: (nutrition?['fat'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\meal.dart:111:      kcal: (nutrition?['kcal'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\meal.dart:112:      sodium: (nutrition?['sodium'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\meal.dart:113:      potassium: (nutrition?['potassium'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\coach\analytics\analytics_tile.dart:137:              return FlSpot(entry.key.toDouble(), entry.value);
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\food_search_result_card.dart:369:                    '${_currentPortion.toStringAsFixed(_currentPortion == _currentPortion.roundToDouble() ? 0 : 2)} serving${_currentPortion != 1 ? 's' : ''}',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\food_search_result_card.dart:569:              'Add ${_currentPortion != 1 ? '${_currentPortion.toStringAsFixed(_currentPortion == _currentPortion.roundToDouble() ? 0 : 2)} servings' : 'to meal'}',
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:481:    // TODO: Implement select all from current tab
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\food_picker_2_0.dart:494:    // TODO: Implement quantity adjustment for all selected foods
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\nutrition\recipe_quick_swap_sheet.dart:52:      // TODO: Get current user ID from auth service
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\nutrition\recipe_quick_swap_sheet.dart:91:        final userId = 'current_user_id'; // TODO: Get actual user ID
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\grocery_item.dart:82:        amount: (m['amount'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\smart_food_search.dart:142:        sodium: catalogItem.sodiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\smart_food_search.dart:143:        potassium: catalogItem.potassiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\smart_food_search.dart:569:    // TODO: Implement speech-to-text
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\smart_food_search.dart:581:    // TODO: Stop speech-to-text service
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\favorites_tab.dart:452:          // TODO: Switch to search tab
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:95:    // TODO: Implement camera permission check
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:647:    // TODO: Implement flash toggle
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\smart_barcode_scanner.dart:652:    // TODO: Show scan history modal
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:65:    // TODO: Load favorite status from backend
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:70:    // TODO: Check if food is in user's favorites
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:464:                      _quantity == _quantity.roundToDouble()
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\enhanced_food_card.dart:567:    // TODO: Update favorite status in backend
+C:\Users\alhas\StudioProjects\vagus_app\lib\components\nutrition\recipe_item_tile.dart:275:                    // TODO: Navigate to recipe details
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\coach\trend_chart.dart:23:    final maxY = (xs.map((e) => e.value).fold<double>(0, (p, c) => c > p ? c : p) * 1.2).clamp(1, double.infinity).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\coach\trend_chart.dart:55:                    maxX: (xs.length - 1).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\coach\trend_chart.dart:62:                        spots: List.generate(xs.length, (i) => FlSpot(i.toDouble(), xs[i].value)),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\components\meal_detail\comments_thread.dart:403:                    // TODO: Implement coach notes functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\food_item.dart:44:      protein: (map['protein'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\food_item.dart:45:      carbs: (map['carbs'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\food_item.dart:46:      fat: (map['fat'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\food_item.dart:47:      kcal: (map['kcal'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\food_item.dart:48:      sodium: (map['sodium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\food_item.dart:49:      potassium: (map['potassium'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\models\nutrition\food_item.dart:50:      amount: (map['amount'] as num?)?.toDouble() ?? 100.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\schedule_call_dialog.dart:220:                              value: _maxParticipants.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:63:        sodium: catalogItem.sodiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:64:        potassium: catalogItem.potassiumMg?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\widgets\shared\recent_foods_tab.dart:296:          // TODO: Switch to search tab
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\files\inline_file_picker.dart:417:    // TODO: Navigate to file previewer
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\coach_nutrition_dashboard.dart:383:                        // TODO: Add isActive field to NutritionPlan model
+C:\Users\alhas\StudioProjects\vagus_app\lib\screens\nutrition\barcode_scan_screen.dart:563:    // TODO: Implement manual product entry
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\call_header.dart:365:    // TODO: Implement call settings dialog
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\call_header.dart:447:    // TODO: Implement recording options
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\files\file_previewer.dart:590:    // TODO: Implement file download functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\call_chat.dart:396:              // TODO: Implement emoji picker
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\call_session_card.dart:446:    // TODO: Implement session sharing
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\call_controls.dart:213:            // TODO: Implement speaker toggle
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\call_controls.dart:222:            // TODO: Implement camera switch
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\calling\call_controls.dart:268:    // TODO: Implement more options menu
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\coach\quick_actions_grid.dart:48:          _unreadMessages = 3; // Mock unread count
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\coach\quick_actions_grid.dart:49:          _hasActiveClients = true; // Mock active clients
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\files\attach_to_workout_button.dart:361:    // TODO: Implement video recording functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\files\attach_to_workout_button.dart:368:    // TODO: Implement photo capture functionality
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\files\attach_to_workout_button.dart:375:    // TODO: Implement file selector from user's uploaded files
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\files\attach_to_note_button.dart:516:    // TODO: Implement file selector from user's uploaded files
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\auth\stats_display.dart:99:          tween: Tween(begin: 0, end: value.toDouble()),
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\fab\simple_glassmorphism_fab.dart:687:        .map((p) => Offset(p.dx.roundToDouble(), p.dy.roundToDouble()))
+C:\Users\alhas\StudioProjects\vagus_app\lib\widgets\fatigue\fatigue_trend_chart.dart:60:      spots.add(FlSpot(i.toDouble(), score.toDouble()));
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coaches\coach_repository.dart:34:      ratingAvg: map['rating_avg']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coaches\coach_repository.dart:75:      ratingAvg: map['rating_avg']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coaches\coach_repository.dart:130:          'rating_avg': null, // TODO: Implement ratings when available
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coaches\coach_repository.dart:173:        'rating_avg': null, // TODO: Implement ratings when available
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\accessibility\accessibility_service.dart:30:    // TODO: Detect screen reader (TalkBack/VoiceOver)
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\cardio\manual_cardio_service.dart:67:      distanceMeters: (map['distance_m'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\cardio\manual_cardio_service.dart:68:      avgHeartRate: (map['avg_hr'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\cardio\manual_cardio_service.dart:69:      maxHeartRate: (meta['max_hr'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\cardio\manual_cardio_service.dart:70:      caloriesBurned: (map['kcal'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\cardio\manual_cardio_service.dart:228:        totalDistanceMeters += (workout['distance_m'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\cardio\manual_cardio_service.dart:229:        totalCalories += (workout['kcal'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:43:      // TODO: Replace with your real calendar fetch if present
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:44:      // For now, return mock data to demonstrate the feature
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:45:      return _generateMockEvents(hours);
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:113:  /// Generates mock events for demonstration
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:114:  List<PeekEvent> _generateMockEvents(int hours) {
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:119:    // Generate 2-4 mock events over the next 48 hours
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:145:          title: _getMockEventTitle(random),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:155:  /// Gets a random mock event title
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_peek_service.dart:156:  String _getMockEventTitle(Random random) {
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_analytics_service.dart:193:      // TODO: Get actual session ratings
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_analytics_service.dart:239:      // TODO: Calculate average response time
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_analytics_service.dart:371:        }).fold<double>(0.0, (sum, s) => sum + ((s['value'] as num?)?.toDouble() ?? 0.0));
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_analytics_service.dart:380:      // TODO: Calculate net energy balance
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\fatigue\fatigue_dashboard_service.dart:354:          final rpe = (log['rpe'] as num).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\fatigue\fatigue_dashboard_service.dart:357:          rir = (log['rir'] as num).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\fatigue\fatigue_dashboard_service.dart:361:          weight: (log['weight'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\fatigue\fatigue_dashboard_service.dart:374:        final weight = (log['weight'] as num?)?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\fatigue\fatigue_dashboard_service.dart:375:        final rir = (log['rir'] as num?)?.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\contextual_memory_service.dart:55:        final sim = (e['similarity'] as num?)?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\contextual_memory_service.dart:82:          'relevance_score': (e['similarity'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\calendar_quick_book_service.dart:79:      // TODO: If you have an existing booking service, call it here
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\error\error_handling_service.dart:262:    // TODO: Send to crash reporting service (Sentry, Firebase Crashlytics, etc.)
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_session_service.dart:12:    // stubbed example
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_messaging_service.dart:384:      // TODO: Implement AI-powered smart replies
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\intake\intake_service.dart:347:    // TODO: Implement Google Forms integration
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\intake\intake_service.dart:357:    // TODO: Implement webhook setup
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\compliance_service.dart:40:      // TODO: In production, trigger background job to generate actual report
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\core\logger.dart:143:    // TODO: Send to remote logging service in production (e.g., Sentry, Firebase Crashlytics)
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_presence_service.dart:71:        final mockPeers = [
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_presence_service.dart:81:        peers.value = mockPeers;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:58:      // TODO: call Edge function 'referrals_attrib'
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:183:      // TODO: Use PlanAccessManager.addProDays(7)
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:187:      // TODO: Use RankEvents.record('+50', meta:{reason:'referral'})
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:217:        // TODO: Use StreakService.grantShieldIfEligible
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:233:      // TODO: Use NotificationHelper to send push notifications
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:302:    // TODO: Implement proper rate limiting
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:394:      // TODO: call Edge function to generate CSV
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:414:      // TODO: Implement proper analytics logging
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\referrals_service.dart:425:      // TODO: Use clipboard service
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_inbox_service.dart:204:        final value = (row['value'] is num) ? (row['value'] as num).toDouble() : 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_inbox_service.dart:225:  /// TODO: Re-implement when workout_sessions table is deployed with correct schema
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_inbox_service.dart:268:        final kcal = (row['kcal'] is num) ? (row['kcal'] as num).toDouble() : 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_inbox_service.dart:278:        final kcal = (row['calories'] is num) ? (row['calories'] as num).toDouble() : 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\health\health_service.dart:71:      value: json['value']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\health\health_service.dart:132:      distanceMeters: json['distance_m']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\health\health_service.dart:133:      avgHeartRate: json['avg_hr']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\health\health_service.dart:134:      calories: json['kcal']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\health\health_service.dart:520:      value = numValue.numericValue.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\health\health_service.dart:689:/// This adapter remains stubbed as it requires Huawei-specific SDK integration
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\health\health_service.dart:963:      debugPrint('findOverlappingWatchWorkout - stubbed, returning demo workout');
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\weekly_review_service.dart:248:        final v = (row['value'] is num) ? (row['value'] as num).toDouble() : 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\weekly_review_service.dart:275:          final kcal = (mealSummary['totalKcal'] as num?)?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\weekly_review_service.dart:307:        final kc = (row['kcal'] is num) ? (row['kcal'] as num).toDouble() : 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\weekly_review_service.dart:409:            final weight = (exercise['weight'] as num?)?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\weekly_review_service.dart:525:    final dCardio  = Delta((curr.summary.cardioMinutes - prev.summary.cardioMinutes).toDouble());
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_tools.dart:5:    debugPrint('openSupportForUser $userId'); // TODO: prefill support ticket compose
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_tools.dart:8:    debugPrint('sendPasswordReset $email'); // TODO: call backend function; client cannot do admin auth ops
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_tools.dart:11:    debugPrint('markEmailVerified $userId'); // TODO
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_tools.dart:14:    debugPrint('clearDevices $userId'); // TODO: wipe push tokens row if exists
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_tools.dart:17:    debugPrint('impersonate as $email'); // TODO: local "actingAs" flag + prominent banner; revert action
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\growth\passive_virality_service.dart:57:      // TODO: Check for PR achievements, weight trends, mission completions
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_client_management_service.dart:45:      avgRating: (data['avg_rating'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_client_management_service.dart:207:        'avg_rating': 4.5, // TODO: Calculate from actual ratings
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_live_session_service.dart:36:      messageId: 'mock-${DateTime.now().millisecondsSinceEpoch}',
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\calendar\event_service.dart:625:      // TODO: Implement supplement events integration
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_ticket_service.dart:93:  // Escalations (stubbed)
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_ticket_service.dart:134:  // Playbooks (stubbed)
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:59:      // TODO: call edge function 'google_connect'
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:64:      final mockEmail = 'coach${Random().nextInt(1000)}@example.com';
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:69:        'email': mockEmail,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:141:      // TODO: Also save to generic attachment table if exists
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:172:      // TODO: call edge function 'google_export'
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:177:      final mockSheetUrl = 'https://docs.google.com/spreadsheets/d/mock_${Random().nextInt(10000)}';
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:183:            'sheet_url': mockSheetUrl,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:190:      return mockSheetUrl;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:303:    // TODO: Implement proper verification
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:310:      // TODO: Implement Forms payload processing
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:384:      // TODO: call edge function 'google_export'
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:389:      final mockSheetUrl = 'https://docs.google.com/spreadsheets/d/mock_${Random().nextInt(10000)}';
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:395:            'sheet_url': mockSheetUrl,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\google\google_apps_service.dart:416:      // TODO: Implement proper analytics logging
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\nutrition_ai.dart:198:          protein: (foodData['protein_g'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\nutrition_ai.dart:199:          carbs: (foodData['carbs_g'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\nutrition_ai.dart:200:          fat: (foodData['fat_g'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\nutrition_ai.dart:201:          kcal: (foodData['kcal'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\nutrition_ai.dart:202:          sodium: (foodData['sodium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\nutrition_ai.dart:203:          potassium: (foodData['potassium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\nutrition_ai.dart:204:          amount: (foodData['portion_grams'] as num?)?.toDouble() ?? 100.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_incident_service.dart:286:  // ---- AI ASSIST (stubbed) ----------------------------------------------------
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\retention\dopamine_service.dart:39:      // TODO: Check for PRs, new messages, completed missions, etc.
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_plan_builder_service.dart:48:      avgRating: (data['avg_rating'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_plan_builder_service.dart:96:      avgRating: (data['avg_rating'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_plan_builder_service.dart:302:        final ratings = ratingsResponse.map((r) => (r['rating'] as num).toDouble()).toList();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_plan_builder_service.dart:350:        final ratings = ratingsResponse.map((r) => (r['rating'] as num).toDouble()).toList();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\coach\coach_plan_builder_service.dart:623:        final ratings = ratingsResponse.map((r) => (r['rating'] as num).toDouble()).toList();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_support_service.dart:1280:    // TODO: persist claim to DB
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_support_service.dart:1305:    // Stubbed mixed events (system + agent + tags + priority + messages)
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_support_service.dart:1319:    // TODO: fetch policy/deadline from DB; stub logic:
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\admin\admin_support_service.dart:1485:    // TODO: wire to Supabase; deterministic fake for UI
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\knowledge_action_service.dart:20:    // Pattern: "TODO:", "REMINDER:", "FOLLOW UP:", "ALERT:"
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\knowledge_action_service.dart:22:      'TODO:': KnowledgeActionType.task,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:99:      distance: json['distance']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:103:      calories: json['calories']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:104:      avgHeartRate: json['avg_heart_rate']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:105:      maxHeartRate: json['max_heart_rate']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:106:      avgPace: json['avg_pace']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:108:      avgSpeed: json['avg_speed']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:112:      confidence: json['confidence']?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:400:      double confidence = parsed['confidence']?.toDouble() ?? 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:418:        distance: parsed['distance']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:422:        calories: parsed['calories']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:423:        avgHeartRate: parsed['avg_heart_rate']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:424:        maxHeartRate: parsed['max_heart_rate']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:425:        avgPace: parsed['avg_pace']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:427:        avgSpeed: parsed['avg_speed']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ocr\ocr_cardio_service.dart:806:        'success_rate': total > 0 ? (confirmed / total * 100).roundToDouble() : 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:48:      correlation: (json['correlation'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:97:      x: (json['x'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:98:      y: (json['y'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:139:      average: (json['average'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:140:      rollingAverage7Day: (json['rolling_average_7_day'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:141:      rollingAverage30Day: (json['rolling_average_30_day'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:146:      changePercent: (json['change_percent'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:179:      value: (json['value'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:181:          ? (json['rolling_average'] as num).toDouble()
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:226:      currentValue: (json['current_value'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:227:      targetValue: (json['target_value'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:228:      predictedValue: (json['predicted_value'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:230:      confidenceScore: (json['confidence_score'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:272:      frequency: (json['frequency'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:328:      value: (json['value'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:329:      expectedValue: (json['expected_value'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:330:      deviationPercent: (json['deviation_percent'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:438:      complianceRate: (json['compliance_rate'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:439:      progressPercent: (json['progress_percent'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\analytics_engine_service.dart:632:        value: (log[macro] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\allergy_medical_service.dart:775:      totalCalories += (log['calories'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\allergy_medical_service.dart:776:      totalProtein += (log['protein'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\allergy_medical_service.dart:777:      totalCarbs += (log['carbs'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\allergy_medical_service.dart:778:      totalFat += (log['fat'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:119:      final confidence = (jsonData['confidence'] as num?)?.toDouble() ?? 0.5;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:136:        protein: (nutrition['protein_g'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:137:        carbs: (nutrition['carbs_g'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:138:        fat: (nutrition['fat_g'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:139:        kcal: (nutrition['calories'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:140:        sodium: (nutrition['sodium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:141:        potassium: (nutrition['potassium_mg'] as num?)?.toDouble() ?? 0.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:142:        amount: (jsonData['estimated_weight_grams'] as num?)?.toDouble() ?? 100.0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:219:        final servingSize = (item['serving_size_g'] as num?)?.toDouble() ?? 100.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:221:        totalCalories += (item['calories'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:222:        totalProtein += (item['protein_g'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:223:        totalCarbs += (item['carbohydrates_total_g'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:224:        totalFat += (item['fat_total_g'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:225:        totalSodium += (item['sodium_mg'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\ai\food_vision_service.dart:226:        totalPotassium += (item['potassium_mg'] as num?)?.toDouble() ?? 0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\navigation\notification_deep_link_handler.dart:353:    // TODO: Implement snooze logic via backend
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\navigation\notification_deep_link_handler.dart:398:              // TODO: Send reply to coach
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\navigation\notification_deep_link_handler.dart:425:            // TODO: Add date/time picker
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\costing_service.dart:154:        final amount = (item['amount'] ?? 0.0).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\costing_service.dart:246:          (response['cost_per_unit'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\costing_service.dart:270:    // TODO: Get from user preferences when available
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\costing_service.dart:279:      // TODO: Add currency field to Preferences model
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\costing_service.dart:385:          (row['cost_per_unit'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\exercise_local_log_service.dart:92:          .map((e) => (e as num?)?.toDouble())
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\exercise_local_log_service.dart:109:      weight: (j['weight'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\exercise_local_log_service.dart:111:      rir: (j['rir'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:6:// TODO: PDF export temporarily disabled due to Windows path resolution issue
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:662:      consistency: consistency.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:747:  /// TODO: Temporarily disabled due to Windows path resolution issue with PDF package
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:1243:      averageIntensity: averageIntensity.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:1330:        muscleGroupCounts.values.map((v) => v.toDouble()).toList());
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:1337:      balanceScore: balanceScore.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:1578:      weightUsed: (map['weight_used'] as num?)?.toDouble() ?? 0,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:1583:      estimated1RM: (map['estimated_1rm'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_service.dart:1584:      volume: (map['volume'] as num?)?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\notifications\notification_helper.dart:91:    // TODO: Navigate to calendar or specific event if needed
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\notifications\notification_helper.dart:97:      // TODO: Implement iOS permission handling when flutter_local_notifications supports it
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:46:      portionGrams: (json['portion_grams'] ?? 100.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:47:      kcal: (json['kcal'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:48:      proteinG: (json['protein_g'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:49:      carbsG: (json['carbs_g'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:50:      fatG: (json['fat_g'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:338:          'kcal': (nutrition['kcal'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:339:          'protein_g': (nutrition['protein_g'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:340:          'carbs_g': (nutrition['carbs_g'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:341:          'fat_g': (nutrition['fat_g'] ?? 0.0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:395:    // TODO: Implement user-specific recent foods tracking
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:419:      // TODO: Query user_custom_foods table from Supabase
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:431:      // TODO: Delete from user_custom_foods table
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:446:      // TODO: Insert into user_custom_foods table
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:457:      // TODO: Update user_custom_foods table
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:468:      // TODO: Query user favorite foods from Supabase
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_catalog_service.dart:479:    // TODO: Implement AI-powered food suggestions based on:
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_database_service.dart:176:      servingSize: json['servingSize']?.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\food_database_service.dart:225:      return (amount is num) ? amount.toDouble() : 0.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\gamification_service.dart:619:        progress: (json['progress'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\simple_calling_service.dart:8:/// Provides all core calling functionality with mock video/audio
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_metrics_service.dart:59:          'volume': (v['volume'] ?? 0).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_metrics_service.dart:87:    if (v is int) return v.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\ANALYTICS_README.md:825:      home: VolumeProgressChart(trendData: mockTrendData),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\supplements\supplement_service.dart:714:      final totalScheduled = 0; // TODO: Calculate from schedules
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\integration_ecosystem_service.dart:213:      totalAmount: (json['total_amount'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\integration_ecosystem_service.dart:261:      price: json['price'] != null ? (json['price'] as num).toDouble() : null,
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\integration_ecosystem_service.dart:321:      weeklyPrice: (json['weekly_price'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\integration_ecosystem_service.dart:667:    // For now, return mock ID
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\integration_ecosystem_service.dart:715:    // Mock pricing calculation
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:144:      calorieTarget: (json['calorie_target'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:145:      proteinTarget: (json['protein_target'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:146:      carbTarget: (json['carb_target'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:147:      fatTarget: (json['fat_target'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:348:      dailyCalories: (json['daily_calories'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:349:      proteinGrams: (json['protein_grams'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:350:      carbGrams: (json['carb_grams'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:351:      fatGrams: (json['fat_grams'] as num).toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\macro_cycling_service.dart:409:          ? (json['calorie_multiplier'] as num).toDouble()
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\progression_analytics_service.dart:65:      'max_volume': sorted.map((e) => (e.volume ?? 0).toDouble()).reduce((a, b) => a > b ? a : b),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\progression_analytics_service.dart:66:      'total_sessions': sorted.length.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\progression_analytics_service.dart:73:      weeklyGainPercentage: weeklyGain.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\progression_analytics_service.dart:91:    // TODO: ExerciseHistoryEntry has exerciseId not exerciseName
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\progression_analytics_service.dart:413:        .map((e) => e.rirActual!.toDouble())
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\fatigue_engine.dart:109:    double baseCost = set.reps!.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\streaks\streak_service.dart:278:  // ===== ADMIN METHODS (stubbed for future implementation) =====
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\intensifier_rule_engine.dart:149:    final reductionPercent = (drop['weight_reduction_percent'] as num?)?.toDouble() ?? 
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\intensifier_rule_engine.dart:150:                            (drop['reduction_percent'] as num?)?.toDouble() ?? 25.0;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\intensifier_rule_engine.dart:273:    return (partial['rom_percent'] as num?)?.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:67:            final avgReps = repsMax != null ? (repsMin + repsMax) / 2 : repsMin.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:92:        avgVolumePerSession: avgVolumePerSession.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:211:        pushPullRatio: pushPullRatio.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:212:        upperLowerRatio: upperLowerRatio.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:321:        overallGainPercentage: overallGainPercentage.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:346:      // TODO: Re-enable when workout_sessions table is deployed
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:774:        confidenceScore: confidenceScore.toDouble(),
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\workout_analytics_service.dart:838:    // TODO: Re-enable when workout_sessions table is deployed
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\share\share_card_service.dart:568:    // TODO: Implement proper PNG rendering when needed
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\fatigue_recovery_service.dart:72:      final rec = (l.recoveryScore ?? 0).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\fatigue_recovery_service.dart:73:      final sleep = (l.sleepQuality ?? 0).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\fatigue_recovery_service.dart:74:      final energy = (l.energyLevel ?? 0).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\fatigue_recovery_service.dart:75:      final fat = (l.fatigueScore ?? 0).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\fatigue_recovery_service.dart:76:      final stress = (l.stressLevel ?? 0).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\pantry_service.dart:120:        final requiredQty = (ingredient.amount as num).toDouble() * servings;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\pantry_service.dart:171:        final requiredQty = (ingredient.amount as num).toDouble() * servings;
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\pantry_service.dart:386:    final qtyBase = item.amount.toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\workout\progression_service.dart:572:        .map((e) => e.difficultyRating!.toDouble())
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\nutrition\integrations\pantry_integration_helper.dart:161:    // TODO: Replace with actual auth service call
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\settings\user_prefs_service.dart:150:      final weight = (sticky['barWeight'] as num).toDouble();
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\settings\user_prefs_service.dart:167:                .map((e) => (e as num?)?.toDouble())
+C:\Users\alhas\StudioProjects\vagus_app\lib\services\settings\user_prefs_service.dart:176:                .map((e) => (e as num?)?.toDouble())

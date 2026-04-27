@@ -1,0 +1,54 @@
+Route map extracted from lib/main.dart
+========================================
+Source: lib/main.dart (lines 125-173)
+Generated: 2026-04-24
+
+Dynamic routes (onGenerateRoute)
+--------------------------------
+/workout-editor                 -> RevolutionaryPlanBuilderScreen(planId, clientId)
+
+Static routes (MaterialApp.routes)
+----------------------------------
+/client-workout                 -> ClientWorkoutDashboardScreen
+/cardio-log                     -> CardioLogScreen
+/messages/coach                 -> CoachThreadsScreen
+/messages/client                -> ClientThreadsScreen
+/messages                       -> ClientThreadsScreen           [DUPLICATE TARGET]
+/nutrition                      -> NutritionPlanViewer
+/calendar                       -> CalendarScreen
+/progress                       -> ClientCheckInCalendar
+/files                          -> FileManagerScreen
+/account-switch                 -> AccountSwitchScreen
+/settings                       -> UserSettingsScreen
+/billing                        -> BillingSettings
+/admin                          -> AdminScreen
+/profile/edit                   -> UserSettingsScreen             [REDIRECT -> /settings]
+/devices                        -> UserSettingsScreen             [REDIRECT -> /settings]
+/ai-usage                       -> AdminScreen                    [REDIRECT -> /admin]
+/export                         -> UserSettingsScreen             [REDIRECT -> /settings]
+/apply-coach                    -> AdminScreen                    [REDIRECT -> /admin]
+/support                        -> UserSettingsScreen             [REDIRECT -> /settings]
+
+Dead / placeholder redirects (multiple route names pointing at one screen)
+--------------------------------------------------------------------------
+Target: UserSettingsScreen (6 routes)
+  /settings, /profile/edit, /devices, /export, /support
+  (plus /settings itself — so /profile/edit, /devices, /export, /support
+   are stub redirects that likely need dedicated screens)
+
+Target: AdminScreen (3 routes)
+  /admin, /ai-usage, /apply-coach
+  (/ai-usage and /apply-coach are redirects — AdminScreen isn't the
+   real destination for these concerns)
+
+Target: ClientThreadsScreen (2 routes)
+  /messages/client, /messages
+  (/messages is explicitly commented as "Default to client view" —
+   coach users hitting /messages would land on the wrong screen)
+
+Totals
+------
+Static routes declared:     20
+Dynamic routes (onGenerate): 1
+Distinct destination widgets: 12
+Redirect / placeholder routes: 8

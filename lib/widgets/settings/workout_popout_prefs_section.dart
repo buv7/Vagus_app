@@ -1,6 +1,8 @@
 // lib/widgets/settings/WorkoutPopoutPrefsSection.dart
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../services/settings/user_prefs_service.dart';
+import '../../theme/design_tokens.dart';
 
 class WorkoutPopoutPrefsSection extends StatefulWidget {
   const WorkoutPopoutPrefsSection({super.key});
@@ -53,33 +55,43 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.fitness_center,
-                  color: Colors.blue, // Use const color instead of theme-dependent
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Workout Popout Defaults',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.25),
+              width: 1,
             ),
-            const SizedBox(height: 16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.fitness_center,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Workout Popout Defaults',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
             
             // Haptics toggle
             _buildToggleTile(
@@ -136,11 +148,12 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
             
             // Feature flags section
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Coach UI Features',
-              style: theme.textTheme.titleSmall?.copyWith(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: theme.colorScheme.primary,
+                color: Colors.white,
+                fontSize: 14,
               ),
             ),
             const SizedBox(height: 8),
@@ -164,7 +177,9 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
                 await _prefsService.setShowMiniDayCards(value);
               },
             ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -176,8 +191,6 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final theme = Theme.of(context);
-    
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -188,15 +201,18 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.6),
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -205,6 +221,7 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
           Switch(
             value: value,
             onChanged: onChanged,
+            activeColor: DesignTokens.accentBlue,
           ),
         ],
       ),
@@ -212,17 +229,17 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
   }
 
   Widget _buildUnitSelector() {
-    final theme = Theme.of(context);
-    
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Default unit',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.w500,
+              color: Colors.white,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),
@@ -243,7 +260,6 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
   }
 
   Widget _buildUnitChip(String unit, String label) {
-    final theme = Theme.of(context);
     final isSelected = _defaultUnit == unit;
     
     return GestureDetector(
@@ -254,23 +270,23 @@ class _WorkoutPopoutPrefsSectionState extends State<WorkoutPopoutPrefsSection> {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           color: isSelected 
-              ? theme.colorScheme.primary.withValues(alpha: 0.1)
-              : theme.colorScheme.surface,
+              ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+              : DesignTokens.accentBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected 
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline.withValues(alpha: 0.3),
+                ? DesignTokens.accentBlue.withValues(alpha: 0.6)
+                : DesignTokens.accentBlue.withValues(alpha: 0.25),
+            width: isSelected ? 2 : 1,
           ),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: isSelected 
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: isSelected ? 1.0 : 0.7),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 14,
           ),
         ),
       ),

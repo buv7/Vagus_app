@@ -9,11 +9,11 @@
     "test:connection": "node -e \"console.log('Testing MCP connection...'); process.exit(0);\""
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.20.0",
-    "pg": "^8.16.3"
+    "@modelcontextprotocol/sdk": "^1.20.0"
   },
   "devDependencies": {
-    "@types/pg": "^8.10.9"
+    "@types/pg": "^8.10.9",
+    "pg": "^8.17.2"
   },
   "keywords": [
     "mcp",

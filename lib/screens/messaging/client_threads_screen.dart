@@ -117,22 +117,52 @@ class _ClientThreadsScreenState extends State<ClientThreadsScreen> {
   }
 
   Future<Map<String, dynamic>?> _getLastMessage(String threadId) async {
+    // Skip if using local thread (no database connection)
+    if (threadId.startsWith('local_')) return null;
+    
     try {
-      final response = await Supabase.instance.client
-          .from('messages')
-          .select('*')
-          .eq('thread_id', threadId)
-          .isFilter('deleted_at', null)
-          .order('created_at', ascending: false)
-          .limit(1)
-          .single();
-      return response;
+      // Try thread_id column first (new schema)
+      try {
+        final response = await Supabase.instance.client
+            .from('messages')
+            .select('*')
+            .eq('thread_id', threadId)
+            .isFilter('deleted_at', null)
+            .order('created_at', ascending: false)
+            .limit(1)
+            .single();
+        return response;
+      } catch (threadError) {
+        // Fallback: Get messages from conversation using sender_id/recipient_id
+        final conv = await Supabase.instance.client
+            .from('conversations')
+            .select('coach_id, client_id')
+            .eq('id', threadId)
+            .maybeSingle();
+        
+        if (conv == null) return null;
+        
+        final coachId = conv['coach_id'] as String;
+        final clientId = conv['client_id'] as String;
+        
+        final response = await Supabase.instance.client
+            .from('messages')
+            .select('*')
+            .or('and(sender_id.eq.$coachId,recipient_id.eq.$clientId),and(sender_id.eq.$clientId,recipient_id.eq.$coachId)')
+            .order('created_at', ascending: false)
+            .limit(1)
+            .maybeSingle();
+        return response;
+      }
     } catch (e) {
       return null;
     }
   }
 
   Future<int> _getUnreadCount(String threadId, String userId) async {
+    // Skip if using local thread (no database connection)
+    if (threadId.startsWith('local_')) return 0;
+    
     try {
       final response = await Supabase.instance.client
           .rpc('get_unread_counts', params: {'uid': userId});
@@ -142,7 +172,7 @@ class _ClientThreadsScreenState extends State<ClientThreadsScreen> {
       }
       return 0;
     } catch (e) {
-      // Fallback: count messages not seen by current user
+      // Fallback: Try thread_id column first, then legacy schema
       try {
         final rows = await Supabase.instance.client
             .from('messages')
@@ -153,8 +183,19 @@ class _ClientThreadsScreenState extends State<ClientThreadsScreen> {
             .isFilter('deleted_at', null);
         
         return rows.length;
-      } catch (e) {
-        return 0;
+      } catch (threadError) {
+        // Legacy schema fallback: count unread messages by recipient_id
+        try {
+          final rows = await Supabase.instance.client
+              .from('messages')
+              .select('id')
+              .eq('recipient_id', userId)
+              .eq('is_read', false);
+          
+          return rows.length;
+        } catch (e) {
+          return 0;
+        }
       }
     }
   }

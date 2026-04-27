@@ -26,6 +26,24 @@ class _FoodSnapScreenState extends State<FoodSnapScreen> {
   FoodItem? _estimatedFoodItem;
   bool _isProcessing = false;
   String _error = '';
+  bool _aiConfigured = false;
+  bool _checkingConfig = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _checkAIConfiguration();
+  }
+  
+  Future<void> _checkAIConfiguration() async {
+    final configured = await _nutritionAI.isAIConfigured();
+    if (mounted) {
+      setState(() {
+        _aiConfigured = configured;
+        _checkingConfig = false;
+      });
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -417,39 +435,106 @@ class _FoodSnapScreenState extends State<FoodSnapScreen> {
   }
 
   Widget _buildInstructions(String language) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              LocaleHelper.t('photo_tips', language),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    return Column(
+      children: [
+        // AI Status Card
+        Card(
+          color: _checkingConfig 
+            ? Colors.grey.shade100
+            : _aiConfigured 
+              ? Colors.green.shade50 
+              : Colors.orange.shade50,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Icon(
+                  _checkingConfig
+                    ? Icons.hourglass_empty
+                    : _aiConfigured 
+                      ? Icons.smart_toy 
+                      : Icons.warning_amber_rounded,
+                  color: _checkingConfig
+                    ? Colors.grey
+                    : _aiConfigured 
+                      ? Colors.green.shade700 
+                      : Colors.orange.shade700,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _checkingConfig
+                          ? 'Checking AI...'
+                          : _aiConfigured 
+                            ? 'AI Powered by Google Gemini' 
+                            : 'AI Not Configured',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: _checkingConfig
+                            ? Colors.grey.shade700
+                            : _aiConfigured 
+                              ? Colors.green.shade700 
+                              : Colors.orange.shade700,
+                        ),
+                      ),
+                      if (!_checkingConfig && !_aiConfigured) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          'Add GEMINI_API_KEY to .env for AI food recognition',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.orange.shade600,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            _buildTipItem(
-              Icons.light_mode,
-              LocaleHelper.t('good_lighting', language),
-              LocaleHelper.t('good_lighting_desc', language),
-            ),
-            const SizedBox(height: 8),
-            _buildTipItem(
-              Icons.center_focus_strong,
-              LocaleHelper.t('clear_focus', language),
-              LocaleHelper.t('clear_focus_desc', language),
-            ),
-            const SizedBox(height: 8),
-            _buildTipItem(
-              Icons.crop_free,
-              LocaleHelper.t('fill_frame', language),
-              LocaleHelper.t('fill_frame_desc', language),
-            ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 16),
+        
+        // Tips Card
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  LocaleHelper.t('photo_tips', language),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildTipItem(
+                  Icons.light_mode,
+                  LocaleHelper.t('good_lighting', language),
+                  LocaleHelper.t('good_lighting_desc', language),
+                ),
+                const SizedBox(height: 8),
+                _buildTipItem(
+                  Icons.center_focus_strong,
+                  LocaleHelper.t('clear_focus', language),
+                  LocaleHelper.t('clear_focus_desc', language),
+                ),
+                const SizedBox(height: 8),
+                _buildTipItem(
+                  Icons.crop_free,
+                  LocaleHelper.t('fill_frame', language),
+                  LocaleHelper.t('fill_frame_desc', language),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -576,9 +661,13 @@ class _FoodSnapScreenState extends State<FoodSnapScreen> {
   }
 
   void _saveFoodItem() {
-    if (_estimatedFoodItem != null && widget.onFoodItemCreated != null) {
-      widget.onFoodItemCreated!(_estimatedFoodItem!);
-      Navigator.of(context).pop();
+    if (_estimatedFoodItem != null) {
+      // If there's a callback, use it
+      if (widget.onFoodItemCreated != null) {
+        widget.onFoodItemCreated!(_estimatedFoodItem!);
+      }
+      // Always pop with the food item for callers that use Navigator.push<FoodItem>
+      Navigator.of(context).pop(_estimatedFoodItem);
     }
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -158,130 +157,138 @@ class _FileAttachToMealState extends State<FileAttachToMeal> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: DesignTokens.cardBackground,
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: DesignTokens.accentGreen,
-          width: 2,
+          color: isDark ? DesignTokens.glassBorder : Colors.grey.shade200,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: DesignTokens.accentGreen.withValues(alpha: 0.3),
-            blurRadius: 20,
-            spreadRadius: 0,
-          ),
-        ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-        Row(
-          children: [
-            const Icon(Icons.attach_file, color: DesignTokens.textSecondary, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              'Attachments',
-              style: DesignTokens.titleSmall.copyWith(
-                color: DesignTokens.neutralWhite,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.attach_file_rounded,
+                size: 16,
+                color: isDark ? DesignTokens.textSecondary : Colors.grey.shade600,
               ),
-            ),
-            const Spacer(),
-            if (!widget.isReadOnly)
-              TextButton.icon(
-                onPressed: _isUploading ? null : _pickAndUploadFile,
-                icon: _isUploading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.add, size: 16),
-                label: Text(_isUploading ? 'Uploading...' : 'Add Files'),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              const SizedBox(width: 6),
+              Text(
+                'Attachments',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? DesignTokens.textSecondary : Colors.grey.shade700,
                 ),
               ),
-          ],
-        ),
-        
-        if (widget.attachments.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: widget.attachments.asMap().entries.map((entry) {
-              final index = entry.key;
-              final attachment = entry.value;
-              
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
+              const Spacer(),
+              if (!widget.isReadOnly)
+                TextButton.icon(
+                  onPressed: _isUploading ? null : _pickAndUploadFile,
+                  icon: _isUploading
+                      ? SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: DesignTokens.accentBlue,
+                          ),
+                        )
+                      : Icon(
+                          Icons.add_rounded,
+                          size: 16,
+                          color: DesignTokens.accentBlue,
+                        ),
+                  label: Text(
+                    _isUploading ? 'Uploading...' : 'Add Files',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: DesignTokens.accentBlue,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: Size.zero,
+                  ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Show image preview for image files
-                    if (_isImageFile(attachment))
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          image: DecorationImage(
-                            image: NetworkImage(attachment),
-                            fit: BoxFit.cover,
+            ],
+          ),
+          
+          if (widget.attachments.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.attachments.asMap().entries.map((entry) {
+                final index = entry.key;
+                final attachment = entry.value;
+                
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isDark ? DesignTokens.glassBorder : Colors.grey.shade200,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_isImageFile(attachment))
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            image: DecorationImage(
+                              image: NetworkImage(attachment),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
+                      else
+                        Icon(
+                          _getFileIcon(attachment),
+                          size: 14,
+                          color: isDark ? DesignTokens.textSecondary : Colors.grey.shade500,
+                        ),
+                      const SizedBox(width: 6),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 100),
+                        child: Text(
+                          _getFileName(attachment),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? DesignTokens.textSecondary : Colors.grey.shade700,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (!widget.isReadOnly) ...[
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () => _removeAttachment(index),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 14,
+                            color: isDark ? DesignTokens.textTertiary : Colors.grey.shade400,
                           ),
                         ),
-                      )
-                    else
-                      Icon(
-                        _getFileIcon(attachment),
-                        size: 16,
-                        color: Colors.grey.shade600,
-                      ),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        _getFileName(attachment),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (!widget.isReadOnly) ...[
-                      const SizedBox(width: 4),
-                      GestureDetector(
-                        onTap: () => _removeAttachment(index),
-                        child: Icon(
-                          Icons.close,
-                          size: 14,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
+                      ],
                     ],
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-              ],
+                  ),
+                );
+              }).toList(),
             ),
-          ),
-        ),
+          ],
+        ],
       ),
     );
   }

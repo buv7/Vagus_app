@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../widgets/branding/vagus_appbar.dart';
+import '../../theme/design_tokens.dart';
 import 'note_reminder_setter.dart';
 import 'smart_panel.dart';
 // Note version viewer restored in Phase 2
@@ -261,17 +263,23 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? DesignTokens.darkBackground : DesignTokens.scaffoldBg(context),
       appBar: VagusAppBar(
-        title: Text(widget.existingNote == null ? 'New Note' : 'Edit Note'),
+        title: Text(
+          widget.existingNote == null ? 'New Note' : 'Edit Note',
+          style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+        ),
         actions: [
           if (widget.existingNote != null && _currentVersion > 1)
             TextButton.icon(
               onPressed: () => _openVersionHistory(),
-              icon: const Icon(Icons.history, size: 16),
+              icon: Icon(Icons.history, size: 16, color: DesignTokens.accentBlue),
               label: Text('v$_currentVersion'),
               style: TextButton.styleFrom(
-                foregroundColor: Colors.blue[700],
+                foregroundColor: DesignTokens.accentBlue,
               ),
             ),
           IconButton(
@@ -280,72 +288,170 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
           )
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Title field
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                hintText: 'Note title (optional)',
-                border: OutlineInputBorder(),
-                labelText: 'Title',
+            // Title field with glassmorphism styling
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.1) : Colors.white,
+                borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                border: Border.all(
+                  color: isDark 
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                    : DesignTokens.borderColor(context),
+                ),
+              ),
+              child: TextField(
+                controller: _titleController,
+                style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                decoration: InputDecoration(
+                  hintText: 'Title',
+                  hintStyle: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: DesignTokens.space16,
+                    vertical: DesignTokens.space12,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             
-            // Body field
-            Expanded(
+            // Body field with glassmorphism styling
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.1) : Colors.white,
+                borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                border: Border.all(
+                  color: isDark 
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                    : DesignTokens.borderColor(context),
+                ),
+              ),
               child: TextField(
                 controller: _bodyController,
                 maxLines: null,
                 expands: true,
-                decoration: const InputDecoration(
-                  hintText: 'Write your note...',
-                  border: OutlineInputBorder(),
-                  labelText: 'Note',
+                style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                decoration: InputDecoration(
+                  hintText: 'Note',
+                  hintStyle: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: DesignTokens.space16,
+                    vertical: DesignTokens.space12,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 12),
             
-            // Tags section
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Tags:', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _tagController,
-                        decoration: const InputDecoration(
-                          hintText: 'Add a tag...',
-                          border: OutlineInputBorder(),
-                          isDense: true,
+            // Tags section with glassmorphism styling
+            Container(
+              padding: const EdgeInsets.all(DesignTokens.space16),
+              decoration: BoxDecoration(
+                color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.1) : Colors.white,
+                borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                border: Border.all(
+                  color: isDark 
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                    : DesignTokens.borderColor(context),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Tags:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.15) : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                            border: Border.all(
+                              color: isDark 
+                                ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                                : DesignTokens.borderColor(context),
+                            ),
+                          ),
+                          child: TextField(
+                            controller: _tagController,
+                            style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                            decoration: InputDecoration(
+                              hintText: 'Add a tag...',
+                              hintStyle: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context)),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: _addTag,
-                      child: const Text('Add'),
+                      const SizedBox(width: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: DesignTokens.accentBlue,
+                          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _addTag,
+                            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              child: Text(
+                                'Add',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_tags.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: _tags.map((tag) => Chip(
+                        label: Text(tag, style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context))),
+                        backgroundColor: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.2) : Colors.grey.shade200,
+                        deleteIconColor: isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.textColorSecondary(context),
+                        side: BorderSide(
+                          color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.3) : DesignTokens.borderColor(context),
+                        ),
+                        onDeleted: () => _removeTag(tag),
+                      )).toList(),
                     ),
                   ],
-                ),
-                if (_tags.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: _tags.map((tag) => Chip(
-                      label: Text(tag),
-                      onDeleted: () => _removeTag(tag),
-                    )).toList(),
-                  ),
                 ],
-              ],
+              ),
             ),
             const SizedBox(height: 12),
             
@@ -367,44 +473,54 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
                   builder: (context, snapshot) {
                     final results = snapshot.data ?? [];
                     if (results.isEmpty) return const SizedBox.shrink();
-                    return Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Row(
-                              children: [
-                                Icon(Icons.lightbulb, size: 20),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Related Notes',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            ...results.map((r) {
-                              final note = r['note'] as Map<String, dynamic>;
-                              final score = r['relevance_score'] as double;
-                              return ListTile(
-                                dense: true,
-                                leading: const Icon(Icons.note, size: 16),
-                                title: Text(
-                                  note['title']?.toString() ?? 'Untitled',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                subtitle: Text(
-                                  '${(score * 100).toStringAsFixed(0)}% match',
-                                  style: const TextStyle(fontSize: 10),
-                                ),
-                                onTap: () {
-                                  // TODO: Navigate to related note
-                                },
-                              );
-                            }),
-                          ],
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.1) : Colors.white,
+                        borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                        border: Border.all(
+                          color: isDark 
+                            ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                            : DesignTokens.borderColor(context),
                         ),
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.lightbulb, size: 20, color: isDark ? DesignTokens.accentBlue : DesignTokens.accentBlue),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Related Notes',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white : DesignTokens.textColor(context),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          ...results.map((r) {
+                            final note = r['note'] as Map<String, dynamic>;
+                            final score = r['relevance_score'] as double;
+                            return ListTile(
+                              dense: true,
+                              leading: Icon(Icons.note, size: 16, color: isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.iconColor(context)),
+                              title: Text(
+                                note['title']?.toString() ?? 'Untitled',
+                                style: TextStyle(fontSize: 12, color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                              ),
+                              subtitle: Text(
+                                '${(score * 100).toStringAsFixed(0)}% match',
+                                style: TextStyle(fontSize: 10, color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context)),
+                              ),
+                              onTap: () {
+                                // TODO: Navigate to related note
+                              },
+                            );
+                          }),
+                        ],
                       ),
                     );
                   },
@@ -447,15 +563,46 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
             
             const SizedBox(height: 12),
             
-            // Action buttons
+            // Action buttons with glassmorphism styling
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                ElevatedButton.icon(
-                  onPressed: _pickReminder,
-                  icon: const Icon(Icons.alarm),
-                  label: const Text('Set Reminder'),
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.2) : Colors.white,
+                    borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                    border: Border.all(
+                      color: isDark 
+                        ? DesignTokens.accentBlue.withValues(alpha: 0.4)
+                        : DesignTokens.accentBlue,
+                      width: isDark ? 2 : 1,
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _pickReminder,
+                      borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.alarm, color: isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.accentBlue),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Set Reminder',
+                              style: TextStyle(
+                                color: isDark ? Colors.white : DesignTokens.accentBlue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 VoiceRecorder(
                   onTranscription: (transcribedText) {
@@ -504,7 +651,33 @@ class _CoachNoteScreenState extends State<CoachNoteScreen> {
             if (_reminderDate != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text('Reminder set for: ${_reminderDate!.toLocal()}'),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark ? DesignTokens.accentBlue.withValues(alpha: 0.1) : Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                    border: Border.all(
+                      color: isDark 
+                        ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                        : Colors.blue.shade200,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.alarm, color: isDark ? DesignTokens.accentBlue : Colors.blue.shade700, size: 16),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Reminder set for: ${_reminderDate!.toLocal()}',
+                          style: TextStyle(
+                            color: isDark ? Colors.white : Colors.blue.shade700,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
           ],
         ),

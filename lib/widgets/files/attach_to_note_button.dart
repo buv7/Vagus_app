@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'inline_file_picker.dart';
 import 'file_previewer.dart';
+import '../../theme/design_tokens.dart';
 
 /// Attach to Note Button Widget
 /// Allows attaching files to notes
@@ -47,68 +48,104 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label != null) ...[
           Text(
             widget.label!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white : DesignTokens.textColor(context),
             ),
           ),
           const SizedBox(height: 8),
         ],
 
-        // Attach button
+        // Attach button with glassmorphism style
         SizedBox(
           width: widget.width,
           height: widget.height,
-          child: InkWell(
-            onTap: _showAttachmentOptions,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark 
+                  ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(DesignTokens.radius16),
+              border: Border.all(
+                color: isDark 
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                    : DesignTokens.borderColor(context),
               ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.attach_file,
-                    color: Colors.blue,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.hint ?? 'Attach files to note',
-                          style: const TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w500,
-                          ),
+              boxShadow: isDark ? [
+                BoxShadow(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                ),
+              ] : null,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _showAttachmentOptions,
+                borderRadius: BorderRadius.circular(DesignTokens.radius16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isDark 
+                              ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                              : DesignTokens.accentBlue.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DesignTokens.radius8),
                         ),
-                        if (_attachedFiles.isNotEmpty)
-                          Text(
-                            '${_attachedFiles.length} file${_attachedFiles.length == 1 ? '' : 's'} attached',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 12,
+                        child: Icon(
+                          Icons.attach_file,
+                          color: DesignTokens.accentBlue,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              widget.hint ?? 'Attach files to note',
+                              style: TextStyle(
+                                color: isDark ? Colors.white : DesignTokens.textColor(context),
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
+                            if (_attachedFiles.isNotEmpty)
+                              Text(
+                                '${_attachedFiles.length} file${_attachedFiles.length == 1 ? '' : 's'} attached',
+                                style: TextStyle(
+                                  color: isDark 
+                                      ? Colors.white.withValues(alpha: 0.6)
+                                      : DesignTokens.textColorSecondary(context),
+                                  fontSize: 12,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.add,
+                        color: isDark 
+                            ? Colors.white.withValues(alpha: 0.6)
+                            : DesignTokens.textColorSecondary(context),
+                      ),
+                    ],
                   ),
-                  Icon(
-                    Icons.add,
-                    color: Colors.grey.shade600,
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -124,6 +161,8 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
   }
 
   Widget _buildAttachmentsPreview() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -132,7 +171,7 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade700,
+            color: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.grey.shade700,
           ),
         ),
         const SizedBox(height: 8),
@@ -146,6 +185,7 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
   }
 
   Widget _buildAttachmentTile(Map<String, dynamic> file, int index) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final fileName = file['file_name'] ?? 'Unknown file';
     final fileSize = file['file_size'] ?? 0;
     final category = file['category'] ?? 'other';
@@ -155,15 +195,32 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(8),
+        color: isDark 
+            ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+            : Colors.grey.shade50,
+        border: Border.all(
+          color: isDark 
+              ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+              : Colors.grey.shade200,
+        ),
+        borderRadius: BorderRadius.circular(DesignTokens.radius12),
       ),
       child: Row(
         children: [
           // File icon
-          CircleAvatar(
-            backgroundColor: _getFileColor(category).withValues(alpha: 0.1),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isDark 
+                  ? _getFileColor(category).withValues(alpha: 0.2)
+                  : _getFileColor(category).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(DesignTokens.radius8),
+              border: Border.all(
+                color: isDark 
+                    ? _getFileColor(category).withValues(alpha: 0.3)
+                    : _getFileColor(category).withValues(alpha: 0.2),
+              ),
+            ),
             child: Icon(
               _getFileIcon(category),
               color: _getFileColor(category),
@@ -179,9 +236,10 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
               children: [
                 Text(
                   fileName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
+                    color: isDark ? Colors.white : DesignTokens.textColor(context),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -189,7 +247,9 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
                 Text(
                   _formatFileSize(fileSize),
                   style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: isDark 
+                        ? Colors.white.withValues(alpha: 0.6)
+                        : Colors.grey.shade600,
                     fontSize: 12,
                   ),
                 ),
@@ -203,12 +263,20 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
             children: [
               if (fileUrl != null)
                 IconButton(
-                  icon: const Icon(Icons.visibility, size: 20),
+                  icon: Icon(
+                    Icons.visibility, 
+                    size: 20,
+                    color: isDark ? Colors.white.withValues(alpha: 0.8) : null,
+                  ),
                   onPressed: () => _previewFile(file),
                   tooltip: 'Preview file',
                 ),
               IconButton(
-                icon: const Icon(Icons.close, size: 20),
+                icon: Icon(
+                  Icons.close, 
+                  size: 20,
+                  color: isDark ? Colors.white.withValues(alpha: 0.8) : null,
+                ),
                 onPressed: () => _removeAttachment(index),
                 tooltip: 'Remove attachment',
               ),
@@ -220,64 +288,178 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
   }
 
   void _showAttachmentOptions() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     showModalBottomSheet(
       context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Attach Files',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? DesignTokens.darkBackground : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          border: Border.all(
+            color: isDark 
+                ? DesignTokens.accentBlue.withValues(alpha: 0.4)
+                : DesignTokens.borderColor(context),
+            width: isDark ? 2 : 1,
+          ),
+          boxShadow: isDark ? [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: const Offset(0, -8),
             ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.attach_file),
-              title: const Text('Add New Files'),
-              subtitle: const Text('Upload files from device'),
-              onTap: () {
-                Navigator.pop(context);
-                _showFilePicker();
-              },
-            ),
-            if (_attachedFiles.isNotEmpty)
-              ListTile(
-                leading: const Icon(Icons.folder_open),
-                title: const Text('Select from Uploaded'),
-                subtitle: const Text('Choose from your uploaded files'),
+          ] : null,
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark 
+                      ? Colors.white.withValues(alpha: 0.3)
+                      : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Attach Files',
+                style: TextStyle(
+                  fontSize: 18, 
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : DesignTokens.textColor(context),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _buildBottomSheetTile(
+                context: ctx,
+                isDark: isDark,
+                icon: Icons.attach_file,
+                iconColor: DesignTokens.accentBlue,
+                title: 'Add New Files',
+                subtitle: 'Upload files from device',
                 onTap: () {
-                  Navigator.pop(context);
-                  _showFileSelector();
+                  Navigator.pop(ctx);
+                  _showFilePicker();
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.clear_all),
-              title: const Text('Clear All Attachments'),
-              subtitle: const Text('Remove all attached files'),
-              onTap: () {
-                Navigator.pop(context);
-                _clearAllAttachments();
-              },
-            ),
-          ],
+              if (_attachedFiles.isNotEmpty)
+                _buildBottomSheetTile(
+                  context: ctx,
+                  isDark: isDark,
+                  icon: Icons.folder_open,
+                  iconColor: DesignTokens.accentPurple,
+                  title: 'Select from Uploaded',
+                  subtitle: 'Choose from your uploaded files',
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _showFileSelector();
+                  },
+                ),
+              _buildBottomSheetTile(
+                context: ctx,
+                isDark: isDark,
+                icon: Icons.clear_all,
+                iconColor: DesignTokens.accentOrange,
+                title: 'Clear All Attachments',
+                subtitle: 'Remove all attached files',
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _clearAllAttachments();
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
   }
+  
+  Widget _buildBottomSheetTile({
+    required BuildContext context,
+    required bool isDark,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: iconColor.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: iconColor.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Icon(
+          icon,
+          color: iconColor,
+        ),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: isDark ? Colors.white : DesignTokens.textColor(context),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: isDark 
+              ? Colors.white.withValues(alpha: 0.6)
+              : DesignTokens.textColorSecondary(context),
+          fontSize: 12,
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      onTap: onTap,
+    );
+  }
 
   void _showFilePicker() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     showDialog(
       context: context,
-      builder: (context) => Dialog(
+      builder: (dialogContext) => Dialog(
+        backgroundColor: isDark ? DesignTokens.darkBackground : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(DesignTokens.radius20),
+          side: BorderSide(
+            color: isDark 
+                ? DesignTokens.accentBlue.withValues(alpha: 0.4)
+                : DesignTokens.borderColor(context),
+            width: isDark ? 2 : 1,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Upload Files',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18, 
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : DesignTokens.textColor(context),
+                ),
               ),
               const SizedBox(height: 16),
               InlineFilePicker(
@@ -298,9 +480,28 @@ class _AttachToNoteButtonState extends State<AttachToNoteButton> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Done'),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: DesignTokens.accentBlue,
+                      borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
+                        borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Text(
+                            'Done',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

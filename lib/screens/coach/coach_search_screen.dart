@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 
 class CoachSearchScreen extends StatefulWidget {
   const CoachSearchScreen({super.key});
@@ -114,11 +115,12 @@ class _CoachSearchScreenState extends State<CoachSearchScreen> {
       ),
       child: ListTile(
         leading: CircleAvatar(
+          backgroundColor: ThemeColors.of(context).avatarBg,
           backgroundImage: coach['avatar_url'] != null
               ? NetworkImage(coach['avatar_url'])
               : null,
           child: coach['avatar_url'] == null
-              ? const Icon(Icons.person)
+              ? Icon(Icons.person, color: ThemeColors.of(context).avatarIcon)
               : null,
         ),
         title: Text(coach['name'] ?? 'No name'),

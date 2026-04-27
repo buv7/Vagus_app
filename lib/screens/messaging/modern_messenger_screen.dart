@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/navigation/vagus_side_menu.dart';
+import '../../theme/theme_colors.dart';
 import '../../services/messages_service.dart';
+import '../../services/simple_calling_service.dart';
+import '../../models/live_session.dart';
+import '../calling/simple_call_screen.dart';
 
 class ModernMessengerScreen extends StatefulWidget {
   const ModernMessengerScreen({super.key});
@@ -16,22 +21,31 @@ class ModernMessengerScreen extends StatefulWidget {
 
 class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final MessagesService _messagesService = MessagesService();
+  final SimpleCallingService _callingService = SimpleCallingService();
   bool _isTyping = false;
   bool _showSearch = false;
   bool _showSmartReplies = true;
   bool _showPinnedMessages = false;
+  bool _isRecording = false;
+  bool _isOnline = true;
+  String _searchQuery = '';
 
   // Real data from Supabase
   List<Message> _messages = [];
   List<Message> _pinnedMessages = [];
+  List<Message> _filteredMessages = [];
   bool _isLoading = true;
   String? _error;
   String _role = 'client';
   String? _threadId;
   String? _coachId;
+  String? _coachName;
+  String? _coachAvatar;
   StreamSubscription? _messagesSubscription;
+  Timer? _onlineStatusTimer;
 
   // Mock data as fallback
   final List<Map<String, dynamic>> _mockMessages = [
@@ -87,6 +101,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   void initState() {
     super.initState();
     _loadMessages();
+    _startOnlineStatusCheck();
   }
 
   @override
@@ -94,9 +109,40 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
     // Restore system UI when leaving messenger screen
     _restoreSystemUI();
     _messageController.dispose();
+    _searchController.dispose();
     _scrollController.dispose();
     _messagesSubscription?.cancel();
+    _onlineStatusTimer?.cancel();
+    _callingService.dispose();
     super.dispose();
+  }
+  
+  void _startOnlineStatusCheck() {
+    // Check online status every 30 seconds
+    _onlineStatusTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      _checkOnlineStatus();
+    });
+  }
+  
+  Future<void> _checkOnlineStatus() async {
+    if (_coachId == null) return;
+    try {
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select('last_seen')
+          .eq('id', _coachId!)
+          .maybeSingle();
+      
+      if (response != null && mounted) {
+        final lastSeen = DateTime.tryParse(response['last_seen']?.toString() ?? '');
+        setState(() {
+          _isOnline = lastSeen != null && 
+              DateTime.now().difference(lastSeen).inMinutes < 5;
+        });
+      }
+    } catch (e) {
+      // Ignore errors
+    }
   }
 
   @override
@@ -145,6 +191,9 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           return;
         }
         
+        // Load coach info
+        await _loadCoachInfo();
+        
         _threadId = await _messagesService.ensureThread(
           coachId: _coachId!,
           clientId: user.id,
@@ -157,6 +206,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           if (mounted) {
             setState(() {
               _messages = messages;
+              _filteredMessages = _searchQuery.isEmpty ? messages : _filterMessages(messages);
               _pinnedMessages = messages.where((msg) => msg.reactions.containsKey('pinned')).toList();
             });
           }
@@ -185,10 +235,42 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             reactions: Map<String, String>.from(mock['reactions'] ?? {}),
             createdAt: mock['timestamp'] ?? DateTime.now(),
           )).toList();
+          _filteredMessages = _messages;
           _pinnedMessages = _messages.where((msg) => msg.reactions.containsKey('pinned')).toList();
         });
       }
     }
+  }
+  
+  Future<void> _loadCoachInfo() async {
+    if (_coachId == null) return;
+    try {
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select('full_name, avatar_url, last_seen')
+          .eq('id', _coachId!)
+          .maybeSingle();
+      
+      if (response != null && mounted) {
+        final lastSeen = DateTime.tryParse(response['last_seen']?.toString() ?? '');
+        setState(() {
+          _coachName = response['full_name'] as String? ?? 'Coach';
+          _coachAvatar = response['avatar_url'] as String?;
+          _isOnline = lastSeen != null && 
+              DateTime.now().difference(lastSeen).inMinutes < 5;
+        });
+      }
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+  
+  List<Message> _filterMessages(List<Message> messages) {
+    if (_searchQuery.isEmpty) return messages;
+    final query = _searchQuery.toLowerCase();
+    return messages.where((msg) => 
+      msg.text.toLowerCase().contains(query)
+    ).toList();
   }
 
   Future<String?> _getCoachId(String clientId) async {
@@ -313,15 +395,213 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
     _messageController.text = reply;
     _sendMessage();
   }
+  
+  // ===== CALL FUNCTIONALITY =====
+  
+  Future<void> _startAudioCall() async {
+    if (_coachId == null) {
+      _showSnackBar('No coach connected');
+      return;
+    }
+    
+    try {
+      final sessionId = await _callingService.createLiveSession(
+        sessionType: SessionType.audioCall,
+        title: 'Audio Call with ${_coachName ?? 'Coach'}',
+        clientId: Supabase.instance.client.auth.currentUser?.id,
+        coachId: _coachId,
+      );
+      
+      final session = await _callingService.getLiveSession(sessionId);
+      if (session != null && mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SimpleCallScreen(session: session),
+          ),
+        );
+      }
+    } catch (e) {
+      _showSnackBar('Failed to start call: $e');
+    }
+  }
+  
+  Future<void> _startVideoCall() async {
+    if (_coachId == null) {
+      _showSnackBar('No coach connected');
+      return;
+    }
+    
+    try {
+      final sessionId = await _callingService.createLiveSession(
+        sessionType: SessionType.videoCall,
+        title: 'Video Call with ${_coachName ?? 'Coach'}',
+        clientId: Supabase.instance.client.auth.currentUser?.id,
+        coachId: _coachId,
+      );
+      
+      final session = await _callingService.getLiveSession(sessionId);
+      if (session != null && mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SimpleCallScreen(session: session),
+          ),
+        );
+      }
+    } catch (e) {
+      _showSnackBar('Failed to start video call: $e');
+    }
+  }
+  
+  void _showSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+  
+  // ===== ATTACHMENT FUNCTIONALITY =====
+  
+  Future<void> _pickImage() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+      
+      if (pickedFile != null && _threadId != null) {
+        final file = File(pickedFile.path);
+        await _messagesService.sendAttachment(
+          threadId: _threadId!,
+          file: file,
+        );
+        _showSnackBar('Image sent');
+      }
+    } catch (e) {
+      _showSnackBar('Failed to send image: $e');
+    }
+  }
+  
+  Future<void> _pickVideo() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickVideo(
+        source: ImageSource.gallery,
+        maxDuration: const Duration(minutes: 5),
+      );
+      
+      if (pickedFile != null && _threadId != null) {
+        final file = File(pickedFile.path);
+        await _messagesService.sendAttachment(
+          threadId: _threadId!,
+          file: file,
+        );
+        _showSnackBar('Video sent');
+      }
+    } catch (e) {
+      _showSnackBar('Failed to send video: $e');
+    }
+  }
+  
+  Future<void> _pickDocument() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'txt', 'md', 'json'],
+      );
+      
+      if (result != null && result.files.isNotEmpty && _threadId != null) {
+        final file = File(result.files.first.path!);
+        await _messagesService.sendAttachment(
+          threadId: _threadId!,
+          file: file,
+        );
+        _showSnackBar('Document sent');
+      }
+    } catch (e) {
+      _showSnackBar('Failed to send document: $e');
+    }
+  }
+  
+  Future<void> _takePhoto() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+      
+      if (pickedFile != null && _threadId != null) {
+        final file = File(pickedFile.path);
+        await _messagesService.sendAttachment(
+          threadId: _threadId!,
+          file: file,
+        );
+        _showSnackBar('Photo sent');
+      }
+    } catch (e) {
+      _showSnackBar('Failed to send photo: $e');
+    }
+  }
+  
+  // ===== VOICE MESSAGE FUNCTIONALITY =====
+  
+  Future<void> _pickVoiceMessage() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['mp3', 'wav', 'm4a', 'aac'],
+      );
+      
+      if (result != null && result.files.isNotEmpty && _threadId != null) {
+        final file = File(result.files.first.path!);
+        await _messagesService.sendVoice(
+          threadId: _threadId!,
+          audioFile: file,
+        );
+        _showSnackBar('Voice message sent');
+      }
+    } catch (e) {
+      _showSnackBar('Failed to send voice message: $e');
+    }
+  }
+  
+  // ===== MESSAGE ACTIONS =====
+  
+  Future<void> _deleteMessage(String messageId) async {
+    try {
+      await _messagesService.deleteMessage(messageId);
+      _showSnackBar('Message deleted');
+    } catch (e) {
+      _showSnackBar('Failed to delete message: $e');
+    }
+  }
+  
+  void _copyMessage(String messageId) {
+    final message = _messages.firstWhere((m) => m.id == messageId);
+    Clipboard.setData(ClipboardData(text: message.text));
+    _showSnackBar('Message copied to clipboard');
+  }
+  
+  Future<void> _forwardMessage(String messageId) async {
+    // Show dialog to select thread to forward to
+    _showSnackBar('Forward feature coming soon');
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tc = context.tc;
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      drawerEdgeDragWidth: 24,
-      drawer: const VagusSideMenu(isClient: true),
       body: Container(
         decoration: BoxDecoration(
           gradient: isDark ? DesignTokens.darkGradient : LinearGradient(
@@ -330,9 +610,9 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         ),
         child: SafeArea(
           child: _isLoading 
-            ? const Center(
+            ? Center(
                 child: CircularProgressIndicator(
-                  color: AppTheme.accentGreen,
+                  color: tc.accent,
                 ),
               )
             : _error != null
@@ -340,23 +620,23 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.error_outline,
-                          color: Colors.red,
+                          color: tc.danger,
                           size: 48,
                         ),
                         const SizedBox(height: DesignTokens.space16),
                         Text(
                           'Error loading messages',
                           style: DesignTokens.titleMedium.copyWith(
-                            color: Colors.white,
+                            color: tc.textPrimary,
                           ),
                         ),
                         const SizedBox(height: DesignTokens.space8),
                         Text(
                           _error!,
                           style: DesignTokens.bodyMedium.copyWith(
-                            color: Colors.white70,
+                            color: tc.textSecondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -364,8 +644,8 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                         ElevatedButton(
                           onPressed: _loadMessages,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.accentGreen,
-                            foregroundColor: AppTheme.primaryDark,
+                            backgroundColor: tc.accent,
+                            foregroundColor: tc.textOnDark,
                           ),
                           child: const Text('Retry'),
                         ),
@@ -388,13 +668,14 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
               child: ListView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.all(DesignTokens.space16),
-                itemCount: _messages.length + (_isTyping ? 1 : 0),
+                itemCount: (_showSearch ? _filteredMessages : _messages).length + (_isTyping ? 1 : 0),
                 itemBuilder: (context, index) {
-                  if (index == _messages.length && _isTyping) {
+                  final displayMessages = _showSearch ? _filteredMessages : _messages;
+                  if (index == displayMessages.length && _isTyping) {
                     return _buildTypingIndicator();
                   }
                   
-                  final message = _messages[index];
+                  final message = displayMessages[index];
                   return _buildMessageBubble(message);
                 },
               ),
@@ -413,37 +694,57 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   }
 
   Widget _buildHeader() {
+    final tc = context.tc;
+    final coachInitials = (_coachName ?? 'Coach').split(' ').map((e) => e.isNotEmpty ? e[0] : '').take(2).join().toUpperCase();
+    
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: tc.surface,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
           ),
         ),
       ),
       child: Row(
         children: [
-          // Hamburger menu
-          Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
+          // Back button instead of hamburger menu (drawer accessible via swipe)
+          IconButton(
+            icon: Icon(Icons.arrow_back, color: tc.icon),
+            onPressed: () => Navigator.of(context).pop(),
           ),
           
-          // Coach Avatar
-          const CircleAvatar(
-            radius: 20,
-            backgroundColor: AppTheme.accentGreen,
-            child: Text(
-              'JD',
-              style: TextStyle(
-                color: AppTheme.primaryDark,
-                fontWeight: FontWeight.bold,
+          // Coach Avatar with online indicator
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: tc.accent,
+                backgroundImage: _coachAvatar != null ? NetworkImage(_coachAvatar!) : null,
+                child: _coachAvatar == null ? Text(
+                  coachInitials,
+                  style: TextStyle(
+                    color: tc.textOnDark,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ) : null,
               ),
-            ),
+              // Online indicator
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: _isOnline ? tc.success : tc.textSecondary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: tc.surface, width: 2),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(width: DesignTokens.space12),
           
@@ -453,9 +754,9 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Coach Jordan',
+                  _coachName ?? 'Coach',
                   style: DesignTokens.titleMedium.copyWith(
-                    color: Colors.white,
+                    color: tc.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -478,10 +779,17 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                       Text(
                         'typing...',
                         style: DesignTokens.bodySmall.copyWith(
-                          color: Colors.white70,
+                          color: tc.textSecondary,
                         ),
                       ),
                     ],
+                  )
+                else
+                  Text(
+                    _isOnline ? 'Online' : 'Offline',
+                    style: DesignTokens.bodySmall.copyWith(
+                      color: _isOnline ? tc.success : tc.textSecondary,
+                    ),
                   ),
               ],
             ),
@@ -491,27 +799,31 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           Row(
             children: [
               IconButton(
-                onPressed: () {
-                  // Schedule call functionality
-                },
-                icon: const Icon(Icons.phone, color: AppTheme.accentGreen),
+                onPressed: _startAudioCall,
+                icon: Icon(Icons.phone, color: tc.accent),
+                tooltip: 'Audio call',
               ),
               IconButton(
-                onPressed: () {
-                  // Video call functionality
-                },
-                icon: const Icon(Icons.videocam, color: AppTheme.accentGreen),
+                onPressed: _startVideoCall,
+                icon: Icon(Icons.videocam, color: tc.accent),
+                tooltip: 'Video call',
               ),
               IconButton(
                 onPressed: () {
                   setState(() {
                     _showSearch = !_showSearch;
+                    if (!_showSearch) {
+                      _searchQuery = '';
+                      _searchController.clear();
+                      _filteredMessages = _messages;
+                    }
                   });
                 },
                 icon: Icon(
                   Icons.search,
-                  color: _showSearch ? AppTheme.accentGreen : Colors.white70,
+                  color: _showSearch ? tc.accent : tc.iconSecondary,
                 ),
+                tooltip: 'Search messages',
               ),
               IconButton(
                 onPressed: () {
@@ -521,8 +833,9 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                 },
                 icon: Icon(
                   Icons.push_pin,
-                  color: _showPinnedMessages ? AppTheme.accentGreen : Colors.white70,
+                  color: _showPinnedMessages ? tc.accent : tc.iconSecondary,
                 ),
+                tooltip: 'Pinned messages',
               ),
             ],
           ),
@@ -532,63 +845,96 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   }
 
   Widget _buildSearchBar() {
+    final tc = context.tc;
+    final matchCount = _searchQuery.isNotEmpty ? _filteredMessages.length : 0;
+    
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: tc.surface,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
           ),
         ),
       ),
-      child: TextField(
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: 'Search messages...',
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.white.withValues(alpha: 0.7),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.3),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _searchController,
+            style: TextStyle(color: tc.textPrimary),
+            decoration: InputDecoration(
+              hintText: 'Search messages...',
+              hintStyle: TextStyle(color: tc.textSecondary),
+              prefixIcon: Icon(
+                Icons.search,
+                color: tc.iconSecondary,
+              ),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear, color: tc.iconSecondary),
+                      onPressed: () {
+                        setState(() {
+                          _searchQuery = '';
+                          _searchController.clear();
+                          _filteredMessages = _messages;
+                        });
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                  color: tc.border,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                  color: tc.border,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                  color: tc.accent,
+                  width: 2,
+                ),
+              ),
+              filled: true,
+              fillColor: tc.inputFill,
             ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+                _filteredMessages = _filterMessages(_messages);
+              });
+            },
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.3),
+          if (_searchQuery.isNotEmpty) ...[
+            const SizedBox(height: DesignTokens.space8),
+            Text(
+              '$matchCount ${matchCount == 1 ? 'message' : 'messages'} found',
+              style: DesignTokens.bodySmall.copyWith(
+                color: tc.textSecondary,
+              ),
             ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: AppTheme.accentGreen,
-              width: 2,
-            ),
-          ),
-          filled: true,
-          fillColor: AppTheme.primaryDark.withValues(alpha: 0.3),
-        ),
-        onChanged: (value) {
-          setState(() {
-          });
-        },
+          ],
+        ],
       ),
     );
   }
 
   Widget _buildPinnedMessagesPanel() {
+    final tc = context.tc;
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: tc.surface,
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
           ),
         ),
       ),
@@ -600,16 +946,16 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.push_pin,
-                    color: AppTheme.accentOrange,
+                    color: tc.warning,
                     size: 16,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     'Pinned Messages',
                     style: DesignTokens.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: tc.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -621,7 +967,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                     _showPinnedMessages = false;
                   });
                 },
-                icon: const Icon(Icons.close, color: Colors.white70, size: 20),
+                icon: Icon(Icons.close, color: tc.iconSecondary, size: 20),
               ),
             ],
           ),
@@ -633,21 +979,22 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   }
 
   Widget _buildPinnedMessageCard(Message message) {
+    final tc = context.tc;
     return Container(
       margin: const EdgeInsets.only(bottom: DesignTokens.space8),
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
-        color: AppTheme.primaryDark.withValues(alpha: 0.3),
+        color: tc.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.accentOrange.withValues(alpha: 0.3),
+          color: tc.warning.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.push_pin,
-            color: AppTheme.accentOrange,
+            color: tc.warning,
             size: 16,
           ),
           const SizedBox(width: 8),
@@ -655,7 +1002,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             child: Text(
               message.text,
               style: DesignTokens.bodySmall.copyWith(
-                color: Colors.white70,
+                color: tc.textSecondary,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -667,13 +1014,14 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   }
 
   Widget _buildMessageComposer() {
+    final tc = context.tc;
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: tc.surface,
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
           ),
         ),
       ),
@@ -681,36 +1029,34 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         children: [
           // Attachment Button
           IconButton(
-            onPressed: () {
-              _showAttachmentMenu();
-            },
-            icon: const Icon(Icons.attach_file, color: AppTheme.accentGreen),
+            onPressed: _showAttachmentMenu,
+            icon: Icon(Icons.attach_file, color: tc.accent),
+            tooltip: 'Attach file',
           ),
           
           // Voice Message Button
           IconButton(
-            onPressed: () {
-              // Voice message functionality
-            },
-            icon: const Icon(Icons.mic, color: AppTheme.accentGreen),
+            onPressed: _showVoiceOptions,
+            icon: Icon(Icons.mic, color: _isRecording ? tc.danger : tc.accent),
+            tooltip: 'Voice message',
           ),
           
           // Message Input
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.primaryDark.withValues(alpha: 0.3),
+                color: tc.inputFill,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.3),
+                  color: tc.border,
                 ),
               ),
               child: TextField(
                 controller: _messageController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: tc.textPrimary),
                 decoration: InputDecoration(
                   hintText: 'Type a message...',
-                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                  hintStyle: TextStyle(color: tc.textSecondary),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: DesignTokens.space16,
@@ -720,6 +1066,12 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                 maxLines: null,
                 textCapitalization: TextCapitalization.sentences,
                 onSubmitted: (_) => _sendMessage(),
+                onChanged: (value) {
+                  // Set typing indicator
+                  if (_threadId != null && value.isNotEmpty) {
+                    _messagesService.setTyping(_threadId!, true);
+                  }
+                },
               ),
             ),
           ),
@@ -727,7 +1079,91 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
           // Send Button
           IconButton(
             onPressed: _sendMessage,
-            icon: const Icon(Icons.send, color: AppTheme.accentGreen),
+            icon: Icon(Icons.send, color: tc.accent),
+            tooltip: 'Send message',
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showVoiceOptions() {
+    final tc = context.tc;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: tc.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        final sheetTc = ThemeColors.of(sheetContext);
+        return Container(
+          padding: const EdgeInsets.all(DesignTokens.space16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Voice Message',
+                style: DesignTokens.titleMedium.copyWith(
+                  color: sheetTc.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DesignTokens.space16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildVoiceOption(
+                    sheetContext,
+                    Icons.audio_file,
+                    'Pick Audio',
+                    sheetTc.accent,
+                    () {
+                      Navigator.pop(sheetContext);
+                      _pickVoiceMessage();
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: DesignTokens.space8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space16),
+                child: Text(
+                  'Select an audio file from your device to send as a voice message',
+                  style: DesignTokens.bodySmall.copyWith(
+                    color: sheetTc.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: DesignTokens.space16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildVoiceOption(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Icon(icon, color: color, size: 28),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: DesignTokens.bodySmall.copyWith(
+              color: ThemeColors.of(context).textPrimary,
+            ),
           ),
         ],
       ),
@@ -735,29 +1171,31 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   }
 
   Widget _buildTypingDot(int index) {
+    final tc = context.tc;
     return AnimatedContainer(
       duration: Duration(milliseconds: 600 + (index * 200)),
       width: 4,
       height: 4,
-      decoration: const BoxDecoration(
-        color: AppTheme.accentGreen,
+      decoration: BoxDecoration(
+        color: tc.accent,
         shape: BoxShape.circle,
       ),
     );
   }
 
   Widget _buildTypingIndicator() {
+    final tc = context.tc;
     return Padding(
       padding: const EdgeInsets.only(bottom: DesignTokens.space16),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 16,
-            backgroundColor: AppTheme.accentGreen,
+            backgroundColor: tc.accent,
             child: Text(
               'JD',
               style: TextStyle(
-                color: AppTheme.primaryDark,
+                color: tc.textOnDark,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -770,8 +1208,9 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
               vertical: DesignTokens.space12,
             ),
             decoration: BoxDecoration(
-              color: AppTheme.cardBackground,
+              color: tc.surface,
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: tc.border),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -790,9 +1229,12 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   }
 
   Widget _buildMessageBubble(Message message) {
+    final tc = context.tc;
     final user = Supabase.instance.client.auth.currentUser;
     final isUser = message.senderId == user?.id;
     final isPinned = message.reactions.containsKey('pinned');
+    final isRead = message.seenAt != null;
+    final coachInitials = (_coachName ?? 'Coach').split(' ').map((e) => e.isNotEmpty ? e[0] : '').take(2).join().toUpperCase();
     
     return Padding(
       padding: const EdgeInsets.only(bottom: DesignTokens.space16),
@@ -801,154 +1243,128 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
-            const CircleAvatar(
+            CircleAvatar(
               radius: 16,
-              backgroundColor: AppTheme.accentGreen,
-              child: Text(
-                'JD',
+              backgroundColor: tc.accent,
+              backgroundImage: _coachAvatar != null ? NetworkImage(_coachAvatar!) : null,
+              child: _coachAvatar == null ? Text(
+                coachInitials,
                 style: TextStyle(
-                  color: AppTheme.primaryDark,
+                  color: tc.textOnDark,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
+              ) : null,
             ),
             const SizedBox(width: DesignTokens.space8),
           ],
           
           Flexible(
-            child: Column(
-              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: [
-                Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: DesignTokens.space16,
-                    vertical: DesignTokens.space12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isUser ? AppTheme.accentGreen : AppTheme.cardBackground,
-                    borderRadius: BorderRadius.circular(18).copyWith(
-                      bottomLeft: isUser ? const Radius.circular(18) : const Radius.circular(4),
-                      bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(18),
+            child: GestureDetector(
+              onLongPress: () => _showMessageOptions(message),
+              child: Column(
+                crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7,
                     ),
-                    border: isPinned
-                        ? Border.all(color: AppTheme.accentOrange, width: 2)
-                        : null,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DesignTokens.space16,
+                      vertical: DesignTokens.space12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isUser ? tc.accent : tc.surface,
+                      borderRadius: BorderRadius.circular(18).copyWith(
+                        bottomLeft: isUser ? const Radius.circular(18) : const Radius.circular(4),
+                        bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(18),
+                      ),
+                      border: isPinned
+                          ? Border.all(color: tc.warning, width: 2)
+                          : Border.all(color: tc.border, width: 1),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (message.text.isNotEmpty)
+                          Text(
+                            message.text,
+                            style: DesignTokens.bodyMedium.copyWith(
+                              color: isUser ? tc.textOnDark : tc.textPrimary,
+                            ),
+                          ),
+                        if (message.attachments.isNotEmpty) ...[
+                          if (message.text.isNotEmpty) const SizedBox(height: DesignTokens.space8),
+                          _buildAttachmentPreview(message.attachments.first, isUser),
+                        ],
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        message.text,
-                        style: DesignTokens.bodyMedium.copyWith(
-                          color: isUser ? AppTheme.primaryDark : Colors.white,
+                  
+                  // Reactions
+                  if (message.reactions.isNotEmpty && !message.reactions.containsKey('pinned'))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: GestureDetector(
+                        onTap: () => _showReactionPicker(message.id),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ...message.reactions.entries.where((e) => e.key != 'pinned').map<Widget>((entry) => Container(
+                              margin: const EdgeInsets.only(right: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: tc.surfaceAlt,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: tc.border),
+                              ),
+                              child: Text(
+                                entry.value,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            )),
+                          ],
                         ),
                       ),
-                      if (message.attachments.isNotEmpty) ...[
-                        const SizedBox(height: DesignTokens.space8),
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.image,
-                            color: AppTheme.accentGreen,
-                            size: 32,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                
-                // Reactions
-                if (message.reactions.isNotEmpty)
+                    ),
+                  
+                  // Timestamp and Read Receipts
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        ...message.reactions.values.map<Widget>((reaction) => Container(
-                          margin: const EdgeInsets.only(right: 4),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
+                        Text(
+                          _formatTime(message.createdAt),
+                          style: DesignTokens.bodySmall.copyWith(
+                            color: tc.textSecondary,
                           ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryDark.withValues(alpha: 0.3),
-                            borderRadius: BorderRadius.circular(12),
+                        ),
+                        if (isPinned) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.push_pin,
+                            color: tc.warning,
+                            size: 12,
                           ),
-                          child: Text(
-                            reaction,
-                            style: const TextStyle(fontSize: 12),
+                        ],
+                        // Read receipts (WhatsApp style double check)
+                        if (isUser) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            isRead ? Icons.done_all : Icons.done,
+                            color: isRead ? tc.accent : tc.textSecondary,
+                            size: 14,
                           ),
-                        )),
+                        ],
                       ],
                     ),
                   ),
-                
-                // Timestamp and Actions
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _formatTime(message.createdAt),
-                      style: DesignTokens.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.5),
-                      ),
-                    ),
-                    if (isPinned) ...[
-                      const SizedBox(width: 4),
-                      const Icon(
-                        Icons.push_pin,
-                        color: AppTheme.accentOrange,
-                        size: 12,
-                      ),
-                    ],
-                    const SizedBox(width: 8),
-                    PopupMenuButton<String>(
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: Colors.white.withValues(alpha: 0.5),
-                        size: 16,
-                      ),
-                      onSelected: (value) {
-                        switch (value) {
-                          case 'react':
-                            _addReaction(message.id, '👍');
-                            break;
-                          case 'pin':
-                            _togglePin(message.id);
-                            break;
-                          case 'copy':
-                            // Copy message functionality
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'react',
-                          child: Text('Add Reaction'),
-                        ),
-                        const PopupMenuItem(
-                          value: 'pin',
-                          child: Text('Pin Message'),
-                        ),
-                        const PopupMenuItem(
-                          value: 'copy',
-                          child: Text('Copy'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           
@@ -956,14 +1372,11 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
             const SizedBox(width: DesignTokens.space8),
             CircleAvatar(
               radius: 16,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              child: const Text(
-                'A',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+              backgroundColor: tc.surfaceAlt,
+              child: Icon(
+                Icons.person,
+                color: tc.textPrimary,
+                size: 16,
               ),
             ),
           ],
@@ -971,15 +1384,243 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
       ),
     );
   }
+  
+  Widget _buildAttachmentPreview(Map<String, dynamic> attachment, bool isUser) {
+    final tc = context.tc;
+    final mime = attachment['mime']?.toString() ?? '';
+    final name = attachment['name']?.toString() ?? 'File';
+    final url = attachment['url']?.toString();
+    
+    IconData icon;
+    Color color;
+    
+    if (mime.startsWith('image/')) {
+      icon = Icons.image;
+      color = Colors.purple;
+    } else if (mime.startsWith('video/')) {
+      icon = Icons.videocam;
+      color = Colors.red;
+    } else if (mime.startsWith('audio/')) {
+      icon = Icons.audiotrack;
+      color = Colors.orange;
+    } else if (mime == 'application/pdf') {
+      icon = Icons.picture_as_pdf;
+      color = Colors.red;
+    } else {
+      icon = Icons.insert_drive_file;
+      color = Colors.blue;
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.space8),
+      decoration: BoxDecoration(
+        color: isUser ? tc.textOnDark.withValues(alpha: 0.2) : tc.surfaceAlt,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(width: DesignTokens.space8),
+          Flexible(
+            child: Text(
+              name,
+              style: DesignTokens.bodySmall.copyWith(
+                color: isUser ? tc.textOnDark : tc.textPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showMessageOptions(Message message) {
+    final tc = context.tc;
+    final user = Supabase.instance.client.auth.currentUser;
+    final isUser = message.senderId == user?.id;
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: tc.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        final sheetTc = ThemeColors.of(sheetContext);
+        return Container(
+          padding: const EdgeInsets.all(DesignTokens.space16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Reaction picker
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: DesignTokens.space8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: ['👍', '❤️', '😂', '😮', '😢', '🔥', '👏'].map((emoji) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        _addReaction(message.id, emoji);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const Divider(),
+              
+              // Copy
+              ListTile(
+                leading: Icon(Icons.copy, color: sheetTc.icon),
+                title: Text('Copy', style: TextStyle(color: sheetTc.textPrimary)),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _copyMessage(message.id);
+                },
+              ),
+              
+              // Pin/Unpin
+              ListTile(
+                leading: Icon(
+                  message.reactions.containsKey('pinned') ? Icons.push_pin_outlined : Icons.push_pin,
+                  color: sheetTc.icon,
+                ),
+                title: Text(
+                  message.reactions.containsKey('pinned') ? 'Unpin' : 'Pin',
+                  style: TextStyle(color: sheetTc.textPrimary),
+                ),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _togglePin(message.id);
+                },
+              ),
+              
+              // Forward
+              ListTile(
+                leading: Icon(Icons.forward, color: sheetTc.icon),
+                title: Text('Forward', style: TextStyle(color: sheetTc.textPrimary)),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _forwardMessage(message.id);
+                },
+              ),
+              
+              // Delete (only for own messages)
+              if (isUser)
+                ListTile(
+                  leading: Icon(Icons.delete, color: sheetTc.danger),
+                  title: Text('Delete', style: TextStyle(color: sheetTc.danger)),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _confirmDeleteMessage(message.id);
+                  },
+                ),
+              
+              const SizedBox(height: DesignTokens.space8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  
+  void _showReactionPicker(String messageId) {
+    final tc = context.tc;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: tc.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return Container(
+          padding: const EdgeInsets.all(DesignTokens.space16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Add Reaction',
+                style: DesignTokens.titleMedium.copyWith(
+                  color: ThemeColors.of(sheetContext).textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DesignTokens.space16),
+              Wrap(
+                spacing: DesignTokens.space12,
+                runSpacing: DesignTokens.space12,
+                children: ['👍', '❤️', '😂', '😮', '😢', '🔥', '👏', '🎉', '💯', '🙏'].map((emoji) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _addReaction(messageId, emoji);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: ThemeColors.of(sheetContext).surfaceAlt,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(emoji, style: const TextStyle(fontSize: 28)),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: DesignTokens.space16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  
+  void _confirmDeleteMessage(String messageId) {
+    final tc = context.tc;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: tc.surface,
+        title: Text(
+          'Delete Message?',
+          style: TextStyle(color: tc.textPrimary),
+        ),
+        content: Text(
+          'This message will be deleted for everyone.',
+          style: TextStyle(color: tc.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text('Cancel', style: TextStyle(color: tc.textSecondary)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              _deleteMessage(messageId);
+            },
+            child: Text('Delete', style: TextStyle(color: tc.danger)),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSmartRepliesPanel() {
+    final tc = context.tc;
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: tc.surface,
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: tc.border,
           ),
         ),
       ),
@@ -992,7 +1633,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
               Text(
                 'Quick Replies',
                 style: DesignTokens.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: tc.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -1002,7 +1643,7 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                     _showSmartReplies = false;
                   });
                 },
-                icon: const Icon(Icons.close, color: Colors.white70, size: 20),
+                icon: Icon(Icons.close, color: tc.iconSecondary, size: 20),
               ),
             ],
           ),
@@ -1019,16 +1660,16 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
                   vertical: DesignTokens.space8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryDark.withValues(alpha: 0.3),
+                  color: tc.surfaceAlt,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: tc.border,
                   ),
                 ),
                 child: Text(
                   reply,
                   style: DesignTokens.bodySmall.copyWith(
-                    color: Colors.white,
+                    color: tc.textPrimary,
                   ),
                 ),
               ),
@@ -1040,64 +1681,108 @@ class _ModernMessengerScreenState extends State<ModernMessengerScreen> {
   }
 
   void _showAttachmentMenu() {
+    final tc = context.tc;
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.cardBackground,
+      backgroundColor: tc.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(DesignTokens.space16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Attach File',
-              style: DesignTokens.titleMedium.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+      builder: (sheetContext) {
+        final sheetTc = ThemeColors.of(sheetContext);
+        return Container(
+          padding: const EdgeInsets.all(DesignTokens.space16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Attach File',
+                style: DesignTokens.titleMedium.copyWith(
+                  color: sheetTc.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: DesignTokens.space16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildAttachmentOption(Icons.camera_alt, 'Camera'),
-                _buildAttachmentOption(Icons.photo_library, 'Gallery'),
-                _buildAttachmentOption(Icons.insert_drive_file, 'Document'),
-                _buildAttachmentOption(Icons.videocam, 'Video'),
-              ],
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: DesignTokens.space16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildAttachmentOption(
+                    sheetContext, 
+                    Icons.camera_alt, 
+                    'Camera',
+                    sheetTc.accent,
+                    () {
+                      Navigator.pop(sheetContext);
+                      _takePhoto();
+                    },
+                  ),
+                  _buildAttachmentOption(
+                    sheetContext, 
+                    Icons.photo_library, 
+                    'Gallery',
+                    Colors.purple,
+                    () {
+                      Navigator.pop(sheetContext);
+                      _pickImage();
+                    },
+                  ),
+                  _buildAttachmentOption(
+                    sheetContext, 
+                    Icons.insert_drive_file, 
+                    'Document',
+                    Colors.orange,
+                    () {
+                      Navigator.pop(sheetContext);
+                      _pickDocument();
+                    },
+                  ),
+                  _buildAttachmentOption(
+                    sheetContext, 
+                    Icons.videocam, 
+                    'Video',
+                    Colors.red,
+                    () {
+                      Navigator.pop(sheetContext);
+                      _pickVideo();
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: DesignTokens.space16),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildAttachmentOption(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: AppTheme.primaryDark.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(30),
+  Widget _buildAttachmentOption(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
           ),
-          child: Icon(
-            icon,
-            color: AppTheme.accentGreen,
-            size: 24,
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: DesignTokens.bodySmall.copyWith(
+              color: ThemeColors.of(context).textSecondary,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: DesignTokens.bodySmall.copyWith(
-            color: Colors.white70,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

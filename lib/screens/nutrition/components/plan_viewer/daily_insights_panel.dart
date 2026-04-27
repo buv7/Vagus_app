@@ -61,15 +61,29 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
   void _generateInsights() {
     _insights.clear();
     final summary = widget.plan.dailySummary;
+    
+    // Get primary color from context - will be updated in didChangeDependencies
+    final primaryColor = _primaryColor ?? AppTheme.accentGreen;
 
     // Analyze macros and generate insights
-    _analyzeProtein(summary);
-    _analyzeCarbs(summary);
-    _analyzeFat(summary);
+    _analyzeProtein(summary, primaryColor);
+    _analyzeCarbs(summary, primaryColor);
+    _analyzeFat(summary, primaryColor);
     _analyzeCalories(summary);
-    _analyzeMealDistribution();
+    _analyzeMealDistribution(primaryColor);
     _analyzeHydration();
     _analyzeMicronutrients(summary);
+  }
+  
+  Color? _primaryColor;
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _primaryColor = Theme.of(context).colorScheme.primary;
+    // Regenerate insights with correct theme color
+    _generateInsights();
+    _initializeAnimations();
   }
 
   void _initializeAnimations() {
@@ -100,7 +114,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
     }
   }
 
-  void _analyzeProtein(DailySummary summary) {
+  void _analyzeProtein(DailySummary summary, Color primaryColor) {
     const proteinTarget = 150.0; // This could be dynamic per user
     final proteinPercentage = (summary.totalProtein / proteinTarget * 100).round();
 
@@ -110,7 +124,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
         icon: Icons.fitness_center,
         title: 'Excellent Protein Intake',
         description: 'You\'re meeting your protein goals! This supports muscle recovery and growth.',
-        color: AppTheme.accentGreen,
+        color: primaryColor,
       ));
     } else if (proteinPercentage >= 70) {
       _insights.add(_InsightItem(
@@ -131,7 +145,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
     }
   }
 
-  void _analyzeCarbs(DailySummary summary) {
+  void _analyzeCarbs(DailySummary summary, Color primaryColor) {
     const carbsTarget = 200.0;
     final carbsPercentage = (summary.totalCarbs / carbsTarget * 100).round();
 
@@ -141,7 +155,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
         icon: Icons.battery_charging_full,
         title: 'Great Energy Balance',
         description: 'Your carb intake is perfect for sustained energy throughout the day.',
-        color: AppTheme.accentGreen,
+        color: primaryColor,
       ));
     } else if (carbsPercentage < 60) {
       _insights.add(_InsightItem(
@@ -154,7 +168,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
     }
   }
 
-  void _analyzeFat(DailySummary summary) {
+  void _analyzeFat(DailySummary summary, Color primaryColor) {
     const fatTarget = 80.0;
     final fatPercentage = (summary.totalFat / fatTarget * 100).round();
 
@@ -164,7 +178,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
         icon: Icons.favorite,
         title: 'Healthy Fat Balance',
         description: 'Good mix of healthy fats for hormone production and nutrient absorption.',
-        color: AppTheme.accentGreen,
+        color: primaryColor,
       ));
     } else if (fatPercentage < 50) {
       _insights.add(_InsightItem(
@@ -200,7 +214,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
     }
   }
 
-  void _analyzeMealDistribution() {
+  void _analyzeMealDistribution(Color primaryColor) {
     final mealCount = widget.plan.meals.length;
 
     if (mealCount >= 5) {
@@ -209,7 +223,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
         icon: Icons.schedule,
         title: 'Great Meal Frequency',
         description: 'Eating $mealCount times helps maintain stable blood sugar and metabolism.',
-        color: AppTheme.accentGreen,
+        color: primaryColor,
       ));
     } else if (mealCount <= 2) {
       _insights.add(_InsightItem(
@@ -260,6 +274,7 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
+    final theme = Theme.of(context);
 
     if (_insights.isEmpty) {
       return const SizedBox.shrink();
@@ -276,12 +291,12 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withValues(alpha: 0.2),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.lightbulb_outline,
-                  color: AppTheme.accentGreen,
+                  color: theme.colorScheme.primary,
                   size: 18,
                 ),
               ),
@@ -292,16 +307,16 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
                   children: [
                     Text(
                       LocaleHelper.t('daily_insights', locale),
-                      style: const TextStyle(
-                        color: AppTheme.neutralWhite,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       LocaleHelper.t('personalized_nutrition_tips', locale),
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 12,
                       ),
                     ),
@@ -314,13 +329,13 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
                   vertical: DesignTokens.space4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DesignTokens.radius8),
                 ),
                 child: Text(
                   '${_insights.length}',
-                  style: const TextStyle(
-                    color: AppTheme.accentGreen,
+                  style: TextStyle(
+                    color: theme.colorScheme.primary,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -366,6 +381,8 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
   }
 
   Widget _buildInsightCard(_InsightItem insight) {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
       decoration: BoxDecoration(
@@ -416,8 +433,8 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
                 const SizedBox(height: DesignTokens.space4),
                 Text(
                   insight.description,
-                  style: const TextStyle(
-                    color: AppTheme.lightGrey,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     height: 1.4,
                   ),
@@ -431,13 +448,14 @@ class _DailyInsightsPanelState extends State<DailyInsightsPanel>
   }
 
   Widget _buildInsightTypeIcon(_InsightType type) {
+    final theme = Theme.of(context);
     IconData icon;
     Color color;
 
     switch (type) {
       case _InsightType.success:
         icon = Icons.check_circle;
-        color = AppTheme.accentGreen;
+        color = theme.colorScheme.primary;
         break;
       case _InsightType.warning:
         icon = Icons.warning;

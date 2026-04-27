@@ -1,11 +1,15 @@
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import 'config/env_config.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/workout/client_workout_dashboard_screen.dart'; // ✅ import workout screen
-import 'screens/workout/revolutionary_plan_builder_screen.dart'; // ✅ import workout editor
+import 'screens/workout/workout_plan_builder_screen.dart'; // ✅ import workout editor
 import 'screens/splash/animated_splash_screen.dart';
 // OneSignal service archived - no longer in use
 // import 'services/notifications/onesignal_service.dart';
@@ -27,9 +31,37 @@ import 'screens/calendar/calendar_screen.dart';
 import 'screens/progress/client_check_in_calendar.dart';
 import 'screens/files/file_manager_screen.dart';
 import 'screens/account_switch_screen.dart';
+import 'screens/settings/ai_usage_screen.dart';
+import 'screens/settings/data_export_screen.dart';
+import 'screens/settings/devices_screen.dart';
+import 'screens/settings/profile_edit_screen.dart';
+import 'screens/support/support_screen.dart';
+import 'screens/coaches/coach_application_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Enable semantics on web for accessibility + test automation.
+  // Flutter web does not build the semantics tree by default.
+  if (kIsWeb) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
+
+  // Surface framework errors to the console instead of swallowing them.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    if (kIsWeb) {
+      debugPrint('FlutterError: ${details.exception}');
+      debugPrint('Stack: ${details.stack}');
+    }
+  };
+
+  // Catch unhandled async / zone errors.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('PlatformDispatcher error: $error');
+    debugPrint('Stack: $stack');
+    return false; // let Flutter handle normally
+  };
 
   // Load environment variables from .env file
   await EnvConfig.init();
@@ -48,8 +80,11 @@ void main() async {
   // OneSignal notifications disabled - service archived
   // await OneSignalService.instance.init();
 
-  // Initialize local notifications for calendar reminders
-  await NotificationHelper.instance.init();
+  // Initialize local notifications for calendar reminders.
+  // flutter_local_notifications has no web implementation — skip on web.
+  if (!kIsWeb) {
+    await NotificationHelper.instance.init();
+  }
 
   // Initialize settings controller
   final settings = SettingsController();
@@ -79,9 +114,12 @@ class _VagusMainAppState extends State<VagusMainApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeDeepLinks();
-    });
+    // app_links plugin uses platform channels not available on web.
+    if (!kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _initializeDeepLinks();
+      });
+    }
   }
 
   void _initializeDeepLinks() {
@@ -93,7 +131,9 @@ class _VagusMainAppState extends State<VagusMainApp> {
 
   @override
   void dispose() {
-    DeepLinkService().dispose();
+    if (!kIsWeb) {
+      DeepLinkService().dispose();
+    }
     super.dispose();
   }
 
@@ -127,7 +167,7 @@ class _VagusMainAppState extends State<VagusMainApp> {
             if (settings.name == '/workout-editor') {
               final args = settings.arguments as Map<String, dynamic>?;
               return MaterialPageRoute(
-                builder: (context) => RevolutionaryPlanBuilderScreen(
+                builder: (context) => WorkoutPlanBuilderScreen(
                   planId: args?['id']?.toString(),
                   clientId: args?['client_id']?.toString(),
                 ),
@@ -163,13 +203,13 @@ class _VagusMainAppState extends State<VagusMainApp> {
             '/billing': (context) => const BillingSettings(),
             '/admin': (context) => const AdminScreen(),
 
-            // Redirects for side menu items
-            '/profile/edit': (context) => const UserSettingsScreen(),
-            '/devices': (context) => const UserSettingsScreen(),
-            '/ai-usage': (context) => const AdminScreen(),
-            '/export': (context) => const UserSettingsScreen(),
-            '/apply-coach': (context) => const AdminScreen(),
-            '/support': (context) => const UserSettingsScreen(),
+            // Side menu items
+            '/profile/edit': (context) => const ProfileEditScreen(),
+            '/devices': (context) => const DevicesScreen(),
+            '/ai-usage': (context) => const AiUsageScreen(),
+            '/export': (context) => const DataExportScreen(),
+            '/apply-coach': (context) => const CoachApplicationScreen(),
+            '/support': (context) => const SupportScreen(),
           },
         );
       },

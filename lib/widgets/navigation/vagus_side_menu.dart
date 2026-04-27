@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../branding/vagus_logo.dart';
 import '../../theme/design_tokens.dart';
 import '../../services/navigation/app_navigator.dart';
 import '../../screens/learn/learn_client_screen.dart';
 import '../../screens/learn/learn_coach_screen.dart';
-import '../../screens/nutrition/coach_nutrition_dashboard.dart';
+import '../../screens/settings/about_screen.dart';
 
 class VagusSideMenu extends StatefulWidget {
   final bool isClient;
@@ -105,11 +105,42 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
 
     return Drawer(
       backgroundColor: Colors.transparent,
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: DesignTokens.darkGradient,
-        ),
-        child: Column(
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              // Glassmorphism style matching FAB and nav bar
+              gradient: RadialGradient(
+                center: Alignment.topLeft,
+                radius: 2.0,
+                colors: [
+                  DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  DesignTokens.accentBlue.withValues(alpha: 0.1),
+                ],
+              ),
+              border: Border(
+                right: BorderSide(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                  width: 2,
+                ),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(8, 0),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  spreadRadius: 0,
+                  offset: const Offset(4, 0),
+                ),
+              ],
+            ),
+            child: Column(
           children: [
             // Header with VAGUS branding
             _buildHeader(resolvedSubtitle),
@@ -122,57 +153,6 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
               child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                // Navigation Section
-                _buildSectionHeader('Navigation'),
-                _buildMenuItem(
-                  icon: Icons.home,
-                  title: 'Dashboard',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.fitness_center,
-                  title: 'Workouts',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.calendar_month,
-                  title: 'Calendar',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.restaurant,
-                  title: 'Nutrition',
-                  onTap: () {
-                    Navigator.pop(context);
-                    // Navigate to coach nutrition dashboard for coaches
-                    if (!widget.isClient) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CoachNutritionDashboard(),
-                        ),
-                      );
-                    }
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.chat,
-                  title: 'Messages',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.videocam,
-                  title: 'Calls',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.trending_up,
-                  title: 'Progress',
-                  onTap: () => Navigator.pop(context),
-                ),
-
-                const SizedBox(height: DesignTokens.space16),
-
                 // Quick Access Section
                 _buildSectionHeader('Quick Access'),
                 _buildMenuItem(
@@ -263,6 +243,19 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
                   title: 'Support',
                   onTap: widget.onSupport ?? () => AppNavigator.support(context),
                 ),
+                _buildMenuItem(
+                  icon: Icons.info_outline,
+                  title: 'About',
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AboutScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -271,31 +264,26 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
           if (widget.onLogout != null)
             _buildFooter(),
         ],
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildHeader(String subtitle) {
-    return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: DesignTokens.blurSm, sigmaY: DesignTokens.blurSm),
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: DesignTokens.cardBackground,
-            border: const Border(
-              bottom: BorderSide(color: DesignTokens.glassBorder, width: 1),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: DesignTokens.accentGreen.withValues(alpha: 0.1),
-                blurRadius: 15,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: DesignTokens.accentBlue.withValues(alpha: 0.1),
+        border: Border(
+          bottom: BorderSide(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+            width: 1,
           ),
-          padding: const EdgeInsets.fromLTRB(DesignTokens.space16, 28, DesignTokens.space16, 24),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(DesignTokens.space16, 48, DesignTokens.space16, 24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -316,8 +304,8 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(
-                    color: DesignTokens.textSecondary,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 13.5,
                     fontWeight: FontWeight.w500,
                   ),
@@ -326,10 +314,20 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
             ),
           ),
           const SizedBox(width: 12),
-          const VagusLogo(size: 36, white: true),
+          // White logo on glassmorphic background
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                width: 1,
+              ),
+            ),
+            child: const VagusLogo(size: 28, white: true),
+          ),
         ],
-        ),
-      ),
       ),
     );
   }
@@ -337,54 +335,50 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space16),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(DesignTokens.radius16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: DesignTokens.blurSm, sigmaY: DesignTokens.blurSm),
-          child: Container(
-            decoration: BoxDecoration(
-              color: DesignTokens.cardBackground,
-              borderRadius: BorderRadius.circular(DesignTokens.radius16),
-              border: Border.all(color: DesignTokens.glassBorder),
+      child: Container(
+        decoration: BoxDecoration(
+          color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(DesignTokens.radius16),
+          border: Border.all(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+          ),
+        ),
+        child: TextField(
+          controller: _searchController,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: 'Search...',
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.white.withValues(alpha: 0.8),
             ),
-            child: TextField(
-              controller: _searchController,
-              style: const TextStyle(color: DesignTokens.neutralWhite),
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                hintStyle: const TextStyle(color: DesignTokens.textSecondary),
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: DesignTokens.accentGreen,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(DesignTokens.radius16),
-                  borderSide: const BorderSide(
-                    color: DesignTokens.accentGreen,
-                    width: 2,
-                  ),
-                ),
-                filled: true,
-                fillColor: Colors.transparent,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: DesignTokens.space16,
-                  vertical: DesignTokens.space12,
-                ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(DesignTokens.radius16),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(DesignTokens.radius16),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(DesignTokens.radius16),
+              borderSide: BorderSide(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.6),
+                width: 2,
               ),
-              onChanged: (value) {
-                setState(() {
-                });
-              },
+            ),
+            filled: true,
+            fillColor: Colors.transparent,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: DesignTokens.space16,
+              vertical: DesignTokens.space12,
             ),
           ),
+          onChanged: (value) {
+            setState(() {
+            });
+          },
         ),
       ),
     );
@@ -396,7 +390,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
       child: Text(
         title,
         style: DesignTokens.bodySmall.copyWith(
-          color: Colors.white70,
+          color: Colors.white.withValues(alpha: 0.6),
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
@@ -410,7 +404,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -419,11 +413,23 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
         width: double.infinity,
         child: OutlinedButton.icon(
           onPressed: widget.onLogout,
-          icon: const Icon(Icons.logout, color: Colors.white70),
-          label: const Text('Logout', style: TextStyle(color: Colors.white70)),
+          icon: Icon(Icons.logout, color: Colors.white.withValues(alpha: 0.8)),
+          label: Text(
+            'Logout',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+            side: BorderSide(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+              width: 2,
+            ),
             padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ),
@@ -439,7 +445,7 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
     return ListTile(
       leading: Icon(
         icon,
-        color: Colors.white70,
+        color: Colors.white.withValues(alpha: 0.8),
         size: 24,
       ),
       title: Text(
@@ -452,15 +458,15 @@ class _VagusSideMenuState extends State<VagusSideMenu> {
       subtitle: subtitle != null
           ? Text(
               subtitle,
-              style: const TextStyle(
-                color: DesignTokens.textSecondary,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 12,
               ),
             )
           : null,
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-      hoverColor: Colors.white.withValues(alpha: 0.1),
+      hoverColor: DesignTokens.accentBlue.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),

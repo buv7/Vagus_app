@@ -1,0 +1,43 @@
+name: Flutter Analyze
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: analyze-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: flutter analyze (fail on errors)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.8'
+          channel: stable
+          cache: true
+
+      - run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run analyzer
+        run: flutter analyze --no-fatal-warnings --no-fatal-infos 2>&1 | tee analyze.txt
+
+      - name: Enforce zero errors
+        run: |
+          errors=$(grep -cE '^\s*error\b' analyze.txt || true)
+          echo "Analyzer error count: ${errors}"
+          if [ "${errors}" -gt 0 ]; then
+            echo "::error::flutter analyze reported ${errors} error(s)."
+            grep -E '^\s*error\b' analyze.txt || true
+            exit 1
+          fi
+          echo "No analyzer errors."

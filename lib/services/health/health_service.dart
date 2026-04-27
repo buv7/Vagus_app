@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:health/health.dart' as health_pkg;
+import 'package:uuid/uuid.dart';
 
 /// Health platform providers
 enum HealthProvider {
@@ -268,190 +271,425 @@ abstract class HealthAdapter {
   });
 }
 
-/// HealthKit adapter (iOS stub)
-class HealthKitAdapter implements HealthAdapter {
+/// Cross-platform health adapter using the health package
+/// Works with Apple HealthKit (iOS) and Google Health Connect (Android)
+class CrossPlatformHealthAdapter implements HealthAdapter {
+  final health_pkg.Health _health = health_pkg.Health();
+  bool _isAuthorized = false;
+  final _uuid = const Uuid();
+  
   @override
-  bool get isSupported => false; // Stub until package approved
+  bool get isSupported => Platform.isIOS || Platform.isAndroid;
+  
+  @override
+  String get platformName => Platform.isIOS ? 'HealthKit' : 'Health Connect';
+  
+  @override
+  List<HealthDataType> get availableDataTypes => [
+    HealthDataType.steps,
+    HealthDataType.distance,
+    HealthDataType.calories,
+    HealthDataType.heartRate,
+    HealthDataType.sleep,
+  ];
+  
+  /// Health data types to request from platform (using health package types)
+  List<health_pkg.HealthDataType> get _platformDataTypes => [
+    health_pkg.HealthDataType.STEPS,
+    health_pkg.HealthDataType.DISTANCE_DELTA,
+    health_pkg.HealthDataType.ACTIVE_ENERGY_BURNED,
+    health_pkg.HealthDataType.HEART_RATE,
+    health_pkg.HealthDataType.SLEEP_ASLEEP,
+    health_pkg.HealthDataType.SLEEP_AWAKE,
+    health_pkg.HealthDataType.SLEEP_DEEP,
+    health_pkg.HealthDataType.SLEEP_LIGHT,
+    health_pkg.HealthDataType.SLEEP_REM,
+    health_pkg.HealthDataType.WORKOUT,
+  ];
+  
+  @override
+  Future<bool> connect() async {
+    try {
+      // Configure health package
+      await _health.configure();
+      
+      // Request authorization
+      final permissions = _platformDataTypes.map((t) => health_pkg.HealthDataAccess.READ).toList();
+      final authorized = await _health.requestAuthorization(_platformDataTypes, permissions: permissions);
+      
+      _isAuthorized = authorized;
+      debugPrint('$platformName: connect() - authorized: $authorized');
+      return authorized;
+    } catch (e) {
+      debugPrint('$platformName: connect() error: $e');
+      return false;
+    }
+  }
+  
+  @override
+  Future<void> disconnect() async {
+    _isAuthorized = false;
+    debugPrint('$platformName: disconnect()');
+  }
+  
+  @override
+  Future<bool> isConnected() async {
+    if (!_isAuthorized) return false;
+    
+    try {
+      // Check if we still have permissions
+      final hasPermissions = await _health.hasPermissions(_platformDataTypes);
+      return hasPermissions ?? false;
+    } catch (e) {
+      debugPrint('$platformName: isConnected() error: $e');
+      return false;
+    }
+  }
+  
+  @override
+  Future<Map<String, bool>> requestPermissions() async {
+    try {
+      final permissions = _platformDataTypes.map((t) => health_pkg.HealthDataAccess.READ).toList();
+      final authorized = await _health.requestAuthorization(_platformDataTypes, permissions: permissions);
+      
+      _isAuthorized = authorized;
+      
+      // Return permission status for each type
+      final result = <String, bool>{};
+      for (final type in _platformDataTypes) {
+        result[type.name] = authorized;
+      }
+      return result;
+    } catch (e) {
+      debugPrint('$platformName: requestPermissions() error: $e');
+      return {};
+    }
+  }
+  
+  @override
+  Future<List<HealthSample>> getSamples({
+    required HealthDataType type,
+    required int days,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('$platformName: getSamples() - not authorized');
+      return [];
+    }
+    
+    try {
+      final now = DateTime.now();
+      final start = now.subtract(Duration(days: days));
+      
+      // Map internal type to health package type
+      final healthType = _mapToHealthDataType(type);
+      if (healthType == null) return [];
+      
+      final dataPoints = await _health.getHealthDataFromTypes(
+        types: [healthType],
+        startTime: start,
+        endTime: now,
+      );
+      
+      // Remove duplicates
+      final uniquePoints = _health.removeDuplicates(dataPoints);
+      
+      // Convert to our model
+      final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+      return uniquePoints.map((point) => _convertToHealthSample(point, userId, type)).toList();
+    } catch (e) {
+      debugPrint('$platformName: getSamples($type) error: $e');
+      return [];
+    }
+  }
+  
+  @override
+  Future<List<HealthWorkout>> getWorkouts({
+    required int days,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('$platformName: getWorkouts() - not authorized');
+      return [];
+    }
+    
+    try {
+      final now = DateTime.now();
+      final start = now.subtract(Duration(days: days));
+      
+      final dataPoints = await _health.getHealthDataFromTypes(
+        types: [health_pkg.HealthDataType.WORKOUT],
+        startTime: start,
+        endTime: now,
+      );
+      
+      final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+      
+      return dataPoints.map((point) {
+        final workoutValue = point.value;
+        final duration = point.dateTo.difference(point.dateFrom).inSeconds;
+        
+        return HealthWorkout(
+          id: _uuid.v4(),
+          userId: userId,
+          sport: workoutValue.toString(),
+          startAt: point.dateFrom,
+          endAt: point.dateTo,
+          durationSeconds: duration,
+          source: platformName.toLowerCase(),
+          meta: {'source_id': point.uuid},
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('$platformName: getWorkouts() error: $e');
+      return [];
+    }
+  }
+  
+  @override
+  Future<List<SleepSegment>> getSleepData({
+    required int days,
+  }) async {
+    if (!_isAuthorized) {
+      debugPrint('$platformName: getSleepData() - not authorized');
+      return [];
+    }
+    
+    try {
+      final now = DateTime.now();
+      final start = now.subtract(Duration(days: days));
+      
+      final sleepTypes = [
+        health_pkg.HealthDataType.SLEEP_ASLEEP,
+        health_pkg.HealthDataType.SLEEP_AWAKE,
+        health_pkg.HealthDataType.SLEEP_DEEP,
+        health_pkg.HealthDataType.SLEEP_LIGHT,
+        health_pkg.HealthDataType.SLEEP_REM,
+      ];
+      
+      final dataPoints = await _health.getHealthDataFromTypes(
+        types: sleepTypes,
+        startTime: start,
+        endTime: now,
+      );
+      
+      final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+      
+      return dataPoints.map((point) {
+        final stage = _mapSleepStage(point.type);
+        
+        return SleepSegment(
+          id: _uuid.v4(),
+          userId: userId,
+          startAt: point.dateFrom,
+          endAt: point.dateTo,
+          stage: stage,
+          source: platformName.toLowerCase(),
+          meta: {'source_id': point.uuid},
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('$platformName: getSleepData() error: $e');
+      return [];
+    }
+  }
+  
+  /// Map internal HealthDataType to health package HealthDataType
+  health_pkg.HealthDataType? _mapToHealthDataType(HealthDataType type) {
+    switch (type) {
+      case HealthDataType.steps:
+        return health_pkg.HealthDataType.STEPS;
+      case HealthDataType.distance:
+        return health_pkg.HealthDataType.DISTANCE_DELTA;
+      case HealthDataType.calories:
+        return health_pkg.HealthDataType.ACTIVE_ENERGY_BURNED;
+      case HealthDataType.heartRate:
+        return health_pkg.HealthDataType.HEART_RATE;
+      case HealthDataType.sleep:
+        return health_pkg.HealthDataType.SLEEP_ASLEEP;
+      default:
+        return null;
+    }
+  }
+  
+  /// Convert health package data point to our HealthSample model
+  HealthSample _convertToHealthSample(health_pkg.HealthDataPoint point, String userId, HealthDataType type) {
+    double? value;
+    String? unit;
+    
+    final numValue = point.value;
+    if (numValue is health_pkg.NumericHealthValue) {
+      value = numValue.numericValue.toDouble();
+    }
+    
+    // Map units
+    switch (point.type) {
+      case health_pkg.HealthDataType.STEPS:
+        unit = 'count';
+        break;
+      case health_pkg.HealthDataType.DISTANCE_DELTA:
+        unit = 'meters';
+        break;
+      case health_pkg.HealthDataType.ACTIVE_ENERGY_BURNED:
+        unit = 'kcal';
+        break;
+      case health_pkg.HealthDataType.HEART_RATE:
+        unit = 'bpm';
+        break;
+      default:
+        unit = point.unit.name;
+    }
+    
+    return HealthSample(
+      id: _uuid.v4(),
+      userId: userId,
+      type: type,
+      value: value,
+      unit: unit,
+      measuredAt: point.dateFrom,
+      source: platformName.toLowerCase(),
+      meta: {'source_id': point.uuid},
+    );
+  }
+  
+  /// Map health package sleep type to stage string
+  String? _mapSleepStage(health_pkg.HealthDataType type) {
+    switch (type) {
+      case health_pkg.HealthDataType.SLEEP_AWAKE:
+        return 'awake';
+      case health_pkg.HealthDataType.SLEEP_LIGHT:
+        return 'light';
+      case health_pkg.HealthDataType.SLEEP_DEEP:
+        return 'deep';
+      case health_pkg.HealthDataType.SLEEP_REM:
+        return 'rem';
+      case health_pkg.HealthDataType.SLEEP_ASLEEP:
+        return 'light'; // Default to light if not specified
+      default:
+        return null;
+    }
+  }
+}
+
+/// Legacy HealthKit adapter - now uses CrossPlatformHealthAdapter
+class HealthKitAdapter implements HealthAdapter {
+  final CrossPlatformHealthAdapter _crossPlatform = CrossPlatformHealthAdapter();
+  
+  @override
+  bool get isSupported => Platform.isIOS;
   
   @override
   String get platformName => 'HealthKit';
   
   @override
-  List<HealthDataType> get availableDataTypes => [];
+  List<HealthDataType> get availableDataTypes => _crossPlatform.availableDataTypes;
   
   @override
-  Future<bool> connect() async {
-    debugPrint('HealthKit: connect() - stubbed');
-    return false;
-  }
+  Future<bool> connect() => _crossPlatform.connect();
   
   @override
-  Future<void> disconnect() async {
-    debugPrint('HealthKit: disconnect() - stubbed');
-  }
+  Future<void> disconnect() => _crossPlatform.disconnect();
   
   @override
-  Future<bool> isConnected() async {
-    debugPrint('HealthKit: isConnected() - stubbed');
-    return false;
-  }
+  Future<bool> isConnected() => _crossPlatform.isConnected();
   
   @override
-  Future<Map<String, bool>> requestPermissions() async {
-    debugPrint('HealthKit: requestPermissions() - stubbed');
-    return {};
-  }
+  Future<Map<String, bool>> requestPermissions() => _crossPlatform.requestPermissions();
   
   @override
   Future<List<HealthSample>> getSamples({
     required HealthDataType type,
     required int days,
-  }) async {
-    debugPrint('HealthKit: getSamples() - stubbed');
-    return [];
-  }
+  }) => _crossPlatform.getSamples(type: type, days: days);
   
   @override
-  Future<List<HealthWorkout>> getWorkouts({
-    required int days,
-  }) async {
-    debugPrint('HealthKit: getWorkouts() - stubbed');
-    return [];
-  }
+  Future<List<HealthWorkout>> getWorkouts({required int days}) => _crossPlatform.getWorkouts(days: days);
   
   @override
-  Future<List<SleepSegment>> getSleepData({
-    required int days,
-  }) async {
-    debugPrint('HealthKit: getSleepData() - stubbed');
-    return [];
-  }
+  Future<List<SleepSegment>> getSleepData({required int days}) => _crossPlatform.getSleepData(days: days);
 }
 
-/// Health Connect adapter (Android stub)
+/// Health Connect adapter (Android) - uses CrossPlatformHealthAdapter
 class HealthConnectAdapter implements HealthAdapter {
+  final CrossPlatformHealthAdapter _crossPlatform = CrossPlatformHealthAdapter();
+  
   @override
-  bool get isSupported => false; // Stub until package approved
+  bool get isSupported => Platform.isAndroid;
   
   @override
   String get platformName => 'Health Connect';
   
   @override
-  List<HealthDataType> get availableDataTypes => [];
+  List<HealthDataType> get availableDataTypes => _crossPlatform.availableDataTypes;
   
   @override
-  Future<bool> connect() async {
-    debugPrint('HealthConnect: connect() - stubbed');
-    return false;
-  }
+  Future<bool> connect() => _crossPlatform.connect();
   
   @override
-  Future<void> disconnect() async {
-    debugPrint('HealthConnect: disconnect() - stubbed');
-  }
+  Future<void> disconnect() => _crossPlatform.disconnect();
   
   @override
-  Future<bool> isConnected() async {
-    debugPrint('HealthConnect: isConnected() - stubbed');
-    return false;
-  }
+  Future<bool> isConnected() => _crossPlatform.isConnected();
   
   @override
-  Future<Map<String, bool>> requestPermissions() async {
-    debugPrint('HealthConnect: requestPermissions() - stubbed');
-    return {};
-  }
+  Future<Map<String, bool>> requestPermissions() => _crossPlatform.requestPermissions();
   
   @override
   Future<List<HealthSample>> getSamples({
     required HealthDataType type,
     required int days,
-  }) async {
-    debugPrint('HealthConnect: getSamples() - stubbed');
-    return [];
-  }
+  }) => _crossPlatform.getSamples(type: type, days: days);
   
   @override
-  Future<List<HealthWorkout>> getWorkouts({
-    required int days,
-  }) async {
-    debugPrint('HealthConnect: getWorkouts() - stubbed');
-    return [];
-  }
+  Future<List<HealthWorkout>> getWorkouts({required int days}) => _crossPlatform.getWorkouts(days: days);
   
   @override
-  Future<List<SleepSegment>> getSleepData({
-    required int days,
-  }) async {
-    debugPrint('HealthConnect: getSleepData() - stubbed');
-    return [];
-  }
+  Future<List<SleepSegment>> getSleepData({required int days}) => _crossPlatform.getSleepData(days: days);
 }
 
-/// Google Fit adapter (Android stub)
+/// Google Fit adapter (Android) - uses CrossPlatformHealthAdapter
+/// Note: Google Fit is deprecated in favor of Health Connect on Android 14+
 class GoogleFitAdapter implements HealthAdapter {
+  final CrossPlatformHealthAdapter _crossPlatform = CrossPlatformHealthAdapter();
+  
   @override
-  bool get isSupported => false; // Stub until package approved
+  bool get isSupported => Platform.isAndroid;
   
   @override
   String get platformName => 'Google Fit';
   
   @override
-  List<HealthDataType> get availableDataTypes => [];
+  List<HealthDataType> get availableDataTypes => _crossPlatform.availableDataTypes;
   
   @override
-  Future<bool> connect() async {
-    debugPrint('GoogleFit: connect() - stubbed');
-    return false;
-  }
+  Future<bool> connect() => _crossPlatform.connect();
   
   @override
-  Future<void> disconnect() async {
-    debugPrint('GoogleFit: disconnect() - stubbed');
-  }
+  Future<void> disconnect() => _crossPlatform.disconnect();
   
   @override
-  Future<bool> isConnected() async {
-    debugPrint('GoogleFit: isConnected() - stubbed');
-    return false;
-  }
+  Future<bool> isConnected() => _crossPlatform.isConnected();
   
   @override
-  Future<Map<String, bool>> requestPermissions() async {
-    debugPrint('GoogleFit: requestPermissions() - stubbed');
-    return {};
-  }
+  Future<Map<String, bool>> requestPermissions() => _crossPlatform.requestPermissions();
   
   @override
   Future<List<HealthSample>> getSamples({
     required HealthDataType type,
     required int days,
-  }) async {
-    debugPrint('GoogleFit: getSamples() - stubbed');
-    return [];
-  }
+  }) => _crossPlatform.getSamples(type: type, days: days);
   
   @override
-  Future<List<HealthWorkout>> getWorkouts({
-    required int days,
-  }) async {
-    debugPrint('GoogleFit: getWorkouts() - stubbed');
-    return [];
-  }
+  Future<List<HealthWorkout>> getWorkouts({required int days}) => _crossPlatform.getWorkouts(days: days);
   
   @override
-  Future<List<SleepSegment>> getSleepData({
-    required int days,
-  }) async {
-    debugPrint('GoogleFit: getSleepData() - stubbed');
-    return [];
-  }
+  Future<List<SleepSegment>> getSleepData({required int days}) => _crossPlatform.getSleepData(days: days);
 }
 
-/// HMS adapter (Huawei stub)
+/// HMS adapter (Huawei)
+/// Note: HMS Health Kit requires Huawei Mobile Services, which may not be available on all devices
+/// This adapter remains stubbed as it requires Huawei-specific SDK integration
 class HMSAdapter implements HealthAdapter {
   @override
-  bool get isSupported => false; // Stub until package approved
+  bool get isSupported => false; // HMS requires Huawei-specific setup
   
   @override
   String get platformName => 'HMS Health';
@@ -461,24 +699,22 @@ class HMSAdapter implements HealthAdapter {
   
   @override
   Future<bool> connect() async {
-    debugPrint('HMS: connect() - stubbed');
+    debugPrint('HMS: connect() - HMS Health requires Huawei-specific integration');
     return false;
   }
   
   @override
   Future<void> disconnect() async {
-    debugPrint('HMS: disconnect() - stubbed');
+    debugPrint('HMS: disconnect()');
   }
   
   @override
   Future<bool> isConnected() async {
-    debugPrint('HMS: isConnected() - stubbed');
     return false;
   }
   
   @override
   Future<Map<String, bool>> requestPermissions() async {
-    debugPrint('HMS: requestPermissions() - stubbed');
     return {};
   }
   
@@ -487,7 +723,6 @@ class HMSAdapter implements HealthAdapter {
     required HealthDataType type,
     required int days,
   }) async {
-    debugPrint('HMS: getSamples() - stubbed');
     return [];
   }
   
@@ -495,7 +730,6 @@ class HMSAdapter implements HealthAdapter {
   Future<List<HealthWorkout>> getWorkouts({
     required int days,
   }) async {
-    debugPrint('HMS: getWorkouts() - stubbed');
     return [];
   }
   
@@ -503,7 +737,6 @@ class HMSAdapter implements HealthAdapter {
   Future<List<SleepSegment>> getSleepData({
     required int days,
   }) async {
-    debugPrint('HMS: getSleepData() - stubbed');
     return [];
   }
 }
@@ -594,18 +827,75 @@ class HealthService {
     }
   }
 
-  /// Sync delta changes
+  /// Sync delta changes - fetches recent data from health platforms
   Future<void> syncDelta() async {
     try {
       final sources = await getConnectedSources();
       
       for (final source in sources) {
-        // TODO: Implement delta sync logic when adapters are real
-        debugPrint('Delta sync for ${source.provider} - stubbed');
+        final adapter = getAdapter(source.provider);
+        
+        // Sync last 1 day of data for quick updates
+        for (final type in adapter.availableDataTypes) {
+          final samples = await adapter.getSamples(type: type, days: 1);
+          await _saveSamples(samples);
+        }
+        
+        // Sync today's workouts
+        final workouts = await adapter.getWorkouts(days: 1);
+        await _saveWorkouts(workouts);
+        
+        debugPrint('Delta sync completed for ${source.provider}');
       }
     } catch (e) {
       debugPrint('Error during delta sync: $e');
     }
+  }
+
+  /// Sync today's data and return fresh summary
+  /// This fetches data directly from the health platform for the current day
+  Future<Map<String, dynamic>> syncAndGetTodaySummary() async {
+    try {
+      // Sync today's data first
+      await syncDelta();
+      
+      // Then fetch from database
+      final summary = await getDailySummary(DateTime.now());
+      
+      return summary ?? {
+        'steps': 0,
+        'active_kcal': 0,
+        'exercise_minutes': 0,
+        'stand_hours': 0,
+        'distance_km': 0.0,
+      };
+    } catch (e) {
+      debugPrint('Error syncing and getting today summary: $e');
+      return {
+        'steps': 0,
+        'active_kcal': 0,
+        'exercise_minutes': 0,
+        'stand_hours': 0,
+        'distance_km': 0.0,
+      };
+    }
+  }
+
+  /// Get the recommended health provider for the current platform
+  HealthProvider? getRecommendedProvider() {
+    if (Platform.isIOS) {
+      return HealthProvider.healthkit;
+    } else if (Platform.isAndroid) {
+      return HealthProvider.healthconnect;
+    }
+    return null;
+  }
+
+  /// Quick connect to the recommended health platform
+  Future<bool> quickConnect() async {
+    final provider = getRecommendedProvider();
+    if (provider == null) return false;
+    return connect(provider);
   }
 
   /// Save health samples to database

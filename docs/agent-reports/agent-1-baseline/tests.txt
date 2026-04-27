@@ -1,0 +1,561 @@
+
+┌─────────────────────────────────────────────────────────┐
+│ A new version of Flutter is available!                  │
+│                                                         │
+│ To update to the latest version, run "flutter upgrade". │
+└─────────────────────────────────────────────────────────┘
+00:00 +0: loading C:/Users/alhas/StudioProjects/vagus_app/test/calendar_peek_service_dst_test.dart
+00:00 +0: C:/Users/alhas/StudioProjects/vagus_app/test/calendar_peek_service_dst_test.dart: CalendarPeekService DST Tests should handle DST transition consistently
+00:00 +1: C:/Users/alhas/StudioProjects/vagus_app/test/calendar_peek_service_dst_test.dart: CalendarPeekService DST Tests should maintain block count consistency across DST boundary
+00:00 +2: C:/Users/alhas/StudioProjects/vagus_app/test/calendar_peek_service_dst_test.dart: CalendarPeekService DST Tests should handle fall DST transition (gain hour)
+00:03 +3: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing (setUpAll)
+00:03 +3: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:03 +4: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:03 +5: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:03 +6: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:03 +7: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:03 +8: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:03 +9: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +10: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +11: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +12: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +13: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +14: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +15: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +16: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +17: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +18: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +19: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +20: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +21: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:04 +22: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:05 +23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:05 +24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:05 +25: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:05 +26: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:05 +27: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:05 +28: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:05 +29: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -1: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -1: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse "option one" variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -2: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -2: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse 'option 1' variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -3: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -3: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse "first" variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -4: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -4: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse Arabic/Kurdish 'first' variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -5: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -5: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse "option two" variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -6: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -6: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse 'option 2' variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -7: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -7: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse "second" variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -8: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -8: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse Arabic/Kurdish 'second' variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -9: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -9: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should parse numeric variants [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -10: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -10: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should return null for invalid inputs [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -11: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -11: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should handle mixed case and whitespace [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -12: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -12: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should prioritize first match in ambiguous cases [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -13: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -13: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionSelection should handle empty and whitespace-only inputs [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -14: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -14: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionFromLastMessage should parse from last message only [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -15: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -15: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionFromLastMessage should ignore earlier messages with option selections [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -16: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -16: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionFromLastMessage should return null for empty history [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -17: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -17: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionFromLastMessage should return null if last message has no option selection [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -18: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -18: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests parseOptionFromLastMessage should handle single message history [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -19: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -19: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests isRescheduleIntent should detect English reschedule intents [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -20: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -20: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests isRescheduleIntent should detect Arabic/Kurdish reschedule intents [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -21: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -21: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests isRescheduleIntent should handle case insensitive detection [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -22: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -22: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests isRescheduleIntent should return false for non-reschedule intents [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +29 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +29 -23: C:/Users/alhas/StudioProjects/vagus_app/test/quickbook_reschedule_parser_test.dart: QuickBookRescheduleService Parser Tests isRescheduleIntent should handle partial matches correctly [E]
+  'package:supabase_flutter/src/supabase.dart': Failed assertion: line 45 pos 7: '_instance._initialized': You must initialize the supabase instance before calling Supabase.instance
+  dart:core                                                                 _AssertionError._throwNew
+  package:supabase_flutter/src/supabase.dart 45:7                           Supabase.instance
+  package:vagus_app/services/messages_service.dart 101:45                   new MessagesService
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 32:44   new CalendarQuickBookService._internal
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 28:78   CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart         CalendarQuickBookService._instance
+  package:vagus_app/services/coach/calendar_quick_book_service.dart 29:41   new CalendarQuickBookService
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 26:40  new QuickBookRescheduleService._
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart 22:81  QuickBookRescheduleService.instance
+  package:vagus_app/services/coach/quickbook_reschedule_service.dart        QuickBookRescheduleService.instance
+  test\quickbook_reschedule_parser_test.dart 9:44                           main.<fn>.<fn>
+  
+00:06 +30 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +31 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +32 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +33 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +34 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +35 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +36 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +37 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +38 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +39 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +40 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +41 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +42 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +43 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +44 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:06 +45 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +46 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +47 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +48 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +49 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +50 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +51 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +52 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +53 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +54 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +55 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +56 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +57 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +58 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +59 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +60 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +61 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +62 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +63 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +64 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +65 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +66 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +67 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +68 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +69 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +70 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +71 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +72 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +73 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +74 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +75 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +76 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +77 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +78 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +79 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +80 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +81 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +82 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +83 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +84 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +85 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +86 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +87 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +88 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +89 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +90 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +91 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +92 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +93 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +94 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +95 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +96 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +97 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +98 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +99 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +100 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +101 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +102 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +103 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +104 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +105 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +106 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +107 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +108 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +109 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +110 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +111 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +112 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +113 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +114 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +115 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +116 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +117 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +118 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +119 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +120 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +121 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +122 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +123 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +124 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +125 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +126 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +127 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +128 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +129 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +130 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +131 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +132 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +133 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +134 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +135 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +136 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +137 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +138 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +139 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +140 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:07 +141 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +142 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +143 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +144 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +145 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +146 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +147 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +148 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +149 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +150 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +151 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:08 +152 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +153 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +154 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +155 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +156 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +157 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +158 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +159 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +160 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +161 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +162 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +163 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:09 +164 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +165 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +166 -23: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +166 -23: C:/Users/alhas/StudioProjects/vagus_app/test/widgets/nutrition/macro_progress_bar_test.dart: MacroProgressBar Widget includes semantic label for accessibility
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: not null
+  Actual: <null>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/Users/alhas/StudioProjects/vagus_app/test/widgets/nutrition/macro_progress_bar_test.dart:70:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:193:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1064:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/alhas/StudioProjects/vagus_app/test/widgets/nutrition/macro_progress_bar_test.dart line 70
+The test description was:
+  includes semantic label for accessibility
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +166 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +166 -24: C:/Users/alhas/StudioProjects/vagus_app/test/widgets/nutrition/macro_progress_bar_test.dart: MacroProgressBar Widget includes semantic label for accessibility [E]
+  Test failed. See exception logs above.
+  The test description was: includes semantic label for accessibility
+  
+00:10 +167 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +168 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +169 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +170 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +171 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +172 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +173 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+00:10 +174 -24: C:/Users/alhas/StudioProjects/vagus_app/test/exercise_sheet_prefs_plumbing_test.dart: ExerciseDetailSheet Preferences Plumbing loads preferences on initialization
+
+========================================================================
+NOTE (Agent 1): test run was manually terminated by the agent after the
+reporter stalled for >120s on the test above (last progress: 174 pass /
+24 fail). No EXIT_CODE line is present because the run did not reach
+natural completion.
+========================================================================

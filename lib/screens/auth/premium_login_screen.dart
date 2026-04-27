@@ -174,18 +174,23 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // Force dark background for login screen since it has dark animated gradient
     return PopScope(
       canPop: !_isLoading,
       child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor: Colors.black,
         body: Stack(
+          fit: StackFit.expand,
           children: [
             // Animated gradient background
-            const AnimatedGradientBackground(),
+            const Positioned.fill(
+              child: AnimatedGradientBackground(),
+            ),
 
             // Floating particles
-            const FloatingParticles(),
+            const Positioned.fill(
+              child: FloatingParticles(),
+            ),
 
             // Main content
             SafeArea(
@@ -296,8 +301,8 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
               'VAGUS',
               style: TextStyle(
                 fontSize: 72,
-                fontWeight: FontWeight.w100,
-                letterSpacing: 4,
+                fontWeight: FontWeight.w300,
+                letterSpacing: 8,
               ),
             ),
           ),
@@ -305,16 +310,21 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
 
         const SizedBox(height: 16),
 
-        // Subtitle
+        // Subtitle with shimmer
         FadeInAnimation(
           delay: const Duration(milliseconds: 400),
-          child: Text(
-            'THE MOST ADVANCED ONLINE FITNESS PLATFORM',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w300,
-              color: Colors.white.withValues(alpha: 0.6),
-              letterSpacing: 2,
+          child: Shimmer.fromColors(
+            baseColor: Colors.white,
+            highlightColor: const Color(0xFF00C8FF),
+            period: const Duration(seconds: 3),
+            child: const Text(
+              'THE MOST ADVANCED IRAQI ONLINE FITNESS\nCOACHING PLATFORM',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 1.5,
+                height: 1.4,
+              ),
             ),
           ),
         ),
@@ -359,22 +369,28 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
               'VAGUS',
               style: TextStyle(
                 fontSize: 48,
-                fontWeight: FontWeight.w100,
-                letterSpacing: 4,
+                fontWeight: FontWeight.w300,
+                letterSpacing: 8,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         FadeInAnimation(
           delay: const Duration(milliseconds: 400),
-          child: Text(
-            'The most advanced IRAQI ONLINE FITNESS COACHING PLATFORM',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w300,
-              color: Colors.white.withValues(alpha: 0.6),
-              letterSpacing: 2,
+          child: Shimmer.fromColors(
+            baseColor: Colors.white,
+            highlightColor: const Color(0xFF00C8FF),
+            period: const Duration(seconds: 3),
+            child: const Text(
+              'THE MOST ADVANCED IRAQI ONLINE FITNESS\nCOACHING PLATFORM',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 1.5,
+                height: 1.4,
+              ),
             ),
           ),
         ),
@@ -404,13 +420,46 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
 
+            // Tagline - stacked vertical layout
             Text(
-              'BE YOUR BEST TODAY WITH OUR ELITE COACHES AND THE MOST ADVANCED FITNESS PLATFORM ON EARTH !',
+              'ONE PLATFORM.',
               style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.5),
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.white.withValues(alpha: 0.7),
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'PURE POWER.',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF00C8FF).withValues(alpha: 0.9),
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'IRAQI PRIDE.',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.white.withValues(alpha: 0.7),
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'CHAMPION MINDSET.',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF00C8FF).withValues(alpha: 0.9),
+                letterSpacing: 2,
               ),
             ),
 
@@ -579,6 +628,11 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
   }
 
   Widget _buildNeuralActivityIndicator() {
+    // Safety check - don't render if animations aren't ready
+    if (_dotControllers.length < 5) {
+      return const SizedBox.shrink();
+    }
+    
     return Positioned(
       bottom: 40,
       left: 0,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/coach_profile_service.dart';
 import '../../models/coach_profile.dart';
+import '../../theme/theme_colors.dart';
 import 'widgets/profile_content.dart';
 import 'widgets/media_gallery.dart';
 import 'widgets/marketplace_status.dart';
@@ -259,7 +260,7 @@ class _CoachProfileScreenState extends State<CoachProfileScreen>
                   children: [
                     CircleAvatar(
                       radius: 60,
-                      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                      backgroundColor: ThemeColors.of(context).avatarBg,
                       backgroundImage: _profile?.avatarUrl != null
                           ? NetworkImage(_profile!.avatarUrl!)
                           : null,
@@ -267,7 +268,7 @@ class _CoachProfileScreenState extends State<CoachProfileScreen>
                           ? Icon(
                               Icons.person,
                               size: 60,
-                              color: Theme.of(context).primaryColor,
+                              color: ThemeColors.of(context).avatarIcon,
                             )
                           : null,
                     ),

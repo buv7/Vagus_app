@@ -5,6 +5,7 @@ import 'coach_note_screen.dart';
 import '../../services/ai/embedding_helper.dart';
 import '../../services/billing/plan_access_manager.dart';
 import '../../widgets/anim/blocking_overlay.dart';
+import '../../theme/design_tokens.dart';
 
 class SmartPanel extends StatefulWidget {
   final TextEditingController noteController;
@@ -240,54 +241,181 @@ class _SmartPanelState extends State<SmartPanel> {
     double score, 
     String reason
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Similar Note Found'),
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: isDark ? DesignTokens.darkBackground : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(DesignTokens.radius20),
+          side: BorderSide(
+            color: isDark 
+                ? DesignTokens.accentBlue.withValues(alpha: 0.4)
+                : DesignTokens.borderColor(context),
+            width: isDark ? 2 : 1,
+          ),
+        ),
+        title: Text(
+          'Similar Note Found',
+          style: TextStyle(
+            color: isDark ? Colors.white : DesignTokens.textColor(context),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Similarity: ${(score * 100).toStringAsFixed(1)}%',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: DesignTokens.accentBlue.withValues(alpha: isDark ? 0.2 : 0.1),
+                borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                border: Border.all(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Text(
+                'Similarity: ${(score * 100).toStringAsFixed(1)}%',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : DesignTokens.accentBlue,
+                ),
+              ),
             ),
-            const SizedBox(height: 8),
-            Text('Reason: $reason'),
+            const SizedBox(height: 12),
+            Text(
+              'Reason: $reason',
+              style: TextStyle(
+                color: isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.textColor(context),
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               'Title: ${match['title'] ?? 'No title'}',
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               'Content: ${(match['body'] ?? '').toString().substring(0, min(100, (match['body'] ?? '').toString().length))}...',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(
+                color: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.grey[600],
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
+            style: TextButton.styleFrom(
+              foregroundColor: isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.textColorSecondary(context),
+            ),
             child: const Text('Continue Writing'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Navigate to the similar note using existing pattern
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CoachNoteScreen(
-                    existingNote: match,
-                    clientId: match['client_id'],
+          Container(
+            decoration: BoxDecoration(
+              color: DesignTokens.accentBlue,
+              borderRadius: BorderRadius.circular(DesignTokens.radius8),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(dialogContext);
+                  // Navigate to the similar note using existing pattern
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CoachNoteScreen(
+                        existingNote: match,
+                        clientId: match['client_id'],
+                      ),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(DesignTokens.radius8),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Text(
+                    'View Similar Note',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              );
-            },
-            child: const Text('View Similar Note'),
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicChip({
+    required BuildContext context,
+    required String label,
+    required String emoji,
+    required VoidCallback onTap,
+    bool isPrimary = false,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark 
+            ? (isPrimary 
+                ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                : DesignTokens.accentBlue.withValues(alpha: 0.15))
+            : (isPrimary 
+                ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+                : Colors.grey.shade100),
+        borderRadius: BorderRadius.circular(DesignTokens.radius20),
+        border: Border.all(
+          color: isDark 
+              ? DesignTokens.accentBlue.withValues(alpha: 0.4)
+              : DesignTokens.accentBlue.withValues(alpha: 0.3),
+          width: isPrimary ? 2 : 1,
+        ),
+        boxShadow: isDark ? [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: isPrimary ? 0.2 : 0.1),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
+        ] : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(DesignTokens.radius20),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : DesignTokens.textColor(context),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -298,29 +426,42 @@ class _SmartPanelState extends State<SmartPanel> {
       spacing: 8,
       runSpacing: 8,
       children: [
-        ElevatedButton(
-          onPressed: () => _runAction(context, 'Improve'),
-          child: const Text('✨ Improve'),
+        _buildGlassmorphicChip(
+          context: context,
+          label: 'Improve',
+          emoji: '✨',
+          onTap: () => _runAction(context, 'Improve'),
+          isPrimary: true,
         ),
-        ElevatedButton(
-          onPressed: () => _runAction(context, 'Summarize'),
-          child: const Text('📄 Summarize'),
+        _buildGlassmorphicChip(
+          context: context,
+          label: 'Summarize',
+          emoji: '📄',
+          onTap: () => _runAction(context, 'Summarize'),
         ),
-        ElevatedButton(
-          onPressed: () => _runAction(context, 'Tags'),
-          child: const Text('🏷 Smart Tags'),
+        _buildGlassmorphicChip(
+          context: context,
+          label: 'Smart Tags',
+          emoji: '🏷',
+          onTap: () => _runAction(context, 'Tags'),
         ),
-        ElevatedButton(
-          onPressed: () => _runAction(context, 'Rewrite Tone'),
-          child: const Text('🎭 Rewrite Tone'),
+        _buildGlassmorphicChip(
+          context: context,
+          label: 'Rewrite Tone',
+          emoji: '🎭',
+          onTap: () => _runAction(context, 'Rewrite Tone'),
         ),
-        ElevatedButton(
-          onPressed: () => _runAction(context, 'Follow-Up'),
-          child: const Text('📌 Follow-Up Suggestion'),
+        _buildGlassmorphicChip(
+          context: context,
+          label: 'Follow-Up Suggestion',
+          emoji: '📌',
+          onTap: () => _runAction(context, 'Follow-Up'),
         ),
-        ElevatedButton(
-          onPressed: () => _runAction(context, 'Duplicate'),
-          child: const Text('🔍 Check Duplicates'),
+        _buildGlassmorphicChip(
+          context: context,
+          label: 'Check Duplicates',
+          emoji: '🔍',
+          onTap: () => _runAction(context, 'Duplicate'),
         ),
       ],
     );

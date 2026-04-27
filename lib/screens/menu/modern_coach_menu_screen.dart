@@ -11,7 +11,7 @@ import '../analytics/analytics_reports_screen.dart';
 import '../billing/billing_payments_screen.dart';
 import '../support/help_center_screen.dart';
 import '../admin/admin_ads_screen.dart';
-import '../auth/modern_login_screen.dart';
+import '../auth/premium_login_screen.dart';
 import '../../services/admin/ad_banner_service.dart';
 
 class ModernCoachMenuScreen extends StatefulWidget {
@@ -64,7 +64,7 @@ class _ModernCoachMenuScreenState extends State<ModernCoachMenuScreen> {
     await supabase.auth.signOut();
     if (mounted) {
       unawaited(Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const ModernLoginScreen()),
+        MaterialPageRoute(builder: (_) => const PremiumLoginScreen()),
         (route) => false,
       ));
     }

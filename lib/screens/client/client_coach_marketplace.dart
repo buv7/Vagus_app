@@ -1,7 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../services/coach_marketplace_service.dart';
 import '../../models/coach_profile.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 import 'coach_profile_view_screen.dart';
 
 class ClientCoachMarketplace extends StatefulWidget {
@@ -92,11 +94,12 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tc = context.tc;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: DesignTokens.textPrimary,
+        foregroundColor: tc.textPrimary,
         title: const Text('Find a Coach'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(110),
@@ -108,14 +111,14 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: _filterCoaches,
-                  style: const TextStyle(color: DesignTokens.textPrimary),
+                  style: TextStyle(color: tc.textPrimary),
                   decoration: InputDecoration(
                     hintText: 'Search coaches...',
-                    hintStyle: const TextStyle(color: DesignTokens.textSecondary),
-                    prefixIcon: const Icon(Icons.search, color: DesignTokens.accentGreen),
+                    hintStyle: TextStyle(color: tc.textSecondary),
+                    prefixIcon: Icon(Icons.search, color: tc.accent),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: DesignTokens.textSecondary),
+                            icon: Icon(Icons.clear, color: tc.textSecondary),
                             onPressed: () {
                               _searchController.clear();
                               _filterCoaches('');
@@ -123,19 +126,19 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                           )
                         : null,
                     filled: true,
-                    fillColor: DesignTokens.cardBackground,
+                    fillColor: tc.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius12),
-                      borderSide: const BorderSide(color: DesignTokens.glassBorder),
+                      borderSide: BorderSide(color: tc.border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius12),
-                      borderSide: const BorderSide(color: DesignTokens.glassBorder),
+                      borderSide: BorderSide(color: tc.border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(DesignTokens.radius12),
-                      borderSide: const BorderSide(
-                        color: DesignTokens.accentGreen,
+                      borderSide: BorderSide(
+                        color: tc.accent,
                         width: 2,
                       ),
                     ),
@@ -159,18 +162,18 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                         label: Text(specialty),
                         selected: isSelected,
                         onSelected: (_) => _selectSpecialty(specialty),
-                        backgroundColor: DesignTokens.cardBackground,
-                        selectedColor: DesignTokens.accentGreen,
+                        backgroundColor: tc.chipBg,
+                        selectedColor: tc.chipSelectedBg,
                         side: BorderSide(
                           color: isSelected
-                              ? DesignTokens.accentGreen
-                              : DesignTokens.glassBorder,
+                              ? tc.accent
+                              : tc.border,
                           width: isSelected ? 2 : 1,
                         ),
                         labelStyle: TextStyle(
                           color: isSelected
-                              ? DesignTokens.primaryDark
-                              : DesignTokens.textPrimary,
+                              ? tc.chipTextOnSelected
+                              : tc.textPrimary,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                         ),
                       ),
@@ -183,7 +186,7 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: DesignTokens.accentGreen))
+          ? Center(child: CircularProgressIndicator(color: tc.accent))
           : _filteredCoaches.isEmpty
               ? _buildEmptyState()
               : RefreshIndicator(
@@ -200,29 +203,30 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    final tc = context.tc;
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.search_off,
             size: 80,
-            color: DesignTokens.textSecondary,
+            color: tc.textSecondary,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'No coaches found',
             style: TextStyle(
               fontSize: 18,
-              color: DesignTokens.textSecondary,
+              color: tc.textSecondary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Try adjusting your search or filters',
             style: TextStyle(
               fontSize: 14,
-              color: DesignTokens.textTertiary,
+              color: tc.textTertiary,
             ),
           ),
         ],
@@ -231,6 +235,7 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
   }
 
   Widget _buildCoachCard(CoachProfile coach) {
+    final tc = context.tc;
     return FutureBuilder<String?>(
       future: _marketplaceService.getConnectionStatus(coach.coachId),
       builder: (context, snapshot) {
@@ -240,11 +245,11 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
 
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
-          color: DesignTokens.cardBackground,
+          color: tc.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DesignTokens.radius12),
-            side: const BorderSide(
-              color: DesignTokens.glassBorder,
+            side: BorderSide(
+              color: tc.border,
             ),
           ),
           child: InkWell(
@@ -267,11 +272,12 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                 children: [
                   CircleAvatar(
                     radius: 30,
+                    backgroundColor: tc.avatarBg,
                     backgroundImage: coach.avatarUrl != null
                         ? NetworkImage(coach.avatarUrl!)
                         : null,
                     child: coach.avatarUrl == null
-                        ? const Icon(Icons.person, size: 30)
+                        ? Icon(Icons.person, size: 30, color: tc.avatarIcon)
                         : null,
                   ),
                   const SizedBox(width: 12),
@@ -281,18 +287,18 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                       children: [
                         Text(
                           coach.displayName ?? 'Coach',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: DesignTokens.textPrimary,
+                            color: tc.textPrimary,
                           ),
                         ),
                         if (coach.username != null)
                           Text(
                             '@${coach.username}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
-                              color: DesignTokens.textSecondary,
+                              color: tc.textSecondary,
                             ),
                           ),
                         // Rating placeholder
@@ -300,9 +306,9 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                           children: [
                             Icon(Icons.star, size: 16, color: Colors.amber[700]),
                             const SizedBox(width: 4),
-                            const Text('0.0', style: TextStyle(fontSize: 14, color: DesignTokens.textSecondary)),
-                            const Text(' • ', style: TextStyle(fontSize: 14, color: DesignTokens.textSecondary)),
-                            const Text('0 clients', style: TextStyle(fontSize: 14, color: DesignTokens.textSecondary)),
+                            Text('0.0', style: TextStyle(fontSize: 14, color: tc.textSecondary)),
+                            Text(' • ', style: TextStyle(fontSize: 14, color: tc.textSecondary)),
+                            Text('0 clients', style: TextStyle(fontSize: 14, color: tc.textSecondary)),
                           ],
                         ),
                       ],
@@ -316,10 +322,10 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                 const SizedBox(height: 12),
                 Text(
                   coach.headline!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
-                    color: DesignTokens.accentGreen,
+                    color: tc.accent,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -331,9 +337,9 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                 const SizedBox(height: 12),
                 Text(
                   coach.bio!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: DesignTokens.textSecondary,
+                    color: tc.textSecondary,
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -352,18 +358,18 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            DesignTokens.accentGreen.withValues(alpha: 0.3),
-                            DesignTokens.accentBlue.withValues(alpha: 0.2),
+                            tc.accent.withValues(alpha: 0.3),
+                            tc.accentSecondary.withValues(alpha: 0.2),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: DesignTokens.accentGreen,
+                          color: tc.accent,
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: DesignTokens.accentGreen.withValues(alpha: 0.2),
+                            color: tc.accent.withValues(alpha: 0.2),
                             blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),
@@ -371,9 +377,9 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                       ),
                       child: Text(
                         specialty,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: DesignTokens.textPrimary,
+                          color: tc.textPrimary,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.2,
                         ),
@@ -383,128 +389,89 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
                 ),
               ],
 
-              // Action Buttons
+              // Action Buttons - Glassmorphic style matching FAB/nav
               const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [DesignTokens.accentGreen, DesignTokens.accentBlue],
-                        ),
-                        borderRadius: BorderRadius.circular(DesignTokens.radius12),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CoachProfileViewScreen(coachId: coach.coachId),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              center: Alignment.center,
+                              radius: 2.0,
+                              colors: [
+                                DesignTokens.accentBlue.withValues(alpha: 0.3),
+                                DesignTokens.accentBlue.withValues(alpha: 0.15),
+                              ],
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: DesignTokens.primaryDark,
-                          shadowColor: Colors.transparent,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                            border: Border.all(
+                              color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: DesignTokens.accentBlue.withValues(alpha: 0.25),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CoachProfileViewScreen(coachId: coach.coachId),
+                                  ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(DesignTokens.radius12),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 14),
+                                child: Center(
+                                  child: Text(
+                                    'View Profile',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        child: const Text('View Profile', style: TextStyle(fontWeight: FontWeight.w600)),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: isActive
-                        ? OutlinedButton.icon(
-                            onPressed: null,
-                            icon: const Icon(Icons.check_circle, size: 18, color: Colors.green),
-                            label: const Text('Connected', style: TextStyle(color: Colors.green)),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              side: const BorderSide(color: Colors.green, width: 2),
-                            ),
+                        ? _buildGlassmorphicButton(
+                            icon: Icons.check_circle,
+                            label: 'Connected',
+                            isSuccess: true,
+                            onTap: null,
                           )
                         : isPending
-                            ? OutlinedButton.icon(
-                                onPressed: () async {
-                                  final shouldCancel = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Cancel Request?'),
-                                      content: const Text('Do you want to cancel your connection request to this coach?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(context, false),
-                                          child: const Text('No'),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () => Navigator.pop(context, true),
-                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                          child: const Text('Cancel Request'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-
-                                  if (shouldCancel == true) {
-                                    try {
-                                      await _marketplaceService.cancelConnectionRequest(coach.coachId);
-                                      if (!context.mounted) return;
-                                      setState(() {}); // Refresh to show connect button
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Connection request cancelled'),
-                                          backgroundColor: Colors.orange,
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      if (!context.mounted) return;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Error: $e'),
-                                          backgroundColor: DesignTokens.danger,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                },
-                                icon: const Icon(Icons.schedule, size: 18, color: Colors.orange),
-                                label: const Text('Pending (tap to cancel)', style: TextStyle(color: Colors.orange)),
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  side: const BorderSide(color: Colors.orange, width: 2),
-                                ),
+                            ? _buildGlassmorphicButton(
+                                icon: Icons.schedule,
+                                label: 'Pending',
+                                isWarning: true,
+                                onTap: () => _showCancelDialog(coach, tc),
                               )
-                            : OutlinedButton.icon(
-                                onPressed: () async {
-                                  try {
-                                    await _marketplaceService.connectWithCoach(coach.coachId);
-                                    if (!context.mounted) return;
-                                    setState(() {}); // Refresh to show pending status
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Connection request sent!'),
-                                        backgroundColor: DesignTokens.accentGreen,
-                                      ),
-                                    );
-                                  } catch (e) {
-                                    if (!context.mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Error: $e'),
-                                        backgroundColor: DesignTokens.danger,
-                                      ),
-                                    );
-                                  }
-                                },
-                                icon: const Icon(Icons.person_add, size: 18, color: DesignTokens.accentGreen),
-                                label: const Text('Connect', style: TextStyle(color: DesignTokens.accentGreen)),
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  side: const BorderSide(color: DesignTokens.accentGreen, width: 2),
-                                ),
+                            : _buildGlassmorphicButton(
+                                icon: Icons.person_add,
+                                label: 'Connect',
+                                onTap: () => _connectWithCoach(coach, tc),
                               ),
                   ),
                 ],
@@ -516,5 +483,147 @@ class _ClientCoachMarketplaceState extends State<ClientCoachMarketplace> {
         );
       },
     );
+  }
+
+  Widget _buildGlassmorphicButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback? onTap,
+    bool isSuccess = false,
+    bool isWarning = false,
+  }) {
+    Color baseColor;
+    if (isSuccess) {
+      baseColor = const Color(0xFF00D4AA); // Green
+    } else if (isWarning) {
+      baseColor = const Color(0xFFFFB800); // Amber
+    } else {
+      baseColor = DesignTokens.accentBlue;
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(DesignTokens.radius12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 2.0,
+              colors: [
+                baseColor.withValues(alpha: 0.25),
+                baseColor.withValues(alpha: 0.1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+            border: Border.all(
+              color: baseColor.withValues(alpha: 0.4),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: baseColor.withValues(alpha: 0.2),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(DesignTokens.radius12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, size: 18, color: Colors.white),
+                    const SizedBox(width: 6),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showCancelDialog(CoachProfile coach, ThemeColors tc) async {
+    final shouldCancel = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: tc.surface,
+        title: Text('Cancel Request?', style: TextStyle(color: tc.textPrimary)),
+        content: Text(
+          'Do you want to cancel your connection request to this coach?',
+          style: TextStyle(color: tc.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('No'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: ElevatedButton.styleFrom(backgroundColor: tc.danger),
+            child: Text('Cancel Request', style: TextStyle(color: tc.textOnDark)),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldCancel == true) {
+      try {
+        await _marketplaceService.cancelConnectionRequest(coach.coachId);
+        if (!mounted) return;
+        setState(() {}); // Refresh to show connect button
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Connection request cancelled'),
+            backgroundColor: tc.warning,
+          ),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: tc.danger,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _connectWithCoach(CoachProfile coach, ThemeColors tc) async {
+    try {
+      await _marketplaceService.connectWithCoach(coach.coachId);
+      if (!mounted) return;
+      setState(() {}); // Refresh to show pending status
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Connection request sent!'),
+          backgroundColor: tc.success,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: tc.danger,
+        ),
+      );
+    }
   }
 }

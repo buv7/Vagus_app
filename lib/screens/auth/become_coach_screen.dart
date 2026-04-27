@@ -107,7 +107,6 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
         throw Exception('User not authenticated');
       }
 
-      // Insert coach application into coach_applications table
       await Supabase.instance.client.from('coach_applications').insert({
         'user_id': user.id,
         'bio': _bioController.text.trim(),
@@ -120,7 +119,6 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
 
       if (!mounted) return;
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('✅ Coach application submitted successfully!'),
@@ -128,7 +126,6 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
         ),
       );
 
-      // Navigate back
       Navigator.of(context).pop();
       
     } catch (e) {
@@ -185,7 +182,9 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
     required String label,
     required IconData icon,
     required Widget child,
+    required bool isDark,
   }) {
+    final textColor = isDark ? Colors.white.withValues(alpha: 0.8) : const Color(0xFF1a1a2e);
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -195,14 +194,16 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
             children: [
               Icon(
                 icon,
-                color: DesignTokens.accentGreen,
+                color: textColor,
                 size: 18,
               ),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: DesignTokens.labelMedium.copyWith(
-                  color: DesignTokens.neutralWhite,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -217,87 +218,57 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : const Color(0xFF1a1a2e);
+    final subtitleColor = isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF4a4a5a);
+    
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        foregroundColor: isDark ? Colors.white : const Color(0xFF0B1220),
         elevation: 0,
-        title: const Text(
-          'Apply to become a Coach',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: DesignTokens.darkGradient,
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                decoration: BoxDecoration(
-                  color: DesignTokens.cardBackground,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: DesignTokens.accentGreen.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      spreadRadius: 0,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Card
+              _buildGlassmorphicCard(
+                isDark: isDark,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.school,
+                          color: textColor.withValues(alpha: 0.9),
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Coach Application',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Icon(
-                                Icons.school,
-                                color: DesignTokens.accentGreen,
-                                size: 24,
-                              ),
-                              SizedBox(width: 12),
-                              Text(
-                                'Coach Application',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Tell us about your coaching experience and qualifications.',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white.withValues(alpha: 0.7),
-                            ),
-                          ),
-                        ],
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tell us about your coaching experience and qualifications.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: subtitleColor,
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
               
@@ -305,32 +276,15 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
               
               // Bio Field
               _buildModernFormField(
-              label: 'Bio',
-              icon: Icons.person,
-              child: TextFormField(
+                label: 'Bio',
+                icon: Icons.person,
+                isDark: isDark,
+                child: _buildGlassmorphicTextField(
                   controller: _bioController,
-                  style: const TextStyle(color: DesignTokens.neutralWhite),
-                  decoration: InputDecoration(
-                    hintText: 'Tell us about your coaching philosophy, experience, and what makes you unique...',
-                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
-                    ),
-                    filled: true,
-                    fillColor: DesignTokens.primaryDark,
-                    alignLabelWithHint: true,
-                  ),
+                  hintText: 'Tell us about your coaching philosophy, experience, and what makes you unique...',
                   maxLines: 4,
                   validator: _validateBio,
+                  isDark: isDark,
                 ),
               ),
               
@@ -338,67 +292,21 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
               _buildModernFormField(
                 label: 'Primary Specialization',
                 icon: Icons.category,
-                child: DropdownButtonFormField<String>(
-                  value: _selectedSpecialization,
-                  dropdownColor: const Color(0xFF2C2F33),
-                  style: const TextStyle(color: DesignTokens.neutralWhite),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
-                    ),
-                    filled: true,
-                    fillColor: DesignTokens.primaryDark,
-                  ),
-                  items: _specializations.map((String specialization) {
-                    return DropdownMenuItem<String>(
-                      value: specialization,
-                      child: Text(specialization),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedSpecialization = newValue!;
-                    });
-                  },
-                ),
+                isDark: isDark,
+                child: _buildGlassmorphicDropdown(isDark: isDark),
               ),
               
               // Years of Experience Field
               _buildModernFormField(
                 label: 'Years of Experience',
                 icon: Icons.schedule,
-                child: TextFormField(
+                isDark: isDark,
+                child: _buildGlassmorphicTextField(
                   controller: _yearsExperienceController,
-                  style: const TextStyle(color: DesignTokens.neutralWhite),
-                  decoration: InputDecoration(
-                    hintText: 'e.g., 5',
-                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
-                    ),
-                    filled: true,
-                    fillColor: DesignTokens.primaryDark,
-                  ),
+                  hintText: 'e.g., 5',
                   keyboardType: TextInputType.number,
                   validator: _validateYearsExperience,
+                  isDark: isDark,
                 ),
               ),
               
@@ -406,100 +314,256 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
               _buildModernFormField(
                 label: 'Certifications & Qualifications',
                 icon: Icons.verified,
-                child: TextFormField(
+                isDark: isDark,
+                child: _buildGlassmorphicTextField(
                   controller: _certificationsController,
-                  style: const TextStyle(color: DesignTokens.neutralWhite),
-                  decoration: InputDecoration(
-                    hintText: 'List your relevant certifications, licenses, and qualifications...',
-                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
-                    ),
-                    filled: true,
-                    fillColor: DesignTokens.primaryDark,
-                    alignLabelWithHint: true,
-                  ),
+                  hintText: 'List your relevant certifications, licenses, and qualifications...',
                   maxLines: 3,
                   validator: _validateCertifications,
+                  isDark: isDark,
                 ),
               ),
+              
               const SizedBox(height: 24),
               
               // Submit Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _submitApplication,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: DesignTokens.accentGreen,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: _loading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.send, size: 18),
-                            SizedBox(width: 8),
-                            Text(
-                              'Submit Application',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+              _buildGlassmorphicButton(
+                onPressed: _loading ? null : _submitApplication,
+                child: _loading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
                         ),
-                ),
+                      )
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.send, size: 18, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text(
+                            'Submit Application',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
               ),
+              
               const SizedBox(height: 16),
               
-              // Info Text
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: const Row(
+              // Info Card
+              _buildGlassmorphicCard(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+                isDark: isDark,
+                child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue),
-                    SizedBox(width: 12),
+                    Icon(Icons.info_outline, color: textColor.withValues(alpha: 0.8)),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Your application will be reviewed by our admin team. You\'ll be notified once a decision is made.',
                         style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 14,
+                          color: subtitleColor,
+                          fontSize: 13,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicCard({required Widget child, Color? color, required bool isDark}) {
+    final baseColor = color ?? DesignTokens.accentBlue;
+    final bgAlpha = isDark ? 0.25 : 0.12;
+    final bgAlphaSecondary = isDark ? 0.1 : 0.05;
+    
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.topLeft,
+              radius: 2.0,
+              colors: [
+                baseColor.withValues(alpha: bgAlpha),
+                baseColor.withValues(alpha: bgAlphaSecondary),
               ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: DesignTokens.accentBlue.withValues(alpha: isDark ? 0.35 : 0.25),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentBlue.withValues(alpha: isDark ? 0.2 : 0.1),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicTextField({
+    required TextEditingController controller,
+    required String hintText,
+    int maxLines = 1,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    required bool isDark,
+  }) {
+    final textColor = isDark ? Colors.white : const Color(0xFF1a1a2e);
+    final hintColor = isDark ? Colors.white.withValues(alpha: 0.5) : const Color(0xFF6a6a7a);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignTokens.accentBlue.withValues(alpha: isDark ? 0.15 : 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: DesignTokens.accentBlue.withValues(alpha: isDark ? 0.3 : 0.2),
+        ),
+      ),
+      child: TextFormField(
+        controller: controller,
+        style: TextStyle(color: textColor, fontSize: 14),
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        validator: validator,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: hintColor),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: DesignTokens.accentBlue.withValues(alpha: 0.6), width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 1),
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: const EdgeInsets.all(16),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicDropdown({required bool isDark}) {
+    final textColor = isDark ? Colors.white : const Color(0xFF1a1a2e);
+    final iconColor = isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF4a4a5a);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignTokens.accentBlue.withValues(alpha: isDark ? 0.15 : 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: DesignTokens.accentBlue.withValues(alpha: isDark ? 0.3 : 0.2),
+        ),
+      ),
+      child: DropdownButtonFormField<String>(
+        value: _selectedSpecialization,
+        dropdownColor: isDark 
+            ? DesignTokens.accentBlue.withValues(alpha: 0.95) 
+            : Colors.white,
+        style: TextStyle(color: textColor, fontSize: 14),
+        icon: Icon(Icons.keyboard_arrow_down, color: iconColor),
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: DesignTokens.accentBlue.withValues(alpha: 0.6), width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        items: _specializations.map((String specialization) {
+          return DropdownMenuItem<String>(
+            value: specialization,
+            child: Text(specialization),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedSpecialization = newValue!;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicButton({required VoidCallback? onPressed, required Widget child}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 2.0,
+              colors: [
+                DesignTokens.accentBlue.withValues(alpha: 0.4),
+                DesignTokens.accentBlue.withValues(alpha: 0.2),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.5),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: child),
+              ),
             ),
           ),
         ),

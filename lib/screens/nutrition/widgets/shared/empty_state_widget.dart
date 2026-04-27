@@ -24,7 +24,9 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final config = _getConfigForType(type);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final config = _getConfigForType(type, context);
 
     return Center(
       child: Padding(
@@ -74,8 +76,8 @@ class EmptyStateWidget extends StatelessWidget {
             // Title
             Text(
               customTitle ?? config.title,
-              style: const TextStyle(
-                color: AppTheme.neutralWhite,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -87,8 +89,8 @@ class EmptyStateWidget extends StatelessWidget {
             // Subtitle
             Text(
               customSubtitle ?? config.subtitle,
-              style: const TextStyle(
-                color: AppTheme.lightGrey,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 16,
                 height: 1.5,
               ),
@@ -108,7 +110,7 @@ class EmptyStateWidget extends StatelessWidget {
                   label: Text(actionLabel ?? config.actionLabel),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: config.actionColor,
-                    foregroundColor: AppTheme.primaryDark,
+                    foregroundColor: isDark ? AppTheme.primaryDark : Colors.white,
                     padding: const EdgeInsets.symmetric(
                       vertical: DesignTokens.space16,
                       horizontal: DesignTokens.space24,
@@ -128,10 +130,12 @@ class EmptyStateWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(DesignTokens.space16),
                 decoration: BoxDecoration(
-                  color: AppTheme.cardBackground.withValues(alpha: 0.5),
+                  color: isDark 
+                      ? AppTheme.cardBackground.withValues(alpha: 0.5)
+                      : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(DesignTokens.radius12),
                   border: Border.all(
-                    color: AppTheme.mediumGrey.withValues(alpha: 0.2),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -139,17 +143,17 @@ class EmptyStateWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: DesignTokens.space8),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.lightbulb_outline,
                           size: 16,
-                          color: AppTheme.accentGreen,
+                          color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: DesignTokens.space8),
                         Expanded(
                           child: Text(
                             hint,
-                            style: const TextStyle(
-                              color: AppTheme.lightGrey,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                           ),
@@ -166,19 +170,24 @@ class EmptyStateWidget extends StatelessWidget {
     );
   }
 
-  _EmptyStateConfig _getConfigForType(EmptyStateType type) {
+  _EmptyStateConfig _getConfigForType(EmptyStateType type, BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardBg = isDark ? AppTheme.cardBackground : theme.colorScheme.surfaceContainerHighest;
+    final primaryColor = theme.colorScheme.primary;
+    
     switch (type) {
       case EmptyStateType.noMeals:
         return _EmptyStateConfig(
           icon: Icons.restaurant_menu,
-          iconColor: AppTheme.accentGreen,
-          backgroundColor: AppTheme.cardBackground,
-          borderColor: AppTheme.accentGreen.withValues(alpha: 0.3),
+          iconColor: primaryColor,
+          backgroundColor: cardBg,
+          borderColor: primaryColor.withValues(alpha: 0.3),
           title: 'No Meals Added',
           subtitle: 'Start building your nutrition plan by adding meals',
           actionLabel: 'Add First Meal',
           actionIcon: Icons.add_circle_outline,
-          actionColor: AppTheme.accentGreen,
+          actionColor: primaryColor,
           hints: [
             'Use AI to generate a complete day',
             'Browse the recipe library',
@@ -190,7 +199,7 @@ class EmptyStateWidget extends StatelessWidget {
         return _EmptyStateConfig(
           icon: Icons.fastfood,
           iconColor: AppTheme.accentOrange,
-          backgroundColor: AppTheme.cardBackground,
+          backgroundColor: cardBg,
           borderColor: AppTheme.accentOrange.withValues(alpha: 0.3),
           title: 'Empty Meal',
           subtitle: 'Add food items to complete this meal',
@@ -208,7 +217,7 @@ class EmptyStateWidget extends StatelessWidget {
         return _EmptyStateConfig(
           icon: Icons.menu_book,
           iconColor: Colors.blue,
-          backgroundColor: AppTheme.cardBackground,
+          backgroundColor: cardBg,
           borderColor: Colors.blue.withValues(alpha: 0.3),
           title: 'No Recipes Found',
           subtitle: 'Discover delicious recipes that match your goals',
@@ -226,7 +235,7 @@ class EmptyStateWidget extends StatelessWidget {
         return _EmptyStateConfig(
           icon: Icons.medication,
           iconColor: Colors.purple,
-          backgroundColor: AppTheme.cardBackground,
+          backgroundColor: cardBg,
           borderColor: Colors.purple.withValues(alpha: 0.3),
           title: 'No Supplements',
           subtitle: 'Track supplements to optimize your nutrition',
@@ -244,7 +253,7 @@ class EmptyStateWidget extends StatelessWidget {
         return _EmptyStateConfig(
           icon: Icons.kitchen,
           iconColor: Colors.brown,
-          backgroundColor: AppTheme.cardBackground,
+          backgroundColor: cardBg,
           borderColor: Colors.brown.withValues(alpha: 0.3),
           title: 'Empty Pantry',
           subtitle: 'Add items to your pantry for smart meal planning',
@@ -261,14 +270,14 @@ class EmptyStateWidget extends StatelessWidget {
       case EmptyStateType.noPlans:
         return _EmptyStateConfig(
           icon: Icons.assignment,
-          iconColor: AppTheme.accentGreen,
-          backgroundColor: AppTheme.cardBackground,
-          borderColor: AppTheme.accentGreen.withValues(alpha: 0.3),
+          iconColor: primaryColor,
+          backgroundColor: cardBg,
+          borderColor: primaryColor.withValues(alpha: 0.3),
           title: 'No Nutrition Plans',
           subtitle: 'Create your first nutrition plan to get started',
           actionLabel: 'Create Plan',
           actionIcon: Icons.add_circle,
-          actionColor: AppTheme.accentGreen,
+          actionColor: primaryColor,
           hints: [
             'Set macro targets',
             'Plan multiple days',
@@ -279,14 +288,14 @@ class EmptyStateWidget extends StatelessWidget {
       case EmptyStateType.searchResults:
         return _EmptyStateConfig(
           icon: Icons.search_off,
-          iconColor: AppTheme.lightGrey,
-          backgroundColor: AppTheme.cardBackground,
-          borderColor: AppTheme.lightGrey.withValues(alpha: 0.3),
+          iconColor: theme.colorScheme.onSurfaceVariant,
+          backgroundColor: cardBg,
+          borderColor: theme.colorScheme.outline.withValues(alpha: 0.3),
           title: 'No Results Found',
           subtitle: 'Try adjusting your search terms or filters',
           actionLabel: 'Clear Search',
           actionIcon: Icons.clear,
-          actionColor: AppTheme.lightGrey,
+          actionColor: theme.colorScheme.onSurfaceVariant,
           hints: [
             'Check spelling',
             'Use fewer filters',
@@ -298,7 +307,7 @@ class EmptyStateWidget extends StatelessWidget {
         return _EmptyStateConfig(
           icon: Icons.cloud_off,
           iconColor: Colors.orange,
-          backgroundColor: AppTheme.cardBackground,
+          backgroundColor: cardBg,
           borderColor: Colors.orange.withValues(alpha: 0.3),
           title: 'Offline Mode',
           subtitle: 'Some features are limited without internet connection',
@@ -392,6 +401,8 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -408,15 +419,15 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [
-                        AppTheme.accentGreen,
-                        AppTheme.accentGreen.withValues(alpha: 0.3),
+                        theme.colorScheme.primary,
+                        theme.colorScheme.primary.withValues(alpha: 0.3),
                       ],
                       stops: const [0.3, 1.0],
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.restaurant_menu,
-                    color: AppTheme.neutralWhite,
+                    color: theme.colorScheme.onPrimary,
                     size: 32,
                   ),
                 ),
@@ -429,8 +440,8 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
           if (widget.message != null)
             Text(
               widget.message!,
-              style: const TextStyle(
-                color: AppTheme.lightGrey,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
@@ -442,7 +453,7 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
               width: 200,
               height: 6,
               decoration: BoxDecoration(
-                color: AppTheme.mediumGrey.withValues(alpha: 0.3),
+                color: theme.colorScheme.outline.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(3),
               ),
               child: FractionallySizedBox(
@@ -450,7 +461,7 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
                 widthFactor: widget.progress!.clamp(0.0, 1.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppTheme.accentGreen,
+                    color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -459,8 +470,8 @@ class _NutritionLoadingWidgetState extends State<NutritionLoadingWidget>
             const SizedBox(height: DesignTokens.space8),
             Text(
               '${(widget.progress! * 100).round()}%',
-              style: const TextStyle(
-                color: AppTheme.accentGreen,
+              style: TextStyle(
+                color: theme.colorScheme.primary,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),

@@ -1,0 +1,308 @@
+Waiting for another flutter command to release the startup lock...
+Analyzing vagus_app...                                          
+
+   info - Use 'const' with the constructor to improve performance - lib\screens\account_switch_screen.dart:77:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\account_switch_screen.dart:77:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\account_switch_screen.dart:77:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\account_switch_screen.dart:77:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:896:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:896:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:898:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:898:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:904:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:904:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:906:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\auth\signup_screen.dart:906:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\billing\billing_settings.dart:551:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\billing\billing_settings.dart:551:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\billing\billing_settings.dart:552:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\billing\billing_settings.dart:552:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:754:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:754:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:865:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:865:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:975:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:975:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:1116:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calendar\event_editor.dart:1116:27 - prefer_const_constructors
+warning - Unused import: '../../theme/app_theme.dart' - lib\screens\calendar\modern_calendar_viewer.dart:6:8 - unused_import
+warning - Unused import: '../../theme/app_theme.dart' - lib\screens\calendar\modern_calendar_viewer.dart:6:8 - unused_import
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\calendar\modern_calendar_viewer.dart:263:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\calendar\modern_calendar_viewer.dart:263:9 - unawaited_futures
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:170:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:170:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:207:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:207:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:207:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:207:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:288:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\calling\call_management_screen.dart:288:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\modern_client_management_screen.dart:419:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\modern_client_management_screen.dart:419:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\modern_client_management_screen.dart:420:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\coach\modern_client_management_screen.dart:420:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_client_dashboard.dart:426:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_client_dashboard.dart:426:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_client_dashboard.dart:427:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_client_dashboard.dart:427:18 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\dashboard\modern_client_dashboard.dart:651:52 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\dashboard\modern_client_dashboard.dart:651:52 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\dashboard\modern_client_dashboard.dart:656:52 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\dashboard\modern_client_dashboard.dart:656:52 - use_build_context_synchronously
+warning - The value of the local variable 'tc' isn't used - lib\screens\dashboard\modern_client_dashboard.dart:800:11 - unused_local_variable
+warning - The value of the local variable 'tc' isn't used - lib\screens\dashboard\modern_client_dashboard.dart:800:11 - unused_local_variable
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_client_dashboard.dart:1605:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_client_dashboard.dart:1605:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_coach_dashboard.dart:691:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_coach_dashboard.dart:691:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_coach_dashboard.dart:692:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\modern_coach_dashboard.dart:692:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:97:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:97:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:121:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:121:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:121:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:121:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:147:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:147:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:279:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\dashboard\notes\note_list_screen.dart:279:34 - prefer_const_constructors
+   info - The private field _selectedDate could be 'final' - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:26:12 - prefer_final_fields
+   info - The private field _selectedDate could be 'final' - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:26:12 - prefer_final_fields
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:235:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:235:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:236:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:236:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:239:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:239:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:245:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:245:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:247:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:247:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:263:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:263:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:300:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\coach_fatigue_dashboard_screen.dart:300:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\fatigue_dashboard_screen.dart:222:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\fatigue\fatigue_dashboard_screen.dart:222:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:311:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:311:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:339:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:339:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:339:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:339:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:389:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:389:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:400:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:400:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:447:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:447:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:450:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:450:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:452:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:452:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:492:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:492:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:618:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:618:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:640:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:640:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:662:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:662:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:664:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:664:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:664:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\files\upload_photos_screen.dart:664:46 - prefer_const_constructors
+warning - Unused import: '../../widgets/branding/vagus_appbar.dart' - lib\screens\learn\learn_client_screen.dart:3:8 - unused_import
+warning - Unused import: '../../widgets/branding/vagus_appbar.dart' - lib\screens\learn\learn_client_screen.dart:3:8 - unused_import
+warning - Unused import: 'dart:io' - lib\screens\messaging\modern_client_messages_screen.dart:1:8 - unused_import
+warning - Unused import: 'dart:io' - lib\screens\messaging\modern_client_messages_screen.dart:1:8 - unused_import
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:448:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:448:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:479:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:479:9 - unawaited_futures
+warning - The value of the field '_messagesService' isn't used - lib\screens\messaging\modern_client_messages_screen.dart:582:25 - unused_field
+warning - The value of the field '_messagesService' isn't used - lib\screens\messaging\modern_client_messages_screen.dart:582:25 - unused_field
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:1265:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:1265:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:1292:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_client_messages_screen.dart:1292:9 - unawaited_futures
+   info - The private field _isRecording could be 'final' - lib\screens\messaging\modern_messenger_screen.dart:32:8 - prefer_final_fields
+   info - The private field _isRecording could be 'final' - lib\screens\messaging\modern_messenger_screen.dart:32:8 - prefer_final_fields
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_messenger_screen.dart:417:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_messenger_screen.dart:417:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_messenger_screen.dart:445:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\messaging\modern_messenger_screen.dart:445:9 - unawaited_futures
+warning - The value of the local variable 'url' isn't used - lib\screens\messaging\modern_messenger_screen.dart:1392:11 - unused_local_variable
+warning - The value of the local variable 'url' isn't used - lib\screens\messaging\modern_messenger_screen.dart:1392:11 - unused_local_variable
+warning - Unused import: '../../theme/app_theme.dart' - lib\screens\nav\main_nav.dart:19:8 - unused_import
+warning - Unused import: '../../theme/app_theme.dart' - lib\screens\nav\main_nav.dart:19:8 - unused_import
+warning - Unused import: '../../theme/theme_colors.dart' - lib\screens\nav\main_nav.dart:20:8 - unused_import
+warning - Unused import: '../../theme/theme_colors.dart' - lib\screens\nav\main_nav.dart:20:8 - unused_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\notes\coach_note_screen.dart:2:8 - unnecessary_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\notes\coach_note_screen.dart:2:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\notes\coach_note_screen.dart:279:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\notes\coach_note_screen.dart:279:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:86:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:86:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:91:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:91:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:93:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:93:22 - prefer_const_constructors
+warning - The declaration '_addFoodAdvanced' isn't referenced - lib\screens\nutrition\meal_editor.dart:225:16 - unused_element
+warning - The declaration '_addFoodAdvanced' isn't referenced - lib\screens\nutrition\meal_editor.dart:225:16 - unused_element
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:952:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:952:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1018:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1018:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1027:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1027:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1047:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1047:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1601:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1601:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1608:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1608:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1760:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1760:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1768:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\nutrition\meal_editor.dart:1768:24 - prefer_const_constructors
+warning - The declaration '_buildSummaryItem' isn't referenced - lib\screens\nutrition\meal_editor.dart:1804:10 - unused_element
+warning - The declaration '_buildSummaryItem' isn't referenced - lib\screens\nutrition\meal_editor.dart:1804:10 - unused_element
+   info - The private field _selectedPlanIds could be 'final' - lib\screens\plans\plans_dashboard_screen.dart:32:15 - prefer_final_fields
+   info - The private field _selectedPlanIds could be 'final' - lib\screens\plans\plans_dashboard_screen.dart:32:15 - prefer_final_fields
+   info - Don't use 'BuildContext's across async gaps - lib\screens\plans\plans_dashboard_screen.dart:914:7 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\plans\plans_dashboard_screen.dart:914:7 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\plans\plans_dashboard_screen.dart:931:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\plans\plans_dashboard_screen.dart:931:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\export_progress_screen.dart:111:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\export_progress_screen.dart:111:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\export_progress_screen.dart:112:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\export_progress_screen.dart:112:40 - prefer_const_constructors
+   info - Local variables should be final - lib\screens\progress\modern_progress_tracker.dart:1221:5 - prefer_final_locals
+   info - Local variables should be final - lib\screens\progress\modern_progress_tracker.dart:1221:5 - prefer_final_locals
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\progress\modern_progress_tracker.dart:1504:9 - unawaited_futures
+   info - Missing an 'await' for the 'Future' computed by this expression - lib\screens\progress\modern_progress_tracker.dart:1504:9 - unawaited_futures
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\progress\progress_gallery.dart:2:8 - unnecessary_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\progress\progress_gallery.dart:2:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:129:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:129:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:156:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:156:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:163:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:163:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:163:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:163:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:189:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:189:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:304:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:304:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:369:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\progress\progress_gallery.dart:369:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings\about_screen.dart:103:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings\about_screen.dart:103:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings\about_screen.dart:104:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings\about_screen.dart:104:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings\about_screen.dart:105:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings\about_screen.dart:105:31 - prefer_const_constructors
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\workout\cardio_log_screen.dart:1:8 - unnecessary_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\workout\cardio_log_screen.dart:1:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\cardio_log_screen.dart:41:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\cardio_log_screen.dart:41:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\cardio_log_screen.dart:101:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\cardio_log_screen.dart:101:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\cardio_log_screen.dart:168:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\workout\cardio_log_screen.dart:168:28 - prefer_const_constructors
+   info - Local variables should be final - lib\services\cardio\manual_cardio_service.dart:220:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\cardio\manual_cardio_service.dart:220:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\cardio\manual_cardio_service.dart:224:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\cardio\manual_cardio_service.dart:224:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\nutrition\nutrition_service.dart:598:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\nutrition\nutrition_service.dart:598:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\nutrition\nutrition_service.dart:601:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\nutrition\nutrition_service.dart:601:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\nutrition\nutrition_service.dart:604:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\nutrition\nutrition_service.dart:604:7 - prefer_final_locals
+warning - Unused import: 'dart:typed_data' - lib\services\ocr\ocr_cardio_service.dart:3:8 - unused_import
+   info - Local variables should be final - lib\services\ocr\ocr_cardio_service.dart:403:9 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:109:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:116:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:132:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:146:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:149:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:150:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:163:7 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:226:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:241:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:247:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\fatigue_engine.dart:248:5 - prefer_final_locals
+   info - Local variables should be final - lib\services\workout\workout_metadata_service.dart:410:7 - prefer_final_locals
+warning - The value of the local variable 'tc' isn't used - lib\theme\theme_colors.dart:518:11 - unused_local_variable
+   info - Use 'const' with the constructor to improve performance - lib\widgets\calling\schedule_call_dialog.dart:86:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\calling\schedule_call_dialog.dart:448:13 - prefer_const_constructors
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\widgets\common\fatigue_recovery_icon.dart:12:3 - prefer_const_constructors_in_immutables
+warning - The value of the local variable 'tc' isn't used - lib\widgets\common\fatigue_recovery_icon.dart:20:11 - unused_local_variable
+   info - Constructors in '@immutable' classes should be declared as 'const' - lib\widgets\common\save_icon.dart:13:3 - prefer_const_constructors_in_immutables
+warning - Unused import: '../../theme/app_theme.dart' - lib\widgets\fab\glassmorphism_fab.dart:5:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_recommendations_panel.dart:76:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_recommendations_panel.dart:78:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_trend_chart.dart:28:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_trend_chart.dart:29:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_trend_chart.dart:32:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_trend_chart.dart:38:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_trend_chart.dart:40:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\fatigue_trend_chart.dart:79:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\intensifier_contribution_list.dart:74:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\intensifier_contribution_list.dart:75:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\intensifier_contribution_list.dart:78:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\intensifier_contribution_list.dart:84:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\intensifier_contribution_list.dart:86:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\intensifier_contribution_list.dart:152:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\muscle_fatigue_list.dart:46:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\muscle_fatigue_list.dart:47:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\muscle_fatigue_list.dart:50:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\muscle_fatigue_list.dart:56:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\muscle_fatigue_list.dart:58:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\fatigue\muscle_fatigue_list.dart:113:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\files\attach_to_note_button.dart:108:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\nutrition\file_attach_to_meal.dart:195:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\nutrition\file_attach_to_meal.dart:198:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\nutrition\file_attach_to_meal.dart:203:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\nutrition\file_attach_to_meal.dart:210:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:171:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:241:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:242:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:245:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:247:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:249:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:315:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\ocr\ocr_cardio_preview_dialog.dart:531:27 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\supplements\half_pill_icon.dart:94:30 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1093:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1099:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1205:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1226:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1247:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1287:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1291:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1440:9 - prefer_const_constructors
+   info - Local variables should be final - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1515:11 - prefer_final_locals
+warning - The value of the local variable 'searchQuery' isn't used - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1515:18 - unused_local_variable
+   info - Local variables should be final - lib\widgets\workout\advanced_exercise_editor_dialog.dart:1690:7 - prefer_final_locals
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:2029:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:2194:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:2198:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:2241:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\advanced_exercise_editor_dialog.dart:2243:20 - prefer_const_constructors
+warning - The value of the field '_intensifierApplyScope' isn't used - lib\widgets\workout\exercise_detail_sheet.dart:119:11 - unused_field
+warning - The operand can't be 'null', so the condition is always 'true' - lib\widgets\workout\exercise_picker_dialog.dart:132:30 - unnecessary_null_comparison
+warning - The operand can't be 'null', so the condition is always 'true' - lib\widgets\workout\exercise_picker_dialog.dart:250:30 - unnecessary_null_comparison
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\exercise_picker_dialog.dart:558:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\exercise_picker_dialog.dart:562:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\exercise_picker_dialog.dart:563:30 - prefer_const_constructors
+warning - The operand can't be 'null', so the condition is always 'true' - lib\widgets\workout\exercise_picker_dialog.dart:884:51 - unnecessary_null_comparison
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\manual_cardio_entry_dialog.dart:406:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\workout\manual_cardio_entry_dialog.dart:440:23 - prefer_const_constructors
+
+302 issues found. (ran in 81.4s)
+EXIT_CODE=0

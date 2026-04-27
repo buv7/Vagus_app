@@ -23,6 +23,7 @@ import 'package:vagus_app/screens/admin/admin_session_copilot_screen.dart';
 import 'package:vagus_app/screens/admin/admin_live_session_screen.dart';
 import 'package:vagus_app/screens/admin/admin_triage_rules_screen.dart';
 import 'package:vagus_app/screens/coach_profile/coach_profile_screen.dart';
+import 'package:vagus_app/screens/settings/about_screen.dart';
 
 class AppNavigator {
   // Always close Drawer first, then navigate on next frame to avoid wrong targets.
@@ -125,4 +126,8 @@ class AppNavigator {
         coachId: coachId,
         isPublicView: false,
       ));
+
+  // About screen navigation
+  static void about(BuildContext context) =>
+      _closeDrawerAndPush(context, const AboutScreen());
 }

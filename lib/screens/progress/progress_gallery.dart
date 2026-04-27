@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import '../../services/progress/progress_service.dart';
+import '../../theme/design_tokens.dart';
 
 class ProgressGallery extends StatefulWidget {
   final String userId;
@@ -108,80 +110,231 @@ class _ProgressGalleryState extends State<ProgressGallery> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? DesignTokens.darkBackground : DesignTokens.scaffoldBg(context),
       appBar: AppBar(
-        title: const Text('Progress Photos'),
+        backgroundColor: isDark ? DesignTokens.darkBackground : Colors.white,
+        foregroundColor: isDark ? Colors.white : DesignTokens.textColor(context),
+        elevation: 0,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.photo_library,
+                color: DesignTokens.accentBlue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Progress Photos',
+              style: TextStyle(
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         actions: [
           if (_photos.isNotEmpty) ...[
             IconButton(
-              icon: Icon(_compareMode ? Icons.compare_arrows : Icons.compare),
+              icon: Icon(
+                _compareMode ? Icons.compare_arrows : Icons.compare,
+                color: _compareMode ? DesignTokens.accentBlue : (isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.iconColor(context)),
+              ),
               onPressed: _toggleCompareMode,
             ),
             if (_compareMode && _selectedPhoto1 != null && _selectedPhoto2 != null)
               IconButton(
-                icon: const Icon(Icons.visibility),
+                icon: Icon(Icons.visibility, color: DesignTokens.accentBlue),
                 onPressed: _showCompareView,
               ),
           ],
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: DesignTokens.accentBlue))
           : _error != null
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Error: $_error'),
-                      ElevatedButton(
-                        onPressed: _loadPhotos,
-                        child: const Text('Retry'),
+                  child: Container(
+                    margin: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: isDark 
+                        ? DesignTokens.accentPink.withValues(alpha: 0.1)
+                        : Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isDark 
+                          ? DesignTokens.accentPink.withValues(alpha: 0.3)
+                          : Colors.red.shade200,
                       ),
-                    ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: DesignTokens.accentPink.withValues(alpha: 0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: DesignTokens.accentPink,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Error: $_error',
+                          style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: DesignTokens.accentBlue,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _loadPhotos,
+                              borderRadius: BorderRadius.circular(12),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                child: Text(
+                                  'Retry',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : Column(
                   children: [
-                    // Filter chips
+                    // Filter chips with glassmorphism styling
                     if (_photos.isNotEmpty)
-                      Padding(
+                      Container(
                         padding: const EdgeInsets.all(16),
                         child: Wrap(
                           spacing: 8,
+                          runSpacing: 8,
                           children: [
                             FilterChip(
-                              label: const Text('All'),
+                              label: Text(
+                                'All',
+                                style: TextStyle(
+                                  color: _selectedFilter == null 
+                                    ? Colors.white 
+                                    : (isDark ? Colors.white : DesignTokens.textColor(context)),
+                                ),
+                              ),
                               selected: _selectedFilter == null,
+                              selectedColor: DesignTokens.accentBlue,
+                              backgroundColor: isDark 
+                                ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+                                : Colors.grey.shade100,
+                              side: BorderSide(
+                                color: _selectedFilter == null
+                                  ? DesignTokens.accentBlue
+                                  : (isDark ? DesignTokens.accentBlue.withValues(alpha: 0.3) : DesignTokens.borderColor(context)),
+                              ),
                               onSelected: (_) => _applyFilter(null),
                             ),
                             ..._filters.map((filter) => FilterChip(
-                              label: Text(filter.toUpperCase()),
+                              label: Text(
+                                filter.toUpperCase(),
+                                style: TextStyle(
+                                  color: _selectedFilter == filter 
+                                    ? Colors.white 
+                                    : (isDark ? Colors.white : DesignTokens.textColor(context)),
+                                ),
+                              ),
                               selected: _selectedFilter == filter,
+                              selectedColor: DesignTokens.accentBlue,
+                              backgroundColor: isDark 
+                                ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+                                : Colors.grey.shade100,
+                              side: BorderSide(
+                                color: _selectedFilter == filter
+                                  ? DesignTokens.accentBlue
+                                  : (isDark ? DesignTokens.accentBlue.withValues(alpha: 0.3) : DesignTokens.borderColor(context)),
+                              ),
                               onSelected: (_) => _applyFilter(filter),
                             )),
                           ],
                         ),
                       ),
                     
-                    // Compare mode indicator
+                    // Compare mode indicator with glassmorphism
                     if (_compareMode)
                       Container(
                         width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
                         padding: const EdgeInsets.all(16),
-                        color: Colors.blue[50],
+                        decoration: BoxDecoration(
+                          color: isDark 
+                            ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+                            : Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark 
+                              ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                              : Colors.blue.shade200,
+                          ),
+                        ),
                         child: Row(
                           children: [
-                            const Icon(Icons.compare, color: Colors.blue),
+                            Icon(Icons.compare, color: DesignTokens.accentBlue),
                             const SizedBox(width: 8),
-                            const Text(
+                            Text(
                               'Compare Mode: Select 2 photos',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : DesignTokens.textColor(context),
+                              ),
                             ),
                             const Spacer(),
                             if (_selectedPhoto1 != null)
-                              const Chip(label: Text('1 selected')),
-                            if (_selectedPhoto2 != null)
-                              const Chip(label: Text('2 selected')),
+                              Chip(
+                                label: Text(
+                                  '1 selected',
+                                  style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                                ),
+                                backgroundColor: isDark 
+                                  ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                                  : Colors.blue.shade100,
+                                side: BorderSide(color: DesignTokens.accentBlue.withValues(alpha: 0.3)),
+                              ),
+                            if (_selectedPhoto2 != null) ...[
+                              const SizedBox(width: 8),
+                              Chip(
+                                label: Text(
+                                  '2 selected',
+                                  style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                                ),
+                                backgroundColor: isDark 
+                                  ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                                  : Colors.blue.shade100,
+                                side: BorderSide(color: DesignTokens.accentBlue.withValues(alpha: 0.3)),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -189,10 +342,47 @@ class _ProgressGalleryState extends State<ProgressGallery> {
                     // Photos grid
                     Expanded(
                       child: _filteredPhotos.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'No photos found',
-                                style: TextStyle(color: Colors.grey),
+                          ? Center(
+                              child: Container(
+                                margin: const EdgeInsets.all(32),
+                                padding: const EdgeInsets.all(32),
+                                decoration: BoxDecoration(
+                                  color: isDark 
+                                    ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+                                    : Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isDark 
+                                      ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                                      : DesignTokens.borderColor(context),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.photo,
+                                        size: 48,
+                                        color: DesignTokens.accentBlue,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No photos found',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark ? Colors.white : DesignTokens.textColor(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                           : GridView.builder(
@@ -220,12 +410,24 @@ class _ProgressGalleryState extends State<ProgressGallery> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       border: isSelected
-                                          ? Border.all(color: Colors.blue, width: 3)
-                                          : null,
-                                      borderRadius: BorderRadius.circular(8),
+                                          ? Border.all(color: DesignTokens.accentBlue, width: 3)
+                                          : Border.all(
+                                              color: isDark 
+                                                ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+                                                : DesignTokens.borderColor(context),
+                                              width: 1,
+                                            ),
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: isSelected ? [
+                                        BoxShadow(
+                                          color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                                          blurRadius: 15,
+                                          spreadRadius: 0,
+                                        ),
+                                      ] : null,
                                     ),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(12),
                                       child: Stack(
                                         children: [
                                           Image.network(
@@ -235,8 +437,10 @@ class _ProgressGalleryState extends State<ProgressGallery> {
                                             fit: BoxFit.cover,
                                             errorBuilder: (context, error, stackTrace) {
                                               return Container(
-                                                color: Colors.grey[300],
-                                                child: const Icon(Icons.error),
+                                                color: isDark 
+                                                  ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+                                                  : Colors.grey[300],
+                                                child: Icon(Icons.error, color: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.grey),
                                               );
                                             },
                                           ),
@@ -273,9 +477,16 @@ class _ProgressGalleryState extends State<ProgressGallery> {
                                               right: 8,
                                               child: Container(
                                                 padding: const EdgeInsets.all(4),
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.blue,
+                                                decoration: BoxDecoration(
+                                                  color: DesignTokens.accentBlue,
                                                   shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                                                      blurRadius: 8,
+                                                      spreadRadius: 0,
+                                                    ),
+                                                  ],
                                                 ),
                                                 child: const Icon(
                                                   Icons.check,

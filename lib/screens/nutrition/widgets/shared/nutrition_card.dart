@@ -26,32 +26,43 @@ class NutritionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    final defaultBackground = isDark 
+        ? AppTheme.cardBackground 
+        : theme.colorScheme.surfaceContainerHighest;
+    final highlightedBackground = isDark
+        ? AppTheme.accentGreen.withValues(alpha: 0.1)
+        : theme.colorScheme.primary.withValues(alpha: 0.1);
+    final borderColor = highlighted
+        ? (isDark ? AppTheme.accentGreen : theme.colorScheme.primary).withValues(alpha: 0.3)
+        : theme.colorScheme.outline.withValues(alpha: 0.2);
+    
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: padding ?? const EdgeInsets.all(DesignTokens.space16),
         decoration: BoxDecoration(
           color: customBackgroundColor ?? (highlighted
-            ? AppTheme.accentGreen.withValues(alpha: 0.1)
-            : AppTheme.cardBackground),
+            ? highlightedBackground
+            : defaultBackground),
           borderRadius: BorderRadius.circular(
             customBorderRadius ?? DesignTokens.radius16,
           ),
           border: Border.all(
-            color: highlighted
-              ? AppTheme.accentGreen.withValues(alpha: 0.3)
-              : AppTheme.mediumGrey.withValues(alpha: 0.2),
+            color: borderColor,
             width: highlighted ? 2 : 1,
           ),
           boxShadow: customShadows ?? [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withValues(alpha: isDark ? 0.1 : 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             if (highlighted)
               BoxShadow(
-                color: AppTheme.accentGreen.withValues(alpha: 0.2),
+                color: theme.colorScheme.primary.withValues(alpha: 0.2),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -88,6 +99,9 @@ class MealCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return NutritionCard(
       onTap: onTap,
       highlighted: isCompleted,
@@ -123,8 +137,8 @@ class MealCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title,
-                            style: const TextStyle(
-                              color: AppTheme.neutralWhite,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -137,13 +151,13 @@ class MealCard extends StatelessWidget {
                               vertical: DesignTokens.space4,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentGreen,
+                              color: theme.colorScheme.primary,
                               borderRadius: BorderRadius.circular(DesignTokens.radius12),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Completed',
                               style: TextStyle(
-                                color: AppTheme.primaryDark,
+                                color: isDark ? AppTheme.primaryDark : Colors.white,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -154,8 +168,8 @@ class MealCard extends StatelessWidget {
                     const SizedBox(height: DesignTokens.space4),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        color: AppTheme.lightGrey,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 14,
                       ),
                     ),
@@ -287,6 +301,8 @@ class FoodItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return NutritionCard(
       onTap: onTap,
       highlighted: isSelected,
@@ -298,12 +314,12 @@ class FoodItemCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.mediumGrey.withValues(alpha: 0.2),
+              color: theme.colorScheme.outline.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(DesignTokens.radius8),
               border: Border.all(
                 color: isRecipe
                   ? Colors.blue.withValues(alpha: 0.5)
-                  : AppTheme.mediumGrey.withValues(alpha: 0.3),
+                  : theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
             child: ClipRRect(
@@ -312,9 +328,9 @@ class FoodItemCard extends StatelessWidget {
                 ? Image.network(
                     photoUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildFoodIcon(),
+                    errorBuilder: (_, __, ___) => _buildFoodIcon(context),
                   )
-                : _buildFoodIcon(),
+                : _buildFoodIcon(context),
             ),
           ),
 
@@ -330,8 +346,8 @@ class FoodItemCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         name,
-                        style: const TextStyle(
-                          color: AppTheme.neutralWhite,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -366,8 +382,8 @@ class FoodItemCard extends StatelessWidget {
                 // Amount and macros
                 Text(
                   '${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 1)}$unit • ${kcal.toStringAsFixed(0)} kcal',
-                  style: const TextStyle(
-                    color: AppTheme.lightGrey,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),
@@ -403,10 +419,11 @@ class FoodItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFoodIcon() {
+  Widget _buildFoodIcon(BuildContext context) {
+    final theme = Theme.of(context);
     return Icon(
       isRecipe ? Icons.restaurant_menu : Icons.fastfood,
-      color: isRecipe ? Colors.blue : AppTheme.accentGreen,
+      color: isRecipe ? Colors.blue : theme.colorScheme.primary,
       size: 24,
     );
   }
@@ -451,6 +468,8 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return NutritionCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -459,8 +478,8 @@ class SummaryCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  color: AppTheme.neutralWhite,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -469,9 +488,9 @@ class SummaryCard extends StatelessWidget {
               if (onViewDetails != null)
                 TextButton(
                   onPressed: onViewDetails,
-                  child: const Text(
+                  child: Text(
                     'View Details',
-                    style: TextStyle(color: AppTheme.accentGreen),
+                    style: TextStyle(color: theme.colorScheme.primary),
                   ),
                 ),
             ],
@@ -501,8 +520,8 @@ class SummaryCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     item.label,
-                    style: const TextStyle(
-                      color: AppTheme.lightGrey,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 14,
                     ),
                   ),

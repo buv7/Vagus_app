@@ -1,6 +1,7 @@
 // Create lib/screens/coach_profile/widgets/profile_header.dart
 import 'package:flutter/material.dart';
 import '../../../models/coach_profile.dart';
+import '../../../theme/theme_colors.dart';
 
 class ProfileHeader extends StatelessWidget {
   final CoachProfile? profile;
@@ -35,11 +36,12 @@ class ProfileHeader extends StatelessWidget {
             // Avatar
             CircleAvatar(
               radius: 40, // Reduced from 50
+              backgroundColor: ThemeColors.of(context).avatarBg,
               backgroundImage: profile?.avatarUrl != null
                   ? NetworkImage(profile!.avatarUrl!)
                   : null,
               child: profile?.avatarUrl == null
-                  ? const Icon(Icons.person, size: 40) // Reduced from 50
+                  ? Icon(Icons.person, size: 40, color: ThemeColors.of(context).avatarIcon) // Reduced from 50
                   : null,
             ),
             const SizedBox(height: 12), // Reduced from 16

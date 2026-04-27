@@ -1,9 +1,12 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/calendar/event_service.dart';
 import '../../widgets/anim/blocking_overlay.dart';
+import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 
 import '../../services/motion_service.dart';
 
@@ -431,30 +434,21 @@ class _EventEditorState extends State<EventEditor> {
   Widget build(BuildContext context) {
     final isEditing = widget.event != null;
     final isCoach = _userRole == 'coach';
+    final tc = ThemeColors.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Edit Event' : 'New Event'),
-        actions: [
-          if (isEditing)
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: _saving ? null : _deleteEvent,
-            ),
-        ],
-      ),
+      backgroundColor: tc.bg,
+      appBar: _buildGlassmorphicAppBar(context, isEditing, tc),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Title
-            TextFormField(
+            // Title Input with glassmorphic style
+            _buildGlassmorphicTextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title *',
-                border: OutlineInputBorder(),
-              ),
+              label: 'Title *',
+              tc: tc,
               validator: (value) {
                 if (value?.trim().isEmpty ?? true) {
                   return 'Title is required';
@@ -462,292 +456,737 @@ class _EventEditorState extends State<EventEditor> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Date and Time Section
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Date & Time',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
+            _buildGlassmorphicCard(
+              tc: tc,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader('Date & Time', tc),
+                  const SizedBox(height: 16),
 
-                    // All Day Toggle
-                    SwitchListTile(
-                      title: const Text('All Day'),
-                      value: _allDay,
-                      onChanged: (value) => setState(() => _allDay = value),
-                    ),
+                  // All Day Toggle
+                  _buildGlassmorphicSwitch(
+                    title: 'All Day',
+                    value: _allDay,
+                    onChanged: (value) => setState(() => _allDay = value),
+                    tc: tc,
+                  ),
 
-                    // Start Date & Time
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            title: const Text('Start'),
-                            subtitle: Text(
-                              _startDate != null
-                                  ? DateFormat('MMM dd, yyyy').format(_startDate!)
-                                  : 'Select date',
-                            ),
-                            onTap: () => _pickDate(context, true),
-                          ),
-                        ),
-                        if (!_allDay)
-                          Expanded(
-                            child: ListTile(
-                              title: const Text('Time'),
-                              subtitle: Text(
-                                _startTime != null
-                                    ? _startTime!.format(context)
-                                    : 'Select time',
-                              ),
-                              onTap: () => _pickTime(context, true),
-                            ),
-                          ),
-                      ],
-                    ),
+                  const SizedBox(height: 16),
 
-                    // End Date & Time
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            title: const Text('End'),
-                            subtitle: Text(
-                              _endDate != null
-                                  ? DateFormat('MMM dd, yyyy').format(_endDate!)
-                                  : 'Select date',
-                            ),
-                            onTap: () => _pickDate(context, false),
-                          ),
-                        ),
-                        if (!_allDay)
-                          Expanded(
-                            child: ListTile(
-                              title: const Text('Time'),
-                              subtitle: Text(
-                                _endTime != null
-                                    ? _endTime!.format(context)
-                                    : 'Select time',
-                              ),
-                              onTap: () => _pickTime(context, false),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Location
-            TextFormField(
-              controller: _locationController,
-              decoration: const InputDecoration(
-                labelText: 'Location',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.location_on),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Notes
-            TextFormField(
-              controller: _notesController,
-              decoration: const InputDecoration(
-                labelText: 'Notes',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.note),
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-
-            // Tags
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Tags',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: _addTag,
-                        ),
-                      ],
-                    ),
-                    if (_tags.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        children: _tags.map((tag) => Chip(
-                          label: Text(tag),
-                          onDeleted: () => _removeTag(tag),
-                        )).toList(),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Coach-specific options
-            if (isCoach) ...[
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  // Start Date & Time
+                  Row(
                     children: [
-                      const Text(
-                        'Booking Options',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: _buildDateTimeTile(
+                          title: 'Start',
+                          value: _startDate != null
+                              ? DateFormat('MMM dd, yyyy').format(_startDate!)
+                              : 'Select date',
+                          onTap: () => _pickDate(context, true),
+                          tc: tc,
+                        ),
                       ),
-                      const SizedBox(height: 16),
-
-                      SwitchListTile(
-                        title: const Text('Booking Slot'),
-                        subtitle: const Text('Allow clients to book this time'),
-                        value: _isBookingSlot,
-                        onChanged: (value) => setState(() => _isBookingSlot = value),
-                      ),
-
-                      if (_isBookingSlot) ...[
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          initialValue: _capacity.toString(),
-                          decoration: const InputDecoration(
-                            labelText: 'Capacity',
-                            border: OutlineInputBorder(),
+                      if (!_allDay) ...[
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildDateTimeTile(
+                            title: 'Time',
+                            value: _startTime != null
+                                ? _startTime!.format(context)
+                                : 'Select time',
+                            onTap: () => _pickTime(context, true),
+                            tc: tc,
                           ),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          onChanged: (value) {
-                            final capacity = int.tryParse(value);
-                            if (capacity != null && capacity > 0) {
-                              setState(() => _capacity = capacity);
-                            }
-                          },
                         ),
                       ],
                     ],
                   ),
+
+                  const SizedBox(height: 12),
+
+                  // End Date & Time
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildDateTimeTile(
+                          title: 'End',
+                          value: _endDate != null
+                              ? DateFormat('MMM dd, yyyy').format(_endDate!)
+                              : 'Select date',
+                          onTap: () => _pickDate(context, false),
+                          tc: tc,
+                        ),
+                      ),
+                      if (!_allDay) ...[
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildDateTimeTile(
+                            title: 'Time',
+                            value: _endTime != null
+                                ? _endTime!.format(context)
+                                : 'Select time',
+                            onTap: () => _pickTime(context, false),
+                            tc: tc,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Location
+            _buildGlassmorphicTextField(
+              controller: _locationController,
+              label: 'Location',
+              tc: tc,
+              prefixIcon: Icons.location_on_outlined,
+            ),
+            const SizedBox(height: 20),
+
+            // Notes
+            _buildGlassmorphicTextField(
+              controller: _notesController,
+              label: 'Notes',
+              tc: tc,
+              prefixIcon: Icons.sticky_note_2_outlined,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 20),
+
+            // Tags
+            _buildGlassmorphicCard(
+              tc: tc,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildSectionHeader('Tags', tc),
+                      _buildGlassmorphicIconButton(
+                        icon: Icons.add,
+                        onTap: _addTag,
+                        tc: tc,
+                      ),
+                    ],
+                  ),
+                  if (_tags.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _tags.map((tag) => _buildGlassmorphicChip(
+                        label: tag,
+                        onDeleted: () => _removeTag(tag),
+                        tc: tc,
+                      )).toList(),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Coach-specific options
+            if (isCoach) ...[
+              _buildGlassmorphicCard(
+                tc: tc,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionHeader('Booking Options', tc),
+                    const SizedBox(height: 16),
+
+                    _buildGlassmorphicSwitch(
+                      title: 'Booking Slot',
+                      subtitle: 'Allow clients to book this time',
+                      value: _isBookingSlot,
+                      onChanged: (value) => setState(() => _isBookingSlot = value),
+                      tc: tc,
+                    ),
+
+                    if (_isBookingSlot) ...[
+                      const SizedBox(height: 16),
+                      _buildGlassmorphicTextField(
+                        initialValue: _capacity.toString(),
+                        label: 'Capacity',
+                        tc: tc,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        onChanged: (value) {
+                          final capacity = int.tryParse(value);
+                          if (capacity != null && capacity > 0) {
+                            setState(() => _capacity = capacity);
+                          }
+                        },
+                      ),
+                    ],
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
             ],
 
             // Visibility and Status
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Settings',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
+            _buildGlassmorphicCard(
+              tc: tc,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader('Settings', tc),
+                  const SizedBox(height: 16),
 
-                    DropdownButtonFormField<String>(
-                      value: _visibility,
-                      decoration: const InputDecoration(
-                        labelText: 'Visibility',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'private', child: Text('Private')),
-                        DropdownMenuItem(value: 'public', child: Text('Public')),
-                      ],
-                      onChanged: (value) => setState(() => _visibility = value!),
-                    ),
-                    const SizedBox(height: 16),
+                  _buildGlassmorphicDropdown(
+                    value: _visibility,
+                    label: 'Visibility',
+                    items: const [
+                      DropdownMenuItem(value: 'private', child: Text('Private')),
+                      DropdownMenuItem(value: 'public', child: Text('Public')),
+                    ],
+                    onChanged: (value) => setState(() => _visibility = value!),
+                    tc: tc,
+                  ),
+                  const SizedBox(height: 16),
 
-                    DropdownButtonFormField<String>(
-                      value: _status,
-                      decoration: const InputDecoration(
-                        labelText: 'Status',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'scheduled', child: Text('Scheduled')),
-                        DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
-                        DropdownMenuItem(value: 'completed', child: Text('Completed')),
-                      ],
-                      onChanged: (value) => setState(() => _status = value!),
-                    ),
-                  ],
-                ),
+                  _buildGlassmorphicDropdown(
+                    value: _status,
+                    label: 'Status',
+                    items: const [
+                      DropdownMenuItem(value: 'scheduled', child: Text('Scheduled')),
+                      DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
+                      DropdownMenuItem(value: 'completed', child: Text('Completed')),
+                    ],
+                    onChanged: (value) => setState(() => _status = value!),
+                    tc: tc,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Recurrence (advanced)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Recurrence (Advanced)',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Enter RRULE format (e.g., FREQ=WEEKLY;INTERVAL=1)',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _recurrenceController,
-                      decoration: const InputDecoration(
-                        labelText: 'Recurrence Rule',
-                        border: OutlineInputBorder(),
-                        hintText: 'FREQ=WEEKLY;INTERVAL=1',
-                      ),
-                    ),
-                  ],
-                ),
+            _buildGlassmorphicCard(
+              tc: tc,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader('Recurrence (Advanced)', tc),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Enter RRULE format (e.g., FREQ=WEEKLY;INTERVAL=1)',
+                    style: TextStyle(fontSize: 12, color: tc.textTertiary),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildGlassmorphicTextField(
+                    controller: _recurrenceController,
+                    label: 'Recurrence Rule',
+                    tc: tc,
+                    hintText: 'FREQ=WEEKLY;INTERVAL=1',
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 32),
 
-            // Save Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _saving ? null : _saveEvent,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: _saving
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(isEditing ? 'Update Event' : 'Create Event'),
-              ),
+            // Save Button - Glassmorphic accent style
+            _buildGlassmorphicButton(
+              label: isEditing ? 'Update Event' : 'Create Event',
+              onPressed: _saving ? null : _saveEvent,
+              isLoading: _saving,
+              tc: tc,
             ),
             const SizedBox(height: 32),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ===== GLASSMORPHIC HELPER WIDGETS =====
+
+  PreferredSizeWidget _buildGlassmorphicAppBar(BuildContext context, bool isEditing, ThemeColors tc) {
+    return AppBar(
+      backgroundColor: tc.bg.withValues(alpha: 0.8),
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      flexibleSpace: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(color: Colors.transparent),
+        ),
+      ),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: tc.icon),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: Text(
+        isEditing ? 'Edit Event' : 'New Event',
+        style: TextStyle(
+          color: tc.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      actions: [
+        if (isEditing)
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: _buildGlassmorphicIconButton(
+              icon: Icons.delete_outline,
+              onTap: _saving ? null : _deleteEvent,
+              tc: tc,
+              isDanger: true,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, ThemeColors tc) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: DesignTokens.accentBlue,
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicCard({
+    required Widget child,
+    required ThemeColors tc,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: tc.isDark
+                  ? [
+                      DesignTokens.accentBlue.withValues(alpha: 0.08),
+                      DesignTokens.accentBlue.withValues(alpha: 0.03),
+                    ]
+                  : [
+                      Colors.white.withValues(alpha: 0.9),
+                      Colors.white.withValues(alpha: 0.7),
+                    ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: tc.isDark
+                  ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                  : tc.border,
+              width: 1,
+            ),
+            boxShadow: tc.isDark
+                ? [
+                    BoxShadow(
+                      color: DesignTokens.accentBlue.withValues(alpha: 0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : tc.cardShadow,
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicTextField({
+    TextEditingController? controller,
+    String? initialValue,
+    required String label,
+    required ThemeColors tc,
+    IconData? prefixIcon,
+    int maxLines = 1,
+    String? hintText,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
+    void Function(String)? onChanged,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: TextFormField(
+          controller: controller,
+          initialValue: initialValue,
+          maxLines: maxLines,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          validator: validator,
+          onChanged: onChanged,
+          style: TextStyle(color: tc.textPrimary),
+          decoration: InputDecoration(
+            labelText: label,
+            hintText: hintText,
+            labelStyle: TextStyle(color: tc.textSecondary),
+            hintStyle: TextStyle(color: tc.textTertiary),
+            prefixIcon: prefixIcon != null
+                ? Icon(prefixIcon, color: DesignTokens.accentBlue, size: 20)
+                : null,
+            filled: true,
+            fillColor: tc.isDark
+                ? DesignTokens.accentBlue.withValues(alpha: 0.05)
+                : tc.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: tc.isDark
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                    : tc.border,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: tc.isDark
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                    : tc.border,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: DesignTokens.accentBlue,
+                width: 1.5,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: tc.danger),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: tc.danger, width: 1.5),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicSwitch({
+    required String title,
+    String? subtitle,
+    required bool value,
+    required void Function(bool) onChanged,
+    required ThemeColors tc,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: tc.isDark
+            ? DesignTokens.accentBlue.withValues(alpha: 0.05)
+            : tc.surfaceAlt,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: tc.isDark
+              ? DesignTokens.accentBlue.withValues(alpha: 0.15)
+              : tc.border,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: tc.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: tc.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: DesignTokens.accentBlue,
+            activeTrackColor: DesignTokens.accentBlue.withValues(alpha: 0.3),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeTile({
+    required String title,
+    required String value,
+    required VoidCallback onTap,
+    required ThemeColors tc,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: tc.isDark
+              ? DesignTokens.accentBlue.withValues(alpha: 0.05)
+              : tc.surfaceAlt,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: tc.isDark
+                ? DesignTokens.accentBlue.withValues(alpha: 0.15)
+                : tc.border,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: tc.textSecondary,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: TextStyle(
+                color: DesignTokens.accentBlue,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicIconButton({
+    required IconData icon,
+    VoidCallback? onTap,
+    required ThemeColors tc,
+    bool isDanger = false,
+  }) {
+    final color = isDanger ? tc.danger : DesignTokens.accentBlue;
+    
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              color.withValues(alpha: 0.2),
+              color.withValues(alpha: 0.05),
+            ],
+          ),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Center(
+              child: Icon(
+                icon,
+                size: 20,
+                color: color,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicChip({
+    required String label,
+    required VoidCallback onDeleted,
+    required ThemeColors tc,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            DesignTokens.accentBlue.withValues(alpha: 0.15),
+            DesignTokens.accentBlue.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: tc.isDark ? Colors.white : DesignTokens.accentBlue,
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: onDeleted,
+            child: Icon(
+              Icons.close,
+              size: 16,
+              color: tc.isDark
+                  ? Colors.white.withValues(alpha: 0.7)
+                  : DesignTokens.accentBlue,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicDropdown({
+    required String value,
+    required String label,
+    required List<DropdownMenuItem<String>> items,
+    required void Function(String?) onChanged,
+    required ThemeColors tc,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: DropdownButtonFormField<String>(
+          value: value,
+          items: items,
+          onChanged: onChanged,
+          style: TextStyle(color: tc.textPrimary),
+          dropdownColor: tc.isDark ? const Color(0xFF1A1A2E) : tc.surface,
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: TextStyle(color: tc.textSecondary),
+            filled: true,
+            fillColor: tc.isDark
+                ? DesignTokens.accentBlue.withValues(alpha: 0.05)
+                : tc.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: tc.isDark
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                    : tc.border,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: tc.isDark
+                    ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                    : tc.border,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: DesignTokens.accentBlue,
+                width: 1.5,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassmorphicButton({
+    required String label,
+    VoidCallback? onPressed,
+    bool isLoading = false,
+    required ThemeColors tc,
+  }) {
+    return GestureDetector(
+      onTap: isLoading ? null : onPressed,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                colors: [
+                  DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  DesignTokens.accentBlue.withValues(alpha: 0.1),
+                ],
+                center: Alignment.center,
+                radius: 2,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+            ),
+          ),
         ),
       ),
     );

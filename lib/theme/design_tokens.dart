@@ -377,4 +377,71 @@ class DesignTokens {
       ),
     );
   }
+
+  // ===== THEME-AWARE HELPER METHODS =====
+  // Use these instead of static colors when you need theme support
+  
+  /// Get theme-aware card background
+  /// Usage: DesignTokens.cardBg(context)
+  static Color cardBg(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? cardBackground : const Color(0xFFFFFFFF);
+  }
+
+  /// Get theme-aware primary text color
+  /// Usage: DesignTokens.textColor(context)
+  static Color textColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? neutralWhite : const Color(0xFF0B1220);
+  }
+
+  /// Get theme-aware secondary text color
+  static Color textColorSecondary(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? textSecondary : const Color(0xFF4B5563);
+  }
+
+  /// Get theme-aware icon color
+  static Color iconColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? neutralWhite : const Color(0xFF0B1220);
+  }
+
+  /// Get theme-aware border color
+  static Color borderColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? glassBorder : const Color(0xFFE5E7EB);
+  }
+
+  /// Get theme-aware scaffold background
+  static Color scaffoldBg(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? primaryDark : const Color(0xFFF7F8FA);
+  }
+
+  /// Create theme-aware glassmorphic decoration
+  static BoxDecoration adaptiveGlassmorphicDecoration(
+    BuildContext context, {
+    double borderRadius = 20.0,
+    List<BoxShadow>? boxShadow,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return BoxDecoration(
+      color: isDark ? cardBackground : const Color(0xFFFFFFFF),
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(
+        color: isDark ? glassBorder : const Color(0xFFE5E7EB),
+        width: 1.0,
+      ),
+      boxShadow: boxShadow ?? (isDark 
+          ? cardShadow 
+          : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ]),
+    );
+  }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,8 +8,8 @@ import '../auth/device_list_screen.dart';
 import '../auth/become_coach_screen.dart';
 import '../billing/billing_settings.dart';
 import '../settings/user_settings_screen.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/design_tokens.dart';
+import '../../theme/theme_colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -130,17 +131,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Navigator.pop(context, true);
   }
 
-  Widget _avatarPreview() {
+  Widget _avatarPreview(ThemeColors tc) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.3),
+          color: DesignTokens.accentBlue.withValues(alpha: 0.4),
           width: 3,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accentGreen.withValues(alpha: 0.2),
+            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
             blurRadius: 20,
             spreadRadius: 2,
           ),
@@ -148,15 +149,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       child: CircleAvatar(
         radius: 50,
-        backgroundColor: AppTheme.cardBackground,
+        backgroundColor: tc.avatarBg,
         backgroundImage: _pickedImage != null 
           ? FileImage(_pickedImage!) 
           : (_avatarUrl.isNotEmpty ? NetworkImage(_avatarUrl) : null),
         child: (_pickedImage == null && _avatarUrl.isEmpty) 
-          ? const Icon(
+          ? Icon(
               Icons.person,
               size: 50,
-              color: AppTheme.accentGreen,
+              color: tc.avatarIcon,
             )
           : null,
       ),
@@ -166,29 +167,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tc = context.tc;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: Colors.white,
+        foregroundColor: tc.textPrimary,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Edit Profile',
           style: TextStyle(
-            color: Colors.white,
+            color: tc.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: tc.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                color: AppTheme.accentGreen,
+                color: DesignTokens.accentBlue,
               ),
             )
           : SingleChildScrollView(
@@ -196,19 +198,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 children: [
                   // Avatar Section
-                  _buildAvatarSection(),
+                  _buildAvatarSection(tc),
                   const SizedBox(height: 16),
                   
                   // Profile Information Card
-                  _buildProfileInfoCard(),
+                  _buildProfileInfoCard(tc),
                   const SizedBox(height: 12),
                   
                   // Security Settings Card
-                  _buildSecuritySettingsCard(),
+                  _buildSecuritySettingsCard(tc),
                   const SizedBox(height: 12),
                   
                   // Save Button
-                  _buildSaveButton(),
+                  _buildSaveButton(tc),
                   const SizedBox(height: 16),
                 ],
               ),
@@ -216,18 +218,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildAvatarSection() {
+  Widget _buildAvatarSection(ThemeColors tc) {
     return Column(
       children: [
         GestureDetector(
           onTap: _pickImage,
-          child: _avatarPreview(),
+          child: _avatarPreview(tc),
         ),
         const SizedBox(height: 8),
         Text(
           'Tap image to change avatar',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: tc.textSecondary,
             fontSize: 13,
           ),
         ),
@@ -235,69 +237,98 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildProfileInfoCard() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2F33),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Profile Information',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+  Widget _buildProfileInfoCard(ThemeColors tc) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.topLeft,
+              radius: 2.0,
+              colors: [
+                DesignTokens.accentBlue.withValues(alpha: 0.2),
+                DesignTokens.accentBlue.withValues(alpha: 0.08),
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          
-          // Name Field
-          _buildCompactTextField(
-            controller: _nameController,
-            label: 'Your Name',
-            icon: Icons.person,
-          ),
-          const SizedBox(height: 6),
-          
-          // Bio Field
-          _buildCompactTextField(
-            controller: _bioController,
-            label: 'Bio',
-            icon: Icons.description,
-            maxLines: 2,
-          ),
-          const SizedBox(height: 6),
-          
-          // Location Field
-          _buildCompactTextField(
-            controller: _locationController,
-            label: 'Location',
-            icon: Icons.location_on,
-          ),
-          const SizedBox(height: 6),
-          
-          // Role Dropdown
-          _buildCompactRoleDropdown(),
-          if (!_isAdmin)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                'Only admins can change roles.',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 10,
-                ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
               ),
-            ),
-        ],
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.person_outline, color: Colors.white.withValues(alpha: 0.9), size: 20),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Profile Information',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              
+              // Name Field
+              _buildCompactTextField(
+                controller: _nameController,
+                label: 'Your Name',
+                icon: Icons.person,
+                tc: tc,
+              ),
+              const SizedBox(height: 12),
+              
+              // Bio Field
+              _buildCompactTextField(
+                controller: _bioController,
+                label: 'Bio',
+                icon: Icons.description,
+                maxLines: 2,
+                tc: tc,
+              ),
+              const SizedBox(height: 12),
+              
+              // Location Field
+              _buildCompactTextField(
+                controller: _locationController,
+                label: 'Location',
+                icon: Icons.location_on,
+                tc: tc,
+              ),
+              const SizedBox(height: 12),
+              
+              // Role Dropdown
+              _buildCompactRoleDropdown(tc),
+              if (!_isAdmin)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    'Only admins can change roles.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -306,6 +337,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    required ThemeColors tc,
     int maxLines = 1,
   }) {
     return Column(
@@ -319,13 +351,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF6A6475),
-            borderRadius: BorderRadius.circular(8),
+            color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppTheme.accentGreen.withValues(alpha: 0.3),
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -334,11 +366,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             maxLines: maxLines,
             style: const TextStyle(color: Colors.white, fontSize: 14),
             decoration: InputDecoration(
-              prefixIcon: Icon(icon, color: AppTheme.accentGreen, size: 16),
+              prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.7), size: 18),
               border: InputBorder.none,
               fillColor: Colors.transparent,
               filled: true,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             ),
           ),
         ),
@@ -347,7 +379,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
 
-  Widget _buildCompactRoleDropdown() {
+  Widget _buildCompactRoleDropdown(ThemeColors tc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -359,27 +391,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF6A6475),
-            borderRadius: BorderRadius.circular(8),
+            color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppTheme.accentGreen.withValues(alpha: 0.3),
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
           child: DropdownButtonFormField<String>(
             value: _role,
-            dropdownColor: const Color(0xFF6A6475),
+            dropdownColor: DesignTokens.accentBlue.withValues(alpha: 0.9),
             style: const TextStyle(color: Colors.white, fontSize: 14),
-            icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.accentGreen, size: 16),
-            decoration: const InputDecoration(
+            icon: Icon(Icons.keyboard_arrow_down, color: Colors.white.withValues(alpha: 0.7), size: 18),
+            decoration: InputDecoration(
               border: InputBorder.none,
               fillColor: Colors.transparent,
               filled: true,
-              prefixIcon: Icon(Icons.admin_panel_settings, color: AppTheme.accentGreen, size: 16),
-              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              prefixIcon: Icon(Icons.admin_panel_settings, color: Colors.white.withValues(alpha: 0.7), size: 18),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             ),
             items: const [
               DropdownMenuItem(value: 'client', child: Text('Client')),
@@ -396,97 +428,117 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
 
-  Widget _buildSecuritySettingsCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2F33),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.security, color: AppTheme.accentOrange, size: 18),
-              SizedBox(width: 8),
-              Text(
-                'Security Settings',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
+  Widget _buildSecuritySettingsCard(ThemeColors tc) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.topLeft,
+              radius: 2.0,
+              colors: [
+                DesignTokens.accentBlue.withValues(alpha: 0.2),
+                DesignTokens.accentBlue.withValues(alpha: 0.08),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          
-          // Device Management
-          _buildSettingsTile(
-            icon: Icons.devices_other,
-            title: 'Manage devices',
-            subtitle: 'View and manage your signed-in devices',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const DeviceListScreen(),
-                ),
-              );
-            },
-          ),
-          
-          // Billing & Upgrade
-          _buildSettingsTile(
-            icon: Icons.credit_card,
-            title: 'Billing & Upgrade',
-            subtitle: 'Manage your subscription and billing',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const BillingSettings(),
-                ),
-              );
-            },
-          ),
-          
-          // Settings
-          _buildSettingsTile(
-            icon: Icons.settings,
-            title: 'Settings',
-            subtitle: 'Theme, language, and reminder preferences',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const UserSettingsScreen(),
-                ),
-              );
-            },
-          ),
-          
-          // Coach Application (only for clients)
-          if (_role == 'client')
-            _buildSettingsTile(
-              icon: Icons.sports_gymnastics,
-              title: 'Apply to become a Coach',
-              subtitle: 'Submit your coaching application',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const BecomeCoachScreen(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.security, color: Colors.white.withValues(alpha: 0.9), size: 20),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Security Settings',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                );
-              },
-            ),
-        ],
+                ],
+              ),
+              const SizedBox(height: 16),
+              
+              // Device Management
+              _buildSettingsTile(
+                icon: Icons.devices_other,
+                title: 'Manage devices',
+                subtitle: 'View and manage your signed-in devices',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DeviceListScreen(),
+                    ),
+                  );
+                },
+              ),
+              
+              // Billing & Upgrade
+              _buildSettingsTile(
+                icon: Icons.credit_card,
+                title: 'Billing & Upgrade',
+                subtitle: 'Manage your subscription and billing',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BillingSettings(),
+                    ),
+                  );
+                },
+              ),
+              
+              // Settings
+              _buildSettingsTile(
+                icon: Icons.settings,
+                title: 'Settings',
+                subtitle: 'Theme, language, and reminder preferences',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const UserSettingsScreen(),
+                    ),
+                  );
+                },
+              ),
+              
+              // Coach Application (only for clients)
+              if (_role == 'client')
+                _buildSettingsTile(
+                  icon: Icons.sports_gymnastics,
+                  title: 'Apply to become a Coach',
+                  subtitle: 'Submit your coaching application',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const BecomeCoachScreen(),
+                      ),
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -498,18 +550,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required VoidCallback onTap,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 6),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: DesignTokens.lightGrey,
+        color: DesignTokens.accentBlue.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.accentGreen.withValues(alpha: 0.2),
+          color: DesignTokens.accentBlue.withValues(alpha: 0.25),
           width: 1,
         ),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        leading: Icon(icon, color: AppTheme.accentGreen, size: 18),
+        leading: Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 20),
         title: Text(
           title,
           style: const TextStyle(
@@ -521,39 +573,68 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         subtitle: Text(
           subtitle,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 12,
           ),
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
-          color: AppTheme.accentGreen,
-          size: 12,
+          color: Colors.white.withValues(alpha: 0.5),
+          size: 14,
         ),
         onTap: onTap,
       ),
     );
   }
 
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _saveProfile,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.accentGreen,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
+  Widget _buildSaveButton(ThemeColors tc) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 2.0,
+              colors: [
+                DesignTokens.accentBlue.withValues(alpha: 0.4),
+                DesignTokens.accentBlue.withValues(alpha: 0.2),
+              ],
+            ),
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.5),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          elevation: 0,
-        ),
-        child: const Text(
-          'Save Changes',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _saveProfile,
+              borderRadius: BorderRadius.circular(12),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(
+                  child: Text(
+                    'Save Changes',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),

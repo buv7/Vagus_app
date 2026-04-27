@@ -44,9 +44,22 @@ class _MealTimelineCardState extends State<MealTimelineCard>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
+    // Initialize with transparent - actual color set in build
     _colorAnimation = ColorTween(
       begin: Colors.transparent,
-      end: AppTheme.accentGreen.withValues(alpha: 0.1),
+      end: Colors.transparent,
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final theme = Theme.of(context);
+    _colorAnimation = ColorTween(
+      begin: Colors.transparent,
+      end: theme.colorScheme.primary.withValues(alpha: 0.1),
     ).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
@@ -132,6 +145,8 @@ class _MealTimelineCardState extends State<MealTimelineCard>
   }
 
   Widget _buildTimelineIndicator() {
+    final theme = Theme.of(context);
+    
     return Column(
       children: [
         // Timeline line (top)
@@ -139,7 +154,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
           Container(
             width: 2,
             height: 20,
-            color: AppTheme.mediumGrey.withValues(alpha: 0.3),
+            color: theme.colorScheme.outline.withValues(alpha: 0.3),
           ),
 
         // Meal number circle
@@ -176,13 +191,16 @@ class _MealTimelineCardState extends State<MealTimelineCard>
         Container(
           width: 2,
           height: 20,
-          color: AppTheme.mediumGrey.withValues(alpha: 0.3),
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
         ),
       ],
     );
   }
 
   Widget _buildMealContent() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -216,8 +234,8 @@ class _MealTimelineCardState extends State<MealTimelineCard>
                       Expanded(
                         child: Text(
                           widget.meal.label,
-                          style: const TextStyle(
-                            color: AppTheme.neutralWhite,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -230,13 +248,13 @@ class _MealTimelineCardState extends State<MealTimelineCard>
                             vertical: DesignTokens.space2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.accentGreen,
+                            color: theme.colorScheme.primary,
                             borderRadius: BorderRadius.circular(DesignTokens.radius8),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Done',
                             style: TextStyle(
-                              color: AppTheme.primaryDark,
+                              color: isDark ? AppTheme.primaryDark : Colors.white,
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
                             ),
@@ -247,8 +265,8 @@ class _MealTimelineCardState extends State<MealTimelineCard>
                   const SizedBox(height: DesignTokens.space4),
                   Text(
                     _getMealTime(),
-                    style: const TextStyle(
-                      color: AppTheme.lightGrey,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
@@ -263,13 +281,13 @@ class _MealTimelineCardState extends State<MealTimelineCard>
                 vertical: DesignTokens.space4,
               ),
               decoration: BoxDecoration(
-                color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DesignTokens.radius8),
               ),
               child: Text(
                 widget.meal.mealSummary.totalKcal.toStringAsFixed(0),
-                style: const TextStyle(
-                  color: AppTheme.accentGreen,
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -312,49 +330,49 @@ class _MealTimelineCardState extends State<MealTimelineCard>
         // Food items summary
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.restaurant_menu,
               size: 14,
-              color: AppTheme.lightGrey,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: DesignTokens.space4),
             Text(
               '${widget.meal.items.length} items',
-              style: const TextStyle(
-                color: AppTheme.lightGrey,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
             if (widget.meal.attachments.isNotEmpty) ...[
               const SizedBox(width: DesignTokens.space12),
-              const Icon(
+              Icon(
                 Icons.photo_camera,
                 size: 14,
-                color: AppTheme.lightGrey,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: DesignTokens.space4),
               Text(
                 '${widget.meal.attachments.length}',
-                style: const TextStyle(
-                  color: AppTheme.lightGrey,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
             ],
             if (widget.meal.clientComment.isNotEmpty) ...[
               const SizedBox(width: DesignTokens.space12),
-              const Icon(
+              Icon(
                 Icons.comment,
                 size: 14,
-                color: AppTheme.lightGrey,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ],
             const Spacer(),
             if (widget.onTap != null)
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios,
                 size: 12,
-                color: AppTheme.lightGrey,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
           ],
         ),
@@ -401,7 +419,7 @@ class _MealTimelineCardState extends State<MealTimelineCard>
     if (name.contains('lunch')) return Colors.green;
     if (name.contains('dinner')) return Colors.purple;
     if (name.contains('snack')) return Colors.blue;
-    return AppTheme.accentGreen;
+    return Theme.of(context).colorScheme.primary;
   }
 
   IconData _getMealTypeIcon() {

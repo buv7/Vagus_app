@@ -1,0 +1,5 @@
+node_modules/
+test-results/html/
+test-results/vagus_smoke-*/
+test-results/.last-run.json
+playwright-report/

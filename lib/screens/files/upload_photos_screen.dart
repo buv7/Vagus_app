@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../theme/design_tokens.dart';
 
 /// Upload Photos Screen for VAGUS app
 /// Simple grid gallery of user's uploaded files with upload functionality
@@ -290,12 +292,41 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? DesignTokens.darkBackground : DesignTokens.scaffoldBg(context),
       appBar: AppBar(
-        title: const Text('📸 Upload Photos'),
+        backgroundColor: isDark ? DesignTokens.darkBackground : Colors.white,
+        foregroundColor: isDark ? Colors.white : DesignTokens.textColor(context),
+        elevation: 0,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.camera_alt,
+                color: DesignTokens.accentBlue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Upload Photos',
+              style: TextStyle(
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh, color: isDark ? Colors.white.withValues(alpha: 0.8) : DesignTokens.iconColor(context)),
             onPressed: _loadFiles,
             tooltip: 'Refresh gallery',
           ),
@@ -305,42 +336,73 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
         children: [
           // Main content
           _loading
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(child: CircularProgressIndicator(color: DesignTokens.accentBlue))
               : _files.isEmpty
                   ? _buildEmptyState()
                   : _buildGalleryGrid(),
 
-          // Upload progress overlay
+          // Upload progress overlay with glassmorphism
           if (_uploading)
             Container(
               color: Colors.black.withValues(alpha: 0.5),
               child: Center(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Uploading files...',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: isDark 
+                          ? DesignTokens.darkBackground.withValues(alpha: 0.9)
+                          : Colors.white.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+                          width: 2,
                         ),
-                        const SizedBox(height: 16),
-                        LinearProgressIndicator(
-                          value: _uploadProgress,
-                          backgroundColor: Colors.grey.shade300,
-                        ),
-                        const SizedBox(height: 8),
-                        Text('${(_uploadProgress * 100).toInt()}%'),
-                        if (_uploadError != null) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            'Error: $_uploadError',
-                            style: const TextStyle(color: Colors.red),
-                            textAlign: TextAlign.center,
+                        boxShadow: [
+                          BoxShadow(
+                            color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            spreadRadius: 0,
                           ),
                         ],
-                      ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Uploading files...',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : DesignTokens.textColor(context),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          LinearProgressIndicator(
+                            value: _uploadProgress,
+                            backgroundColor: isDark 
+                              ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+                              : Colors.grey.shade300,
+                            valueColor: AlwaysStoppedAnimation<Color>(DesignTokens.accentBlue),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '${(_uploadProgress * 100).toInt()}%',
+                            style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context)),
+                          ),
+                          if (_uploadError != null) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'Error: $_uploadError',
+                              style: TextStyle(color: DesignTokens.accentPink),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -348,49 +410,110 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _uploading ? null : _pickAndUploadFiles,
-        tooltip: 'Upload files',
-        child: _uploading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      floatingActionButton: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              DesignTokens.accentBlue.withValues(alpha: 0.3),
+              DesignTokens.accentBlue.withValues(alpha: 0.1),
+            ],
+          ),
+          border: Border.all(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _uploading ? null : _pickAndUploadFiles,
+                borderRadius: BorderRadius.circular(28),
+                child: Center(
+                  child: _uploading
+                    ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Icon(Icons.add, color: Colors.white),
                 ),
-              )
-            : const Icon(Icons.add),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.photo_library,
-            size: 64,
-            color: Colors.grey.shade400,
+      child: Container(
+        margin: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: isDark 
+            ? DesignTokens.accentBlue.withValues(alpha: 0.1)
+            : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark 
+              ? DesignTokens.accentBlue.withValues(alpha: 0.3)
+              : DesignTokens.borderColor(context),
           ),
-          const SizedBox(height: 16),
-          Text(
-            'No photos or videos yet',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey.shade600,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.photo_library,
+                size: 48,
+                color: DesignTokens.accentBlue,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Tap the + button to upload your first file',
-            style: TextStyle(
-              color: Colors.grey.shade500,
+            const SizedBox(height: 16),
+            Text(
+              'No photos or videos yet',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : DesignTokens.textColor(context),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              'Tap the + button to upload your first file',
+              style: TextStyle(
+                color: isDark ? Colors.white.withValues(alpha: 0.6) : DesignTokens.textColorSecondary(context),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -444,38 +567,112 @@ class _UploadPhotosScreenState extends State<UploadPhotosScreen> {
   }
 
   void _showFileOptions(Map<String, dynamic> file) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.visibility),
-              title: const Text('View'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Navigate to file previewer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement share functionality
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('Delete', style: TextStyle(color: Colors.red)),
-              onTap: () {
-                Navigator.pop(context);
-                _showDeleteConfirmation(file);
-              },
+        decoration: BoxDecoration(
+          color: isDark ? DesignTokens.darkBackground : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          border: Border.all(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.4),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: const Offset(0, -8),
             ),
           ],
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.3) : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(Icons.visibility, color: DesignTokens.accentBlue),
+                ),
+                title: Text('View', style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context), fontWeight: FontWeight.w600)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                hoverColor: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                onTap: () {
+                  Navigator.pop(context);
+                  // TODO: Navigate to file previewer
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: DesignTokens.accentPurple.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: DesignTokens.accentPurple.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(Icons.share, color: DesignTokens.accentPurple),
+                ),
+                title: Text('Share', style: TextStyle(color: isDark ? Colors.white : DesignTokens.textColor(context), fontWeight: FontWeight.w600)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                hoverColor: DesignTokens.accentBlue.withValues(alpha: 0.2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                onTap: () {
+                  Navigator.pop(context);
+                  // TODO: Implement share functionality
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: DesignTokens.accentPink.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: DesignTokens.accentPink.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(Icons.delete, color: DesignTokens.accentPink),
+                ),
+                title: Text('Delete', style: TextStyle(color: DesignTokens.accentPink, fontWeight: FontWeight.w600)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                hoverColor: DesignTokens.accentPink.withValues(alpha: 0.2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showDeleteConfirmation(file);
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

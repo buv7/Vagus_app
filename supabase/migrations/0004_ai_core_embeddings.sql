@@ -6,7 +6,7 @@ create extension if not exists pgcrypto;
 create table if not exists public.note_embeddings (
   id uuid primary key default gen_random_uuid(),
   note_id uuid not null references public.coach_notes(id) on delete cascade,
-  model text not null default 'text-embedding-3-large',
+  model text not null default 'text-embedding-3-small',
   content text not null,
   embedding vector(1536) not null,
   created_at timestamptz not null default now()
@@ -45,7 +45,7 @@ end $$;
 create table if not exists public.message_embeddings (
   id uuid primary key default gen_random_uuid(),
   message_id uuid not null,
-  model text not null default 'text-embedding-3-large',
+  model text not null default 'text-embedding-3-small',
   content text not null,
   embedding vector(1536) not null,
   created_by uuid not null,
@@ -73,7 +73,7 @@ end $$;
 create table if not exists public.workout_embeddings (
   id uuid primary key default gen_random_uuid(),
   workout_id uuid not null,
-  model text not null default 'text-embedding-3-large',
+  model text not null default 'text-embedding-3-small',
   content text not null,
   embedding vector(1536) not null,
   created_by uuid not null,

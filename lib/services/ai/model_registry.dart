@@ -19,7 +19,7 @@ class ModelRegistry {
     'messaging.translate': 'gpt-4o-mini',
     'messaging.summarize': 'gpt-4o-mini',
     'chat.default': 'gpt-4o-mini',
-    'embedding.default': 'text-embedding-3-large',
+    'embedding.default': 'text-embedding-3-small',
   };
 
   // Override mappings with dart-define if available
@@ -53,8 +53,8 @@ class ModelRegistry {
   }
 
   int embeddingDim(String model) {
-    // Return 1536 for text-embedding-3-large, default to 1536 for unknown models
-    if (model.contains('text-embedding-3-large') || model.contains('text-embedding-3-small')) {
+    // Return 1536 for text-embedding-3-small (and legacy -3-large), default to 1536 for unknown models
+    if (model.contains('text-embedding-3-small') || model.contains('text-embedding-3-large')) {
       return 1536;
     }
     

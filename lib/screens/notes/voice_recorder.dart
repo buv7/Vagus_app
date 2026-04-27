@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/ai/transcription_ai.dart';
+import '../../theme/design_tokens.dart';
 import 'package:uuid/uuid.dart';
 
 class VoiceRecorder extends StatefulWidget {
@@ -123,16 +124,67 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: _isProcessing 
-          ? const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.mic),
-      label: Text(_isProcessing ? 'Processing...' : 'Record Voice'),
-      onPressed: _isProcessing ? null : () => _recordAndTranscribe(context),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark 
+            ? DesignTokens.accentBlue.withValues(alpha: 0.2)
+            : DesignTokens.accentBlue,
+        borderRadius: BorderRadius.circular(DesignTokens.radius12),
+        border: Border.all(
+          color: isDark 
+              ? DesignTokens.accentBlue.withValues(alpha: 0.4)
+              : DesignTokens.accentBlue,
+          width: 2,
+        ),
+        boxShadow: isDark ? [
+          BoxShadow(
+            color: DesignTokens.accentBlue.withValues(alpha: 0.2),
+            blurRadius: 12,
+            spreadRadius: 0,
+          ),
+        ] : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isProcessing ? null : () => _recordAndTranscribe(context),
+          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _isProcessing 
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isDark ? Colors.white : Colors.white,
+                          ),
+                        ),
+                      )
+                    : Icon(
+                        Icons.mic,
+                        color: isDark ? Colors.white.withValues(alpha: 0.9) : Colors.white,
+                        size: 18,
+                      ),
+                const SizedBox(width: 8),
+                Text(
+                  _isProcessing ? 'Processing...' : 'Record Voice',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

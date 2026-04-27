@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/coach_profile_service.dart';
 import '../../services/coach_marketplace_service.dart';
 import '../../models/coach_profile.dart';
+import '../../theme/theme_colors.dart';
 import '../coach_profile/widgets/profile_content.dart';
 import '../coach_profile/widgets/media_gallery.dart';
 
@@ -130,11 +131,12 @@ class _CoachProfileViewScreenState extends State<CoachProfileViewScreen>
                             children: [
                               CircleAvatar(
                                 radius: 40,
+                                backgroundColor: ThemeColors.of(context).avatarBg,
                                 backgroundImage: _profile?.avatarUrl != null
                                     ? NetworkImage(_profile!.avatarUrl!)
                                     : null,
                                 child: _profile?.avatarUrl == null
-                                    ? const Icon(Icons.person, size: 40, color: Colors.white)
+                                    ? Icon(Icons.person, size: 40, color: ThemeColors.of(context).avatarIcon)
                                     : null,
                               ),
                               const SizedBox(width: 16),

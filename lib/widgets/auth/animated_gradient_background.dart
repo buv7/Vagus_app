@@ -38,36 +38,38 @@ class _AnimatedGradientBackgroundState
       animation: _animation,
       builder: (context, child) {
         final value = _animation.value;
-        return Container(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              colors: [
-                const Color(0xFF0096FF).withValues(alpha: 0.1),
-                const Color(0xFF00FFC8).withValues(alpha: 0.1),
-                const Color(0xFF0064C8).withValues(alpha: 0.05),
-                const Color(0xFF000000),
-              ],
-              stops: const [0.0, 0.3, 0.6, 1.0],
-              center: Alignment(
-                cos(value) * 0.8,
-                sin(value) * 0.8,
-              ),
-              radius: 1.5,
-            ),
-          ),
-          child: Container(
+        return SizedBox.expand(
+          child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF00C8FF).withValues(alpha: 0.08),
-                  Colors.transparent,
+                  const Color(0xFF0096FF).withValues(alpha: 0.1),
+                  const Color(0xFF00FFC8).withValues(alpha: 0.1),
+                  const Color(0xFF0064C8).withValues(alpha: 0.05),
+                  const Color(0xFF000000),
                 ],
-                stops: const [0.0, 1.0],
+                stops: const [0.0, 0.3, 0.6, 1.0],
                 center: Alignment(
-                  cos(value + pi) * 0.6,
-                  sin(value + pi) * 0.6,
+                  cos(value) * 0.8,
+                  sin(value) * 0.8,
                 ),
-                radius: 1.2,
+                radius: 1.5,
+              ),
+            ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFF00C8FF).withValues(alpha: 0.08),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 1.0],
+                  center: Alignment(
+                    cos(value + pi) * 0.6,
+                    sin(value + pi) * 0.6,
+                  ),
+                  radius: 1.2,
+                ),
               ),
             ),
           ),

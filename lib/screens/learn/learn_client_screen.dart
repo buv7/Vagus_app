@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../widgets/branding/vagus_appbar.dart';
 import '../../theme/design_tokens.dart';
@@ -7,30 +8,39 @@ class LearnClientScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
-      appBar: const VagusAppBar(title: Text('Master VAGUS')),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        foregroundColor: isDark ? Colors.white : const Color(0xFF0B1220),
+        elevation: 0,
+        title: Text(
+          'Master VAGUS',
+          style: TextStyle(
+            color: isDark ? Colors.white : const Color(0xFF0B1220),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            Container(
-              width: double.infinity,
+            _buildGlassmorphicCard(
               padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: DesignTokens.primaryGradient,
-                borderRadius: const BorderRadius.all(Radius.circular(DesignTokens.radius16)),
-                border: Border.all(color: DesignTokens.glassBorderAccent),
-                boxShadow: DesignTokens.glowMd,
-              ),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'MASTER VAGUS',
                     style: TextStyle(
-                      color: DesignTokens.neutralWhite,
+                      color: Colors.white,
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
@@ -40,8 +50,8 @@ class LearnClientScreen extends StatelessWidget {
                   Text(
                     'Your complete guide to getting the most out of VAGUS',
                     style: TextStyle(
-                      color: DesignTokens.textSecondary,
-                      fontSize: 16,
+                      color: Colors.white70,
+                      fontSize: 14,
                     ),
                   ),
                 ],
@@ -90,11 +100,6 @@ class LearnClientScreen extends StatelessWidget {
                   'Track your food intake accurately for better results',
                   '1. Use the camera to snap meal photos\n2. Log portion sizes and ingredients\n3. Note any substitutions or changes\n4. Share updates with your coach',
                 ),
-                _buildGuideItem(
-                  'Hydration & Supplements',
-                  'Stay hydrated and manage your supplement routine',
-                  '1. Set daily hydration goals\n2. Log water intake throughout the day\n3. Track supplement timing and dosage\n4. Report any side effects to your coach',
-                ),
               ],
             ),
 
@@ -111,11 +116,6 @@ class LearnClientScreen extends StatelessWidget {
                   '1. Check your daily workout in the dashboard\n2. Warm up properly before starting\n3. Follow exercise form and technique\n4. Log sets, reps, and weights used',
                 ),
                 _buildGuideItem(
-                  'Exercise Form & Safety',
-                  'Perform exercises safely and effectively',
-                  '1. Watch demonstration videos\n2. Start with lighter weights\n3. Focus on proper form over heavy weight\n4. Ask your coach for form checks',
-                ),
-                _buildGuideItem(
                   'Progress Tracking',
                   'Monitor your strength and fitness improvements',
                   '1. Log your workout performance\n2. Take progress photos regularly\n3. Track measurements and body weight\n4. Celebrate milestones and achievements',
@@ -125,32 +125,7 @@ class LearnClientScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Communication Section
-            _buildSection(
-              'Communication & Support',
-              Icons.chat_bubble_outline,
-              [
-                _buildGuideItem(
-                  'Messaging Your Coach',
-                  'Stay connected with your coach for guidance and support',
-                  '1. Use the messaging feature to ask questions\n2. Share photos and updates regularly\n3. Be specific about challenges or concerns\n4. Respond to coach feedback promptly',
-                ),
-                _buildGuideItem(
-                  'Getting Help & Support',
-                  'Access help when you need it',
-                  '1. Check the FAQ section first\n2. Use the support chat for technical issues\n3. Contact your coach for program questions\n4. Reach out to admin for account issues',
-                ),
-                _buildGuideItem(
-                  'Community & Resources',
-                  'Connect with other users and access learning materials',
-                  '1. Join community discussions\n2. Read educational articles\n3. Watch tutorial videos\n4. Share your success stories',
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // Tips & Best Practices
+            // Tips Section
             _buildSection(
               'Tips & Best Practices',
               Icons.lightbulb_outline,
@@ -165,47 +140,34 @@ class LearnClientScreen extends StatelessWidget {
                   'Keep your motivation high throughout your journey',
                   '• Track your progress regularly\n• Set short-term and long-term goals\n• Connect with your coach for accountability\n• Join the community for support',
                 ),
-                _buildGuideItem(
-                  'Listen to Your Body',
-                  'Pay attention to your body\'s signals and adjust accordingly',
-                  '• Rest when you need to\n• Communicate any pain or discomfort\n• Adjust intensity based on how you feel\n• Prioritize recovery and sleep',
-                ),
               ],
             ),
 
             const SizedBox(height: 32),
 
             // Footer
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: DesignTokens.cardBackground,
-                borderRadius: const BorderRadius.all(Radius.circular(DesignTokens.radius16)),
-                border: Border.all(color: DesignTokens.glassBorder),
-                boxShadow: DesignTokens.cardShadow,
-              ),
-              child: const Column(
+            _buildGlassmorphicCard(
+              child: Column(
                 children: [
                   Icon(
                     Icons.school,
-                    color: DesignTokens.accentGreen,
+                    color: Colors.white.withValues(alpha: 0.9),
                     size: 32,
                   ),
-                  SizedBox(height: 12),
-                  Text(
+                  const SizedBox(height: 12),
+                  const Text(
                     'Ready to Master VAGUS?',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: DesignTokens.textPrimary,
+                      color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Start implementing these tips today and unlock your full potential with VAGUS.',
                     style: TextStyle(
-                      color: DesignTokens.textSecondary,
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                     textAlign: TextAlign.center,
@@ -229,7 +191,7 @@ class LearnClientScreen extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: DesignTokens.accentGreen,
+              color: Colors.white.withValues(alpha: 0.9),
               size: 24,
             ),
             const SizedBox(width: 12),
@@ -238,7 +200,7 @@ class LearnClientScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: DesignTokens.textPrimary,
+                color: Colors.white,
               ),
             ),
           ],
@@ -250,53 +212,89 @@ class LearnClientScreen extends StatelessWidget {
   }
 
   Widget _buildGuideItem(String title, String description, String steps) {
-    return Card(
+    return _buildGlassmorphicCard(
       margin: const EdgeInsets.only(bottom: 12),
-      color: DesignTokens.cardBackground,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DesignTokens.radius12),
-        side: const BorderSide(color: DesignTokens.glassBorder),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Text(
+              steps,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.white.withValues(alpha: 0.9),
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: DesignTokens.textPrimary,
+    );
+  }
+
+  Widget _buildGlassmorphicCard({
+    required Widget child,
+    EdgeInsets? padding,
+    EdgeInsets? margin,
+  }) {
+    return Container(
+      margin: margin,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: padding ?? const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.topLeft,
+                radius: 2.0,
+                colors: [
+                  DesignTokens.accentBlue.withValues(alpha: 0.25),
+                  DesignTokens.accentBlue.withValues(alpha: 0.1),
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(
-                color: DesignTokens.textSecondary,
-                fontSize: 14,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: DesignTokens.accentBlue.withValues(alpha: 0.35),
+                width: 1.5,
               ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: DesignTokens.darkBackground,
-                borderRadius: const BorderRadius.all(Radius.circular(DesignTokens.radius8)),
-                border: Border.all(color: DesignTokens.glassBorder),
-              ),
-              child: Text(
-                steps,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: DesignTokens.textPrimary,
-                  height: 1.4,
+              boxShadow: [
+                BoxShadow(
+                  color: DesignTokens.accentBlue.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
-              ),
+              ],
             ),
-          ],
+            child: child,
+          ),
         ),
       ),
     );

@@ -582,4 +582,186 @@ class NutritionService {
     // For now, just a placeholder
     debugPrint('Adding item ${item.name} to meal $mealId');
   }
+
+  /// Log a food item directly (for OCR/photo capture quick logging)
+  /// This creates the necessary day/meal records if they don't exist
+  Future<void> logFoodItem({
+    required fi.FoodItem foodItem,
+    required String date, // Format: YYYY-MM-DD
+    required String mealType, // breakfast, lunch, dinner, snack
+  }) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      // 1. Find or create a "quick log" plan for the user
+      String planId = await _findOrCreateQuickLogPlan(user.id);
+
+      // 2. Find or create the day record
+      String dayId = await _findOrCreateDay(planId, date);
+
+      // 3. Find or create the meal record
+      String mealId = await _findOrCreateMeal(dayId, mealType);
+
+      // 4. Insert the nutrition item
+      await _supabase.from('nutrition_items').insert({
+        'meal_id': mealId,
+        'food_item_id': foodItem.id,
+        'name': foodItem.name,
+        'amount_grams': foodItem.amount,
+        'protein_g': foodItem.protein,
+        'carbs_g': foodItem.carbs,
+        'fat_g': foodItem.fat,
+        'kcal': foodItem.kcal,
+        'sodium_mg': foodItem.sodium,
+        'potassium_mg': foodItem.potassium,
+      });
+
+      debugPrint('✅ Food item logged: ${foodItem.name} to $mealType on $date');
+    } catch (e) {
+      debugPrint('❌ Failed to log food item: $e');
+      throw Exception('Failed to log food item: $e');
+    }
+  }
+
+  /// Find or create a "Quick Log" plan for the user
+  Future<String> _findOrCreateQuickLogPlan(String userId) async {
+    try {
+      // Check if user has a Quick Log plan
+      final existingPlan = await _supabase
+          .from('nutrition_plans')
+          .select('id')
+          .eq('client_id', userId)
+          .eq('name', 'Quick Log')
+          .maybeSingle();
+
+      if (existingPlan != null) {
+        return existingPlan['id'];
+      }
+
+      // Create a new Quick Log plan
+      final newPlan = await _supabase
+          .from('nutrition_plans')
+          .insert({
+            'client_id': userId,
+            'created_by': userId,
+            'name': 'Quick Log',
+            'description': 'Auto-created plan for quick food logging via photo/OCR',
+            'length_type': 'daily',
+            'ai_generated': false,
+          })
+          .select('id')
+          .single();
+
+      debugPrint('✅ Created Quick Log plan: ${newPlan['id']}');
+      return newPlan['id'];
+    } catch (e) {
+      throw Exception('Failed to find or create Quick Log plan: $e');
+    }
+  }
+
+  /// Find or create a day record for the given date
+  Future<String> _findOrCreateDay(String planId, String date) async {
+    try {
+      // Parse the date
+      final parts = date.split('-');
+      final dayNumber = int.tryParse(parts[2]) ?? 1;
+
+      // Check if day exists
+      final existingDay = await _supabase
+          .from('nutrition_days')
+          .select('id')
+          .eq('plan_id', planId)
+          .eq('date', date)
+          .maybeSingle();
+
+      if (existingDay != null) {
+        return existingDay['id'];
+      }
+
+      // Create new day
+      final newDay = await _supabase
+          .from('nutrition_days')
+          .insert({
+            'plan_id': planId,
+            'day_number': dayNumber,
+            'date': date,
+          })
+          .select('id')
+          .single();
+
+      debugPrint('✅ Created day record: ${newDay['id']} for date $date');
+      return newDay['id'];
+    } catch (e) {
+      throw Exception('Failed to find or create day: $e');
+    }
+  }
+
+  /// Find or create a meal record for the given day and meal type
+  Future<String> _findOrCreateMeal(String dayId, String mealType) async {
+    try {
+      // Check if meal exists
+      final existingMeal = await _supabase
+          .from('nutrition_meals')
+          .select('id')
+          .eq('day_id', dayId)
+          .eq('meal_type', mealType)
+          .maybeSingle();
+
+      if (existingMeal != null) {
+        return existingMeal['id'];
+      }
+
+      // Determine order index and label
+      final orderIndex = _getMealOrderIndex(mealType);
+      final label = _getMealLabel(mealType);
+
+      // Create new meal
+      final newMeal = await _supabase
+          .from('nutrition_meals')
+          .insert({
+            'day_id': dayId,
+            'meal_type': mealType,
+            'label': label,
+            'order_index': orderIndex,
+          })
+          .select('id')
+          .single();
+
+      debugPrint('✅ Created meal record: ${newMeal['id']} for $mealType');
+      return newMeal['id'];
+    } catch (e) {
+      throw Exception('Failed to find or create meal: $e');
+    }
+  }
+
+  int _getMealOrderIndex(String mealType) {
+    switch (mealType.toLowerCase()) {
+      case 'breakfast':
+        return 0;
+      case 'lunch':
+        return 1;
+      case 'snack':
+        return 2;
+      case 'dinner':
+        return 3;
+      default:
+        return 4;
+    }
+  }
+
+  String _getMealLabel(String mealType) {
+    switch (mealType.toLowerCase()) {
+      case 'breakfast':
+        return 'Breakfast';
+      case 'lunch':
+        return 'Lunch';
+      case 'snack':
+        return 'Snack';
+      case 'dinner':
+        return 'Dinner';
+      default:
+        return mealType;
+    }
+  }
 }
