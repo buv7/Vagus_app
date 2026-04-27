@@ -63,14 +63,20 @@ jobs:
           fi
           shopt -s nullglob
           deployed=0
+          skipped=0
           for d in supabase/functions/*/; do
             fn=$(basename "$d")
             [[ "$fn" == _* ]] && continue
+            if [ ! -f "$d/index.ts" ]; then
+              echo "Skipping $fn (no index.ts; placeholder or scaffold)"
+              skipped=$((skipped + 1))
+              continue
+            fi
             echo "Deploying function: $fn"
             supabase functions deploy "$fn" --no-verify-jwt
             deployed=$((deployed + 1))
           done
-          echo "Deployed $deployed Edge Function(s)."
+          echo "Deployed $deployed Edge Function(s); skipped $skipped placeholder(s)."
 
       - name: Verify Supabase API
         run: |
