@@ -13,6 +13,11 @@ analyzer:
   exclude:
     - ARCHIVE/**
     - archived/**
+  # Forbidden literals (enforced by guard test, see test/auth/no_placeholder_user_id_test.dart):
+  #   'current_user_id' — placeholder string for the authenticated user ID.
+  #   Always source the user ID from `AuthContext.currentUserId` (see
+  #   lib/services/auth/auth_context.dart). Hardcoding the literal causes
+  #   silent data scoping bugs in production.
   # Downgrade style-only infos to info level to help reach ≤120 warnings goal
   errors:
     # Downgrade file naming style to info (not warning)

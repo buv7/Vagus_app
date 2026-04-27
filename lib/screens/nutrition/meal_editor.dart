@@ -11,6 +11,7 @@ import '../../components/nutrition/recipe_item_tile.dart';
 import '../../components/nutrition/recipe_quick_swap_sheet.dart';
 import '../../services/feature_flags_service.dart';
 import '../../services/nutrition/locale_helper.dart';
+import '../../services/auth/auth_context.dart';
 import '../../services/nutrition/nutrition_service.dart';
 import '../../services/nutrition/preferences_service.dart';
 import '../../services/nutrition/pantry_service.dart';
@@ -177,12 +178,13 @@ class _MealEditorState extends State<MealEditor> {
 
   Future<void> _loadUserPreferences() async {
     try {
-      // TODO: Get current user ID from auth service
-      final userId = 'current_user_id'; // Replace with actual user ID
-      
+      final userId = AuthContext.currentUserIdOrNull;
+      if (userId == null) return; // preferences are optional; skip when anonymous
+
       final preferences = await _preferencesService.getPrefs(userId);
       await _preferencesService.getAllergies(userId);
-      
+
+      if (!mounted) return;
       setState(() {
         _userPreferences = preferences;
       });

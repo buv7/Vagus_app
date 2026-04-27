@@ -9,6 +9,7 @@ import '../../services/nutrition/integrations/pantry_recipe_adapter.dart';
 import '../../services/nutrition/pantry_service.dart';
 import '../../components/nutrition/recipe_card.dart';
 import '../../theme/design_tokens.dart';
+import '../../services/auth/auth_context.dart';
 import '../../services/nutrition/locale_helper.dart';
 import 'pantry_screen.dart';
 
@@ -85,9 +86,13 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
 
   Future<void> _loadUserPreferences() async {
     try {
-      // TODO: Get current user ID from auth service
-      final userId = 'current_user_id'; // Replace with actual user ID
-      
+      final userId = AuthContext.currentUserIdOrNull;
+      if (userId == null) {
+        if (!mounted) return;
+        setState(() => _preferencesLoaded = true);
+        return;
+      }
+
       final preferences = await _preferencesService.getPrefs(userId);
       final allergies = await _preferencesService.getAllergies(userId);
       
@@ -633,7 +638,7 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
           final recipe = _filteredRecipes[index];
           return FutureBuilder<Map<String, dynamic>>(
             future: Future.wait([
-              _coverageFor(recipe.id, 'current_user_id'), // TODO: Get actual user ID
+              _coverageFor(recipe.id, AuthContext.currentUserIdOrNull ?? ''),
               _costFor(recipe),
             ]).then((results) => {
               'coverage': results[0] as double,
@@ -667,7 +672,7 @@ class _RecipeLibraryScreenState extends State<RecipeLibraryScreen> {
           padding: const EdgeInsets.only(bottom: DesignTokens.space16),
           child: FutureBuilder<Map<String, dynamic>>(
             future: Future.wait([
-              _coverageFor(recipe.id, 'current_user_id'), // TODO: Get actual user ID
+              _coverageFor(recipe.id, AuthContext.currentUserIdOrNull ?? ''),
               _costFor(recipe),
             ]).then((results) => {
               'coverage': results[0] as double,

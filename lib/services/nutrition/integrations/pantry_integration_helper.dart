@@ -4,6 +4,7 @@ import '../locale_helper.dart';
 import 'pantry_recipe_adapter.dart';
 import 'package:vagus_app/models/nutrition/recipe.dart';
 import 'package:vagus_app/screens/nutrition/pantry_screen.dart';
+import 'package:vagus_app/services/auth/auth_context.dart';
 import '../recipe_service.dart';
 
 /// Helper class for pantry integration across screens
@@ -156,11 +157,8 @@ class PantryIntegrationHelper {
     );
   }
 
-  /// Get current user ID (placeholder - should be replaced with actual auth service)
-  static String getCurrentUserId() {
-    // TODO: Replace with actual auth service call
-    return 'current_user_id';
-  }
+  /// Get current user ID. Throws [AuthException] if no user is signed in.
+  static String getCurrentUserId() => AuthContext.currentUserId;
 
   /// Navigate to pantry screen
   static void navigateToPantry(BuildContext context) {

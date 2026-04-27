@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/nutrition/pantry_item.dart';
+import '../../services/auth/auth_context.dart';
 import '../../services/nutrition/pantry_service.dart';
 import '../../services/nutrition/locale_helper.dart';
 import '../../widgets/branding/vagus_appbar.dart';
@@ -19,7 +20,7 @@ class _PantryScreenState extends State<PantryScreen> {
   List<PantryItem> _filteredItems = [];
   bool _isLoading = true;
   String _searchQuery = '';
-  String _currentUserId = ''; // TODO: Get from auth service
+  String _currentUserId = '';
 
   @override
   void initState() {
@@ -35,11 +36,26 @@ class _PantryScreenState extends State<PantryScreen> {
 
   Future<void> _loadPantryItems() async {
     setState(() => _isLoading = true);
-    
+
     try {
-      // TODO: Get current user ID from auth service
-      _currentUserId = 'current_user_id'; // Replace with actual user ID
-      
+      final userId = AuthContext.currentUserIdOrNull;
+      if (userId == null) {
+        setState(() {
+          _allItems = [];
+          _filteredItems = [];
+          _isLoading = false;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sign in to view your pantry'),
+            ),
+          );
+        }
+        return;
+      }
+      _currentUserId = userId;
+
       final items = await _pantryService.list(_currentUserId);
       setState(() {
         _allItems = items;
