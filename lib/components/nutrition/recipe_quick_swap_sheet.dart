@@ -7,6 +7,7 @@ import '../../services/nutrition/integrations/pantry_recipe_adapter.dart';
 import '../../services/nutrition/pantry_service.dart';
 import '../../services/nutrition/recipe_service.dart';
 import '../../services/nutrition/locale_helper.dart';
+import '../../services/auth/auth_context.dart';
 import 'recipe_card.dart';
 
 /// Bottom sheet for quick recipe swapping
@@ -49,12 +50,13 @@ class _RecipeQuickSwapSheetState extends State<RecipeQuickSwapSheet> {
 
   Future<void> _loadUserPreferences() async {
     try {
-      // TODO: Get current user ID from auth service
-      final userId = 'current_user_id'; // Replace with actual user ID
-      
+      final userId = AuthContext.currentUserIdOrNull;
+      if (userId == null) return; // preferences are optional; skip when anonymous
+
       final preferences = await _preferencesService.getPrefs(userId);
       final allergies = await _preferencesService.getAllergies(userId);
-      
+
+      if (!mounted) return;
       setState(() {
         _userPreferences = preferences;
         _userAllergies = allergies;
@@ -87,8 +89,8 @@ class _RecipeQuickSwapSheetState extends State<RecipeQuickSwapSheet> {
       }
 
       // Sort by pantry coverage if preferPantry is enabled
-      if (widget.preferPantry && suggestions.isNotEmpty) {
-        final userId = 'current_user_id'; // TODO: Get actual user ID
+      final userId = AuthContext.currentUserIdOrNull;
+      if (widget.preferPantry && suggestions.isNotEmpty && userId != null) {
         final coverages = <String, double>{};
         
         await Future.wait(suggestions.map((r) async {
