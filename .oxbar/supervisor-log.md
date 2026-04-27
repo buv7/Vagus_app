@@ -20,4 +20,12 @@ Pushed `oxbar: add agent prompts and coordination protocol` (commit e2b698c) —
 
 Coordination skeleton being assembled now.
 
+**20:53 UTC** — Coordination skeleton committed (0daef06): `.oxbar/{daily,agent-status,handoffs,reports}` + `supervisor-log.md`, `decisions.md`, `escalations.md`, 51 PENDING agent status files. `.oxbar/staging-secrets.md` added to `.gitignore`.
+
+**20:55 UTC** — Branch protection applied to `main`: requires `flutter analyze (fail on errors)` status check + 1 PR review approval. Force pushes & deletions blocked. `enforce_admins: false` keeps OXBAR's admin bypass for hotfixes. CI baseline tweaked: `flutter test` added as soft-fail step (continue-on-error: true) — TESTBED hardens this in Wave D.
+
+**21:08 UTC** — Staging Supabase live. Created `vagus-staging` (ref `xjrwmzctsmmcdmwzgptw`) in eu-central-1 (free tier, $0/mo). API URL + keys captured in `.oxbar/staging-secrets.md` (gitignored). Schema is bare for now; prod-baseline dump is a deferred follow-up (see decisions.md + task #6).
+
+**Hour 0-4 playbook complete.** Next: launch always-ons (HARBOR, PRISM, VAULT, SHIELD) in separate terminals — that's a human action since each agent runs in its own Claude Code terminal session. Alhassan needs to open the always-on terminals and paste the relevant prompts from `AGENT_PROMPTS.md`.
+
 ---
