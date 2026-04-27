@@ -49,3 +49,7 @@ Coordination skeleton being assembled now.
 **22:38 UTC** — Worktree contention noted: 8+ worker terminals (HARBOR, KEEL, TONGUE, MASON, MEDIC, GUARDIAN, SHIELD, MUSIC-PURGE, VAULT) all live in the same physical clone, switching branches via `git checkout`. OXBAR's local commit `ea21b25` (VAULT review notes) was orphaned when a worker switched branches mid-write. **Fix:** OXBAR no longer uses local `git commit`/`git push`. All OXBAR commits to `main` go through `gh api PUT contents/...` (this commit is one such). Workers continue normally.
 
 ---
+
+**22:42 UTC** — Worktree contention RESOLVED. Created OXBAR's own physical worktree at `C:\Users\alhas\StudioProjects\vagus_app_oxbar` on branch `oxbar-workspace` (tracks `origin/main`, HEAD f6f5bf1). All future OXBAR local git ops happen there; the shared `vagus_app` clone stays for worker traffic. Saved to user-memory `feedback_oxbar_worktree_isolation.md` so future OXBAR sessions auto-pick it up. Other agents are already isolated by their own worktrees: GUARDIAN, MASON (×2), TIER, VAULT. Any worker still using the shared clone (HARBOR, KEEL, TONGUE, MEDIC, MUSIC-PURGE, SHIELD, THRIFT) keeps doing so — they self-coordinate.
+
+---
