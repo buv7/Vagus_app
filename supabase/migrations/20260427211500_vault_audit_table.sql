@@ -88,20 +88,18 @@ CREATE INDEX IF NOT EXISTS data_access_audit_actor_idx
 ALTER TABLE public.data_access_audit ENABLE ROW LEVEL SECURITY;
 
 -- SELECT: the data subject can always see who's accessed their data.
--- Admins (profiles.role = 'admin') can see everything.
+--
+-- Admin visibility is intentionally NOT routed through this policy. Admins
+-- read the audit log via the Supabase service-role key (which bypasses RLS),
+-- or via dedicated admin tooling that authenticates with the service role.
+-- Keeping the policy independent of the `profiles` table also means this
+-- migration applies cleanly against an empty Supabase Preview database
+-- (no cross-table dependency on rows that may not exist yet).
 DROP POLICY IF EXISTS data_access_audit_select_self ON public.data_access_audit;
 CREATE POLICY data_access_audit_select_self
   ON public.data_access_audit
   FOR SELECT
-  USING (
-    accessed_user_id = auth.uid()
-    OR EXISTS (
-      SELECT 1
-      FROM public.profiles p
-      WHERE p.id = auth.uid()
-        AND p.role = 'admin'
-    )
-  );
+  USING (accessed_user_id = auth.uid());
 
 -- INSERT: any authenticated user can write a row, BUT only with themselves
 -- as the accessor_id. This prevents one user from forging audit entries

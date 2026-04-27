@@ -46,6 +46,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.32.8'
           channel: stable
           cache: true
 
@@ -247,10 +248,12 @@ jobs:
                 echo "  EXEMPT   $t (annotated)"
                 continue
               fi
+              # Flatten newlines so multi-line CREATE POLICY ... ON <table> matches.
+              flat=$(tr '\n' ' ' < "$f")
               # Require: ALTER TABLE <t> ENABLE ROW LEVEL SECURITY in the same file.
-              if grep -qiE "alter[[:space:]]+table[[:space:]]+(only[[:space:]]+)?(\"?[a-zA-Z_][a-zA-Z0-9_]*\"?\.)?\"?${t}\"?[[:space:]]+enable[[:space:]]+row[[:space:]]+level[[:space:]]+security" "$f"; then
+              if echo "$flat" | grep -qiE "alter[[:space:]]+table[[:space:]]+(only[[:space:]]+)?(\"?[a-zA-Z_][a-zA-Z0-9_]*\"?\.)?\"?${t}\"?[[:space:]]+enable[[:space:]]+row[[:space:]]+level[[:space:]]+security"; then
                 # Also require at least one CREATE POLICY referencing the table
-                if grep -qiE "create[[:space:]]+policy[[:space:]]+[^;]+\bon[[:space:]]+(\"?[a-zA-Z_][a-zA-Z0-9_]*\"?\.)?\"?${t}\"?\b" "$f"; then
+                if echo "$flat" | grep -qiE "create[[:space:]]+policy[[:space:]]+[^;]+[[:space:]]on[[:space:]]+(\"?[a-zA-Z_][a-zA-Z0-9_]*\"?\.)?\"?${t}\"?\b"; then
                   echo "  ok       $t (RLS enabled + at least one policy)"
                 else
                   echo "  FAIL     $t (RLS enabled but no CREATE POLICY in this file)"
