@@ -41,3 +41,7 @@ jobs:
             exit 1
           fi
           echo "No analyzer errors."
+
+      - name: Run unit & widget tests (soft-fail until TESTBED)
+        continue-on-error: true
+        run: flutter test --reporter expanded
