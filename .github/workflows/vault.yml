@@ -1,0 +1,276 @@
+name: VAULT — security, secrets, licenses, RLS
+
+# Owned by VAULT. Runs on every PR and on push to main.
+# Three jobs, all required to pass:
+#   1. secrets_scan   — gitleaks against the diff and full history of new commits
+#   2. license_scan   — block GPL / AGPL / SSPL / BUSL / Commons-Clause in the dep graph
+#   3. rls_validation — every new table in supabase/migrations must enable RLS in the same file
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: vault-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  secrets_scan:
+    name: gitleaks (no secrets in code)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
+          GITLEAKS_ENABLE_SUMMARY: true
+          GITLEAKS_NOTIFY_USER_LIST: '@buv7'
+
+  license_scan:
+    name: license scan (no GPL/AGPL/SSPL/BUSL)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Generate dep graph
+        run: flutter pub deps --json > pub-deps.json
+
+      - name: Scan licenses
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, sys, urllib.request, urllib.error, time
+
+          BANNED_SPDX = {
+              # Strong copyleft — incompatible with closed-source Flutter app
+              "GPL-1.0", "GPL-2.0", "GPL-3.0",
+              "GPL-1.0-only", "GPL-2.0-only", "GPL-3.0-only",
+              "GPL-1.0-or-later", "GPL-2.0-or-later", "GPL-3.0-or-later",
+              "LGPL-3.0",  # LGPL-2.1 is generally OK for dynamic linking; LGPL-3.0 has anti-tivoization terms
+              "LGPL-3.0-only", "LGPL-3.0-or-later",
+              "AGPL-1.0", "AGPL-3.0",
+              "AGPL-1.0-only", "AGPL-3.0-only",
+              "AGPL-1.0-or-later", "AGPL-3.0-or-later",
+              # Source-available, non-OSI
+              "SSPL-1.0",
+              "BUSL-1.1",
+              "Commons-Clause",
+              "Elastic-2.0",
+              "Server Side Public License",
+              # Research / non-commercial
+              "CC-BY-NC-4.0", "CC-BY-NC-SA-4.0", "CC-BY-NC-ND-4.0",
+          }
+
+          # SPDX strings sometimes appear as substrings; we lower-case and substring-match.
+          BANNED_LOWER = {b.lower() for b in BANNED_SPDX}
+
+          # Allowlist override for known-safe deps that pub.dev mis-tags or that ship without a license string.
+          # Each entry must include a justification.
+          ALLOWLIST = {
+              # Example: "some_package": "verified MIT in upstream LICENSE file, pub.dev metadata empty",
+          }
+
+          with open("pub-deps.json") as f:
+              data = json.load(f)
+
+          packages = data.get("packages", [])
+          # Filter to non-SDK packages (SDK packages like "flutter" have no pub.dev license entry)
+          pkg_names = sorted({p["name"] for p in packages if p.get("kind") in ("direct", "dev", "transitive")})
+
+          violations = []
+          unknown = []
+
+          def fetch_license(name):
+              url = f"https://pub.dev/api/packages/{name}"
+              for attempt in range(3):
+                  try:
+                      req = urllib.request.Request(url, headers={"Accept": "application/json"})
+                      with urllib.request.urlopen(req, timeout=15) as r:
+                          meta = json.load(r)
+                          # pub.dev API does not always expose license in the package endpoint;
+                          # fall back to the score endpoint which has tags like "license:mit".
+                          tags = meta.get("latest", {}).get("pubspec", {}).get("license")
+                          if tags:
+                              return tags
+                  except urllib.error.HTTPError as e:
+                      if e.code == 404:
+                          return None
+                  except Exception:
+                      pass
+                  time.sleep(1 + attempt)
+              # Score endpoint fallback for SPDX tags
+              try:
+                  url2 = f"https://pub.dev/api/packages/{name}/score"
+                  req2 = urllib.request.Request(url2, headers={"Accept": "application/json"})
+                  with urllib.request.urlopen(req2, timeout=15) as r:
+                      score = json.load(r)
+                      for tag in score.get("tags", []):
+                          if tag.startswith("license:"):
+                              return tag.split(":", 1)[1]
+              except Exception:
+                  pass
+              return None
+
+          for name in pkg_names:
+              if name in ALLOWLIST:
+                  print(f"  ALLOWLIST  {name}  ({ALLOWLIST[name]})")
+                  continue
+              lic = fetch_license(name)
+              if lic is None:
+                  unknown.append(name)
+                  print(f"  UNKNOWN    {name}")
+                  continue
+              lic_lower = lic.lower()
+              if any(b in lic_lower for b in BANNED_LOWER):
+                  violations.append((name, lic))
+                  print(f"  BANNED     {name}  -> {lic}")
+              else:
+                  print(f"  ok         {name}  -> {lic}")
+
+          print()
+          print(f"Scanned {len(pkg_names)} packages.")
+          print(f"  banned:   {len(violations)}")
+          print(f"  unknown:  {len(unknown)}")
+
+          if violations:
+              print()
+              print("FAIL: banned licenses present in dep graph:")
+              for n, l in violations:
+                  print(f"  - {n}: {l}")
+              print()
+              print("Either: (a) remove the dep, (b) replace with a permissive alternative,")
+              print("or (c) if you believe pub.dev metadata is wrong, add the package to ALLOWLIST")
+              print("in .github/workflows/vault.yml with a one-line justification.")
+              sys.exit(1)
+
+          # Unknown licenses are a soft warning for now, not a fail — pub.dev metadata is incomplete
+          # for many older packages. VAULT will tighten this once the catalog is stable.
+          if unknown:
+              print()
+              print("WARN: licenses could not be resolved for:")
+              for n in unknown:
+                  print(f"  - {n}")
+              print("These are not blocking the build but VAULT will track them.")
+          PY
+
+  rls_validation:
+    name: RLS validation (every new table has RLS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine base ref
+        id: base
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "ref=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            # On push to main: compare against the previous commit
+            echo "ref=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Find new SQL migrations in this PR
+        id: migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.base.outputs.ref }}"
+          if [[ -z "$BASE" || "$BASE" == "0000000000000000000000000000000000000000" ]]; then
+            # First push to a branch, or initial commit — scan every migration at top level
+            mapfile -t FILES < <(ls supabase/migrations/*.sql 2>/dev/null || true)
+          else
+            mapfile -t FILES < <(git diff --name-only --diff-filter=A "$BASE"...HEAD -- 'supabase/migrations/*.sql' 2>/dev/null || true)
+          fi
+          if [[ ${#FILES[@]} -eq 0 ]]; then
+            echo "No new migrations to validate."
+            echo "files=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          printf 'files<<EOF\n' >> "$GITHUB_OUTPUT"
+          printf '%s\n' "${FILES[@]}" >> "$GITHUB_OUTPUT"
+          printf 'EOF\n' >> "$GITHUB_OUTPUT"
+
+      - name: Verify RLS for every new table
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILES="${{ steps.migrations.outputs.files }}"
+          if [[ -z "$FILES" ]]; then
+            echo "Nothing to check."
+            exit 0
+          fi
+          fails=0
+          while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            [[ ! -f "$f" ]] && continue
+            echo "=== $f ==="
+            # Extract every CREATE TABLE statement's qualified table name.
+            # Matches: CREATE TABLE [IF NOT EXISTS] [schema.]table_name
+            # Skips: CREATE TABLE inside _archive (those are not applied)
+            mapfile -t TABLES < <(grep -iEo 'create[[:space:]]+table[[:space:]]+(if[[:space:]]+not[[:space:]]+exists[[:space:]]+)?[a-zA-Z_][a-zA-Z0-9_."]*' "$f" \
+              | sed -E 's/^create[[:space:]]+table[[:space:]]+(if[[:space:]]+not[[:space:]]+exists[[:space:]]+)?//I' \
+              | sed -E 's/"//g' \
+              | awk -F'.' '{print $NF}' \
+              | sort -u)
+            if [[ ${#TABLES[@]} -eq 0 ]]; then
+              echo "  (no CREATE TABLE statements — skipping)"
+              continue
+            fi
+            for t in "${TABLES[@]}"; do
+              # Allow opt-out for non-user-data tables with an explicit annotation comment.
+              # Tag must appear in the migration: -- vault-rls-exempt: <table_name> reason: ...
+              if grep -qE "^\s*--\s*vault-rls-exempt:\s*${t}\b" "$f"; then
+                echo "  EXEMPT   $t (annotated)"
+                continue
+              fi
+              # Require: ALTER TABLE <t> ENABLE ROW LEVEL SECURITY in the same file.
+              if grep -qiE "alter[[:space:]]+table[[:space:]]+(only[[:space:]]+)?(\"?[a-zA-Z_][a-zA-Z0-9_]*\"?\.)?\"?${t}\"?[[:space:]]+enable[[:space:]]+row[[:space:]]+level[[:space:]]+security" "$f"; then
+                # Also require at least one CREATE POLICY referencing the table
+                if grep -qiE "create[[:space:]]+policy[[:space:]]+[^;]+\bon[[:space:]]+(\"?[a-zA-Z_][a-zA-Z0-9_]*\"?\.)?\"?${t}\"?\b" "$f"; then
+                  echo "  ok       $t (RLS enabled + at least one policy)"
+                else
+                  echo "  FAIL     $t (RLS enabled but no CREATE POLICY in this file)"
+                  fails=$((fails+1))
+                fi
+              else
+                echo "  FAIL     $t (no ENABLE ROW LEVEL SECURITY in this file)"
+                fails=$((fails+1))
+              fi
+            done
+          done <<< "$FILES"
+          echo
+          if [[ $fails -gt 0 ]]; then
+            echo "FAIL: $fails table(s) without RLS in their migration."
+            echo
+            echo "Every new table must enable RLS and define at least one policy in the SAME migration file."
+            echo "If a table is genuinely not user-scoped (e.g. a global lookup table),"
+            echo "add a comment line to the migration:"
+            echo "  -- vault-rls-exempt: <table_name> reason: <one-line>"
+            echo "VAULT will review exemptions on PR."
+            exit 1
+          fi
+          echo "All new tables have RLS configured."
