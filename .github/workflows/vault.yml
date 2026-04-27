@@ -41,6 +41,7 @@ jobs:
   license_scan:
     name: license scan (no GPL/AGPL/SSPL/BUSL)
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
 
@@ -61,7 +62,8 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json, sys, urllib.request, urllib.error, time
+          import json, sys, urllib.request, urllib.error
+          from concurrent.futures import ThreadPoolExecutor, as_completed
 
           BANNED_SPDX = {
               # Strong copyleft — incompatible with closed-source Flutter app
@@ -83,7 +85,6 @@ jobs:
               "CC-BY-NC-4.0", "CC-BY-NC-SA-4.0", "CC-BY-NC-ND-4.0",
           }
 
-          # SPDX strings sometimes appear as substrings; we lower-case and substring-match.
           BANNED_LOWER = {b.lower() for b in BANNED_SPDX}
 
           # Allowlist override for known-safe deps that pub.dev mis-tags or that ship without a license string.
@@ -96,54 +97,71 @@ jobs:
               data = json.load(f)
 
           packages = data.get("packages", [])
-          # Filter to non-SDK packages (SDK packages like "flutter" have no pub.dev license entry)
           pkg_names = sorted({p["name"] for p in packages if p.get("kind") in ("direct", "dev", "transitive")})
 
-          violations = []
-          unknown = []
+          # Single-shot per package, short timeout. Parallelize across 16 workers so the
+          # whole scan finishes in seconds even if pub.dev is slow on a few packages.
+          # If pub.dev returns nothing usable in <5s, the package is reported UNKNOWN
+          # (soft warning, not a fail) — better to flag than to hang CI for 30 min.
+          REQUEST_TIMEOUT = 5
+          MAX_WORKERS = 16
 
           def fetch_license(name):
-              url = f"https://pub.dev/api/packages/{name}"
-              for attempt in range(3):
-                  try:
-                      req = urllib.request.Request(url, headers={"Accept": "application/json"})
-                      with urllib.request.urlopen(req, timeout=15) as r:
-                          meta = json.load(r)
-                          # pub.dev API does not always expose license in the package endpoint;
-                          # fall back to the score endpoint which has tags like "license:mit".
-                          tags = meta.get("latest", {}).get("pubspec", {}).get("license")
-                          if tags:
-                              return tags
-                  except urllib.error.HTTPError as e:
-                      if e.code == 404:
-                          return None
-                  except Exception:
-                      pass
-                  time.sleep(1 + attempt)
-              # Score endpoint fallback for SPDX tags
+              if name in ALLOWLIST:
+                  return ("ALLOWLIST", ALLOWLIST[name])
+              # Try the package endpoint first (cheap, has pubspec license string when present)
               try:
-                  url2 = f"https://pub.dev/api/packages/{name}/score"
-                  req2 = urllib.request.Request(url2, headers={"Accept": "application/json"})
-                  with urllib.request.urlopen(req2, timeout=15) as r:
+                  req = urllib.request.Request(
+                      f"https://pub.dev/api/packages/{name}",
+                      headers={"Accept": "application/json"},
+                  )
+                  with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as r:
+                      meta = json.load(r)
+                      lic = meta.get("latest", {}).get("pubspec", {}).get("license")
+                      if lic:
+                          return ("ok", lic)
+              except urllib.error.HTTPError as e:
+                  if e.code == 404:
+                      return ("unknown", None)
+              except Exception:
+                  pass
+              # Fallback to the score endpoint which exposes "license:<spdx>" tag.
+              try:
+                  req2 = urllib.request.Request(
+                      f"https://pub.dev/api/packages/{name}/score",
+                      headers={"Accept": "application/json"},
+                  )
+                  with urllib.request.urlopen(req2, timeout=REQUEST_TIMEOUT) as r:
                       score = json.load(r)
                       for tag in score.get("tags", []):
                           if tag.startswith("license:"):
-                              return tag.split(":", 1)[1]
+                              return ("ok", tag.split(":", 1)[1])
               except Exception:
                   pass
-              return None
+              return ("unknown", None)
 
+          results = {}
+          with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+              future_to_name = {pool.submit(fetch_license, n): n for n in pkg_names}
+              for fut in as_completed(future_to_name):
+                  name = future_to_name[fut]
+                  try:
+                      results[name] = fut.result()
+                  except Exception as e:
+                      results[name] = ("unknown", None)
+
+          violations = []
+          unknown = []
           for name in pkg_names:
-              if name in ALLOWLIST:
-                  print(f"  ALLOWLIST  {name}  ({ALLOWLIST[name]})")
+              kind, lic = results[name]
+              if kind == "ALLOWLIST":
+                  print(f"  ALLOWLIST  {name}  ({lic})")
                   continue
-              lic = fetch_license(name)
-              if lic is None:
+              if kind == "unknown" or lic is None:
                   unknown.append(name)
                   print(f"  UNKNOWN    {name}")
                   continue
-              lic_lower = lic.lower()
-              if any(b in lic_lower for b in BANNED_LOWER):
+              if any(b in lic.lower() for b in BANNED_LOWER):
                   violations.append((name, lic))
                   print(f"  BANNED     {name}  -> {lic}")
               else:
@@ -165,8 +183,6 @@ jobs:
               print("in .github/workflows/vault.yml with a one-line justification.")
               sys.exit(1)
 
-          # Unknown licenses are a soft warning for now, not a fail — pub.dev metadata is incomplete
-          # for many older packages. VAULT will tighten this once the catalog is stable.
           if unknown:
               print()
               print("WARN: licenses could not be resolved for:")
