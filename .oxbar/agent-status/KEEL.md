@@ -1,36 +1,34 @@
-# KEEL status: RUNNING
+# KEEL status: READY-FOR-REVIEW
 
 **Started:** 2026-04-27 21:10 UTC
-**Last update:** 2026-04-27 21:35 UTC
+**Last update:** 2026-04-27 21:50 UTC
 **Branch:** agent/keel-cleanup
 **Mission:** Archive root-level *.sql fix scripts; remove duplicate Dart files; retire dead code paths.
 
 ## Current state
-RUNNING: phase-1 committed and pushed. 43 root-level *.sql moved into `archive/legacy-sql/` with a policy README; root README amended; `.gitignore` carve-out added so the new archive tree is tracked (the existing `ARCHIVE/` rule case-folded on Windows). Phase-2 (Dart duplicate cleanup) starts next, in its own commit.
+READY-FOR-REVIEW: PR opened. 43 root *.sql archived, 6 orphan Dart files deleted, 1,514 net LOC removed. flutter analyze clean (0 errors); flutter test reports 174 pass / 24 pre-existing flaky failures, none touching KEEL-changed files.
 
 ## Sign-off note
-KEEL touches: 43 root *.sql → `archive/legacy-sql/`, plus Dart duplicates by callsite count. KEEL does NOT touch: `supabase/migrations|queries|scripts|seed/`, `archived/`, the 8 theme files (PALETTE owns), and the pre-existing dirty WIP per OXBAR's 20:49 decision.
-
-## Note on working-tree contention
-The shared working tree is being branch-swapped under KEEL by other agents. KEEL commits each phase in its own commit and pushes to origin so the work survives.
+KEEL touched: 43 root *.sql → `archive/legacy-sql/`, plus 6 orphan Dart files. KEEL did NOT touch: `supabase/migrations|queries|scripts|seed/`, `archived/`, the 8 theme files (PALETTE owns), and the pre-existing dirty WIP per OXBAR's 20:49 decision.
 
 ## Progress
-- [x] Phase 1: SQL archive + READMEs + gitignore (committed, pushed)
-- [ ] Phase 2: Dart duplicate cleanup
-- [ ] flutter analyze clean
-- [ ] Report at `.oxbar/reports/keel-cleanup.md`
-- [ ] PR opened
+- [x] Phase 1: SQL archive + READMEs + gitignore (commit `b9bc5da`, pushed)
+- [x] Phase 2: 6 orphan Dart files deleted (commit `971d9ec`, pushed)
+- [x] flutter analyze clean (0 errors, 190 pre-existing info/warning)
+- [x] flutter test (pre-existing failures only; soft-fail per OXBAR CI policy)
+- [x] Report at `.oxbar/reports/keel-cleanup.md`
+- [x] PR opened (see PR section below)
 
-## Phase-2 plan (zero-Dart-import orphans, all confirmed)
-- delete `lib/services/ai/nutrition_ai_clean.dart` (canonical: `nutrition_ai.dart`)
-- delete `lib/widgets/messaging/smart_replies_panel.dart` (canonical: `smart_reply_panel.dart`)
-- delete `lib/widgets/fab/glassmorphism_fab.dart` (orphan; live: `simple_glassmorphism_fab.dart`, `camera_glassmorphism_fab.dart`)
-- delete `lib/components/workout/rest_timer.dart` (orphan; canonical: `rest_timer_inline.dart`)
-- delete `lib/screens/workout/widgets/rest_timer_widget.dart` (orphan; only README mentions)
-- delete `lib/models/nutrition/money_compat.dart` (orphan)
+## Files touched
+- `archive/legacy-sql/` (new, 43 *.sql + README.md)
+- `README.md` (root)
+- `.gitignore`
+- 6 deleted Dart files (see `.oxbar/reports/keel-cleanup.md`)
+- `.oxbar/reports/keel-cleanup.md` (new)
+- `.oxbar/agent-status/KEEL.md` (this file)
 
-Kept (have callsites): `design_tokens_compat.dart` (exported via theme_index), `nutrition_plan_compat.dart` (imported by costing_service).
-8 theme files — left for PALETTE per prompt.
+## Note on working-tree contention
+The shared working tree was branch-swapped under KEEL several times by other agents. KEEL committed each phase in its own commit and pushed to `origin/agent/keel-cleanup` so the work survived. PR is opened from the origin branch.
 
 ## Questions for OXBAR
 (none)
@@ -39,4 +37,4 @@ Kept (have callsites): `design_tokens_compat.dart` (exported via theme_index), `
 (none)
 
 ## Next step
-Phase-2 commit + push, then flutter analyze, then report and PR.
+Wait for OXBAR / CI. State will move to DONE when PR merges.
