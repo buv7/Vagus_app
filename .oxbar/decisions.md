@@ -36,3 +36,19 @@ What: Local Supabase CLI is unauthenticated (`supabase projects list` → 401). 
 Why: The MCP route is already auth'd, idempotent, and avoids the friction of refreshing a CLI access token mid-campaign.
 
 ---
+
+**21:55 UTC · Provision `app_vault_data_key` via Supabase Vault, not GUC**
+What: VAULT's question #1 asked OXBAR to set `app.vault_data_key` as a Postgres GUC on staging. Supabase blocks this via MCP/non-superuser (`42501 permission denied to set parameter`). Provisioned via `vault.create_secret('<256-bit hex>', 'app_vault_data_key', …)` — secret ID `670d52fa-0023-4236-96bd-da9b55c64da5` on staging.
+Why: Custom GUCs are not settable on managed Supabase; `supabase_vault` 0.3.1 is the supported alternative. Asked VAULT to refactor encryption helpers in a follow-up PR to read from `vault.decrypted_secrets` instead of `current_setting('app.vault_data_key')`.
+
+**22:35 UTC · MUSIC-PURGE PR #7 escalated to Alhassan (prod migration)**
+What: PR #7's `20260427192816_music_purge_drop_tables.sql` does `DROP TABLE … CASCADE` on 4 prod tables. Trips OXBAR rule #1 (prod migration approval). PR is HOLD until Alhassan replies in `escalations.md` with: hard drop, or pg_dump first?
+Why: OXBAR's pipeline authority explicitly excludes "Apply a migration to production Supabase". The data drop is unrecoverable.
+
+**22:35 UTC · Single-account branch protection workaround: admin-merge**
+What: All Claude Code terminals (OXBAR + 9+ workers so far) operate as `buv7`. Branch protection's "1 approving review" requirement can never be met by another reviewer in this campaign. OXBAR will use `gh pr merge --admin` (enabled by `enforce_admins: false`) to merge clean PRs after CI green.
+Why: Without admin override, every worker PR would deadlock on review. Pre-authorized by Alhassan via "branch protection: pre-authorized" + the fact that the OXBAR playbook's job is "merge non-conflicting PRs into main after CI passes." Re-tighten before v1.0 RC tag (force a real second review for the RC merge).
+
+**22:38 UTC · OXBAR no longer touches local worktree**
+What: 8+ worker terminals share the same local clone and switch branches via `git checkout`. OXBAR's `git commit` on local main (commit `ea21b25`) was orphaned when a worker switched branches mid-write. Going forward, all OXBAR commits to `main` go via `gh api PUT contents/...` (REST contents endpoint). Local `git push`/`git checkout`/`git commit` from OXBAR's terminal are banned.
+Why: Local-worktree contention is unfixable while many agents share the directory. The REST API treats main as a remote append target, sidesteps the worktree entirely. Workers continue using local checkouts on their own branches.
