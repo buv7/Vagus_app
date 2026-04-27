@@ -59,6 +59,11 @@ node_modules/
 
 # Archived code - exclude from analysis
 ARCHIVE/
+# Re-include the lowercase archive/ tree (legacy-sql kept on purpose for forensic
+# reference). The ARCHIVE/ rule above catches archive/ too on case-insensitive
+# filesystems (Windows/macOS); this negation puts archive/ back under git.
+!archive/
+!archive/**
 .vercel
 
 # OXBAR staging secrets - NEVER COMMIT

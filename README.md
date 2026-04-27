@@ -169,7 +169,20 @@ supabase/
 ├── functions/        # Edge Functions
 ├── migrations/       # Database migrations
 └── config.toml      # Supabase configuration
+
+archive/
+└── legacy-sql/       # Frozen ad-hoc SQL fix/diagnostic scripts (forensic only)
 ```
+
+### Archive policy
+
+- The authoritative database schema lives in `supabase/migrations/`. Anything
+  schema-affecting must land there as a proper, idempotent migration with a
+  rollback comment block — never as a root-level fix script.
+- `archive/legacy-sql/` is a frozen snapshot of pre-campaign one-off scripts
+  (`fix_*.sql`, `check_*.sql`, `debug_*.sql`, etc.) kept for forensic reference
+  only. Do not run them against any environment, and do not add new files to
+  that directory. See `archive/legacy-sql/README.md` for details.
 
 ### Key Services
 - `AIUsageService` - AI usage tracking and limits
