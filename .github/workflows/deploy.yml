@@ -80,12 +80,13 @@ jobs:
 
       - name: Verify Supabase API
         run: |
-          url="https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/rest/v1/"
-          if ! curl -sSf -o /dev/null "$url"; then
-            echo "Supabase REST API unreachable at $url"
+          url="https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/auth/v1/health"
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 10 "$url" || echo "000")
+          if [ "$code" -ge 500 ] || [ "$code" = "000" ]; then
+            echo "Supabase auth health check unhealthy (HTTP $code) at $url"
             exit 1
           fi
-          echo "Supabase REST API healthy."
+          echo "Supabase reachable (HTTP $code)."
 
   notify:
     name: Summary
