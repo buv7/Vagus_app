@@ -1,0 +1,95 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  supabase:
+    name: Supabase migrations + Edge Functions
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          missing=()
+          [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ] && missing+=("SUPABASE_ACCESS_TOKEN")
+          [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ] && missing+=("SUPABASE_PROJECT_REF")
+          [ -z "${{ secrets.SUPABASE_DB_PASSWORD }}" ] && missing+=("SUPABASE_DB_PASSWORD")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Missing required secrets: ${missing[*]}"
+            exit 1
+          fi
+          echo "All required secrets present."
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Link project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}"
+
+      - name: Push database migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          for i in 1 2 3; do
+            echo "Migration attempt $i/3"
+            if supabase db push --include-all; then
+              echo "Migrations applied."
+              exit 0
+            fi
+            [ $i -lt 3 ] && sleep 10
+          done
+          echo "Migrations failed after 3 attempts."
+          exit 1
+
+      - name: Deploy Edge Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ ! -d supabase/functions ]; then
+            echo "No Edge Functions directory found; skipping."
+            exit 0
+          fi
+          shopt -s nullglob
+          deployed=0
+          for d in supabase/functions/*/; do
+            fn=$(basename "$d")
+            [[ "$fn" == _* ]] && continue
+            echo "Deploying function: $fn"
+            supabase functions deploy "$fn" --no-verify-jwt
+            deployed=$((deployed + 1))
+          done
+          echo "Deployed $deployed Edge Function(s)."
+
+      - name: Verify Supabase API
+        run: |
+          url="https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/rest/v1/"
+          if ! curl -sSf -o /dev/null "$url"; then
+            echo "Supabase REST API unreachable at $url"
+            exit 1
+          fi
+          echo "Supabase REST API healthy."
+
+  notify:
+    name: Summary
+    needs: supabase
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Report
+        run: |
+          echo "Supabase: ${{ needs.supabase.result }}"
+          echo "Vercel: deployed automatically via Vercel's GitHub integration."
+          echo "Project URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co"
+          echo "App URL: https://vagus.fit"
