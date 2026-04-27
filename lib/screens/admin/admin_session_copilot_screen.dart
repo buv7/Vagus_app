@@ -160,11 +160,6 @@ class _AdminSessionCopilotScreenState extends State<AdminSessionCopilotScreen> {
           onChanged: (v) => setState(() => f = f.copyWith(betaNutrition: v)),
         ),
         SwitchListTile(
-          title: const Text('Beta Music'),
-          value: f.betaMusic,
-          onChanged: (v) => setState(() => f = f.copyWith(betaMusic: v)),
-        ),
-        SwitchListTile(
           title: const Text('Force lite animations'),
           value: f.forceLiteAnimations,
           onChanged: (v) => setState(() => f = f.copyWith(forceLiteAnimations: v)),
