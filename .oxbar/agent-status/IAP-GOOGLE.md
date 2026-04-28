@@ -20,6 +20,8 @@ READY-FOR-REVIEW: All code deliverables shipped on branch `agent/iap-google`. PR
 - [x] `supabase/migrations/20260428000000_iap_google_columns.sql` — additive columns + plan seeds
 - [x] `pubspec.yaml` — added `in_app_purchase: ^3.2.0` and `in_app_purchase_android: ^0.3.5`
 - [x] Status updated
+- [x] `lib/services/iap/iap_provider.dart` — platform-aware factory; `_NoOpIapService` placeholder for iOS until IAP-APPLE ships
+- [x] `.oxbar/handoffs/IAP-GOOGLE-to-IAP-APPLE.md` — documents interface + schema for IAP-APPLE to implement
 - [ ] Play Console: create `vagus_pro_monthly` + `vagus_ultimate_monthly` subscription products (manual — escalated to Alhassan)
 - [ ] Play Console: configure 30-day free trial on each base plan (manual — escalated)
 - [ ] Supabase secret: `supabase secrets set GOOGLE_SERVICE_ACCOUNT_JSON='...'` (VAULT manages)
