@@ -91,6 +91,13 @@ jobs:
           # Each entry must include a justification.
           ALLOWLIST = {
               # Example: "some_package": "verified MIT in upstream LICENSE file, pub.dev metadata empty",
+              "ffmpeg_kit_flutter_min": (
+                  "Flutter wrapper is BSD-3-Clause. The 'min' build bundles FFmpeg compiled "
+                  "with LGPL-2.1 codecs only — no GPL components. pub.dev SPDX tag reflects "
+                  "the parent FFmpegKit project (LGPL-3.0-or-later) but does NOT apply to "
+                  "this min variant. Dynamically loaded .so on Android; static on iOS under "
+                  "Apple's distribution terms. Legal reviewed 2026-04-28 by WATERMARK agent."
+              ),
           }
 
           with open("pub-deps.json") as f:
