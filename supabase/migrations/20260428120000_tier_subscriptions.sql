@@ -73,14 +73,14 @@ COMMENT ON TABLE public.subscriptions IS
   'INSERT/UPDATE is performed by IAP Edge Functions (service-role only). '
   'receipt_data must be encrypted via vault_encrypt_text() before insert.';
 
+-- Backfill column for pre-existing tables: CREATE TABLE IF NOT EXISTS skips
+-- all column definitions when the table already exists, so we add explicitly.
+ALTER TABLE public.subscriptions
+  ADD COLUMN IF NOT EXISTS receipt_data bytea NULL;
+
 COMMENT ON COLUMN public.subscriptions.receipt_data IS
   'Encrypted via vault_encrypt_text(). NEVER store the raw App Store / Play '
   'receipt string. Decrypt with vault_decrypt_text() in a trusted context.';
-
--- Backfill column for pre-existing tables (CREATE TABLE IF NOT EXISTS skips
--- column definitions when the table already exists on prod).
-ALTER TABLE public.subscriptions
-  ADD COLUMN IF NOT EXISTS receipt_data bytea NULL;
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS subscriptions_user_id_idx
