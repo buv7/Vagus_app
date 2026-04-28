@@ -76,3 +76,12 @@ E-003 · 2026-04-28 · VAULT · Provision app_vault_data_key on PROD Supabase
        staging usually has fake data), generate a fresh key for prod.
     5. Reply in this file with: "E-003 RESOLVED <date>" once the secret
        is created. Do NOT paste the key value.
+
+---
+E-003 RESOLVED 2026-04-28 by Alhassan
+  Verification: vault.decrypted_secrets has 1 row matching
+  name='app_vault_data_key' on prod (project kydrpnrmqbedjflklgue),
+  key_length_chars=64 (AES-256 hex format confirmed).
+  Created at: 2026-04-28 21:58:20.062893+00
+  PR #36 (PERIODS-FORGE) is now unblocked pending only the
+  migration timestamp rename.
