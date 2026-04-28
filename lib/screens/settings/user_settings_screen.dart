@@ -15,6 +15,7 @@ import '../diagnostics_screen.dart';
 import 'music_settings_screen.dart';
 import 'google_integrations_screen.dart';
 import 'earn_rewards_screen.dart';
+import 'account_settings_screen.dart';
 
 class UserSettingsScreen extends StatefulWidget {
   const UserSettingsScreen({super.key});
@@ -463,6 +464,38 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                         icon: Icons.psychology,
                         title: 'AI Usage & Quotas',
                         child: const AIQuotasCard(),
+                      ),
+
+                      // Account (deactivate / delete / export data)
+                      _buildGlassmorphicCard(
+                        context: context,
+                        icon: Icons.manage_accounts,
+                        title: 'Account',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Export your data, deactivate, or permanently delete your account.',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildGlassmorphicButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const AccountSettingsScreen(),
+                                  ),
+                                );
+                              },
+                              icon: Icons.manage_accounts,
+                              label: 'Account Settings',
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
