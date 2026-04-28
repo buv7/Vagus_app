@@ -11,7 +11,7 @@ Implementation complete. PR open. All 27 unit tests pass.
 
 ## Progress
 
-- [x] Migration `20260428000000_periods_forge.sql`
+- [x] Migration `20260428220000_periods_forge.sql` (renamed from 20260428000000 to avoid timestamp collision)
   - `period_tracking_consent` (explicit opt-in, coach_share separate)
   - `period_logs` (flow_enc / symptoms_enc / notes_enc encrypted at rest)
   - `cycles` (rolling avg, irregular_flag)
@@ -32,7 +32,7 @@ Implementation complete. PR open. All 27 unit tests pass.
 ## Files touched
 
 **New:**
-- `supabase/migrations/20260428000000_periods_forge.sql`
+- `supabase/migrations/20260428220000_periods_forge.sql`
 - `lib/models/periods/flow_level.dart`
 - `lib/models/periods/period_symptom.dart`
 - `lib/models/periods/cycle_phase.dart`
