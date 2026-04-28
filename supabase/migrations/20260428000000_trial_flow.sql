@@ -68,7 +68,12 @@ end;
 $$;
 
 -- ── 5. Update entitlements view to treat 'trial_expired' as free ─────────────
-create or replace view public.entitlements_v as
+-- 2026-04-28 KEEL fixup: CREATE OR REPLACE VIEW cannot remove columns.
+-- DROP+CREATE used because no objects depend on entitlements_v
+-- (verified phase 5 inspection: 0 SQL consumers, 1 Dart consumer
+--  reads only plan_code + ai_monthly_limit which are retained).
+drop view if exists public.entitlements_v cascade;
+create view public.entitlements_v as
 select
   p.id as user_id,
   case
@@ -94,3 +99,8 @@ left join public.billing_plans bp
   on bp.code = s.plan_code and bp.is_active = true;
 
 select 'trial flow v1 ready' as status;
+
+-- ROLLBACK NOTE (KEEL fixup 2026-04-28):
+-- To revert: drop view if exists public.entitlements_v cascade;
+--            then re-create from _archive/20250115130000_fix_schema_issues.sql
+--            (9-column version with plan_name, price_monthly_cents, currency, features).
