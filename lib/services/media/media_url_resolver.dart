@@ -75,3 +75,33 @@ String _buildCdnUrl({
 
 String _stripTrailingSlash(String s) =>
     s.endsWith('/') ? s.substring(0, s.length - 1) : s;
+
+/// Static-method wrapper around already-resolved media URLs.
+///
+/// Coexists with [resolveMediaUrl] (the bucket+path function form) for
+/// historical reasons — the two have different signatures and call sites.
+/// [resolve] takes a single already-resolved URL and only normalizes
+/// edge cases (empty string, null safety on thumbnails). It does NOT
+/// build URLs from bucket+path; callers must do that via [resolveMediaUrl]
+/// upstream and pass the result here.
+///
+/// Behavior:
+///   - empty or null → returns ''
+///   - absolute http(s) URL → returned unchanged
+///   - any other input → returned unchanged (callers are expected to
+///     hold absolute URLs by the time they reach this layer)
+class MediaUrlResolver {
+  const MediaUrlResolver._();
+
+  /// Normalize a media URL for display.
+  static String resolve(String url) {
+    if (url.isEmpty) return '';
+    return url;
+  }
+
+  /// Normalize a thumbnail URL, treating null as empty.
+  static String thumbnail(String? url) {
+    if (url == null || url.isEmpty) return '';
+    return url;
+  }
+}
