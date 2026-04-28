@@ -1,4 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Health Connect — read permissions for wearable data -->
+    <uses-permission android:name="android.permission.health.READ_STEPS"/>
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE"/>
+    <uses-permission android:name="android.permission.health.READ_RESTING_HEART_RATE"/>
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE_VARIABILITY"/>
+    <uses-permission android:name="android.permission.health.READ_SLEEP"/>
+    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED"/>
+    <uses-permission android:name="android.permission.health.READ_EXERCISE"/>
+    <uses-permission android:name="android.permission.health.READ_VO2_MAX"/>
+    <uses-permission android:name="android.permission.health.READ_WEIGHT"/>
+    <uses-permission android:name="android.permission.health.READ_BODY_FAT"/>
+    <uses-permission android:name="android.permission.health.READ_DISTANCE"/>
+
     <!-- Camera and media permissions for food photos and barcode scanning -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" android:required="false"/>
@@ -64,6 +77,19 @@
                 <data android:scheme="vagus" android:host="qr" />
             </intent-filter>
         </activity>
+        <!-- Health Connect: declare support so the system shows this app in the
+             Health Connect "manage app permissions" screen. -->
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+            </intent-filter>
+        </activity-alias>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -80,5 +106,7 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Required for the health package to find Health Connect on Android -->
+        <package android:name="com.google.android.apps.healthdata"/>
     </queries>
 </manifest>

@@ -44,3 +44,33 @@ When this PR merges to `main`, `.github/workflows/deploy.yml` runs `supabase db 
 **Blocking:** POLYGLOT-KU progress past PENDING-glossary work. Not blocking other agents.
 
 **OXBAR note:** This is correctly outside OXBAR authority (scope/quality call). Same question latently applies to POLYGLOT-AR — Arabic has higher LLM quality but a native reviewer is still mission-required for medical/cultural strings. If Alhassan picks (2), POLYGLOT-AR remains in scope; if (1), the same Gemini key + reviewer arrangement covers AR too.
+
+---
+
+## E-003 · 2026-04-28 · WEARABLE-HUB · Open Wearables VPS + cloud OAuth credentials
+
+**Context:** Apple Health and Google Health Connect are **live** — they use the on-device `health` Dart package, no server needed. This escalation covers the *next phase*: Garmin Connect, WHOOP, and Oura Ring (Pro+ tier).
+
+**What's blocking Pro+ cloud providers:**
+
+1. **VPS provisioning** — the Open Wearables middleware (github.com/openwearables, MIT) needs a host. Recommended: €5/mo Hetzner Frankfurt CX11 (2 vCPU, 2 GB RAM), Docker Compose deploy. WEARABLE-HUB can author the docker-compose.yml and Caddy reverse-proxy config once a server IP is confirmed.
+
+2. **OAuth credentials** — each cloud provider requires a registered app:
+   - **Garmin Connect** → apply at developer.garmin.com (typically 2–4 week review)
+   - **WHOOP** → apply at developer.whoop.com
+   - **Oura** → apply at cloud.ouraring.com/oauth/applications
+   - **Polar / Suunto / Strava / Ultrahuman** → lower priority; same pattern
+
+   For each, Alhassan needs to submit the application under the Vagus App brand with a redirect URI like `https://api.vagus.app/oauth/callback/<provider>`.
+
+**What WEARABLE-HUB has already shipped (no VPS needed):**
+- UI stubs for Garmin/WHOOP/Oura showing "Coming Soon — awaiting OAuth approval"
+- Flutter `connect()` scaffold that will wire up once credentials arrive
+- `wearable_daily` + `wearable_sources` Supabase tables already provisioned
+
+**What Alhassan needs to do:**
+1. Decide: provision Hetzner VPS now (so it's ready when OAuth approvals land), or wait?
+2. Submit OAuth applications for Garmin, WHOOP, Oura — takes ~10 min per provider; WEARABLE-HUB can draft the application text.
+3. Once credentials arrive, drop `GARMIN_CLIENT_ID`, `GARMIN_CLIENT_SECRET`, etc. into Supabase Vault secrets and notify WEARABLE-HUB to wire the OAuth flow.
+
+**Not blocking:** current PR. Apple Health + Health Connect are fully operational.

@@ -66,5 +66,9 @@
 	<string>Microphone access required for live audio and video calls.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera access required for live video calls and food photos.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Vagus reads steps, sleep, heart rate, HRV, and workout data to help you and your coach track your health and recovery. Only aggregated daily summaries leave your device.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Vagus does not write to Apple Health.</string>
 </dict>
 </plist>

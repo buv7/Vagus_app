@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -37,6 +38,7 @@ import 'screens/settings/devices_screen.dart';
 import 'screens/settings/profile_edit_screen.dart';
 import 'screens/support/support_screen.dart';
 import 'screens/coaches/coach_application_screen.dart';
+import 'services/wearables/wearable_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,6 +91,12 @@ void main() async {
   // Initialize settings controller
   final settings = SettingsController();
   await settings.load();
+
+  // Wearable background sync — on launch + every 4 h thereafter.
+  // Runs only when a user is already signed in; re-triggered on auth change.
+  if (!kIsWeb && Supabase.instance.client.auth.currentUser != null) {
+    unawaited(WearableService.instance.init());
+  }
 
   runApp(
     MultiProvider(
