@@ -23,11 +23,13 @@ Implementation complete. PR open.
 
 ## Files touched
 - `supabase/migrations/20260428000000_dangerzone_account_lifecycle.sql` (new)
-- `supabase/functions/lifecycle-purge/index.ts` (new)
+- `supabase/migrations/20260428000001_dangerzone_cron.sql` (new — merge_lifecycle_flag RPC + pg_cron registration)
+- `supabase/functions/lifecycle-purge/index.ts` (new; setFlag bug fixed: uses merge_lifecycle_flag RPC)
 - `lib/services/account_lifecycle_service.dart` (new)
 - `lib/components/settings/account_deletion_dialog.dart` (rewritten: adds DeactivateAccountDialog, AccountGraceCountdownBanner, password confirm, DELETE phrase)
 - `lib/screens/settings/account_settings_screen.dart` (new)
 - `lib/screens/settings/user_settings_screen.dart` (Account card added)
+- `lib/screens/nav/main_nav.dart` (AccountGraceCountdownBanner wired into body Stack)
 
 ## Notification schedule implemented
 | Event                   | Channel |

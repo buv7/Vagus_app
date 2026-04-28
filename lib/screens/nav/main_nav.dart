@@ -18,6 +18,7 @@ import '../../widgets/fab/simple_glassmorphism_fab.dart';
 import '../../widgets/fab/camera_glassmorphism_fab.dart';
 import '../../theme/design_tokens.dart';
 import '../../widgets/navigation/vagus_side_menu.dart';
+import '../../components/settings/account_deletion_dialog.dart';
 
 class MainNav extends StatefulWidget {
   const MainNav({super.key});
@@ -356,8 +357,17 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
             controller: _tabController,
             children: tabs.map((tab) => tab.screen).toList(),
           ),
+          // Grace-period banner: shown when the signed-in user has a pending
+          // deactivation or deletion. Invisible (SizedBox.shrink) otherwise.
+          if (!isAdmin)
+            Positioned(
+              top: 56, // below the transparent AppBar
+              left: 0,
+              right: 0,
+              child: const AccountGraceCountdownBanner(),
+            ),
           // Camera FAB - positioned in upper half (hidden icon but functional) - not for admin
-          if (_currentIndex == 0 && !isAdmin) 
+          if (_currentIndex == 0 && !isAdmin)
             Positioned(
               right: 0,
               top: 100,

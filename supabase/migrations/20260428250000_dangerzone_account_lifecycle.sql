@@ -1,5 +1,5 @@
 -- DANGERZONE — account lifecycle: deactivate + delete with grace periods
--- Migration: 20260428000000_dangerzone_account_lifecycle.sql
+-- Migration: 20260428250000_dangerzone_account_lifecycle.sql
 -- Owner: DANGERZONE
 -- Created: 2026-04-28 UTC
 --

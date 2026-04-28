@@ -221,10 +221,10 @@ async function purgeUser(admin: SupabaseClient, row: LifecycleRow): Promise<void
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function setFlag(admin: SupabaseClient, rowId: string, flag: string): Promise<void> {
-  await admin
-    .from('account_lifecycle')
-    .update({ notification_flags: { [flag]: true } })
-    .eq('id', rowId);
+  // Uses merge_lifecycle_flag RPC (JSONB || operator) so we never clobber
+  // flags set by a previous cron run.
+  const { error } = await admin.rpc('merge_lifecycle_flag', { p_id: rowId, p_flag: flag });
+  if (error) throw new Error(`merge_lifecycle_flag failed: ${error.message}`);
 }
 
 async function insertAudit(
