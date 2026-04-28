@@ -5,6 +5,8 @@ import '../../widgets/coach/client_management_header.dart';
 import '../../widgets/coach/client_search_filter_bar.dart';
 import '../../widgets/coach/client_metrics_cards.dart';
 import '../../widgets/coach/client_list_view.dart';
+import '../../services/subscription/tier_service.dart';
+import '../../widgets/subscription/upgrade_prompt_sheet.dart';
 import 'coach_requests_screen.dart';
 
 class ModernClientManagementScreen extends StatefulWidget {
@@ -374,14 +376,20 @@ class _ModernClientManagementScreenState extends State<ModernClientManagementScr
     _filterClients();
   }
 
-  void _onAddClient() {
-    // Navigate to pending requests/coach requests screen
-    Navigator.push(
+  Future<void> _onAddClient() async {
+    final check = await TierService.instance.checkCanAddClient(_clients.length);
+    if (!check.allowed) {
+      if (mounted) await UpgradePromptSheet.show(context, check);
+      return;
+    }
+    if (!mounted) return;
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const CoachRequestsScreen(),
       ),
-    ).then((_) => _refreshData()); // Refresh when returning
+    );
+    await _refreshData();
   }
 
   void _onViewProfile(Map<String, dynamic> client) {

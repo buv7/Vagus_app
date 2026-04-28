@@ -6,6 +6,7 @@ import 'ai_usage_service.dart';
 import 'rate_limiter.dart';
 import 'model_registry.dart';
 import '../billing/plan_access_manager.dart';
+import '../subscription/tier_service.dart';
 
 class WorkoutAI {
   static final AIClient _aiClient = AIClient();
@@ -16,8 +17,12 @@ class WorkoutAI {
 
   static Future<String> suggestProgression({required String planJson}) async {
     const task = 'workout.suggest';
-    
+
     try {
+      // Tier gate: AI insights require Pro+
+      final tierCheck = await TierService.instance.checkAiInsights();
+      if (!tierCheck.allowed) return tierCheck.reason;
+
       // AI gating check
       final remaining = await PlanAccessManager.instance.remainingAICalls();
       if (remaining <= 0) {
@@ -83,12 +88,16 @@ Keep suggestions practical and actionable.'''
   }
 
   static Future<String> deloadAdvice({
-    required String planJson, 
-    Map<String, dynamic>? fatigueSignals
+    required String planJson,
+    Map<String, dynamic>? fatigueSignals,
   }) async {
     const task = 'workout.deload';
-    
+
     try {
+      // Tier gate: AI insights require Pro+
+      final tierCheck = await TierService.instance.checkAiInsights();
+      if (!tierCheck.allowed) return tierCheck.reason;
+
       // AI gating check
       final remaining = await PlanAccessManager.instance.remainingAICalls();
       if (remaining <= 0) {
@@ -160,11 +169,15 @@ Provide specific, actionable deload recommendations.'''
 
   static Future<String> weakPointAnalysis({
     required String planJson,
-    List<String>? recentNotes
+    List<String>? recentNotes,
   }) async {
     const task = 'workout.weakpoint';
 
     try {
+      // Tier gate: AI insights require Pro+
+      final tierCheck = await TierService.instance.checkAiInsights();
+      if (!tierCheck.allowed) return tierCheck.reason;
+
       // Rate limiting and quota check
       if (!await _rateLimiter.tryConsume(task)) {
         return 'Rate limit exceeded. Please wait a moment before trying again.';
