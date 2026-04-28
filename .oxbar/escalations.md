@@ -44,3 +44,32 @@ When this PR merges to `main`, `.github/workflows/deploy.yml` runs `supabase db 
 **Blocking:** POLYGLOT-KU progress past PENDING-glossary work. Not blocking other agents.
 
 **OXBAR note:** This is correctly outside OXBAR authority (scope/quality call). Same question latently applies to POLYGLOT-AR — Arabic has higher LLM quality but a native reviewer is still mission-required for medical/cultural strings. If Alhassan picks (2), POLYGLOT-AR remains in scope; if (1), the same Gemini key + reviewer arrangement covers AR too.
+
+---
+
+## E-003 · 2026-04-28 · IAP-APPLE · App Store Connect configuration required
+
+**Trigger:** IAP-APPLE cannot create App Store Connect products — this requires human access to the Apple Developer portal and App Store Connect. IAP-APPLE has no API credentials to do this programmatically.
+
+**Actions required from Alhassan** in App Store Connect (appstoreconnect.apple.com) for the Vagus app:
+
+1. **Create a Subscription Group** named `"Coach Tiers"` under the app's In-App Purchases section.
+
+2. **Create two Auto-Renewable Subscriptions** inside that group:
+   | Product ID | Display Name | Price | Tier |
+   |---|---|---|---|
+   | `vagus_pro_monthly` | Vagus Pro | $9.99/mo | 2 |
+   | `vagus_ultimate_monthly` | Vagus Ultimate | $19.99/mo | 4 |
+
+3. **Add an Introductory Offer** to both products:
+   - Type: Free
+   - Duration: 30 days
+   - Eligibility: New subscribers only
+
+4. **Add a Sandbox Tester** account (or confirm one already exists) for TestFlight validation. The email can be any Apple ID not associated with a real purchase. Note the credentials here so IAP-APPLE can complete sandbox testing.
+
+5. **Confirm the bundle ID** used in App Store Connect (e.g. `com.vagusapp.vagus` or similar) so IAP-APPLE can verify the product IDs resolve correctly in StoreKit.
+
+**Status:** IAP-APPLE is PENDING on TIER's models (dependency), and PENDING on this App Store Connect setup (human task). Both must be complete before the full integration can be tested. The Dart code and Edge Function can be written without App Store Connect access, but sandbox testing cannot proceed without it.
+
+**No merge blocker:** This escalation does not block the PR being opened — the implementation can be reviewed without sandbox test results. It blocks the VALIDATION section of IAP-APPLE's mission.

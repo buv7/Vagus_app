@@ -1,4 +1,5 @@
-﻿import 'dart:ui';
+import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:vagus_app/theme/tokens.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,9 @@ import '../../components/settings/language_selector.dart';
 import '../../components/settings/reminder_defaults.dart';
 import '../../widgets/settings/workout_popout_prefs_section.dart';
 import '../../theme/design_tokens.dart';
+import '../../models/subscription/tier.dart';
+import '../../services/iap/apple_iap_service.dart';
+import '../../services/iap/tier_service.dart';
 import '../diagnostics_screen.dart';
 import 'music_settings_screen.dart';
 import 'google_integrations_screen.dart';
@@ -25,11 +29,11 @@ class UserSettingsScreen extends StatefulWidget {
 class _UserSettingsScreenState extends State<UserSettingsScreen> {
   late SettingsController _settingsController;
   int _titleTapCount = 0;
+  bool _restoring = false;
 
   @override
   void initState() {
     super.initState();
-    // Get the settings controller from the app
     _settingsController = SettingsController();
     _loadSettings();
   }
@@ -47,6 +51,37 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   Future<void> _loadSettings() async {
     await _settingsController.load();
     setState(() {});
+  }
+
+  Future<void> _restorePurchases() async {
+    if (_restoring) return;
+    setState(() => _restoring = true);
+    try {
+      await AppleIAPService.instance.restorePurchases();
+      // Give the purchase stream time to fire and TierService to refresh.
+      await Future.delayed(const Duration(seconds: 3));
+      await TierService.instance.refresh();
+      if (mounted) {
+        final tier = TierService.instance.currentTier;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tier.isPaid
+                  ? 'Purchases restored — ${tier.displayName} active'
+                  : 'No active purchases found',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Restore failed: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _restoring = false);
+    }
   }
 
   /// Glassmorphic card matching the FAB style with blue accent
@@ -455,6 +490,18 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                         title: 'AI Usage & Quotas',
                         child: const AIQuotasCard(),
                       ),
+
+                      // Subscription card (iOS only)
+                      if (Platform.isIOS)
+                        _buildGlassmorphicCard(
+                          context: context,
+                          icon: Icons.workspace_premium,
+                          title: 'Subscription',
+                          child: _SubscriptionCard(
+                            restoring: _restoring,
+                            onRestore: _restorePurchases,
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -652,4 +699,102 @@ class AIQuotasCard extends StatelessWidget {
       ],
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Subscription card — shown on iOS only
+// ---------------------------------------------------------------------------
+
+class _SubscriptionCard extends StatelessWidget {
+  const _SubscriptionCard({
+    required this.restoring,
+    required this.onRestore,
+  });
+
+  final bool restoring;
+  final VoidCallback onRestore;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: TierService.instance,
+      builder: (context, _) {
+        final state = TierService.instance.currentState;
+        final tier = state.tier;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  tier.isPaid ? Icons.check_circle : Icons.radio_button_unchecked,
+                  color: tier.isPaid ? Colors.greenAccent : Colors.white54,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${tier.displayName} plan',
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                ),
+                if (state.isTrial) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.orangeAccent.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.orangeAccent.withValues(alpha: 0.5)),
+                    ),
+                    child: const Text(
+                      'Trial',
+                      style: TextStyle(
+                        color: Colors.orangeAccent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            if (state.expiresAt != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                state.isTrial
+                    ? 'Trial ends ${_formatDate(state.expiresAt!)}'
+                    : 'Renews ${_formatDate(state.expiresAt!)}',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.6),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: restoring ? null : onRestore,
+                icon: restoring
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.restore, size: 16),
+                label: Text(restoring ? 'Restoring...' : 'Restore Purchases'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.4)),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String _formatDate(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 }

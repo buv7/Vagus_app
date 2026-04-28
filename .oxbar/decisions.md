@@ -49,6 +49,17 @@ Why: OXBAR's pipeline authority explicitly excludes "Apply a migration to produc
 What: All Claude Code terminals (OXBAR + 9+ workers so far) operate as `buv7`. Branch protection's "1 approving review" requirement can never be met by another reviewer in this campaign. OXBAR will use `gh pr merge --admin` (enabled by `enforce_admins: false`) to merge clean PRs after CI green.
 Why: Without admin override, every worker PR would deadlock on review. Pre-authorized by Alhassan via "branch protection: pre-authorized" + the fact that the OXBAR playbook's job is "merge non-conflicting PRs into main after CI passes." Re-tighten before v1.0 RC tag (force a real second review for the RC merge).
 
+---
+
+## 2026-04-28
+
+**IAP-APPLE · No per-client à-la-carte billing via IAP**
+What: Per-extra-client billing ($0.25/client/month) will NOT be implemented as an in-app purchase. Instead, additional client capacity is bundled into the tier upgrade path: Pro supports up to 20 clients; upgrading to Ultimate ($19.99/mo) unlocks 21+ clients. No fractional-dollar IAP line items.
+Why: Apple's StoreKit does not support usage-based consumable billing for SaaS client slots cleanly — it would require consumable products, complex quantity tracking, and App Review scrutiny. Bundling it in the tier upgrade is simpler, passes App Review without issues, and matches how competitor apps handle coach-tier upsells.
+How to apply: IAP-APPLE implements exactly two subscription products (vagus_pro_monthly, vagus_ultimate_monthly). Any UI that previously referenced per-client pricing should direct coaches to the tier upgrade flow instead.
+
+---
+
 **22:38 UTC · OXBAR no longer touches local worktree**
 What: 8+ worker terminals share the same local clone and switch branches via `git checkout`. OXBAR's `git commit` on local main (commit `ea21b25`) was orphaned when a worker switched branches mid-write. Going forward, all OXBAR commits to `main` go via `gh api PUT contents/...` (REST contents endpoint). Local `git push`/`git checkout`/`git commit` from OXBAR's terminal are banned.
 Why: Local-worktree contention is unfixable while many agents share the directory. The REST API treats main as a remote append target, sidesteps the worktree entirely. Workers continue using local checkouts on their own branches.
