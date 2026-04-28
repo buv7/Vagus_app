@@ -277,6 +277,12 @@ flutter test integration_test/
 2. Deploy functions: `supabase functions deploy`
 3. Update environment variables
 
+## 🗂️ Archive Policy
+
+`archived/legacy-sql/` holds one-shot fix scripts, diagnostic queries, and ad-hoc SQL that accumulated at the repo root during early development. These files are **read-only history** — do not re-run them against production. Canonical database schema lives exclusively in `supabase/migrations/`.
+
+If you need to apply a schema change, create a new timestamped migration in `supabase/migrations/` via `supabase migration new <name>`.
+
 ## Supabase Auto Deploy
 
 - DB migrations live in `supabase/migrations/` (timestamped *.sql).  

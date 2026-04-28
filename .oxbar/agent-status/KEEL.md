@@ -1,18 +1,26 @@
-# KEEL status: PENDING
+# KEEL status: RUNNING
 
-**Started:** —
-**Last update:** 2026-04-27 20:49 UTC
-**Branch:** —
-**Mission:** (see AGENT_PROMPTS.md)
+**Started:** 2026-04-28 00:00 UTC
+**Last update:** 2026-04-28 00:05 UTC
+**Branch:** agent/keel-cleanup-v2
+**Mission:** Archive 43 root SQL scripts, delete 5 confirmed-dead duplicate files
 
 ## Current state
-PENDING: agent has not been launched yet by OXBAR.
+RUNNING: Closed PR #11. Archiving SQL files and deleting duplicates.
 
 ## Progress
-- [ ] Awaiting launch
+- [x] Close old PR #11
+- [x] Survey duplicate files and confirm callsites
+- [ ] Archive 43 root *.sql to archive/legacy-sql/
+- [ ] Delete 5 dead duplicate files
+- [ ] Update README.md with archive policy
+- [ ] Write .oxbar/reports/keel-cleanup.md
+- [ ] flutter analyze passes
+- [ ] Open PR
+- [ ] Update status to READY-FOR-REVIEW
 
 ## Files touched
-(none)
+(in progress)
 
 ## Questions for OXBAR
 (none)
@@ -21,4 +29,4 @@ PENDING: agent has not been launched yet by OXBAR.
 (none)
 
 ## Next step
-Wait for OXBAR to launch.
+Archive SQL files, then delete duplicates.
