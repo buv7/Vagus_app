@@ -64,3 +64,20 @@ WHERE id = entry_id;
 - `VAULT-to-LABKIT.md` — same primitives, different `data_class`
 - `VAULT-to-WEARABLE-HUB.md`
 - `SECURITY.md`
+
+---
+
+## Update 2026-04-28 — GUC → vault.decrypted_secrets
+
+The original handoff said `vault_encrypt_text` / `vault_decrypt_text` read the
+key from `current_setting('app.vault_data_key')`. That GUC was never provisioned
+(Supabase blocks ALTER DATABASE for non-superusers). The functions now read
+from `vault.decrypted_secrets WHERE name = 'app_vault_data_key'` per the
+refactor migration `20260428210000_vault_guc_refactor.sql`.
+
+**For consumers:** no API change — keep calling `public.vault_encrypt_text(text)`
+and `public.vault_decrypt_text(bytea)` exactly as before. The change is internal.
+
+**Operator action required on each new environment:** create the
+`app_vault_data_key` secret via `vault.create_secret(...)` before any encrypted
+insert runs, or every call will raise.
