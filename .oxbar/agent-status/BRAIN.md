@@ -1,4 +1,4 @@
-# BRAIN status: READY-FOR-REVIEW
+# BRAIN status: DONE
 
 **Started:** 2026-04-28 UTC
 **Last update:** 2026-04-28 UTC
@@ -7,7 +7,7 @@
 quota tracking, and fallback chains.
 
 ## Current state
-Implementation complete. PR ready to open. Awaiting CI pass.
+All CI checks green. PR #20 open and ready to merge.
 
 ## Progress
 - [x] `lib/services/ai/task_type.dart` — TaskType enum + kProviderChain routing map
@@ -52,4 +52,4 @@ Implementation complete. PR ready to open. Awaiting CI pass.
 None.
 
 ## Next step
-Open PR, pass CI.
+Merge PR #20. Launch THRIFT for cache layer (see handoff).
