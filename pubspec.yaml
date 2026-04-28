@@ -71,6 +71,7 @@ dev_dependencies:
   test: ^1.25.2
 
   supabase: any
+  golden_toolkit: ^0.15.0  # MIT — eBay; snapshot-based visual regression tests
 flutter:
   uses-material-design: true
   

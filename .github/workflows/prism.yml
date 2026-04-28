@@ -1,0 +1,222 @@
+name: PRISM — visual diff CI + token enforcement
+
+# Runs on every PR targeting main that touches Dart/Flutter source or assets.
+# Three jobs:
+#   1. golden_diff   — compare widget snapshots against baseline; fails on pixel diff
+#   2. token_lint    — grep for hardcoded Color/TextStyle/EdgeInsets values
+#   3. rtl_check     — warn when UI files change without an RTL screenshot note
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'test/golden/**'
+      - 'assets/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+
+permissions:
+  contents: read
+  pull-requests: write   # needed to post diff comments
+
+concurrency:
+  group: prism-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Golden visual diff
+  # ---------------------------------------------------------------------------
+  golden_diff:
+    name: Golden snapshot diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.8'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Restore committed baseline goldens from main so the test runner can
+      # compare against them.  If a golden is missing on main (new screen) the
+      # test will generate it and pass; the generated file is uploaded as an
+      # artifact for review.
+      - name: Fetch baseline goldens from main
+        run: |
+          git fetch origin main
+          # Extract only the goldens directory from main — soft-fail if absent
+          git checkout origin/main -- test/golden/goldens 2>/dev/null || true
+
+      - name: Run golden tests
+        run: |
+          flutter test test/golden/golden_test.dart \
+            --reporter=expanded \
+            --timeout=120s
+        env:
+          # Supabase init inside tests uses a fake local URL; no real network needed.
+          CI: 'true'
+
+      # On failure, upload the diff images so reviewers can see what changed.
+      - name: Upload golden diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prism-golden-diffs
+          path: |
+            test/golden/failures/
+          retention-days: 14
+
+      # On success, upload newly generated goldens so they can be committed.
+      - name: Upload generated goldens
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prism-generated-goldens
+          path: test/golden/goldens/
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # 2. Token enforcement — block hardcoded design values
+  # ---------------------------------------------------------------------------
+  token_lint:
+    name: Token enforcement (no hardcoded design values)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect hardcoded Color(0xFF…)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Scan lib/**/*.dart for raw Color(0xFF...) literals.
+          # Allowlist:
+          #   • lib/theme/           — token definitions themselves
+          #   • lib/theme/app_theme.dart
+          #   • Comments and strings inside tests
+          VIOLATIONS=$(grep -rn \
+            --include="*.dart" \
+            --exclude-path="*/theme/*" \
+            'Color(0x' lib/ \
+            | grep -v '^\s*//' \
+            | grep -v 'test/' \
+            || true)
+          if [[ -n "$VIOLATIONS" ]]; then
+            echo "PRISM FAIL: hardcoded Color() literals found."
+            echo "All colors must come from DesignTokens (or tokens.dart once PALETTE merges)."
+            echo ""
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "ok — no hardcoded Color() literals outside theme/"
+
+      - name: Detect hardcoded TextStyle(fontSize:…)
+        shell: bash
+        run: |
+          set -euo pipefail
+          VIOLATIONS=$(grep -rn \
+            --include="*.dart" \
+            --exclude-path="*/theme/*" \
+            'TextStyle(fontSize:' lib/ \
+            | grep -v '^\s*//' \
+            | grep -v 'test/' \
+            || true)
+          if [[ -n "$VIOLATIONS" ]]; then
+            echo "PRISM FAIL: hardcoded TextStyle(fontSize:) found."
+            echo "All text styles must come from DesignTokens."
+            echo ""
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "ok — no hardcoded TextStyle(fontSize:) outside theme/"
+
+      - name: Detect hardcoded EdgeInsets literals
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Flag EdgeInsets.all(N) / .symmetric(...) / .only(...) with raw numbers.
+          # Pattern: EdgeInsets.all( followed by a digit (not a token const reference).
+          VIOLATIONS=$(grep -rEn \
+            --include="*.dart" \
+            --exclude-path="*/theme/*" \
+            'EdgeInsets\.(all|symmetric|only|fromLTRB)\s*\(\s*[0-9]' lib/ \
+            | grep -v '^\s*//' \
+            | grep -v 'test/' \
+            || true)
+          if [[ -n "$VIOLATIONS" ]]; then
+            echo "PRISM FAIL: hardcoded EdgeInsets literals found."
+            echo "All spacing must come from DesignTokens.spaceN constants."
+            echo ""
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "ok — no hardcoded EdgeInsets literals outside theme/"
+
+  # ---------------------------------------------------------------------------
+  # 3. RTL check — warn when UI files change without RTL screenshots
+  # ---------------------------------------------------------------------------
+  rtl_check:
+    name: RTL layout check (warn on UI changes without RTL note)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # This job is advisory only — does not block merge.
+    # PRISM will file a GitHub issue for confirmed RTL breakage.
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for RTL annotation in PR body
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Count changed UI files in this PR.
+          BASE="${{ github.event.pull_request.base.sha }}"
+          UI_CHANGES=$(git diff --name-only "$BASE"...HEAD -- 'lib/screens/**' 'lib/widgets/**' | wc -l)
+
+          if [[ "$UI_CHANGES" -eq 0 ]]; then
+            echo "No UI file changes — RTL check skipped."
+            exit 0
+          fi
+
+          echo "$UI_CHANGES UI file(s) changed."
+
+          # Check PR body for an RTL screenshot note.
+          PR_BODY=$(gh pr view "$PR_NUMBER" --json body -q '.body' 2>/dev/null || echo '')
+
+          if echo "$PR_BODY" | grep -qi 'rtl\|right.to.left\|arabic\|kurdish\|ar_SA\|ku_IQ'; then
+            echo "ok — PR body references RTL. Requirement satisfied."
+            exit 0
+          fi
+
+          echo ""
+          echo "PRISM WARNING: This PR changes UI files but the PR description does not"
+          echo "mention RTL screenshots (keywords: RTL, right-to-left, Arabic, Kurdish)."
+          echo ""
+          echo "Per PRISM policy:"
+          echo "  • PRs touching UI must include RTL screenshots for ar + ku locales."
+          echo "  • Run: flutter test test/golden/ --update-goldens"
+          echo "  • Attach the ar/ku golden images to this PR."
+          echo ""
+          echo "This job is advisory and does not block merge, but PRISM will flag"
+          echo "confirmed layout breakage as a GitHub issue."
+          # Advisory — exit 0 so the job is yellow, not red.
+          exit 0

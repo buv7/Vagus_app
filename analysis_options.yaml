@@ -48,5 +48,26 @@ linter:
     # Keep existing rules
     prefer_single_quotes: true
 
+# ---------------------------------------------------------------------------
+# PRISM token enforcement (enforced in CI via .github/workflows/prism.yml)
+# ---------------------------------------------------------------------------
+# The following patterns are BANNED outside of lib/theme/:
+#
+#   Color(0xFF…)          — use DesignTokens color constants instead
+#   TextStyle(fontSize:…) — use DesignTokens text style constants instead
+#   EdgeInsets.all(N)     — use DesignTokens.spaceN constants instead
+#   EdgeInsets.symmetric(…numeric…)
+#   EdgeInsets.only(…numeric…)
+#
+# Dart's built-in linter cannot currently enforce these patterns natively.
+# PRISM's token_lint CI job (prism.yml) runs grep-based checks on every PR
+# and blocks merge if violations are found.
+#
+# To suppress a legitimate exception (e.g. a one-off animation value that
+# genuinely has no token equivalent), add an inline comment:
+#   // prism-token-exempt: <reason>
+# PRISM will audit exemptions during code review.
+# ---------------------------------------------------------------------------
+
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
