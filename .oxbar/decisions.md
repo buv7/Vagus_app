@@ -52,3 +52,25 @@ Why: Without admin override, every worker PR would deadlock on review. Pre-autho
 **22:38 UTC · OXBAR no longer touches local worktree**
 What: 8+ worker terminals share the same local clone and switch branches via `git checkout`. OXBAR's `git commit` on local main (commit `ea21b25`) was orphaned when a worker switched branches mid-write. Going forward, all OXBAR commits to `main` go via `gh api PUT contents/...` (REST contents endpoint). Local `git push`/`git checkout`/`git commit` from OXBAR's terminal are banned.
 Why: Local-worktree contention is unfixable while many agents share the directory. The REST API treats main as a remote append target, sidesteps the worktree entirely. Workers continue using local checkouts on their own branches.
+
+---
+
+## 2026-04-28
+
+**00:00 UTC · SHEETIFY: Edge-function encryption instead of vault_encrypt_text**
+What: OAuth refresh tokens are encrypted via AES-256-GCM in the `sheetify-oauth`/`sheetify-sync` edge functions (Web Crypto API) before storage, using the `SHEETIFY_ENCRYPT_KEY` edge secret. `vault_encrypt_text` is NOT used.
+Why: `vault_encrypt_text` reads from `current_setting('app.vault_data_key', true)` — a GUC Supabase blocks non-superusers from setting (see decision 21:55 UTC 2026-04-27). OXBAR provisioned the key in Supabase Vault instead, but VAULT's refactor to read from `vault.decrypted_secrets` is still pending. Edge-function crypto is the correct place for OAuth token encryption anyway (tokens never need to be queried by Postgres functions).
+Future: When VAULT ships the `vault.decrypted_secrets` refactor, SHEETIFY can migrate to `vault_encrypt_text` for consistency. Migration path: run a one-time edge function to re-encrypt all stored tokens with the new key, then drop `SHEETIFY_ENCRYPT_KEY`.
+
+**00:00 UTC · SHEETIFY: Deferred DRIFTKIT integration for offline queue**
+What: `sheets_sync_queue` is a standalone Postgres table with a simple `queued → processing → done/failed` state machine. The `flush_queue` edge function drains it. DRIFTKIT's primitives are NOT used.
+Why: DRIFTKIT is PENDING (not launched). The queue semantics required here (batch Sheets API writes, retry up to 3 times) are simple enough to implement directly. DRIFTKIT may provide a better abstraction once it ships.
+Future: When DRIFTKIT is ready, evaluate replacing `sheets_sync_queue` with DRIFTKIT's queue. The DB table can be kept as a fallback or removed if DRIFTKIT covers the use case.
+
+**00:00 UTC · SHEETIFY: All tiers get Sheets sync (no TIER gate)**
+What: No tier check is applied in the SHEETIFY code. All coaches (Free/Pro/Ultimate) get Google Sheets sync.
+Why: TIER is PENDING. More importantly, the mission spec explicitly states "All 3 tiers (Free/Pro/Ultimate) get this" — so even when TIER ships, no gate is needed here.
+
+**00:00 UTC · SHEETIFY: App is source of truth, no auto-resolve of conflicts**
+What: When the poll detects a divergence between sheet data and app data, the conflict is recorded in `sheets_sync_conflicts` and surfaced to the coach. The app value is NEVER auto-overwritten by a sheet edit.
+Why: The mission spec is explicit: "app is source of truth." Coaches may edit sheets for their own notes but the canonical record is Supabase. Auto-resolving in either direction risks data loss.

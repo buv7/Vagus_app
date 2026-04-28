@@ -44,3 +44,40 @@ When this PR merges to `main`, `.github/workflows/deploy.yml` runs `supabase db 
 **Blocking:** POLYGLOT-KU progress past PENDING-glossary work. Not blocking other agents.
 
 **OXBAR note:** This is correctly outside OXBAR authority (scope/quality call). Same question latently applies to POLYGLOT-AR — Arabic has higher LLM quality but a native reviewer is still mission-required for medical/cultural strings. If Alhassan picks (2), POLYGLOT-AR remains in scope; if (1), the same Gemini key + reviewer arrangement covers AR too.
+
+---
+
+## E-003 · 2026-04-28 · SHEETIFY · Google OAuth client ID + 3 edge secrets needed
+
+**Trigger:** SHEETIFY cannot make OAuth work without a Google Cloud OAuth client configured. This requires a human with access to Google Cloud Console.
+
+**What is needed — 3 steps, ~10 minutes total:**
+
+### Step 1 — Create OAuth 2.0 client in Google Cloud Console
+1. Go to [console.cloud.google.com](https://console.cloud.google.com) → select or create a project for Vagus
+2. APIs & Services → Credentials → Create credentials → OAuth client ID
+3. Application type: **Web application**
+4. Name: `Vagus Sheetify`
+5. Authorized redirect URIs — add the Supabase edge function URL:
+   `https://<your-supabase-project-ref>.supabase.co/functions/v1/sheetify-oauth`
+   (Replace `<your-supabase-project-ref>` with the prod project ref — visible in Supabase Dashboard URL)
+6. Scopes to enable (OAuth consent screen): `spreadsheets`, `drive.file`, `email`, `profile`
+   - `https://www.googleapis.com/auth/spreadsheets`
+   - `https://www.googleapis.com/auth/drive.file`
+7. Copy the **Client ID** and **Client Secret**
+
+### Step 2 — Set edge function secrets in Supabase Dashboard
+Go to Supabase Dashboard → Edge Functions → Secrets, add:
+```
+GOOGLE_CLIENT_ID=<paste client ID from step 1>
+GOOGLE_CLIENT_SECRET=<paste client secret from step 1>
+SHEETIFY_ENCRYPT_KEY=<generate with: openssl rand -hex 32>
+```
+`SHEETIFY_ENCRYPT_KEY` is a 64-character hex string (256-bit AES key). Generate it fresh — do NOT reuse any existing key. Store it in your password manager; it encrypts all coach Google refresh tokens.
+
+### Step 3 — Configure app deep link
+Confirm that `vagus://sheetify/connected` is registered in the Android/iOS app as a custom URI scheme so the OAuth callback can return to the app. The `app_links` package is already in `pubspec.yaml`. If the URI scheme `vagus://` is not yet configured in `AndroidManifest.xml` / `Info.plist`, add it.
+
+**Impact:** SHEETIFY's OAuth flow will not work until these secrets are provisioned. The rest of the sync engine (sheet creation, push, poll) is code-complete and unblocked.
+
+**Status:** BLOCKED on Alhassan. Does not block PR merge (CI does not test the live OAuth flow).
