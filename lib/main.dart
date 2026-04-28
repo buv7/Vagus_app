@@ -1,12 +1,16 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import 'config/env_config.dart';
+import 'core/error/error_boundary.dart';
+import 'core/error/shield_store.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/workout/client_workout_dashboard_screen.dart'; // ✅ import workout screen
 import 'screens/workout/workout_plan_builder_screen.dart'; // ✅ import workout editor
@@ -38,29 +42,47 @@ import 'screens/settings/profile_edit_screen.dart';
 import 'screens/support/support_screen.dart';
 import 'screens/coaches/coach_application_screen.dart';
 
-void main() async {
+Future<void> main() async {
+  // DSN injected at build time: flutter run --dart-define=SENTRY_DSN=https://...
+  // An empty DSN makes Sentry a no-op (safe for local dev without credentials).
+  const sentryDsn = String.fromEnvironment('SENTRY_DSN');
+
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = sentryDsn;
+      options.tracesSampleRate = kDebugMode ? 0.0 : 0.2;
+      options.environment =
+          kDebugMode ? 'debug' : (kProfileMode ? 'profile' : 'production');
+      options.attachScreenshot = !kIsWeb;
+    },
+    appRunner: _bootstrap,
+  );
+}
+
+Future<void> _bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Replace the red error widget with a friendly fallback in release/profile.
+  installGlobalErrorBoundary();
+
   // Enable semantics on web for accessibility + test automation.
-  // Flutter web does not build the semantics tree by default.
   if (kIsWeb) {
     SemanticsBinding.instance.ensureSemantics();
   }
 
-  // Surface framework errors to the console instead of swallowing them.
+  // Route Flutter framework errors to Sentry and the local store.
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
-    if (kIsWeb) {
-      debugPrint('FlutterError: ${details.exception}');
-      debugPrint('Stack: ${details.stack}');
-    }
+    ShieldStore.instance.recordError(details.exception, details.stack ?? StackTrace.empty,
+        context: details.library);
+    Sentry.captureException(details.exception, stackTrace: details.stack);
   };
 
-  // Catch unhandled async / zone errors.
+  // Route platform/async errors to Sentry and the local store.
   PlatformDispatcher.instance.onError = (error, stack) {
-    debugPrint('PlatformDispatcher error: $error');
-    debugPrint('Stack: $stack');
-    return false; // let Flutter handle normally
+    ShieldStore.instance.recordError(error, stack, context: 'PlatformDispatcher');
+    Sentry.captureException(error, stackTrace: stack);
+    return true; // mark as handled so Flutter doesn't also print it
   };
 
   // Load environment variables from .env file
@@ -90,14 +112,20 @@ void main() async {
   final settings = SettingsController();
   await settings.load();
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ReduceMotion()),
-        // keep other providers if any
-      ],
-      child: VagusMainApp(settings: settings),
+  runZonedGuarded(
+    () => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ReduceMotion()),
+          // keep other providers if any
+        ],
+        child: VagusMainApp(settings: settings),
+      ),
     ),
+    (error, stack) {
+      ShieldStore.instance.recordError(error, stack, context: 'runZonedGuarded');
+      Sentry.captureException(error, stackTrace: stack);
+    },
   );
 }
 
@@ -110,16 +138,25 @@ class VagusMainApp extends StatefulWidget {
   State<VagusMainApp> createState() => _VagusMainAppState();
 }
 
-class _VagusMainAppState extends State<VagusMainApp> {
+class _VagusMainAppState extends State<VagusMainApp>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // app_links plugin uses platform channels not available on web.
     if (!kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _initializeDeepLinks();
       });
     }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    Sentry.addBreadcrumb(
+      Breadcrumb(message: 'lifecycle: ${state.name}', level: SentryLevel.info),
+    );
   }
 
   void _initializeDeepLinks() {
@@ -131,6 +168,7 @@ class _VagusMainAppState extends State<VagusMainApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     if (!kIsWeb) {
       DeepLinkService().dispose();
     }

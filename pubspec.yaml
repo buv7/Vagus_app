@@ -58,6 +58,8 @@ dependencies:
   flutter_svg: ^2.0.10+1
   health: ^13.1.4  # Cross-platform health data access (Apple Health, Google Health Connect)
   google_generative_ai: ^0.4.6  # Google Gemini AI for food recognition
+  sentry_flutter: ^8.14.2
+  connectivity_plus: ^6.1.4
 
 dev_dependencies:
   flutter_test:
