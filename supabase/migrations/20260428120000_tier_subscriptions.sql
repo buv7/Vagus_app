@@ -77,6 +77,11 @@ COMMENT ON COLUMN public.subscriptions.receipt_data IS
   'Encrypted via vault_encrypt_text(). NEVER store the raw App Store / Play '
   'receipt string. Decrypt with vault_decrypt_text() in a trusted context.';
 
+-- Backfill column for pre-existing tables (CREATE TABLE IF NOT EXISTS skips
+-- column definitions when the table already exists on prod).
+ALTER TABLE public.subscriptions
+  ADD COLUMN IF NOT EXISTS receipt_data bytea NULL;
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS subscriptions_user_id_idx
   ON public.subscriptions (user_id);
