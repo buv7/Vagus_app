@@ -63,7 +63,9 @@ Future<T> withRetry<T>(
     }
   }
 
-  // Unreachable, but the analyzer needs this.
-  await Sentry.captureException(lastError!, stackTrace: lastStack);
-  throw lastError!;
+  // Unreachable — the loop always returns or rethrows.  Satisfies the
+  // analyzer's missing-return check.
+  final unrecoverable = lastError!;
+  await Sentry.captureException(unrecoverable, stackTrace: lastStack);
+  throw unrecoverable;
 }
