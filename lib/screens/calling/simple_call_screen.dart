@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../../models/live_session.dart';
-import '../../models/call_participant.dart';
+import '../../services/calling/webrtc_service.dart';
+import '../../services/calling/call_signaling_service.dart';
+import '../../services/calling/call_analytics_service.dart';
+import '../../services/calling/incoming_call_stub.dart';
 import '../../services/simple_calling_service.dart';
 import '../../widgets/calling/call_controls.dart';
 import '../../widgets/calling/call_header.dart';
@@ -23,77 +27,156 @@ class SimpleCallScreen extends StatefulWidget {
 }
 
 class _SimpleCallScreenState extends State<SimpleCallScreen> {
-  late SimpleCallingService _callingService;
-  late StreamSubscription _sessionSubscription;
-  late StreamSubscription _participantsSubscription;
-  late StreamSubscription _messagesSubscription;
-  late StreamSubscription _errorSubscription;
+  late final WebRtcService _webRtc;
+  late final CallSignalingService _signaling;
+  late final SimpleCallingService _sessionService;
 
   bool _isConnected = false;
   bool _showChat = false;
   bool _isMuted = false;
   bool _isVideoEnabled = true;
   bool _isScreenSharing = false;
+  String _statusText = 'Connecting…';
+
+  DateTime? _callStartTime;
 
   @override
   void initState() {
     super.initState();
-    _callingService = SimpleCallingService();
-    _setupSubscriptions();
-    _joinCall();
+    _webRtc = WebRtcService();
+    _signaling = CallSignalingService();
+    _sessionService = SimpleCallingService();
+    _startCall();
   }
 
-  void _setupSubscriptions() {
-    _sessionSubscription = _callingService.sessionStream.listen((session) {
-      if (mounted) {
-        setState(() {
-          _isConnected = true;
-        });
-      }
-    });
-
-    _participantsSubscription = _callingService.participantsStream.listen((participants) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-
-    _messagesSubscription = _callingService.messagesStream.listen((messages) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-
-    _errorSubscription = _callingService.errorStream.listen((error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error)),
-        );
-      }
-    });
-  }
-
-  Future<void> _joinCall() async {
+  Future<void> _startCall() async {
     try {
-      await _callingService.joinLiveSession(widget.session.id);
+      // 1. Camera/mic + local preview
+      await _webRtc.initialize();
+      final isVideo = widget.session.sessionType == SessionType.videoCall ||
+          widget.session.sessionType == SessionType.coachingSession;
+      await _webRtc.startLocalMedia(video: isVideo);
+
+      // 2. Join the Supabase session record
+      await _sessionService.joinLiveSession(widget.session.id);
+
+      // 3. Wire up WebRTC → Signaling
+      _webRtc.onIceCandidate = (candidate) {
+        _signaling.sendIceCandidate({
+          'candidate': candidate.candidate,
+          'sdpMid': candidate.sdpMid,
+          'sdpMLineIndex': candidate.sdpMLineIndex,
+        });
+      };
+
+      _webRtc.onConnectionStateChange = (state) {
+        if (!mounted) return;
+        setState(() {
+          _isConnected =
+              state == RTCPeerConnectionState.RTCPeerConnectionStateConnected;
+          _statusText = _connectionStateLabel(state);
+        });
+        if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
+          _callStartTime = DateTime.now();
+          CallAnalyticsService.logCallStarted(
+            sessionId: widget.session.id,
+            sessionType: widget.session.sessionType.value,
+            isVideo: isVideo,
+            isCaller: !widget.isIncoming,
+          );
+        }
+      };
+
+      _webRtc.onRemoteStreamAdded = () {
+        if (mounted) setState(() {});
+      };
+
+      // 4. Wire up Signaling → WebRTC
+      _signaling.onOffer = (data) async {
+        // Callee path: received offer → create answer
+        await _webRtc.setupPeerConnection();
+        await _webRtc.setRemoteDescription(data);
+        final answer = await _webRtc.createAnswer();
+        await _signaling.sendAnswer({'sdp': answer.sdp, 'type': answer.type});
+      };
+
+      _signaling.onAnswer = (data) async {
+        // Caller path: received answer → complete handshake
+        await _webRtc.setRemoteDescription(data);
+      };
+
+      _signaling.onIceCandidate = (data) async {
+        await _webRtc.addIceCandidate(data);
+      };
+
+      _signaling.onPeerReady = () async {
+        // Caller path: callee signalled ready → send offer
+        if (!widget.isIncoming) {
+          await _webRtc.setupPeerConnection();
+          final offer = await _webRtc.createOffer();
+          await _signaling.sendOffer({'sdp': offer.sdp, 'type': offer.type});
+        }
+      };
+
+      _signaling.onHangup = () {
+        if (mounted) _endCall(remote: true);
+      };
+
+      // 5. Subscribe to channel
+      _signaling.joinChannel(widget.session.id);
+
+      // 6. Role-specific initiation
+      if (widget.isIncoming) {
+        // Callee: tell caller we're ready to receive the offer
+        await _signaling.sendReady();
+        if (mounted) setState(() => _statusText = 'Waiting for caller…');
+      } else {
+        // Caller: notify callee via push (stub — no-op until SIGNAL merges)
+        if (widget.session.clientId != null) {
+          await IncomingCallStub.notifyCallee(
+            sessionId: widget.session.id,
+            calleeId: widget.session.clientId!,
+            callerName: 'Coach',
+            callType: widget.session.sessionType.value,
+          );
+        }
+        if (mounted) setState(() => _statusText = 'Ringing…');
+      }
+
+      if (mounted) setState(() {});
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to join call: $e')),
+          SnackBar(content: Text('Failed to start call: $e')),
         );
         Navigator.pop(context);
       }
     }
   }
 
+  String _connectionStateLabel(RTCPeerConnectionState state) {
+    switch (state) {
+      case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
+        return 'Connecting…';
+      case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
+        return 'Connected';
+      case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
+        return 'Reconnecting…';
+      case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
+        return 'Connection failed';
+      case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
+        return 'Call ended';
+      default:
+        return 'Connecting…';
+    }
+  }
+
   @override
   void dispose() {
-    _sessionSubscription.cancel();
-    _participantsSubscription.cancel();
-    _messagesSubscription.cancel();
-    _errorSubscription.cancel();
-    _callingService.leaveLiveSession();
-    _callingService.dispose();
+    _signaling.dispose();
+    _webRtc.dispose();
+    _sessionService.leaveLiveSession();
+    _sessionService.dispose();
     super.dispose();
   }
 
@@ -102,34 +185,111 @@ class _SimpleCallScreenState extends State<SimpleCallScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Header
-            CallHeader(
-              session: widget.session,
-              participants: _callingService.participants,
-              onBack: () => Navigator.pop(context),
-            ),
-            
-            // Main content
-            Expanded(
-              child: _isConnected ? _buildCallContent() : _buildConnectingView(),
-            ),
-            
-            // Controls
+            // Remote video — full screen background
             if (_isConnected)
-              CallControls(
-                isMuted: _isMuted,
-                isVideoEnabled: _isVideoEnabled,
-                isScreenSharing: _isScreenSharing,
-                isConnecting: false,
-                isCallEnded: false,
-                onToggleMute: _toggleMute,
-                onToggleVideo: _toggleVideo,
-                onToggleScreenShare: _toggleScreenShare,
-                onToggleChat: _toggleChat,
-                onEndCall: _endCall,
-                onToggleControls: () {},
+              Positioned.fill(
+                child: RTCVideoView(
+                  _webRtc.remoteRenderer,
+                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                ),
+              )
+            else
+              _buildConnectingBackground(),
+
+            // Local video PIP — top-right corner
+            Positioned(
+              top: 80,
+              right: 16,
+              width: 100,
+              height: 140,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: RTCVideoView(
+                  _webRtc.localRenderer,
+                  mirror: true,
+                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                ),
+              ),
+            ),
+
+            // Header
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: CallHeader(
+                session: widget.session,
+                participants: _sessionService.participants,
+                onBack: () => _endCall(remote: false),
+              ),
+            ),
+
+            // Chat overlay
+            if (_showChat)
+              Positioned.fill(
+                top: 72,
+                child: CallChat(
+                  messages: _sessionService.messages,
+                  onSendMessage: (msg) => _sessionService.sendMessage(msg),
+                  onClose: () => setState(() => _showChat = false),
+                ),
+              ),
+
+            // Controls — bottom
+            if (!_showChat)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: CallControls(
+                  isMuted: _isMuted,
+                  isVideoEnabled: _isVideoEnabled,
+                  isScreenSharing: _isScreenSharing,
+                  isConnecting: !_isConnected,
+                  isCallEnded: false,
+                  onToggleMute: _toggleMute,
+                  onToggleVideo: _toggleVideo,
+                  onToggleScreenShare: _toggleScreenShare,
+                  onToggleChat: _toggleChat,
+                  onEndCall: () => _endCall(remote: false),
+                  onToggleControls: () {},
+                  onSwitchCamera: _switchCamera,
+                ),
+              ),
+
+            // Status overlay while connecting
+            if (!_isConnected)
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 200),
+                    const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      _statusText,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.session.title ??
+                          widget.session.sessionType.value
+                              .replaceAll('_', ' '),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
           ],
         ),
@@ -137,234 +297,58 @@ class _SimpleCallScreenState extends State<SimpleCallScreen> {
     );
   }
 
-  Widget _buildConnectingView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Connecting to call...',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.session.title ?? 'Untitled Call',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.white70,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCallContent() {
-    if (_showChat) {
-      return CallChat(
-        messages: _callingService.messages,
-        onSendMessage: _sendMessage,
-        onClose: () => setState(() => _showChat = false),
-      );
-    }
-
-    return _buildVideoGrid();
-  }
-
-  Widget _buildVideoGrid() {
-    final participants = _callingService.participants;
-    
-    if (participants.isEmpty) {
-      return const Center(
-        child: Text(
-          'Waiting for participants...',
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ),
-      );
-    }
-
-    if (participants.length == 1) {
-      return _buildSingleParticipantView(participants.first);
-    }
-
-    if (participants.length == 2) {
-      return _buildTwoParticipantView(participants);
-    }
-
-    return _buildMultipleParticipantView(participants);
-  }
-
-  Widget _buildSingleParticipantView(CallParticipant participant) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Mock video placeholder
-          Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              color: Colors.grey[800],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  _isVideoEnabled ? Icons.videocam : Icons.videocam_off,
-                  size: 48,
-                  color: Colors.white70,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _isVideoEnabled ? 'Video On' : 'Video Off',
-                  style: const TextStyle(color: Colors.white70),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'You are in the call',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.session.title ?? 'Untitled Call',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.white70,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTwoParticipantView(List<CallParticipant> participants) {
-    return Row(
-      children: participants.map((participant) {
-        return Expanded(
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.grey[800],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  participant.isVideoEnabled ? Icons.videocam : Icons.videocam_off,
-                  size: 48,
-                  color: Colors.white70,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  participant.isVideoEnabled ? 'Video On' : 'Video Off',
-                  style: const TextStyle(color: Colors.white70),
-                ),
-                if (participant.isMuted)
-                  const Icon(
-                    Icons.mic_off,
-                    color: Colors.red,
-                    size: 24,
-                  ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildMultipleParticipantView(List<CallParticipant> participants) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.0,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: participants.length,
-      itemBuilder: (context, index) {
-        final participant = participants[index];
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[800],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                participant.isVideoEnabled ? Icons.videocam : Icons.videocam_off,
-                size: 32,
-                color: Colors.white70,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                participant.isVideoEnabled ? 'Video On' : 'Video Off',
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-              ),
-              if (participant.isMuted)
-                const Icon(
-                  Icons.mic_off,
-                  color: Colors.red,
-                  size: 16,
-                ),
-            ],
-          ),
-        );
-      },
+  Widget _buildConnectingBackground() {
+    return Container(
+      color: Colors.grey[900],
+      child: const Center(child: SizedBox.shrink()),
     );
   }
 
   void _toggleMute() {
-    setState(() {
-      _isMuted = !_isMuted;
-    });
-    _callingService.toggleMute();
+    setState(() => _isMuted = !_isMuted);
+    _webRtc.setMuted(_isMuted);
     HapticFeedback.lightImpact();
   }
 
   void _toggleVideo() {
-    setState(() {
-      _isVideoEnabled = !_isVideoEnabled;
-    });
-    _callingService.toggleVideo();
+    setState(() => _isVideoEnabled = !_isVideoEnabled);
+    _webRtc.setVideoEnabled(_isVideoEnabled);
     HapticFeedback.lightImpact();
   }
 
   void _toggleScreenShare() {
-    setState(() {
-      _isScreenSharing = !_isScreenSharing;
-    });
-    _callingService.toggleScreenShare();
+    setState(() => _isScreenSharing = !_isScreenSharing);
     HapticFeedback.lightImpact();
   }
 
   void _toggleChat() {
-    setState(() {
-      _showChat = !_showChat;
-    });
+    setState(() => _showChat = !_showChat);
     HapticFeedback.lightImpact();
   }
 
-  void _sendMessage(String message) {
-    _callingService.sendMessage(message);
+  void _switchCamera() {
+    unawaited(_webRtc.switchCamera());
+    unawaited(HapticFeedback.lightImpact());
   }
 
-  void _endCall() {
+  void _endCall({required bool remote}) {
     HapticFeedback.mediumImpact();
-    _callingService.leaveLiveSession();
+
+    // Log analytics before teardown
+    if (_callStartTime != null) {
+      final duration =
+          DateTime.now().difference(_callStartTime!).inSeconds;
+      CallAnalyticsService.logCallEnded(
+        sessionId: widget.session.id,
+        durationSeconds: duration,
+        qualityStats: _webRtc.getStats(),
+      );
+    }
+
+    if (!remote) {
+      unawaited(_signaling.sendHangup());
+    }
+
     Navigator.pop(context);
   }
 }

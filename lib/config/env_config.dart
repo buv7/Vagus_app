@@ -49,6 +49,16 @@ class EnvConfig {
   static String get databaseUrl =>
       dotenv.env['DATABASE_URL'] ?? '';
 
+  // ==================== WebRTC / ExpressTURN Configuration ====================
+
+  /// ExpressTURN TURN server username (free tier: 1000 GB/mo)
+  static String get expressturnUser =>
+      dotenv.env['EXPRESSTURN_USER'] ?? '';
+
+  /// ExpressTURN TURN server credential
+  static String get expressturnPass =>
+      dotenv.env['EXPRESSTURN_PASS'] ?? '';
+
   // ==================== Optional Configuration ====================
 
   /// Custom API base URL (if using separate backend)
