@@ -63,3 +63,5 @@ Coordination skeleton being assembled now.
 - Status files remain stale (never maintained by workers); real state is in git/gh
 
 2026-04-28 — E-001 APPROVED (dump-then-drop; PR #7 gate now "backup verified"). E-002 PUNTED (KU → v1.1; AR-only launch). POLYGLOT-KU stood down. Existing KU branches (polyglot-ku-v2, polyglot-ku-translations) preserved for v1.1.
+
+2026-04-28 — Phase 7: PR #37 merged via admin (KEEL trial_flow fixup). Deploy workflow on main: SUCCESS (run 25078042609, sha db09a68). Re-triggered CI on PRs #14, #27, #28, #36 (the 4 previously masked as RED by the entitlements_v failure cascading through Supabase Preview). GitHub Actions checks (Flutter Analyze, VAULT) already SUCCESS on #27/#28/#36. PR #14 had zero runs — manually dispatched Flutter Analyze (run 25078225600, queued). Supabase Preview check remains CANCELLED on all 4 PRs (external check, needs push or Supabase branch rebase to re-trigger — not done per no-rebase constraint).
