@@ -1,5 +1,6 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -1087,7 +1088,7 @@ class _EventEditorState extends State<EventEditor> {
           items: items,
           onChanged: onChanged,
           style: TextStyle(color: tc.textPrimary),
-          dropdownColor: tc.isDark ? const Color(0xFF1A1A2E) : tc.surface,
+          dropdownColor: tc.isDark ? VagusTokens.bgModal : tc.surface,
           decoration: InputDecoration(
             labelText: label,
             labelStyle: TextStyle(color: tc.textSecondary),

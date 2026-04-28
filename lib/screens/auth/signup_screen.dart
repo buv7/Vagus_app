@@ -1,5 +1,6 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shimmer/shimmer.dart';
@@ -580,7 +581,7 @@ class _SignupScreenState extends State<SignupScreen>
           delay: const Duration(milliseconds: 200),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'VAGUS',
@@ -600,7 +601,7 @@ class _SignupScreenState extends State<SignupScreen>
           delay: const Duration(milliseconds: 400),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'THE MOST ADVANCED IRAQI ONLINE FITNESS\nCOACHING PLATFORM',
@@ -648,7 +649,7 @@ class _SignupScreenState extends State<SignupScreen>
           delay: const Duration(milliseconds: 200),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'VAGUS',
@@ -665,7 +666,7 @@ class _SignupScreenState extends State<SignupScreen>
           delay: const Duration(milliseconds: 400),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'THE MOST ADVANCED IRAQI ONLINE FITNESS\nCOACHING PLATFORM',
@@ -713,7 +714,7 @@ class _SignupScreenState extends State<SignupScreen>
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF00C8FF).withValues(alpha: 0.8),
+                  color: VagusTokens.primary.withValues(alpha: 0.8),
                   letterSpacing: 1.5,
                 ),
               ),
@@ -869,7 +870,7 @@ class _SignupScreenState extends State<SignupScreen>
                           _agreedToTerms = value ?? false;
                         });
                       },
-                      activeColor: const Color(0xFF00C8FF),
+                      activeColor: VagusTokens.primary,
                       checkColor: Colors.black,
                       side: BorderSide(
                         color: Colors.white.withValues(alpha: 0.5),
@@ -896,7 +897,7 @@ class _SignupScreenState extends State<SignupScreen>
                             TextSpan(
                               text: 'Terms of Service',
                               style: TextStyle(
-                                color: const Color(0xFF00C8FF),
+                                color: VagusTokens.primary,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -904,7 +905,7 @@ class _SignupScreenState extends State<SignupScreen>
                             TextSpan(
                               text: 'Privacy Policy',
                               style: TextStyle(
-                                color: const Color(0xFF00C8FF),
+                                color: VagusTokens.primary,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -967,7 +968,7 @@ class _SignupScreenState extends State<SignupScreen>
           height: 20,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C8FF)),
+            valueColor: AlwaysStoppedAnimation<Color>(VagusTokens.primary),
           ),
         ),
       );
@@ -1027,7 +1028,7 @@ class _SignupScreenState extends State<SignupScreen>
               style: TextStyle(
                 fontSize: 12,
                 color: isFocused
-                    ? const Color(0xFF00C8FF)
+                    ? VagusTokens.primary
                     : Colors.white.withValues(alpha: 0.6),
                 fontWeight: FontWeight.w600,
               ),
@@ -1085,7 +1086,7 @@ class _SignupScreenState extends State<SignupScreen>
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF00C8FF), width: 2),
+              borderSide: const BorderSide(color: VagusTokens.primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -1121,7 +1122,7 @@ class _SignupScreenState extends State<SignupScreen>
                   height: 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF00C8FF).withValues(
+                    color: VagusTokens.primary.withValues(
                       alpha: _dotOpacityAnimations[index].value,
                     ),
                   ),

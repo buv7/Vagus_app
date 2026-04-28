@@ -1,4 +1,10 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+import 'tokens.dart';
+
 /// Consistent spacing system for Nutrition Platform 2.0.
+///
+/// Core spacing values are @Deprecated aliases for [VagusTokens].
+/// Nutrition-domain-specific sizing (avatar, meal images, charts) remains here.
 ///
 /// Provides a standardized set of spacing values to ensure visual consistency
 /// across all nutrition screens and components.
@@ -24,40 +30,26 @@ class NutritionSpacing {
   // SPACING SCALE
   // ============================================================
 
-  /// Extra extra small spacing (4.0 logical pixels)
-  ///
-  /// Use for: Tight spacing between related elements, icon padding
-  static const double xxs = 4.0;
+  @Deprecated('Use VagusTokens.spaceXs (4 px)')
+  static const double xxs = VagusTokens.spaceXs;    // 4 px
 
-  /// Extra small spacing (8.0 logical pixels)
-  ///
-  /// Use for: Small gaps, chip spacing, badge padding
-  static const double xs = 8.0;
+  @Deprecated('Use VagusTokens.spaceSm (8 px)')
+  static const double xs = VagusTokens.spaceSm;     // 8 px
 
-  /// Small spacing (12.0 logical pixels)
-  ///
-  /// Use for: Vertical spacing between related items, small margins
-  static const double sm = 12.0;
+  /// 12 px — no direct VagusTokens alias; use VagusTokens.space12
+  static const double sm = VagusTokens.space12;     // 12 px
 
-  /// Medium spacing (16.0 logical pixels) - DEFAULT
-  ///
-  /// Use for: Standard padding, default margins, card padding
-  static const double md = 16.0;
+  @Deprecated('Use VagusTokens.spaceMd (16 px)')
+  static const double md = VagusTokens.spaceMd;     // 16 px
 
-  /// Large spacing (24.0 logical pixels)
-  ///
-  /// Use for: Section separation, large margins
-  static const double lg = 24.0;
+  @Deprecated('Use VagusTokens.spaceLg (24 px)')
+  static const double lg = VagusTokens.spaceLg;     // 24 px
 
-  /// Extra large spacing (32.0 logical pixels)
-  ///
-  /// Use for: Major section breaks, screen padding
-  static const double xl = 32.0;
+  @Deprecated('Use VagusTokens.spaceXl (32 px)')
+  static const double xl = VagusTokens.spaceXl;     // 32 px
 
-  /// Extra extra large spacing (48.0 logical pixels)
-  ///
-  /// Use for: Major visual breaks, hero section spacing
-  static const double xxl = 48.0;
+  @Deprecated('Use VagusTokens.spaceXxl (48 px)')
+  static const double xxl = VagusTokens.spaceXxl;   // 48 px
 
   // ============================================================
   // SEMANTIC SPACING
@@ -100,20 +92,20 @@ class NutritionSpacing {
   // BORDER RADIUS
   // ============================================================
 
-  /// Small border radius for chips and badges
-  static const double radiusSm = 8.0;
+  @Deprecated('Use VagusTokens.radiusSm')
+  static const double radiusSm = VagusTokens.radiusSm;
 
-  /// Medium border radius for cards and buttons
-  static const double radiusMd = 12.0;
+  @Deprecated('Use VagusTokens.radiusMd')
+  static const double radiusMd = VagusTokens.radiusMd;
 
-  /// Large border radius for major containers
-  static const double radiusLg = 16.0;
+  @Deprecated('Use VagusTokens.radiusLg')
+  static const double radiusLg = VagusTokens.radiusLg;
 
-  /// Extra large border radius for sheets and modals
-  static const double radiusXl = 24.0;
+  @Deprecated('Use VagusTokens.radiusXl')
+  static const double radiusXl = VagusTokens.radiusXl;
 
-  /// Circular border radius (50% of size)
-  static const double radiusCircular = 9999.0;
+  @Deprecated('Use VagusTokens.radiusPill')
+  static const double radiusCircular = VagusTokens.radiusPill;
 
   // ============================================================
   // ICON SIZES

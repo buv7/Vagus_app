@@ -1,66 +1,101 @@
-// Compatibility layer for legacy token names
-// Maps old token names to current canonical DesignTokens
-// DO NOT modify DesignTokens.dart - only add aliases here
+// Compatibility layer for legacy token names.
+// All aliases here are @Deprecated — migrate to VagusTokens directly.
 
 import 'package:flutter/material.dart';
-import 'design_tokens.dart' show DesignTokens;
+import 'tokens.dart';
 
 // ===== COLOR ALIASES =====
 
-/// Legacy color names mapped to current DesignTokens
-const Color mintAqua = DesignTokens.accentGreen;        // #00E5A0 legacy → accentGreen
-const Color errorRed = DesignTokens.danger;             // Error color → danger
-const Color softYellow = DesignTokens.warn;             // Warning → warn
-const Color steelGrey = DesignTokens.mediumGrey;        // Medium grey
-const Color lightGrey = DesignTokens.lightGrey;         // Light grey
-const Color primaryBlack = DesignTokens.primaryDark;    // Black → primaryDark
-const Color neutralWhite = DesignTokens.neutralWhite;   // White (already correct)
-const Color textPrimary = DesignTokens.neutralWhite;    // Primary text
-const Color textSecondary = DesignTokens.textSecondary; // Secondary text (already correct)
-const Color primaryAccent = DesignTokens.accentGreen;   // Primary accent
+@Deprecated('Use VagusTokens.primary')
+const Color mintAqua = VagusTokens.primary;
+
+@Deprecated('Use VagusTokens.error')
+const Color errorRed = VagusTokens.error;
+
+@Deprecated('Use VagusTokens.warning')
+const Color softYellow = VagusTokens.warning;
+
+@Deprecated('Use VagusTokens.textSecondary or a theme-aware accessor')
+const Color steelGrey = Color(0xFF6A7385);
+
+@Deprecated('Use VagusTokens.textSecondary or a theme-aware accessor')
+const Color lightGrey = Color(0xFF2A2433);
+
+@Deprecated('Use VagusTokens.bgBase')
+const Color primaryBlack = VagusTokens.bgBase;
+
+@Deprecated('Use VagusTokens.textPrimary')
+const Color neutralWhite = VagusTokens.textPrimary;
+
+@Deprecated('Use VagusTokens.textPrimary')
+const Color textPrimary = VagusTokens.textPrimary;
+
+@Deprecated('Use VagusTokens.textSecondary')
+const Color textSecondary = VagusTokens.textSecondary;
+
+@Deprecated('Use VagusTokens.primary')
+const Color primaryAccent = VagusTokens.primary;
 
 // ===== SPACING ALIASES =====
 
-/// Legacy spacing names mapped to 8pt grid system
-const double spacing1 = DesignTokens.space4;   // 4px
-const double spacing2 = DesignTokens.space8;   // 8px
-const double spacing3 = DesignTokens.space12;  // 12px
-const double spacing4 = DesignTokens.space16;  // 16px
-const double spacing5 = DesignTokens.space20;  // 20px
-const double spacing6 = DesignTokens.space24;  // 24px
+@Deprecated('Use VagusTokens.spaceXs')
+const double spacing1 = VagusTokens.spaceXs;
+
+@Deprecated('Use VagusTokens.spaceSm')
+const double spacing2 = VagusTokens.spaceSm;
+
+@Deprecated('Use VagusTokens.space12')
+const double spacing3 = VagusTokens.space12;
+
+@Deprecated('Use VagusTokens.spaceMd')
+const double spacing4 = VagusTokens.spaceMd;
+
+@Deprecated('Use VagusTokens.space20')
+const double spacing5 = VagusTokens.space20;
+
+@Deprecated('Use VagusTokens.spaceLg')
+const double spacing6 = VagusTokens.spaceLg;
 
 // ===== RADIUS ALIASES =====
 
-/// Legacy radius names mapped to current system
-const double radiusS = DesignTokens.radius6;   // Small radius
-const double radiusM = DesignTokens.radius12;  // Medium radius
-const double radiusL = DesignTokens.radius16;  // Large radius
-const double radiusXL = DesignTokens.radius20; // Extra large radius
+@Deprecated('Use VagusTokens.radiusSm')
+const double radiusM = VagusTokens.radiusMd;
+
+@Deprecated('Use VagusTokens.radiusMd')
+const double radiusS = VagusTokens.radiusMd;
+
+@Deprecated('Use VagusTokens.radiusLg')
+const double radiusL = VagusTokens.radiusLg;
+
+@Deprecated('Use VagusTokens.radiusXl')
+const double radiusXL = VagusTokens.radiusXl;
 
 // ===== TYPOGRAPHY ALIASES =====
 
-/// Legacy typography sizes
-const double h1 = 32.0;
-const double h2 = 28.0;
-const double h3 = 24.0;
-const double body = 16.0;
+const double h1      = 32.0;
+const double h2      = 28.0;
+const double h3      = 24.0;
+const double body    = 16.0;
 const double caption = 12.0;
 
 // ===== SHADOW ALIASES =====
 
-/// Legacy shadow definitions
+@Deprecated('Use VagusTokens.shadowCard')
 final List<BoxShadow> glassShadow = [
   BoxShadow(
-    color: DesignTokens.primaryDark.withValues(alpha: 0.08),
+    color: VagusTokens.bgBase.withValues(alpha: 0.08),
     blurRadius: 24,
     offset: const Offset(0, 12),
-  )
+  ),
 ];
 
 // ===== HELPER GETTERS =====
 
-/// Legacy brand color getters
-Color get brandMint => DesignTokens.accentGreen;
-Color get brandYellow => DesignTokens.warn;
-Color get brandGreen => DesignTokens.success;
+@Deprecated('Use VagusTokens.primary')
+Color get brandMint => VagusTokens.primary;
 
+@Deprecated('Use VagusTokens.warning')
+Color get brandYellow => VagusTokens.warning;
+
+@Deprecated('Use VagusTokens.success')
+Color get brandGreen => VagusTokens.success;

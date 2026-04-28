@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
 import '../../theme/app_theme.dart';
@@ -288,7 +289,7 @@ class _FoodItemEditModalState extends State<FoodItemEditModal> {
                 emoji: '💪',
                 label: 'Protein',
                 controller: _proteinController,
-                color: const Color(0xFF00D9A3),
+                color: VagusTokens.success,
               ),
             ),
             const SizedBox(width: 12),
@@ -298,7 +299,7 @@ class _FoodItemEditModalState extends State<FoodItemEditModal> {
                 emoji: '🍞',
                 label: 'Carbs',
                 controller: _carbsController,
-                color: const Color(0xFFFF9A3C),
+                color: VagusTokens.macroCarbs,
               ),
             ),
           ],
@@ -312,7 +313,7 @@ class _FoodItemEditModalState extends State<FoodItemEditModal> {
                 emoji: '🥑',
                 label: 'Fat',
                 controller: _fatController,
-                color: const Color(0xFFFFD93C),
+                color: VagusTokens.macroFat,
               ),
             ),
             const SizedBox(width: 12),
@@ -540,7 +541,7 @@ class _FoodItemEditModalState extends State<FoodItemEditModal> {
               child: ElevatedButton(
                 onPressed: _handleSave,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00D9A3),
+                  backgroundColor: VagusTokens.success,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

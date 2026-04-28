@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import '../../theme/app_theme.dart';
 import '../../models/nutrition/nutrition_plan.dart';
@@ -103,19 +104,19 @@ class FoodItemCard extends StatelessWidget {
                       emoji: '💪',
                       label: 'Protein',
                       value: '${foodItem.protein.toStringAsFixed(1)}g',
-                      color: const Color(0xFF00D9A3),
+                      color: VagusTokens.success,
                     ),
                     _buildMacroChip(
                       emoji: '🍞',
                       label: 'Carbs',
                       value: '${foodItem.carbs.toStringAsFixed(1)}g',
-                      color: const Color(0xFFFF9A3C),
+                      color: VagusTokens.macroCarbs,
                     ),
                     _buildMacroChip(
                       emoji: '🥑',
                       label: 'Fat',
                       value: '${foodItem.fat.toStringAsFixed(1)}g',
-                      color: const Color(0xFFFFD93C),
+                      color: VagusTokens.macroFat,
                     ),
                     _buildMacroChip(
                       emoji: '🔥',

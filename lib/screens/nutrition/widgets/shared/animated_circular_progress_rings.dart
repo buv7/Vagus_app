@@ -1,5 +1,6 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../services/haptics.dart';
 
@@ -247,7 +248,7 @@ class _AnimatedCircularProgressRingsState
                     ),
                     if (_allTargetsMet())
                       BoxShadow(
-                        color: const Color(0xFF00D9A3).withValues(alpha: 0.3),
+                        color: VagusTokens.success.withValues(alpha: 0.3),
                         blurRadius: 30,
                         offset: const Offset(0, 0),
                       ),
@@ -350,7 +351,7 @@ class _AnimatedCircularProgressRingsState
 
   Color _getCalorieStatusColor() {
     final progress = widget.totalCalories / widget.calorieTarget;
-    if (progress >= 0.9 && progress <= 1.1) return const Color(0xFF00D9A3);
+    if (progress >= 0.9 && progress <= 1.1) return VagusTokens.success;
     if (progress < 0.9) return const Color(0xFF3B82F6);
     return const Color(0xFFEF4444);
   }
@@ -378,21 +379,21 @@ class _MacroRingsPainter extends CustomPainter {
     final rings = [
       _RingConfig(
         progress: proteinProgress,
-        color: const Color(0xFF00D9A3), // Protein green
+        color: VagusTokens.success, // Protein green
         radius: baseRadius - 20,
         strokeWidth: 12,
         label: 'Protein',
       ),
       _RingConfig(
         progress: carbsProgress,
-        color: const Color(0xFFFF9A3C), // Carbs orange
+        color: VagusTokens.macroCarbs, // Carbs orange
         radius: baseRadius - 40,
         strokeWidth: 12,
         label: 'Carbs',
       ),
       _RingConfig(
         progress: fatProgress,
-        color: const Color(0xFFFFD93C), // Fat yellow
+        color: VagusTokens.macroFat, // Fat yellow
         radius: baseRadius - 60,
         strokeWidth: 12,
         label: 'Fat',

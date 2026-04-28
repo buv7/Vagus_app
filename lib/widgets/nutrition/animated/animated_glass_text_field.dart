@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 
 /// Animated text field with focus effects and glow
@@ -67,7 +68,7 @@ class _AnimatedGlassTextFieldState extends State<AnimatedGlassTextField>
 
     _borderColorAnimation = ColorTween(
       begin: widget.borderColor ?? Colors.white.withValues(alpha: 0.1),
-      end: const Color(0xFF00D9A3).withValues(alpha: 0.5),
+      end: VagusTokens.success.withValues(alpha: 0.5),
     ).animate(CurvedAnimation(
       parent: _focusController,
       curve: Curves.easeOut,
@@ -108,7 +109,7 @@ class _AnimatedGlassTextFieldState extends State<AnimatedGlassTextField>
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF00D9A3).withValues(alpha: _glowAnimation.value / 100),
+                    color: VagusTokens.success.withValues(alpha: _glowAnimation.value / 100),
                     blurRadius: _glowAnimation.value,
                     spreadRadius: 0,
                   ),
@@ -134,7 +135,7 @@ class _AnimatedGlassTextFieldState extends State<AnimatedGlassTextField>
                     child: Icon(
                       widget.icon,
                       color: _isFocused
-                          ? const Color(0xFF00D9A3)
+                          ? VagusTokens.success
                           : Colors.white54,
                       size: 20,
                     ),

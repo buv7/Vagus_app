@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 
 class PremiumGradientButton extends StatefulWidget {
@@ -58,8 +59,8 @@ class _PremiumGradientButtonState extends State<PremiumGradientButton>
                         Colors.grey.withValues(alpha: 0.2),
                       ]
                     : const [
-                        Color(0xFF00C8FF),
-                        Color(0xFF0080FF),
+                        VagusTokens.primary,
+                        VagusTokens.primaryDark,
                       ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -68,7 +69,7 @@ class _PremiumGradientButtonState extends State<PremiumGradientButton>
               boxShadow: _isHovered && !isDisabled
                   ? [
                       BoxShadow(
-                        color: const Color(0xFF00C8FF).withValues(alpha: 0.4),
+                        color: VagusTokens.primary.withValues(alpha: 0.4),
                         blurRadius: 32,
                         spreadRadius: 2,
                         offset: const Offset(0, 8),
@@ -76,7 +77,7 @@ class _PremiumGradientButtonState extends State<PremiumGradientButton>
                     ]
                   : [
                       BoxShadow(
-                        color: const Color(0xFF00C8FF).withValues(alpha: 0.2),
+                        color: VagusTokens.primary.withValues(alpha: 0.2),
                         blurRadius: 16,
                         spreadRadius: 0,
                         offset: const Offset(0, 4),

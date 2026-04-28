@@ -1,48 +1,81 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'tokens.dart';
 
-/// Design tokens for NFT Marketplace UI/UX v2
-/// Centralized constants for colors, typography, spacing, shadows, and glassmorphic effects
+/// Legacy design-token namespace — retained for backward compatibility.
+///
+/// All constants below are @Deprecated aliases for [VagusTokens].
+/// Migrate call-sites to `VagusTokens.xxx` and remove this file in a future PR.
+// ignore_for_file: deprecated_member_use_from_same_package
 class DesignTokens {
-  // Private constructor to prevent instantiation
   DesignTokens._();
 
-  // ===== PREMIUM NEURAL FITNESS COLORS =====
+  // ===== BACKGROUNDS =====
 
-  /// Primary Background Colors - Pure black theme
-  static const Color primaryDark = Color(0xFF000000);      // Black base
-  static const Color darkBackground = Color(0xFF0A0A14);   // Black soft
-  static const Color secondaryDark = Color(0xFF0A0A14);    // Black soft (compatibility)
-  static const Color cardBackground = Color(0xF20A0A14);   // Black soft with 95% opacity
+  @Deprecated('Use VagusTokens.bgBase')
+  static const Color primaryDark = VagusTokens.bgBase;
 
-  /// Cyan/Blue Spectrum Colors
-  static const Color accentGreen = Color(0xFF00C8FF);      // Cyan primary (renamed from green for compatibility)
-  static const Color accentBlue = Color(0xFF0080FF);       // Blue deep
-  static const Color primaryBlue = Color(0xFF0099FF);      // Blue medium
-  static const Color darkBlue = Color(0xFF0064C8);         // Blue dark
+  @Deprecated('Use VagusTokens.bgSurface')
+  static const Color darkBackground = VagusTokens.bgSurface;
 
-  /// Accent Colors
-  static const Color accentTeal = Color(0xFF00FFC8);       // Teal
-  static const Color accentPink = Color(0xFFFF6B9D);       // Pink (kept)
-  static const Color accentPurple = Color(0xFF9D6BFF);     // Purple (kept)
-  static const Color accentOrange = Color(0xFFFF9D6B);     // Orange (kept)
+  @Deprecated('Use VagusTokens.bgSurface')
+  static const Color secondaryDark = VagusTokens.bgSurface;
 
-  /// Text Colors - Pure white spectrum
-  static const Color neutralWhite = Color(0xFFFFFFFF);     // Pure white text
-  static const Color textPrimary = Color(0xFFFFFFFF);      // Primary text (white)
-  static const Color textSecondary = Color(0x99FFFFFF);    // Secondary text (60% white)
-  static const Color textTertiary = Color(0x66FFFFFF);     // Tertiary text (40% white)
-  static const Color textDisabled = Color(0x4DFFFFFF);     // Disabled text (30% white)
-  static const Color lightGrey = Color(0xFF2A2433);        // Darker grey for dark theme (legacy)
-  static const Color mediumGrey = Color(0xFF6A7385);       // Medium text (legacy)
-  static const Color darkGrey = Color(0xFF1C1C1C);         // Dark card backgrounds (legacy)
+  @Deprecated('Use VagusTokens.surfaceGlass')
+  static const Color cardBackground = VagusTokens.surfaceGlass;
 
-  /// Gradient Definitions - Premium neural style
-  static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF00C8FF), Color(0xFF0080FF)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  // ===== CYAN / BLUE SPECTRUM =====
+
+  @Deprecated('Use VagusTokens.primary')
+  static const Color accentGreen = VagusTokens.primary;
+
+  @Deprecated('Use VagusTokens.primaryDark')
+  static const Color accentBlue = VagusTokens.primaryDark;
+
+  @Deprecated('Use VagusTokens.primaryDark')
+  static const Color primaryBlue = Color(0xFF0099FF);
+
+  static const Color darkBlue = Color(0xFF0064C8);
+
+  // ===== ACCENT COLORS =====
+
+  @Deprecated('Use VagusTokens.primaryLight')
+  static const Color accentTeal = VagusTokens.primaryLight;
+
+  @Deprecated('Use VagusTokens.accentPink')
+  static const Color accentPink = VagusTokens.accentPink;
+
+  @Deprecated('Use VagusTokens.secondary')
+  static const Color accentPurple = VagusTokens.secondary;
+
+  @Deprecated('Use VagusTokens.accentOrange')
+  static const Color accentOrange = VagusTokens.accentOrange;
+
+  // ===== TEXT =====
+
+  @Deprecated('Use VagusTokens.textPrimary')
+  static const Color neutralWhite = VagusTokens.textPrimary;
+
+  @Deprecated('Use VagusTokens.textPrimary')
+  static const Color textPrimary = VagusTokens.textPrimary;
+
+  @Deprecated('Use VagusTokens.textSecondary')
+  static const Color textSecondary = VagusTokens.textSecondary;
+
+  @Deprecated('Use VagusTokens.textTertiary')
+  static const Color textTertiary = VagusTokens.textTertiary;
+
+  @Deprecated('Use VagusTokens.textDisabled')
+  static const Color textDisabled = VagusTokens.textDisabled;
+
+  static const Color lightGrey  = Color(0xFF2A2433);
+  static const Color mediumGrey = Color(0xFF6A7385);
+  static const Color darkGrey   = Color(0xFF1C1C1C);
+
+  // ===== GRADIENTS =====
+
+  @Deprecated('Use VagusTokens.gradientPrimary')
+  static const LinearGradient primaryGradient = VagusTokens.gradientPrimary;
 
   static const LinearGradient textGradient = LinearGradient(
     colors: [Color(0xFFFFFFFF), Color(0xCC00C8FF)],
@@ -50,303 +83,242 @@ class DesignTokens {
     end: Alignment.bottomCenter,
   );
 
-  static const RadialGradient backgroundGradient = RadialGradient(
-    colors: [
-      Color(0x1A00C8FF), // Subtle cyan hint
-      Color(0x0D0080FF), // Subtle blue hint
-      Color(0xFF000000), // Black base
-    ],
-    stops: [0.0, 0.5, 1.0],
-    center: Alignment.center,
-    radius: 1.5,
-  );
+  @Deprecated('Use VagusTokens.gradientBackground')
+  static const RadialGradient backgroundGradient = VagusTokens.gradientBackground;
 
-  static const LinearGradient cardGradient = LinearGradient(
-    colors: [Color(0x40FFFFFF), Color(0x10FFFFFF)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  @Deprecated('Use VagusTokens.gradientCard')
+  static const LinearGradient cardGradient = VagusTokens.gradientCard;
 
   static const LinearGradient darkGradient = LinearGradient(
-    colors: [Color(0xFF000000), Color(0xFF0A0A14)],
+    colors: [Color(0xFF000000), VagusTokens.bgSurface],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Legacy gradient for compatibility
-  static const LinearGradient vibrantGradient = primaryGradient;
+  @Deprecated('Use VagusTokens.gradientPrimary')
+  static const LinearGradient vibrantGradient = VagusTokens.gradientPrimary;
 
-  /// State Colors (updated for premium theme)
-  static const Color success = Color(0xFF00C8FF); // Use cyan primary
-  static const Color info = Color(0xFF0080FF);    // Use blue deep
-  static const Color warn = Color(0xFFFF9D6B);    // Use accent orange (kept)
-  static const Color danger = Color(0xFFFF6B9D);  // Use accent pink (kept)
+  // ===== SEMANTIC STATES =====
 
-  /// State Background Colors (dark theme variants)
-  static const Color successBg = Color(0x2000C8FF); // 12% cyan
-  static const Color infoBg = Color(0x200080FF);    // 12% blue
-  static const Color warnBg = Color(0x20FF9D6B);    // 12% orange
-  static const Color dangerBg = Color(0x20FF6B9D);  // 12% pink
+  @Deprecated('Use VagusTokens.success')
+  static const Color success = VagusTokens.success;
 
-  // ===== BACKWARD COMPATIBILITY COLORS =====
+  @Deprecated('Use VagusTokens.info')
+  static const Color info = VagusTokens.info;
 
-  /// Legacy brand colors (mapped to new NFT colors for compatibility)
-  static const Color blue600 = accentBlue;    // Primary brand -> Blue accent
-  static const Color blue500 = accentBlue;    // Secondary brand -> Blue accent
-  static const Color blue200 = Color(0xFFC7D2FE); // Light brand border (kept)
-  static const Color blue100 = Color(0xFFDBEAFE); // Very light brand tint (kept)
-  static const Color blue50 = Color(0xFFF2F5FF);  // Light brand tint (kept)
-  static const Color blue700 = accentBlue;    // Darker brand -> Blue accent
-  static const Color blue900 = primaryDark;   // Dark brand -> Primary dark
+  @Deprecated('Use VagusTokens.warning')
+  static const Color warn = VagusTokens.warning;
 
-  /// Legacy accent colors
-  static const Color purple500 = accentPurple; // Primary accent -> Purple accent
-  static const Color purple50 = Color(0xFFF6F0FF);  // Light accent tint (kept)
+  @Deprecated('Use VagusTokens.error')
+  static const Color danger = VagusTokens.error;
 
-  /// Legacy neutral colors (mapped to new dark theme colors)
-  static const Color ink900 = primaryDark;    // Darkest text -> Primary dark
-  static const Color ink700 = secondaryDark;  // Dark text -> Secondary dark
-  static const Color ink600 = lightGrey;      // Medium-dark text -> Light grey
-  static const Color ink500 = mediumGrey;     // Medium text -> Medium grey
-  static const Color ink400 = textSecondary;  // Medium-light text -> Text secondary
-  static const Color ink300 = glassBorder;    // Light borders -> Glass border
-  static const Color ink200 = glassBorder;    // Lighter borders -> Glass border
-  static const Color ink100 = Color(0xFFE7EAF2); // Light borders (kept for light theme)
-  static const Color ink50 = Color(0xFFF7F8FC);  // Lightest surface (kept for light theme)
+  @Deprecated('Use VagusTokens.successBg')
+  static const Color successBg = VagusTokens.successBg;
+
+  @Deprecated('Use VagusTokens.infoBg')
+  static const Color infoBg = VagusTokens.infoBg;
+
+  @Deprecated('Use VagusTokens.warningBg')
+  static const Color warnBg = VagusTokens.warningBg;
+
+  @Deprecated('Use VagusTokens.errorBg')
+  static const Color dangerBg = VagusTokens.errorBg;
+
+  // ===== LEGACY BRAND COLORS =====
+
+  static const Color blue600 = VagusTokens.primaryDark;
+  static const Color blue500 = VagusTokens.primaryDark;
+  static const Color blue200 = Color(0xFFC7D2FE);
+  static const Color blue100 = Color(0xFFDBEAFE);
+  static const Color blue50  = Color(0xFFF2F5FF);
+  static const Color blue700 = VagusTokens.primaryDark;
+  static const Color blue900 = VagusTokens.bgBase;
+
+  static const Color purple500 = VagusTokens.secondary;
+  static const Color purple50  = Color(0xFFF6F0FF);
+
+  static const Color ink900 = VagusTokens.bgBase;
+  static const Color ink700 = VagusTokens.bgSurface;
+  static const Color ink600 = Color(0xFF2A2433);
+  static const Color ink500 = Color(0xFF6A7385);
+  static const Color ink400 = VagusTokens.textSecondary;
+  static const Color ink300 = VagusTokens.glassBorder;
+  static const Color ink200 = VagusTokens.glassBorder;
+  static const Color ink100 = Color(0xFFE7EAF2);
+  static const Color ink50  = Color(0xFFF7F8FC);
 
   // ===== TYPOGRAPHY =====
 
-  /// Display Text (ultra-light for premium feel)
-  static const TextStyle displayLarge = TextStyle(
-    fontSize: 72,
-    fontWeight: FontWeight.w100,
-    letterSpacing: -2,
-    height: 1.1,
-  );
+  @Deprecated('Use VagusTokens.displayLg')
+  static const TextStyle displayLarge = VagusTokens.displayLg;
 
-  static const TextStyle displayMedium = TextStyle(
-    fontSize: 48,
-    fontWeight: FontWeight.w100,
-    letterSpacing: -1,
-    height: 1.2,
-  );
+  @Deprecated('Use VagusTokens.displayMd')
+  static const TextStyle displayMedium = VagusTokens.displayMd;
 
-  static const TextStyle displaySmall = TextStyle(
-    fontSize: 34,
-    fontWeight: FontWeight.w200,
-    letterSpacing: -0.5,
-    height: 1.2,
-  );
+  @Deprecated('Use VagusTokens.displaySm')
+  static const TextStyle displaySmall = VagusTokens.displaySm;
 
-  /// Title Text (light to regular)
-  static const TextStyle titleLarge = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w400,
-    height: 1.3,
-  );
+  @Deprecated('Use VagusTokens.titleLg')
+  static const TextStyle titleLarge = VagusTokens.titleLg;
 
-  static const TextStyle titleMedium = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w400,
-    height: 1.3,
-  );
+  @Deprecated('Use VagusTokens.titleMd')
+  static const TextStyle titleMedium = VagusTokens.titleMd;
 
-  static const TextStyle titleSmall = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    height: 1.3,
-  );
+  @Deprecated('Use VagusTokens.titleSm')
+  static const TextStyle titleSmall = VagusTokens.titleSm;
 
-  /// Body Text (regular with increased line height)
-  static const TextStyle bodyLarge = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    height: 1.8,
-  );
+  @Deprecated('Use VagusTokens.bodyLg')
+  static const TextStyle bodyLarge = VagusTokens.bodyLg;
 
-  static const TextStyle bodyMedium = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    height: 1.6,
-  );
+  @Deprecated('Use VagusTokens.bodyMd')
+  static const TextStyle bodyMedium = VagusTokens.bodyMd;
 
-  static const TextStyle bodySmall = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-  );
+  @Deprecated('Use VagusTokens.bodySm')
+  static const TextStyle bodySmall = VagusTokens.bodySm;
 
-  /// Label Text (semibold for buttons)
-  static const TextStyle labelMedium = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-  );
+  @Deprecated('Use VagusTokens.labelMd')
+  static const TextStyle labelMedium = VagusTokens.labelMd;
 
-  static const TextStyle labelSmall = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    letterSpacing: 1.5,
-    height: 1.4,
-  );
+  @Deprecated('Use VagusTokens.labelSm')
+  static const TextStyle labelSmall = VagusTokens.labelSm;
 
   // ===== SPACING =====
-  
-  /// 8-pt grid spacing system
-  static const double space2 = 2.0;
-  static const double space4 = 4.0;
-  static const double space6 = 6.0;
-  static const double space8 = 8.0;
-  static const double space12 = 12.0;
-  static const double space14 = 14.0;
-  static const double space16 = 16.0;
-  static const double space20 = 20.0;
-  static const double space24 = 24.0;
-  static const double space32 = 32.0;
-  static const double space48 = 48.0;
+
+  @Deprecated('Use VagusTokens.space2')
+  static const double space2 = VagusTokens.space2;
+  @Deprecated('Use VagusTokens.spaceXs or VagusTokens.space4')
+  static const double space4 = VagusTokens.space4;
+  @Deprecated('Use VagusTokens.space6')
+  static const double space6 = VagusTokens.space6;
+  @Deprecated('Use VagusTokens.spaceSm or VagusTokens.space8')
+  static const double space8 = VagusTokens.space8;
+  @Deprecated('Use VagusTokens.space12')
+  static const double space12 = VagusTokens.space12;
+  @Deprecated('Use VagusTokens.space14')
+  static const double space14 = VagusTokens.space14;
+  @Deprecated('Use VagusTokens.spaceMd or VagusTokens.space16')
+  static const double space16 = VagusTokens.space16;
+  @Deprecated('Use VagusTokens.space20')
+  static const double space20 = VagusTokens.space20;
+  @Deprecated('Use VagusTokens.spaceLg or VagusTokens.space24')
+  static const double space24 = VagusTokens.space24;
+  @Deprecated('Use VagusTokens.spaceXl or VagusTokens.space32')
+  static const double space32 = VagusTokens.space32;
+  @Deprecated('Use VagusTokens.spaceXxl or VagusTokens.space48')
+  static const double space48 = VagusTokens.space48;
 
   // ===== RADIUS =====
 
-  /// Border radius values
-  static const double radius4 = 4.0;
-  static const double radius6 = 6.0;
-  static const double radius8 = 8.0;
-  static const double radius12 = 12.0;
-  static const double radius16 = 16.0;
+  static const double radius4  = 4.0;
+  static const double radius6  = 6.0;
+
+  @Deprecated('Use VagusTokens.radiusSm')
+  static const double radius8 = VagusTokens.radiusSm;
+
+  @Deprecated('Use VagusTokens.radiusMd')
+  static const double radius12 = VagusTokens.radiusMd;
+
+  @Deprecated('Use VagusTokens.radiusLg')
+  static const double radius16 = VagusTokens.radiusLg;
+
   static const double radius20 = 20.0;
-  static const double radius24 = 24.0;
+
+  @Deprecated('Use VagusTokens.radiusXl')
+  static const double radius24 = VagusTokens.radiusXl;
+
   static const double radius28 = 28.0;
-  static const double radiusFull = 999.0;
 
-  // ===== SHADOWS & GLASSMORPHIC EFFECTS =====
+  @Deprecated('Use VagusTokens.radiusPill')
+  static const double radiusFull = VagusTokens.radiusPill;
 
-  /// Glassmorphic shadows with premium glow effects
-  static const List<BoxShadow> glowSm = [
-    BoxShadow(
-      color: Color(0x4000C8FF), // Cyan primary @ 25%
-      blurRadius: 20,
-      offset: Offset(0, 0),
-      spreadRadius: 0,
-    ),
-  ];
+  // ===== SHADOWS / GLASSMORPHIC =====
 
-  static const List<BoxShadow> glowMd = [
-    BoxShadow(
-      color: Color(0x400080FF), // Blue deep @ 25%
-      blurRadius: 30,
-      offset: Offset(0, 0),
-      spreadRadius: 0,
-    ),
-  ];
+  @Deprecated('Use VagusTokens.shadowSm')
+  static const List<BoxShadow> glowSm = VagusTokens.shadowSm;
 
-  static const List<BoxShadow> glowLg = [
-    BoxShadow(
-      color: Color(0x4000C8FF), // Cyan primary @ 25%
-      blurRadius: 40,
-      offset: Offset(0, 0),
-      spreadRadius: 0,
-    ),
-  ];
+  @Deprecated('Use VagusTokens.shadowMd')
+  static const List<BoxShadow> glowMd = VagusTokens.shadowMd;
 
-  static const List<BoxShadow> glowPurple = [
-    BoxShadow(
-      color: Color(0x4000FFC8), // Teal @ 25%
-      blurRadius: 30,
-      offset: Offset(0, 0),
-      spreadRadius: 0,
-    ),
-  ];
+  @Deprecated('Use VagusTokens.shadowLg')
+  static const List<BoxShadow> glowLg = VagusTokens.shadowLg;
 
-  /// Card shadows with subtle elevation
-  static const List<BoxShadow> cardShadow = [
-    BoxShadow(
-      color: Color(0x20000000), // Black @ 12%
-      blurRadius: 16,
-      offset: Offset(0, 8),
-      spreadRadius: -4,
-    ),
-  ];
+  @Deprecated('Use VagusTokens.shadowPurple')
+  static const List<BoxShadow> glowPurple = VagusTokens.shadowPurple;
 
-  /// Dark mode shadows (minimal, elevation-based)
-  static const List<BoxShadow> shadowDark = [
-    BoxShadow(
-      color: Color(0x10000000), // Black @ 6%
-      blurRadius: 12,
-      offset: Offset(0, 6),
-      spreadRadius: 0,
-    ),
-  ];
+  @Deprecated('Use VagusTokens.shadowCard')
+  static const List<BoxShadow> cardShadow = VagusTokens.shadowCard;
 
-  /// Glassmorphic border colors
-  static const Color glassBorder = Color(0x14FFFFFF); // 8% white
-  static const Color glassBorderAccent = Color(0x4000C8FF); // 25% cyan
+  @Deprecated('Use VagusTokens.shadowSubtle')
+  static const List<BoxShadow> shadowDark = VagusTokens.shadowSubtle;
 
-  /// Backdrop filter blur values
-  static const double blurSm = 10.0;
-  static const double blurMd = 15.0;
-  static const double blurLg = 20.0;
+  @Deprecated('Use VagusTokens.glassBorder')
+  static const Color glassBorder = VagusTokens.glassBorder;
 
-  // ===== ANIMATION DURATIONS =====
-  
-  /// Motion durations (160-220ms for micro-interactions)
-  static const Duration durationFast = Duration(milliseconds: 160);
-  static const Duration durationNormal = Duration(milliseconds: 200);
-  static const Duration durationSlow = Duration(milliseconds: 220);
+  @Deprecated('Use VagusTokens.glassBorderAccent')
+  static const Color glassBorderAccent = VagusTokens.glassBorderAccent;
+
+  @Deprecated('Use VagusTokens.glassBlurSm')
+  static const double blurSm = VagusTokens.glassBlurSm;
+
+  @Deprecated('Use VagusTokens.glassBlurMd')
+  static const double blurMd = VagusTokens.glassBlurMd;
+
+  @Deprecated('Use VagusTokens.glassBlurLg')
+  static const double blurLg = VagusTokens.glassBlurLg;
+
+  // ===== ANIMATION =====
+
+  @Deprecated('Use VagusTokens.animFast')
+  static const Duration durationFast = VagusTokens.animFast;
+
+  @Deprecated('Use VagusTokens.animNormal')
+  static const Duration durationNormal = VagusTokens.animNormal;
+
+  @Deprecated('Use VagusTokens.animSlow')
+  static const Duration durationSlow = VagusTokens.animSlow;
 
   // ===== CATEGORY COLORS =====
 
-  /// Category color mapping for consistent visual hierarchy (updated for premium theme)
   static const Map<String, Color> categoryColors = {
-    'workout': primaryBlue,    // Blue medium for workouts
-    'nutrition': accentGreen,  // Cyan primary for nutrition
-    'calling': accentPink,     // Pink for calling/sessions (kept)
-    'coach': accentPurple,     // Purple for coaching (kept)
-    'other': mediumGrey,       // Grey for other (kept)
+    'workout':   Color(0xFF0099FF),
+    'nutrition': VagusTokens.primary,
+    'calling':   VagusTokens.accentPink,
+    'coach':     VagusTokens.secondary,
+    'other':     Color(0xFF6A7385),
   };
 
-  /// Category background colors (dark theme variants)
   static const Map<String, Color> categoryBgColors = {
-    'workout': Color(0x200099FF),   // Blue medium @ 12%
-    'nutrition': Color(0x2000C8FF), // Cyan primary @ 12%
-    'calling': Color(0x20FF6B9D),   // Pink @ 12%
-    'coach': Color(0x209D6BFF),     // Purple @ 12%
-    'other': Color(0x206A7385),     // Grey @ 12%
+    'workout':   Color(0x200099FF),
+    'nutrition': Color(0x2000C8FF),
+    'calling':   Color(0x20FF6B9D),
+    'coach':     Color(0x209D6BFF),
+    'other':     Color(0x206A7385),
   };
 
   // ===== NAVIGATION =====
 
-  /// Navigation active state colors (updated for premium theme)
-  static const Color navActive = accentGreen; // Cyan primary
-  static const Color navInactive = textSecondary; // 60% white
+  static const Color navActive   = VagusTokens.primary;
+  static const Color navInactive = VagusTokens.textSecondary;
 
-  /// Navigation active state styles
   static const TextStyle navActiveLabel = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w600,
-    color: accentGreen,
+    fontSize: 12, fontWeight: FontWeight.w600, color: VagusTokens.primary,
   );
-
   static const TextStyle navInactiveLabel = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    color: textSecondary, // 60% white
+    fontSize: 12, fontWeight: FontWeight.w400, color: VagusTokens.textSecondary,
   );
 
   // ===== BADGES =====
 
-  /// Badge sizes and styles
-  static const double badgeSize = 16.0;
+  static const double badgeSize      = 16.0;
   static const double badgeSizeSmall = 12.0;
 
-  /// Badge colors (updated for premium theme)
-  static const Color badgeDefault = accentBlue; // Blue deep
-  static const Color badgeSuccess = accentGreen; // Cyan primary
-  static const Color badgeWarning = accentOrange; // Orange (kept)
-  static const Color badgeDanger = accentPink; // Pink (kept)
+  static const Color badgeDefault = VagusTokens.primaryDark;
+  static const Color badgeSuccess = VagusTokens.primary;
+  static const Color badgeWarning = VagusTokens.accentOrange;
+  static const Color badgeDanger  = VagusTokens.accentPink;
 
   // ===== GLASSMORPHIC HELPER METHODS =====
 
-  /// Create a glassmorphic decoration
   static BoxDecoration glassmorphicDecoration({
     Color? backgroundColor,
     double borderRadius = 20.0,
@@ -354,17 +326,16 @@ class DesignTokens {
     List<BoxShadow>? boxShadow,
   }) {
     return BoxDecoration(
-      color: backgroundColor ?? cardBackground,
+      color: backgroundColor ?? VagusTokens.surfaceGlass,
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
-        color: borderColor ?? glassBorder,
+        color: borderColor ?? VagusTokens.glassBorder,
         width: 1.0,
       ),
-      boxShadow: boxShadow ?? cardShadow,
+      boxShadow: boxShadow ?? VagusTokens.shadowCard,
     );
   }
 
-  /// Create backdrop filter for glassmorphic effect
   static Widget createBackdropFilter({
     required Widget child,
     double sigmaX = 15.0,
@@ -378,48 +349,38 @@ class DesignTokens {
     );
   }
 
-  // ===== THEME-AWARE HELPER METHODS =====
-  // Use these instead of static colors when you need theme support
-  
-  /// Get theme-aware card background
-  /// Usage: DesignTokens.cardBg(context)
+  // ===== THEME-AWARE HELPERS =====
+
   static Color cardBg(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? cardBackground : const Color(0xFFFFFFFF);
+    return isDark ? VagusTokens.surfaceGlass : const Color(0xFFFFFFFF);
   }
 
-  /// Get theme-aware primary text color
-  /// Usage: DesignTokens.textColor(context)
   static Color textColor(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? neutralWhite : const Color(0xFF0B1220);
+    return isDark ? VagusTokens.textPrimary : VagusTokens.textInverse;
   }
 
-  /// Get theme-aware secondary text color
   static Color textColorSecondary(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? textSecondary : const Color(0xFF4B5563);
+    return isDark ? VagusTokens.textSecondary : const Color(0xFF4B5563);
   }
 
-  /// Get theme-aware icon color
   static Color iconColor(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? neutralWhite : const Color(0xFF0B1220);
+    return isDark ? VagusTokens.textPrimary : VagusTokens.textInverse;
   }
 
-  /// Get theme-aware border color
   static Color borderColor(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? glassBorder : const Color(0xFFE5E7EB);
+    return isDark ? VagusTokens.glassBorder : const Color(0xFFE5E7EB);
   }
 
-  /// Get theme-aware scaffold background
   static Color scaffoldBg(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? primaryDark : const Color(0xFFF7F8FA);
+    return isDark ? VagusTokens.bgBase : const Color(0xFFF7F8FA);
   }
 
-  /// Create theme-aware glassmorphic decoration
   static BoxDecoration adaptiveGlassmorphicDecoration(
     BuildContext context, {
     double borderRadius = 20.0,
@@ -427,14 +388,14 @@ class DesignTokens {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return BoxDecoration(
-      color: isDark ? cardBackground : const Color(0xFFFFFFFF),
+      color: isDark ? VagusTokens.surfaceGlass : const Color(0xFFFFFFFF),
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
-        color: isDark ? glassBorder : const Color(0xFFE5E7EB),
+        color: isDark ? VagusTokens.glassBorder : const Color(0xFFE5E7EB),
         width: 1.0,
       ),
-      boxShadow: boxShadow ?? (isDark 
-          ? cardShadow 
+      boxShadow: boxShadow ?? (isDark
+          ? VagusTokens.shadowCard
           : [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),

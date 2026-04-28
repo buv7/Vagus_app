@@ -1,5 +1,6 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 
 class FloatingParticles extends StatefulWidget {
   final int particleCount;
@@ -83,10 +84,10 @@ class _FloatingParticlesState extends State<FloatingParticles>
                 height: 2,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF00C8FF).withValues(alpha: 0.5),
+                  color: VagusTokens.primary.withValues(alpha: 0.5),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF00C8FF).withValues(alpha: 0.3),
+                      color: VagusTokens.primary.withValues(alpha: 0.3),
                       blurRadius: 4,
                       spreadRadius: 1,
                     ),

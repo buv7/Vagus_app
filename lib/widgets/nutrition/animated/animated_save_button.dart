@@ -1,5 +1,6 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 
 /// Animated save button with loading and success states
@@ -116,7 +117,7 @@ class _AnimatedSaveButtonState extends State<AnimatedSaveButton>
             child: ElevatedButton(
               onPressed: _isLoading || _isSuccess ? null : _handlePress,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _isSuccess ? Colors.green : const Color(0xFF00D9A3),
+                backgroundColor: _isSuccess ? Colors.green : VagusTokens.success,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 elevation: 0,

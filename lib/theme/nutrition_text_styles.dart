@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'tokens.dart';
 
-import 'nutrition_colors.dart';
 
 /// Typography system for Nutrition Platform 2.0.
 ///
@@ -43,7 +43,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w500,
-      color: NutritionColors.textSecondary,
+      color: VagusTokens.textSecondary,
       letterSpacing: 0.5,
       height: 1.3,
     );
@@ -125,7 +125,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.textPrimary,
+      color: VagusTokens.textPrimary,
       height: 1.5,
     );
   }
@@ -135,7 +135,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.textPrimary,
+      color: VagusTokens.textPrimary,
       height: 1.5,
     );
   }
@@ -145,7 +145,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.textSecondary,
+      color: VagusTokens.textSecondary,
       height: 1.4,
     );
   }
@@ -196,7 +196,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.textTertiary,
+      color: VagusTokens.textTertiary,
       height: 1.3,
     );
   }
@@ -206,7 +206,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w500,
-      color: NutritionColors.textSecondary,
+      color: VagusTokens.textSecondary,
       height: 1.3,
     );
   }
@@ -216,7 +216,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 10,
       fontWeight: FontWeight.w600,
-      color: NutritionColors.textSecondary,
+      color: VagusTokens.textSecondary,
       letterSpacing: 1.0,
       height: 1.2,
     );
@@ -231,7 +231,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w500,
-      color: NutritionColors.textSecondary,
+      color: VagusTokens.textSecondary,
       fontFeatures: [FontFeature.tabularFigures()],
       height: 1.2,
     );
@@ -252,7 +252,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.error,
+      color: VagusTokens.error,
       height: 1.4,
     );
   }
@@ -262,7 +262,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.success,
+      color: VagusTokens.success,
       height: 1.4,
     );
   }
@@ -272,7 +272,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.warning,
+      color: VagusTokens.warning,
       height: 1.4,
     );
   }
@@ -282,7 +282,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.info,
+      color: VagusTokens.info,
       height: 1.4,
     );
   }
@@ -296,7 +296,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w500,
-      color: NutritionColors.info,
+      color: VagusTokens.info,
       decoration: TextDecoration.underline,
       height: 1.4,
     );
@@ -311,7 +311,7 @@ class NutritionTextStyles {
     return const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.normal,
-      color: NutritionColors.textDisabled,
+      color: VagusTokens.textDisabled,
       fontStyle: FontStyle.italic,
       height: 1.5,
     );

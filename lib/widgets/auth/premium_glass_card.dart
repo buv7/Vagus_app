@@ -1,5 +1,6 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 
 class PremiumGlassCard extends StatelessWidget {
   final Widget child;
@@ -39,7 +40,7 @@ class PremiumGlassCard extends StatelessWidget {
                 offset: const Offset(0, 16),
               ),
               BoxShadow(
-                color: const Color(0xFF00C8FF).withValues(alpha: 0.05),
+                color: VagusTokens.primary.withValues(alpha: 0.05),
                 blurRadius: 64,
                 spreadRadius: -16,
                 offset: const Offset(0, 32),

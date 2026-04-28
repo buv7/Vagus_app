@@ -1,5 +1,6 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:provider/provider.dart';
 import '../../services/feature_flags_service.dart';
 import '../../services/settings/settings_controller.dart';
@@ -180,15 +181,15 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B1220), // Dark background matching FAB context
+      backgroundColor: VagusTokens.textInverse, // Dark background matching FAB context
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF0B1220),
-              const Color(0xFF0B1220).withValues(alpha: 0.9),
+              VagusTokens.textInverse,
+              VagusTokens.textInverse.withValues(alpha: 0.9),
               DesignTokens.accentBlue.withValues(alpha: 0.1),
             ],
           ),

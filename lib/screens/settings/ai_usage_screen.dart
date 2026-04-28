@@ -1,5 +1,6 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../services/ai/ai_usage_service.dart';
 import '../../services/navigation/app_navigator.dart';
 import '../../theme/design_tokens.dart';
@@ -52,12 +53,12 @@ class _AiUsageScreenState extends State<AiUsageScreen> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: isDark ? Colors.white : const Color(0xFF0B1220),
+        foregroundColor: isDark ? Colors.white : VagusTokens.textInverse,
         elevation: 0,
         title: Text(
           'AI Usage & Quotas',
           style: TextStyle(
-            color: isDark ? Colors.white : const Color(0xFF0B1220),
+            color: isDark ? Colors.white : VagusTokens.textInverse,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),

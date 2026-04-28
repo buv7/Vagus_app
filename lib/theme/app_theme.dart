@@ -1,45 +1,74 @@
 import 'package:flutter/material.dart';
-import 'design_tokens.dart';
+import 'tokens.dart';
 
-/// App theme configuration with NFT Marketplace design system
+/// App theme configuration — builds ThemeData from [VagusTokens].
+///
+/// Dark theme: glassmorphic dark purple/navy (primary canonical theme).
+/// Light theme: monochrome skeleton (future-ready; not the primary mode).
 class AppTheme {
-  // Legacy colors (kept for compatibility)
-  static const Color primaryDark = DesignTokens.primaryDark;
-  static const Color neutralWhite = Color(0xFFFFFFFF);
-  static const Color mediumGrey = DesignTokens.mediumGrey;
-  static const Color lightGrey = Color(0xFFE0E0E0);
+  AppTheme._();
+
+  // ---------------------------------------------------------------------------
+  // Backward-compat shims for callers that import AppTheme directly.
+  // Prefer VagusTokens.xxx in new code.
+  // ---------------------------------------------------------------------------
+
+  @Deprecated('Use VagusTokens.bgBase')
+  static const Color primaryDark = VagusTokens.bgBase;
+
+  @Deprecated('Use VagusTokens.textPrimary')
+  static const Color neutralWhite = VagusTokens.textPrimary;
+
+  @Deprecated('Use VagusTokens.textSecondary or a ThemeColors accessor')
+  static const Color mediumGrey = Color(0xFF6A7385);
+
+  static const Color lightGrey    = Color(0xFFE0E0E0);
   static const Color charcoalGrey = Color(0xFF1C1C1C);
 
-  // Updated to use NFT marketplace colors from DesignTokens
-  static const Color accentGreen = DesignTokens.accentGreen;
-  static const Color accentOrange = DesignTokens.accentOrange;
-  static const Color cardBackground = DesignTokens.secondaryDark;
+  @Deprecated('Use VagusTokens.primary')
+  static const Color accentGreen = VagusTokens.primary;
 
-  // Additional color getters for nutrition platform compatibility
-  static const Color backgroundDark = DesignTokens.primaryDark;
-  static const Color cardDark = DesignTokens.cardBackground;
-  static const Color lightBlue = DesignTokens.accentBlue;
-  static const Color lightOrange = DesignTokens.accentOrange;
-  static const Color lightYellow = Color(0xFFFFEB3B); // Material yellow
+  @Deprecated('Use VagusTokens.accentOrange')
+  static const Color accentOrange = VagusTokens.accentOrange;
 
-  /// Light theme with VAGUS monochrome palette
+  @Deprecated('Use VagusTokens.surfaceGlass')
+  static const Color cardBackground = VagusTokens.surfaceGlass;
+
+  @Deprecated('Use VagusTokens.bgBase')
+  static const Color backgroundDark = VagusTokens.bgBase;
+
+  @Deprecated('Use VagusTokens.surfaceGlass')
+  static const Color cardDark = VagusTokens.surfaceGlass;
+
+  @Deprecated('Use VagusTokens.primaryDark')
+  static const Color lightBlue = VagusTokens.primaryDark;
+
+  @Deprecated('Use VagusTokens.accentOrange')
+  static const Color lightOrange = VagusTokens.accentOrange;
+
+  static const Color lightYellow = Color(0xFFFFEB3B);
+
+  // ---------------------------------------------------------------------------
+  // LIGHT THEME  (monochrome skeleton — reserved for future parity work)
+  // ---------------------------------------------------------------------------
+
   static ThemeData light() {
     return ThemeData.light().copyWith(
       colorScheme: const ColorScheme.light(
-        primary: Color(0xFF000000),    // Black
-        secondary: DesignTokens.mediumGrey,  // Medium Grey
-        surface: Color(0xFFFFFFFF),    // White
+        primary: Color(0xFF000000),
+        secondary: Color(0xFF6A7385),
+        surface: Color(0xFFFFFFFF),
         onPrimary: Color(0xFFFFFFFF),
         onSecondary: Color(0xFFFFFFFF),
         onSurface: Color(0xFF000000),
         outline: Color(0xFFE0E0E0),
         surfaceContainerHighest: Color(0xFFFFFFFF),
-        onSurfaceVariant: DesignTokens.mediumGrey,
+        onSurfaceVariant: Color(0xFF6A7385),
       ),
-      scaffoldBackgroundColor: const Color(0xFFFFFFFF), // White
+      scaffoldBackgroundColor: const Color(0xFFFFFFFF),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFFFFFFF), // White
-        foregroundColor: Color(0xFF000000), // Black
+        backgroundColor: Color(0xFFFFFFFF),
+        foregroundColor: Color(0xFF000000),
         elevation: 0,
         shadowColor: Color(0xFF000000),
       ),
@@ -47,7 +76,7 @@ class AppTheme {
         elevation: 0,
         shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius16),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusLg),
         ),
         color: Colors.white,
         surfaceTintColor: const Color(0xFFE0E0E0),
@@ -58,9 +87,9 @@ class AppTheme {
         labelStyle: const TextStyle(color: Color(0xFF000000)),
         secondaryLabelStyle: const TextStyle(color: Colors.white),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
         ),
-        side: const BorderSide(color: DesignTokens.mediumGrey),
+        side: const BorderSide(color: Color(0xFF6A7385)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -69,11 +98,11 @@ class AppTheme {
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius8),
+            borderRadius: BorderRadius.circular(VagusTokens.radiusSm),
           ),
           padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space24,
-            vertical: DesignTokens.space12,
+            horizontal: VagusTokens.spaceLg,
+            vertical: VagusTokens.space12,
           ),
         ),
       ),
@@ -82,11 +111,11 @@ class AppTheme {
           foregroundColor: const Color(0xFF000000),
           side: const BorderSide(color: Color(0xFF000000)),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius8),
+            borderRadius: BorderRadius.circular(VagusTokens.radiusSm),
           ),
           padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space24,
-            vertical: DesignTokens.space12,
+            horizontal: VagusTokens.spaceLg,
+            vertical: VagusTokens.space12,
           ),
         ),
       ),
@@ -94,59 +123,62 @@ class AppTheme {
         style: TextButton.styleFrom(
           foregroundColor: const Color(0xFF000000),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius8),
+            borderRadius: BorderRadius.circular(VagusTokens.radiusSm),
           ),
           padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space16,
-            vertical: DesignTokens.space8,
+            horizontal: VagusTokens.spaceMd,
+            vertical: VagusTokens.spaceSm,
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
           borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
           borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
           borderSide: const BorderSide(color: Color(0xFF000000), width: 2),
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.all(DesignTokens.space16),
+        contentPadding: const EdgeInsets.all(VagusTokens.spaceMd),
       ),
       dividerColor: const Color(0xFFE0E0E0),
       textTheme: _buildTextTheme(const Color(0xFF000000)).copyWith(
-        bodyLarge: const TextStyle(color: Color(0xFF000000)),
-        bodyMedium: const TextStyle(color: DesignTokens.mediumGrey),
+        bodyLarge:  const TextStyle(color: Color(0xFF000000)),
+        bodyMedium: const TextStyle(color: Color(0xFF6A7385)),
         titleLarge: const TextStyle(color: Color(0xFF000000), fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  /// Dark theme with Premium Neural Fitness design palette
+  // ---------------------------------------------------------------------------
+  // DARK THEME  (glassmorphic dark purple/navy — primary canonical theme)
+  // ---------------------------------------------------------------------------
+
   static ThemeData dark() {
     return ThemeData.dark().copyWith(
       colorScheme: const ColorScheme.dark(
-        primary: DesignTokens.accentGreen,           // Cyan primary
-        secondary: DesignTokens.accentBlue,          // Blue deep
-        tertiary: DesignTokens.accentTeal,           // Teal
-        surface: DesignTokens.primaryDark,           // Pure black
-        onPrimary: Colors.black,                     // Black text on cyan
-        onSecondary: DesignTokens.neutralWhite,      // White text on blue
-        onSurface: DesignTokens.neutralWhite,        // White text
-        outline: DesignTokens.glassBorder,           // 8% white borders
-        surfaceContainerHighest: DesignTokens.cardBackground, // Black soft 95%
-        onSurfaceVariant: DesignTokens.textSecondary,         // 60% white text
+        primary: VagusTokens.primary,
+        secondary: VagusTokens.primaryDark,
+        tertiary: VagusTokens.primaryLight,
+        surface: VagusTokens.bgBase,
+        onPrimary: Colors.black,
+        onSecondary: VagusTokens.textPrimary,
+        onSurface: VagusTokens.textPrimary,
+        outline: VagusTokens.glassBorder,
+        surfaceContainerHighest: VagusTokens.surfaceGlass,
+        onSurfaceVariant: VagusTokens.textSecondary,
       ),
-      scaffoldBackgroundColor: DesignTokens.primaryDark, // Pure black
+      scaffoldBackgroundColor: VagusTokens.bgBase,
       appBarTheme: const AppBarTheme(
-        backgroundColor: DesignTokens.cardBackground, // Black soft with 95% opacity
-        foregroundColor: DesignTokens.neutralWhite,
+        backgroundColor: VagusTokens.surfaceGlass,
+        foregroundColor: VagusTokens.textPrimary,
         elevation: 0,
         shadowColor: Colors.transparent,
         scrolledUnderElevation: 0,
@@ -156,170 +188,172 @@ class AppTheme {
         elevation: 0,
         shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
         ),
-        color: DesignTokens.cardBackground, // Black soft with 95% opacity
+        color: VagusTokens.surfaceGlass,
         surfaceTintColor: Colors.transparent,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: DesignTokens.cardBackground,
-        selectedColor: DesignTokens.accentGreen,
-        labelStyle: const TextStyle(color: DesignTokens.neutralWhite),
+        backgroundColor: VagusTokens.surfaceGlass,
+        selectedColor: VagusTokens.primary,
+        labelStyle: const TextStyle(color: VagusTokens.textPrimary),
         secondaryLabelStyle: const TextStyle(color: Colors.black),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
         ),
-        side: const BorderSide(color: DesignTokens.glassBorder),
+        side: const BorderSide(color: VagusTokens.glassBorder),
         shadowColor: Colors.transparent,
         elevation: 0,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: DesignTokens.accentGreen, // Cyan primary (gradient applied via decoration)
-          foregroundColor: Colors.black, // Black text
+          backgroundColor: VagusTokens.primary,
+          foregroundColor: Colors.black,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+            borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
           ),
           padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space24,
-            vertical: DesignTokens.space12,
+            horizontal: VagusTokens.spaceLg,
+            vertical: VagusTokens.space12,
           ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: DesignTokens.neutralWhite,
-          side: const BorderSide(color: DesignTokens.glassBorder),
-          backgroundColor: DesignTokens.cardBackground,
+          foregroundColor: VagusTokens.textPrimary,
+          side: const BorderSide(color: VagusTokens.glassBorder),
+          backgroundColor: VagusTokens.surfaceGlass,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+            borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
           ),
           padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space24,
-            vertical: DesignTokens.space12,
+            horizontal: VagusTokens.spaceLg,
+            vertical: VagusTokens.space12,
           ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: DesignTokens.accentGreen,
+          foregroundColor: VagusTokens.primary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.radius12),
+            borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
           ),
           padding: const EdgeInsets.symmetric(
-            horizontal: DesignTokens.space16,
-            vertical: DesignTokens.space8,
+            horizontal: VagusTokens.spaceMd,
+            vertical: VagusTokens.spaceSm,
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: DesignTokens.glassBorder),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
+          borderSide: const BorderSide(color: VagusTokens.glassBorder),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: DesignTokens.glassBorder),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
+          borderSide: const BorderSide(color: VagusTokens.glassBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: DesignTokens.accentGreen, width: 2),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
+          borderSide: const BorderSide(color: VagusTokens.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radius12),
-          borderSide: const BorderSide(color: DesignTokens.accentPink, width: 2),
+          borderRadius: BorderRadius.circular(VagusTokens.radiusMd),
+          borderSide: const BorderSide(color: VagusTokens.accentPink, width: 2),
         ),
         filled: true,
-        fillColor: const Color(0x0AFFFFFF), // 4% white
-        contentPadding: const EdgeInsets.all(DesignTokens.space16),
-        hintStyle: const TextStyle(color: DesignTokens.textSecondary),
-        labelStyle: const TextStyle(color: DesignTokens.textSecondary),
+        fillColor: const Color(0x0AFFFFFF),
+        contentPadding: const EdgeInsets.all(VagusTokens.spaceMd),
+        hintStyle: const TextStyle(color: VagusTokens.textSecondary),
+        labelStyle: const TextStyle(color: VagusTokens.textSecondary),
       ),
-      dividerColor: DesignTokens.glassBorder,
-      textTheme: _buildTextTheme(DesignTokens.neutralWhite).copyWith(
-        bodyLarge: const TextStyle(color: DesignTokens.neutralWhite),
-        bodyMedium: const TextStyle(color: DesignTokens.textSecondary),
+      dividerColor: VagusTokens.divider,
+      textTheme: _buildTextTheme(VagusTokens.textPrimary).copyWith(
+        bodyLarge:  const TextStyle(color: VagusTokens.textPrimary),
+        bodyMedium: const TextStyle(color: VagusTokens.textSecondary),
         titleLarge: const TextStyle(
-          color: DesignTokens.neutralWhite,
-          fontWeight: FontWeight.w400, // Light for premium feel
+          color: VagusTokens.textPrimary,
+          fontWeight: FontWeight.w400,
         ),
         headlineMedium: const TextStyle(
-          color: DesignTokens.neutralWhite,
-          fontWeight: FontWeight.w100, // Ultra-light headings
+          color: VagusTokens.textPrimary,
+          fontWeight: FontWeight.w100,
           fontSize: 24,
         ),
       ),
     );
   }
 
-  /// Build text theme with design tokens
+  // ---------------------------------------------------------------------------
+  // HELPERS (kept for call-site compat)
+  // ---------------------------------------------------------------------------
+
   static TextTheme _buildTextTheme(Color onSurface) {
     return TextTheme(
-      displayLarge: DesignTokens.displayLarge.copyWith(color: onSurface),
-      displayMedium: DesignTokens.displayMedium.copyWith(color: onSurface),
-      displaySmall: DesignTokens.displaySmall.copyWith(color: onSurface),
-      titleLarge: DesignTokens.titleLarge.copyWith(color: onSurface),
-      titleMedium: DesignTokens.titleMedium.copyWith(color: onSurface),
-      titleSmall: DesignTokens.titleSmall.copyWith(color: onSurface),
-      bodyLarge: DesignTokens.bodyLarge.copyWith(color: onSurface),
-      bodyMedium: DesignTokens.bodyMedium.copyWith(color: onSurface),
-      bodySmall: DesignTokens.bodySmall.copyWith(color: onSurface),
-      labelLarge: DesignTokens.labelMedium.copyWith(color: onSurface),
-      labelMedium: DesignTokens.labelMedium.copyWith(color: onSurface),
-      labelSmall: DesignTokens.labelSmall.copyWith(color: onSurface),
+      displayLarge:  VagusTokens.displayLg.copyWith(color: onSurface),
+      displayMedium: VagusTokens.displayMd.copyWith(color: onSurface),
+      displaySmall:  VagusTokens.displaySm.copyWith(color: onSurface),
+      titleLarge:    VagusTokens.titleLg.copyWith(color: onSurface),
+      titleMedium:   VagusTokens.titleMd.copyWith(color: onSurface),
+      titleSmall:    VagusTokens.titleSm.copyWith(color: onSurface),
+      bodyLarge:     VagusTokens.bodyLg.copyWith(color: onSurface),
+      bodyMedium:    VagusTokens.bodyMd.copyWith(color: onSurface),
+      bodySmall:     VagusTokens.bodySm.copyWith(color: onSurface),
+      labelLarge:    VagusTokens.labelMd.copyWith(color: onSurface),
+      labelMedium:   VagusTokens.labelMd.copyWith(color: onSurface),
+      labelSmall:    VagusTokens.labelSm.copyWith(color: onSurface),
     );
   }
 
-  /// Get category color for consistent visual hierarchy
   static Color getCategoryColor(String category) {
-    return DesignTokens.categoryColors[category.toLowerCase()] ?? DesignTokens.mediumGrey;
+    switch (category.toLowerCase()) {
+      case 'workout':   return VagusTokens.primaryDark;
+      case 'nutrition': return VagusTokens.primary;
+      case 'calling':   return VagusTokens.accentPink;
+      case 'coach':     return VagusTokens.secondary;
+      default:          return const Color(0xFF6A7385);
+    }
   }
 
-  /// Get category background color
   static Color getCategoryBgColor(String category) {
-    return DesignTokens.categoryBgColors[category.toLowerCase()] ?? DesignTokens.cardBackground;
+    switch (category.toLowerCase()) {
+      case 'workout':   return const Color(0x200099FF);
+      case 'nutrition': return const Color(0x2000C8FF);
+      case 'calling':   return const Color(0x20FF6B9D);
+      case 'coach':     return const Color(0x209D6BFF);
+      default:          return const Color(0x206A7385);
+    }
   }
 
-  /// Get glow shadow based on category or color type
   static List<BoxShadow> getGlowShadow({String type = 'sm'}) {
     switch (type) {
-      case 'sm':
-        return DesignTokens.glowSm;
-      case 'md':
-        return DesignTokens.glowMd;
-      case 'lg':
-        return DesignTokens.glowLg;
-      case 'purple':
-        return DesignTokens.glowPurple;
-      default:
-        return DesignTokens.glowSm;
+      case 'sm':     return VagusTokens.shadowSm;
+      case 'md':     return VagusTokens.shadowMd;
+      case 'lg':     return VagusTokens.shadowLg;
+      case 'purple': return VagusTokens.shadowPurple;
+      default:       return VagusTokens.shadowSm;
     }
   }
 
-  /// Get shadow based on theme mode (updated for NFT theme)
   static List<BoxShadow> getShadow(ThemeMode themeMode, {String type = 'card'}) {
-    if (themeMode == ThemeMode.dark) {
-      return type == 'card' ? DesignTokens.cardShadow : DesignTokens.shadowDark;
-    }
-
-    // For light mode, use card shadows as well
-    return DesignTokens.cardShadow;
+    return (themeMode == ThemeMode.dark && type != 'card')
+        ? VagusTokens.shadowSubtle
+        : VagusTokens.shadowCard;
   }
 
-  /// Create glassmorphic container decoration
   static BoxDecoration createGlassmorphicDecoration({
     Color? backgroundColor,
     double borderRadius = 20.0,
     Color? borderColor,
     List<BoxShadow>? boxShadow,
   }) {
-    return DesignTokens.glassmorphicDecoration(
-      backgroundColor: backgroundColor,
-      borderRadius: borderRadius,
-      borderColor: borderColor,
-      boxShadow: boxShadow,
+    return BoxDecoration(
+      color: backgroundColor ?? VagusTokens.surfaceGlass,
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(color: borderColor ?? VagusTokens.glassBorder),
+      boxShadow: boxShadow ?? VagusTokens.shadowCard,
     );
   }
 }

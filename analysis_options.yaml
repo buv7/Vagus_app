@@ -48,5 +48,23 @@ linter:
     # Keep existing rules
     prefer_single_quotes: true
 
+# ─────────────────────────────────────────────────────────────────
+# PALETTE TOKEN LINT RULES
+# These rules flag hardcoded design values that should reference VagusTokens.
+# Requires the `custom_lint` package + a `vagus_lints` plugin in dev_dependencies
+# when that plugin is created (tracked in PRISM handoff).
+#
+# Patterns to enforce via custom_lint:
+#   avoid_hardcoded_color     → Color(0xFF...) or Color(0x..) literal in widget tree
+#   avoid_hardcoded_fontsize  → TextStyle(fontSize: <number literal>)
+#   avoid_hardcoded_padding   → EdgeInsets.all(<number literal>)
+#                               EdgeInsets.symmetric(horizontal: N, vertical: N)
+#
+# Until the plugin exists, grep for violations with:
+#   grep -rn "Color(0xFF"       lib/screens lib/components
+#   grep -rn "fontSize: [0-9]"  lib/screens lib/components
+#   grep -rn "EdgeInsets.all([0-9]" lib/screens lib/components
+# ─────────────────────────────────────────────────────────────────
+
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

@@ -1,6 +1,7 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 
 /// A beautiful animated ring chart displaying macro progress.
 ///
@@ -133,9 +134,9 @@ class _MacroRingChartState extends State<MacroRingChart>
                 widget.fatTarget,
                 _animation.value,
               ),
-              proteinColor: const Color(0xFF00D9A3),
-              carbsColor: const Color(0xFFFF9A3C),
-              fatColor: const Color(0xFFFFD93C),
+              proteinColor: VagusTokens.success,
+              carbsColor: VagusTokens.macroCarbs,
+              fatColor: VagusTokens.macroFat,
             ),
           );
         },

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -364,17 +365,17 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                   if (protein > 0)
                     Expanded(
                       flex: ((protein / total) * 100).round(),
-                      child: Container(color: const Color(0xFF00D9A3)),
+                      child: Container(color: VagusTokens.success),
                     ),
                   if (carbs > 0)
                     Expanded(
                       flex: ((carbs / total) * 100).round(),
-                      child: Container(color: const Color(0xFFFF9A3C)),
+                      child: Container(color: VagusTokens.macroCarbs),
                     ),
                   if (fat > 0)
                     Expanded(
                       flex: ((fat / total) * 100).round(),
-                      child: Container(color: const Color(0xFFFFD93C)),
+                      child: Container(color: VagusTokens.macroFat),
                     ),
                 ],
               ),

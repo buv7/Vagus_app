@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../models/nutrition/nutrition_plan.dart';
@@ -506,21 +507,21 @@ class _MealTimelineVisualizationState extends State<MealTimelineVisualization>
                             '💪',
                             '${meal.mealSummary.totalProtein.toStringAsFixed(0)}g',
                             'P',
-                            const Color(0xFF00D9A3),
+                            VagusTokens.success,
                           ),
                           const SizedBox(width: DesignTokens.space6),
                           _buildMacroChip(
                             '🍞',
                             '${meal.mealSummary.totalCarbs.toStringAsFixed(0)}g',
                             'C',
-                            const Color(0xFFFF9A3C),
+                            VagusTokens.macroCarbs,
                           ),
                           const SizedBox(width: DesignTokens.space6),
                           _buildMacroChip(
                             '🥑',
                             '${meal.mealSummary.totalFat.toStringAsFixed(0)}g',
                             'F',
-                            const Color(0xFFFFD93C),
+                            VagusTokens.macroFat,
                           ),
                         ],
                       ),
