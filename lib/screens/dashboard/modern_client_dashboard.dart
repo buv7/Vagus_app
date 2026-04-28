@@ -28,6 +28,7 @@ import '../../services/growth/passive_virality_service.dart';
 import '../../services/share/share_card_service.dart';
 import '../../services/health/health_service.dart';
 import '../settings/health_connections_screen.dart';
+import '../../widgets/ux/ux_mode_builder.dart';
 
 class ModernClientDashboard extends StatefulWidget {
   const ModernClientDashboard({super.key});
@@ -519,8 +520,10 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
               
               const SizedBox(height: 24),
               
-              // ✅ VAGUS ADD: daily-missions START
-              FutureBuilder<bool>(
+              // ✅ VAGUS ADD: daily-missions START (Default+ only)
+              UxModeBuilder(
+                minMode: UxMode.default_,
+                child: FutureBuilder<bool>(
                 future: FeatureFlags.instance.isEnabled(FeatureFlags.dailyMissions),
                 builder: (context, flagSnapshot) {
                   if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
@@ -595,130 +598,46 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
                   );
                 },
               ),
+              ),
               // ✅ VAGUS ADD: daily-missions END
-              
-              // ✅ VAGUS ADD: passive-virality START
-              FutureBuilder<bool>(
-                future: FeatureFlags.instance.isEnabled(FeatureFlags.passiveVirality),
-                builder: (context, flagSnapshot) {
-                  if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
-                  
-                  return FutureBuilder<ShareableMomentData?>(
-                    future: () async {
-                      try {
-                        final user = Supabase.instance.client.auth.currentUser;
-                        if (user == null) return null;
-                        return await PassiveViralityService.I.detectShareableMoments(userId: user.id);
-                      } catch (_) {
-                        return null;
-                      }
-                    }(),
-                    builder: (context, snapshot) {
-                      final moment = snapshot.data;
-                      if (moment == null) return const SizedBox.shrink();
 
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        color: Colors.blue.shade50,
-                        child: InkWell(
-                          onTap: () async {
-                            try {
-                              final user = Supabase.instance.client.auth.currentUser;
-                              if (user == null) return;
-
-                              // Generate share card
-                              final shareData = ShareDataModel(
-                                title: moment.title,
-                                subtitle: moment.subtitle,
-                                metrics: moment.metrics,
-                              );
-
-                              // Generate share asset (for future use when share sheet is implemented)
-                              // ignore: unused_local_variable
-                              final shareAsset = await ShareCardService().buildStory(
-                                ShareTemplate.minimal,
-                                shareData,
-                              );
-
-                              // Log viral event
-                              await PassiveViralityService.I.triggerPassiveShare(
-                                userId: user.id,
-                                moment: moment,
-                                source: 'dashboard_suggestion',
-                              );
-
-                              // TODO: Open native share sheet with shareAsset
-                              if (!mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Share card generated! (Share sheet coming soon)')),
-                              );
-                            } catch (e) {
-                              if (!mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
-                              );
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.share, color: Colors.blue),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Shareable Moment',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        moment.title,
-                                        style: TextStyle(
-                                          color: Colors.grey.shade700,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_forward_ios, size: 16),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
+              // ✅ VAGUS ADD: passive-virality START (Insane only)
+              UxModeBuilder(
+                minMode: UxMode.insane,
+                child: _buildViralitySection(),
               ),
               // ✅ VAGUS ADD: passive-virality END
-              
+
               const SizedBox(height: 24),
-              
-              // Profile Card
+
+              // Profile Card — always visible
               _buildProfileCard(),
-              
-              // Progress Metrics Card
-              _buildProgressMetricsCard(),
-              
-              // Supplements Card
-              _buildSupplementsCard(),
-              
+
+              // Progress Metrics Card — Default and above
+              UxModeBuilder(
+                minMode: UxMode.default_,
+                child: _buildProgressMetricsCard(),
+              ),
+
+              // Supplements Card — Default and above
+              UxModeBuilder(
+                minMode: UxMode.default_,
+                child: _buildSupplementsCard(),
+              ),
+
               const SizedBox(height: 24),
-              
-              // Horizontal Scroll: Health Rings, Streak, Rank, AI Usage
-              _buildHorizontalScrollSection(),
-              
+
+              // Horizontal Scroll — Default and above
+              UxModeBuilder(
+                minMode: UxMode.default_,
+                child: _buildHorizontalScrollSection(),
+              ),
+
               const SizedBox(height: 24),
-              
-              // Bottom Grid: Quick Actions, Recent Activity
-              _buildBottomGrid(),
+
+              // Bottom Grid: Quick Actions always visible; Recent Activity
+              // shown only in Default+ to keep Simple uncluttered.
+              _buildBottomGridAdaptive(),
               
               const SizedBox(height: 24),
             ],
@@ -1974,9 +1893,8 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isTablet = constraints.maxWidth > 768;
-        
+
         if (isTablet) {
-          // 2-column layout for tablet
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1986,7 +1904,6 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
             ],
           );
         } else {
-          // Single column layout for mobile
           return Column(
             children: [
               _buildQuickActionsCard(),
@@ -1996,6 +1913,16 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           );
         }
       },
+    );
+  }
+
+  /// Mode-adaptive bottom grid:
+  /// - Simple: Quick Actions only (4 essential tiles)
+  /// - Default+: Quick Actions + Recent Activity
+  Widget _buildBottomGridAdaptive() {
+    return UxModeSwitch(
+      simpleChild: _buildQuickActionsCard(),
+      defaultChild: _buildBottomGrid(),
     );
   }
 
@@ -2195,6 +2122,108 @@ class _ModernClientDashboardState extends State<ModernClientDashboard> {
           ),
         ],
       ),
+    );
+  }
+
+  /// Passive virality suggestion card — surfaced only in Insane mode.
+  Widget _buildViralitySection() {
+    return FutureBuilder<bool>(
+      future: FeatureFlags.instance.isEnabled(FeatureFlags.passiveVirality),
+      builder: (context, flagSnapshot) {
+        if (!(flagSnapshot.data ?? false)) return const SizedBox.shrink();
+
+        return FutureBuilder<ShareableMomentData?>(
+          future: () async {
+            try {
+              final user = Supabase.instance.client.auth.currentUser;
+              if (user == null) return null;
+              return await PassiveViralityService.I
+                  .detectShareableMoments(userId: user.id);
+            } catch (_) {
+              return null;
+            }
+          }(),
+          builder: (context, snapshot) {
+            final moment = snapshot.data;
+            if (moment == null) return const SizedBox.shrink();
+
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              color: Colors.blue.shade50,
+              child: InkWell(
+                onTap: () async {
+                  try {
+                    final user = Supabase.instance.client.auth.currentUser;
+                    if (user == null) return;
+
+                    final shareData = ShareDataModel(
+                      title: moment.title,
+                      subtitle: moment.subtitle,
+                      metrics: moment.metrics,
+                    );
+
+                    // ignore: unused_local_variable
+                    final shareAsset = await ShareCardService().buildStory(
+                      ShareTemplate.minimal,
+                      shareData,
+                    );
+
+                    await PassiveViralityService.I.triggerPassiveShare(
+                      userId: user.id,
+                      moment: moment,
+                      source: 'dashboard_suggestion',
+                    );
+
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Share card generated! (Share sheet coming soon)')),
+                    );
+                  } catch (e) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.share, color: Colors.blue),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Shareable Moment',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              moment.title,
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.arrow_forward_ios, size: 16),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

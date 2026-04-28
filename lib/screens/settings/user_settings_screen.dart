@@ -9,6 +9,7 @@ import '../../components/settings/theme_toggle.dart';
 import '../../components/settings/language_selector.dart';
 import '../../components/settings/reminder_defaults.dart';
 import '../../widgets/settings/workout_popout_prefs_section.dart';
+import '../../widgets/settings/ux_mode_settings_section.dart';
 import '../../theme/design_tokens.dart';
 import '../diagnostics_screen.dart';
 import 'music_settings_screen.dart';
@@ -290,6 +291,14 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Interface Mode Card
+                      _buildGlassmorphicCard(
+                        context: context,
+                        icon: Icons.bolt,
+                        title: 'Interface Mode',
+                        child: const UxModeSettingsSection(),
+                      ),
+
                       // Theme Settings Card
                       _buildGlassmorphicCard(
                         context: context,
