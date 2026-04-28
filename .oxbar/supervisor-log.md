@@ -91,3 +91,12 @@ for timestamps ending in six zeros — covers the known #36 rename + all future 
 HOLD-7: #7 MUSIC-PURGE (dump-then-drop gate, not yet verified)
 VAULT-blocked: #36 PERIODS-FORGE (waiting on E-003 + timestamp rename)
 Rest are UNKNOWN state (need CI re-trigger or rebase).
+
+2026-04-29 — Phase 15: PR #39 (vault.yml comment-stripping) + PR #40
+(MediaUrlResolver class) merged to fix two pre-existing main bugs that
+were masquerading as PR #36 CI failures. PR #40 merged first (clean CI);
+PR #39 rebased onto main after #40 to pick up the MediaUrlResolver class,
+then merged clean. PR #36 (PERIODS-FORGE) rebased clean onto main and
+merged. Deploy run 25081852921 succeeded. Medical-data foundation
+complete: encryption helpers + prod secret + first encrypted-table
+consumer + audited consent-gated tables, all coherent on prod.
