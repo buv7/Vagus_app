@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StatsDisplay extends StatefulWidget {
@@ -106,7 +107,7 @@ class _StatItem extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF00C8FF),
+                      color: VagusTokens.primary,
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -116,7 +117,7 @@ class _StatItem extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w400,
-                        color: const Color(0xFF00C8FF).withValues(alpha: 0.7),
+                        color: VagusTokens.primary.withValues(alpha: 0.7),
                       ),
                     ),
                 ],

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../services/haptics.dart';
@@ -630,21 +631,21 @@ class CompactMacroBalance extends StatelessWidget {
               Expanded(
                 flex: proteinPercent.round(),
                 child: Container(
-                  color: const Color(0xFF00D9A3),
+                  color: VagusTokens.success,
                 ),
               ),
             if (carbsPercent > 0)
               Expanded(
                 flex: carbsPercent.round(),
                 child: Container(
-                  color: const Color(0xFFFF9A3C),
+                  color: VagusTokens.macroCarbs,
                 ),
               ),
             if (fatPercent > 0)
               Expanded(
                 flex: fatPercent.round(),
                 child: Container(
-                  color: const Color(0xFFFFD93C),
+                  color: VagusTokens.macroFat,
                 ),
               ),
           ],

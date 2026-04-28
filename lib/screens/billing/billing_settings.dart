@@ -1,5 +1,6 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../services/billing/billing_service.dart';
 import '../../theme/design_tokens.dart';
 import 'invoice_history_viewer.dart';
@@ -516,12 +517,12 @@ class _BillingSettingsState extends State<BillingSettings> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: theme.brightness == Brightness.dark ? Colors.white : const Color(0xFF0B1220),
+        foregroundColor: theme.brightness == Brightness.dark ? Colors.white : VagusTokens.textInverse,
         elevation: 0,
         title: Text(
           'Billing & Upgrade',
           style: TextStyle(
-            color: theme.brightness == Brightness.dark ? Colors.white : const Color(0xFF0B1220),
+            color: theme.brightness == Brightness.dark ? Colors.white : VagusTokens.textInverse,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),

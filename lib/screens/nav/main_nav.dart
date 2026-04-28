@@ -1,6 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../dashboard/modern_client_dashboard.dart';
@@ -16,8 +17,6 @@ import '../admin/admin_hub_screen.dart';
 import '../../widgets/fab/simple_glassmorphism_fab.dart';
 import '../../widgets/fab/camera_glassmorphism_fab.dart';
 import '../../theme/design_tokens.dart';
-import '../../theme/app_theme.dart';
-import '../../theme/theme_colors.dart';
 import '../../widgets/navigation/vagus_side_menu.dart';
 
 class MainNav extends StatefulWidget {
@@ -342,7 +341,7 @@ class _MainNavState extends State<MainNav> with TickerProviderStateMixin {
             return IconButton(
               icon: Icon(
                 Icons.menu,
-                color: isDark ? Colors.white : const Color(0xFF0B1220),
+                color: isDark ? Colors.white : VagusTokens.textInverse,
                 size: 24,
               ),
               onPressed: () => Scaffold.of(context).openDrawer(),

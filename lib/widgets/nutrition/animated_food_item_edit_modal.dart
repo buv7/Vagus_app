@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
 import 'dart:async';
@@ -204,7 +205,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('✓ Found: ${nutrition.name}'),
-                backgroundColor: const Color(0xFF00D9A3),
+                backgroundColor: VagusTokens.success,
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -228,7 +229,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('✓ Found: ${localResult.name}'),
-              backgroundColor: const Color(0xFF00D9A3),
+              backgroundColor: VagusTokens.success,
               duration: const Duration(seconds: 2),
             ),
           );
@@ -295,7 +296,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
                   style: const TextStyle(color: Colors.white),
                 ),
                 trailing: _selectedUnit == unit
-                    ? const Icon(Icons.check, color: Color(0xFF00D9A3))
+                    ? const Icon(Icons.check, color: VagusTokens.success)
                     : null,
                 onTap: () {
                   setState(() {
@@ -497,7 +498,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00D9A3)),
+                        valueColor: AlwaysStoppedAnimation<Color>(VagusTokens.success),
                       ),
                     ),
                   ),
@@ -558,7 +559,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
-                            color: Color(0xFF00D9A3),
+                            color: VagusTokens.success,
                             width: 1.5,
                           ),
                         ),
@@ -639,7 +640,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
             child: Text(
               '✓ Auto-calculated for $_currentAmount$_selectedUnit based on ${_baseNutritionPer100g!.name}',
               style: const TextStyle(
-                color: Color(0xFF00D9A3),
+                color: VagusTokens.success,
                 fontSize: 11,
               ),
             ),
@@ -670,7 +671,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
                 emoji: '💪',
                 label: 'Protein',
                 unit: 'g',
-                color: const Color(0xFF00D9A3),
+                color: VagusTokens.success,
                 onChanged: (_) => _calculateCalories(),
               ),
             ),
@@ -681,7 +682,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
                 emoji: '🍞',
                 label: 'Carbs',
                 unit: 'g',
-                color: const Color(0xFFFF9A3C),
+                color: VagusTokens.macroCarbs,
                 onChanged: (_) => _calculateCalories(),
               ),
             ),
@@ -696,7 +697,7 @@ class _AnimatedFoodItemEditModalState extends State<AnimatedFoodItemEditModal>
                 emoji: '🥑',
                 label: 'Fat',
                 unit: 'g',
-                color: const Color(0xFFFFD93C),
+                color: VagusTokens.macroFat,
                 onChanged: (_) => _calculateCalories(),
               ),
             ),

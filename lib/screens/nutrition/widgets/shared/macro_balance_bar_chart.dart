@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 
@@ -149,8 +150,8 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFF00D9A3),
-                          const Color(0xFF00D9A3).withValues(alpha: 0.8),
+                          VagusTokens.success,
+                          VagusTokens.success.withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -179,8 +180,8 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFFFF9A3C),
-                          const Color(0xFFFF9A3C).withValues(alpha: 0.8),
+                          VagusTokens.macroCarbs,
+                          VagusTokens.macroCarbs.withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -209,8 +210,8 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFFFFD93C),
-                          const Color(0xFFFFD93C).withValues(alpha: 0.8),
+                          VagusTokens.macroFat,
+                          VagusTokens.macroFat.withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -246,21 +247,21 @@ class _MacroBalanceBarChartState extends State<MacroBalanceBarChart>
       children: [
         _buildLegendItem(
           'Protein',
-          const Color(0xFF00D9A3),
+          VagusTokens.success,
           widget.protein,
           total > 0 ? (widget.protein / total) * 100 : 0,
           widget.targetProteinPercent,
         ),
         _buildLegendItem(
           'Carbs',
-          const Color(0xFFFF9A3C),
+          VagusTokens.macroCarbs,
           widget.carbs,
           total > 0 ? (widget.carbs / total) * 100 : 0,
           widget.targetCarbsPercent,
         ),
         _buildLegendItem(
           'Fat',
-          const Color(0xFFFFD93C),
+          VagusTokens.macroFat,
           widget.fat,
           total > 0 ? (widget.fat / total) * 100 : 0,
           widget.targetFatPercent,
@@ -414,21 +415,21 @@ class CompactMacroBalance extends StatelessWidget {
               Expanded(
                 flex: proteinPercent.round(),
                 child: Container(
-                  color: const Color(0xFF00D9A3),
+                  color: VagusTokens.success,
                 ),
               ),
             if (carbsPercent > 0)
               Expanded(
                 flex: carbsPercent.round(),
                 child: Container(
-                  color: const Color(0xFFFF9A3C),
+                  color: VagusTokens.macroCarbs,
                 ),
               ),
             if (fatPercent > 0)
               Expanded(
                 flex: fatPercent.round(),
                 child: Container(
-                  color: const Color(0xFFFFD93C),
+                  color: VagusTokens.macroFat,
                 ),
               ),
           ],

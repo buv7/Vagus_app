@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'design_tokens.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 
 /// Theme-aware color helper with guaranteed readable LIGHT mode
 /// while preserving the existing DARK glass aesthetic.
@@ -42,7 +42,7 @@ class ThemeColors {
   static const _lightSurfaceAlt = Color(0xFFF2F4F7);
   static const _lightSurfaceTertiary = Color(0xFFE8EAED);
 
-  static const _lightTextPrimary = Color(0xFF0B1220);
+  static const _lightTextPrimary = VagusTokens.textInverse;
   static const _lightTextSecondary = Color(0xFF4B5563);
   static const _lightTextTertiary = Color(0xFF6B7280);
   static const _lightTextDisabled = Color(0xFF9CA3AF);
@@ -56,13 +56,13 @@ class ThemeColors {
   // =============================================================
 
   /// Main app/scaffold background
-  Color get bg => isDark ? DesignTokens.primaryDark : _lightBg;
+  Color get bg => isDark ? VagusTokens.bgBase : _lightBg;
 
   /// Card/dialog surface
-  Color get surface => isDark ? DesignTokens.cardBackground : _lightSurface;
+  Color get surface => isDark ? VagusTokens.surfaceGlass : _lightSurface;
 
   /// Secondary surface (nested cards, subtle elevation)
-  Color get surfaceAlt => isDark ? DesignTokens.cardBackground : _lightSurfaceAlt;
+  Color get surfaceAlt => isDark ? VagusTokens.surfaceGlass : _lightSurfaceAlt;
 
   /// Tertiary surface (deeply nested elements)
   Color get surfaceTertiary => isDark 
@@ -71,7 +71,7 @@ class ThemeColors {
 
   /// Modal/bottom sheet background
   Color get modalBg => isDark 
-      ? const Color(0xFF1A1A2E) 
+      ? VagusTokens.bgModal 
       : _lightSurface;
 
   /// Overlay/scrim color
@@ -84,16 +84,16 @@ class ThemeColors {
   // =============================================================
 
   /// Primary text (highest contrast)
-  Color get textPrimary => isDark ? DesignTokens.neutralWhite : _lightTextPrimary;
+  Color get textPrimary => isDark ? VagusTokens.textPrimary : _lightTextPrimary;
 
   /// Secondary text (labels/hints)
-  Color get textSecondary => isDark ? DesignTokens.textSecondary : _lightTextSecondary;
+  Color get textSecondary => isDark ? VagusTokens.textSecondary : _lightTextSecondary;
 
   /// Tertiary text (subtle, less important)
-  Color get textTertiary => isDark ? DesignTokens.textTertiary : _lightTextTertiary;
+  Color get textTertiary => isDark ? VagusTokens.textTertiary : _lightTextTertiary;
 
   /// Disabled text
-  Color get textDisabled => isDark ? DesignTokens.textDisabled : _lightTextDisabled;
+  Color get textDisabled => isDark ? VagusTokens.textDisabled : _lightTextDisabled;
 
   /// Inverse text (text on accent/primary backgrounds)
   Color get textInverse => isDark ? Colors.black : Colors.white;
@@ -109,13 +109,13 @@ class ThemeColors {
   // =============================================================
 
   /// Primary icon color
-  Color get icon => isDark ? DesignTokens.neutralWhite : _lightTextPrimary;
+  Color get icon => isDark ? VagusTokens.textPrimary : _lightTextPrimary;
 
   /// Secondary icon color (less prominent)
-  Color get iconSecondary => isDark ? DesignTokens.textSecondary : _lightTextSecondary;
+  Color get iconSecondary => isDark ? VagusTokens.textSecondary : _lightTextSecondary;
 
   /// Disabled icon
-  Color get iconDisabled => isDark ? DesignTokens.textDisabled : _lightTextDisabled;
+  Color get iconDisabled => isDark ? VagusTokens.textDisabled : _lightTextDisabled;
 
   /// Icon on accent backgrounds
   Color get iconOnAccent => isDark ? Colors.black : Colors.white;
@@ -125,7 +125,7 @@ class ThemeColors {
   // =============================================================
 
   /// Standard border
-  Color get border => isDark ? DesignTokens.glassBorder : _lightBorder;
+  Color get border => isDark ? VagusTokens.glassBorder : _lightBorder;
 
   /// Strong/focused border
   Color get borderStrong => isDark 
@@ -133,17 +133,17 @@ class ThemeColors {
       : _lightBorderStrong;
 
   /// Divider color
-  Color get divider => isDark ? DesignTokens.glassBorder : _lightDivider;
+  Color get divider => isDark ? VagusTokens.glassBorder : _lightDivider;
 
   // =============================================================
   // INTERACTIVE ELEMENTS
   // =============================================================
 
   /// Chip background (unselected)
-  Color get chipBg => isDark ? DesignTokens.cardBackground : _lightSurfaceAlt;
+  Color get chipBg => isDark ? VagusTokens.surfaceGlass : _lightSurfaceAlt;
 
   /// Chip background (selected)
-  Color get chipSelectedBg => isDark ? DesignTokens.accentGreen : _lightTextPrimary;
+  Color get chipSelectedBg => isDark ? VagusTokens.primary : _lightTextPrimary;
 
   /// Chip text (unselected)
   Color get chipText => textPrimary;
@@ -161,7 +161,7 @@ class ThemeColors {
 
   /// Button background (secondary/outlined)
   Color get buttonSecondaryBg => isDark 
-      ? DesignTokens.cardBackground 
+      ? VagusTokens.surfaceGlass 
       : _lightSurfaceAlt;
 
   /// Hover/pressed state overlay
@@ -189,41 +189,41 @@ class ThemeColors {
   // =============================================================
 
   /// Primary accent (cyan in dark, darker blue in light for contrast)
-  Color get accent => isDark ? DesignTokens.accentGreen : const Color(0xFF0066CC);
+  Color get accent => isDark ? VagusTokens.primary : const Color(0xFF0066CC);
 
   /// Secondary accent
-  Color get accentSecondary => isDark ? DesignTokens.accentBlue : const Color(0xFF0080FF);
+  Color get accentSecondary => isDark ? VagusTokens.primaryDark : VagusTokens.primaryDark;
 
   /// Success color
-  Color get success => isDark ? DesignTokens.accentGreen : const Color(0xFF059669);
+  Color get success => isDark ? VagusTokens.primary : const Color(0xFF059669);
 
   /// Warning color
-  Color get warning => isDark ? DesignTokens.accentOrange : const Color(0xFFD97706);
+  Color get warning => isDark ? VagusTokens.accentOrange : const Color(0xFFD97706);
 
   /// Error/danger color
-  Color get danger => isDark ? DesignTokens.accentPink : const Color(0xFFDC2626);
+  Color get danger => isDark ? VagusTokens.accentPink : const Color(0xFFDC2626);
 
   /// Info color
-  Color get info => isDark ? DesignTokens.accentBlue : const Color(0xFF2563EB);
+  Color get info => isDark ? VagusTokens.primaryDark : const Color(0xFF2563EB);
 
   // =============================================================
   // ACCENT BACKGROUNDS (subtle tints)
   // =============================================================
 
   Color get successBg => isDark 
-      ? DesignTokens.successBg 
+      ? VagusTokens.successBg 
       : const Color(0xFFD1FAE5);
 
   Color get warningBg => isDark 
-      ? DesignTokens.warnBg 
+      ? VagusTokens.warningBg 
       : const Color(0xFFFEF3C7);
 
   Color get dangerBg => isDark 
-      ? DesignTokens.dangerBg 
+      ? VagusTokens.errorBg 
       : const Color(0xFFFEE2E2);
 
   Color get infoBg => isDark 
-      ? DesignTokens.infoBg 
+      ? VagusTokens.infoBg 
       : const Color(0xFFDBEAFE);
 
   // =============================================================
@@ -232,7 +232,7 @@ class ThemeColors {
 
   /// Card shadow
   List<BoxShadow> get cardShadow => isDark 
-      ? DesignTokens.cardShadow 
+      ? VagusTokens.shadowCard 
       : [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -243,7 +243,7 @@ class ThemeColors {
 
   /// Elevated shadow (modals, FABs)
   List<BoxShadow> get elevatedShadow => isDark 
-      ? DesignTokens.glowSm 
+      ? VagusTokens.shadowSm 
       : [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -258,21 +258,21 @@ class ThemeColors {
 
   /// Premium cyan-teal gradient (works in both light/dark modes)
   static const premiumGradient = LinearGradient(
-    colors: [Color(0xFF00C8FF), Color(0xFF00D4AA)],
+    colors: [VagusTokens.primary, Color(0xFF00D4AA)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   /// Premium blue-cyan gradient
   static const premiumBlueGradient = LinearGradient(
-    colors: [Color(0xFF0080FF), Color(0xFF00C8FF)],
+    colors: [VagusTokens.primaryDark, VagusTokens.primary],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   /// Premium purple-pink gradient
   static const premiumPurpleGradient = LinearGradient(
-    colors: [Color(0xFF9D6BFF), Color(0xFFFF6B9D)],
+    colors: [VagusTokens.secondary, VagusTokens.accentPink],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -292,17 +292,17 @@ class ThemeColors {
   // =============================================================
 
   /// Text on premium gradient cards (always dark for readability)
-  Color get textOnGradient => const Color(0xFF0B1220);
+  Color get textOnGradient => VagusTokens.textInverse;
 
   /// Secondary text on gradient cards
   Color get textOnGradientSecondary => const Color(0xFF1A3A5C);
 
   /// Icon/check color on gradient cards (cyan accent)
-  Color get iconOnGradient => const Color(0xFF00C8FF);
+  Color get iconOnGradient => VagusTokens.primary;
 
   /// Button on gradient cards (white with dark text)
   Color get buttonOnGradient => Colors.white;
-  Color get buttonTextOnGradient => const Color(0xFF0B1220);
+  Color get buttonTextOnGradient => VagusTokens.textInverse;
 
   // =============================================================
   // DECORATIONS (pre-built for common patterns)
@@ -347,7 +347,7 @@ class ThemeColors {
     ),
     boxShadow: [
       BoxShadow(
-        color: const Color(0xFF00C8FF).withValues(alpha: 0.3),
+        color: VagusTokens.primary.withValues(alpha: 0.3),
         blurRadius: 20,
         offset: const Offset(0, 8),
       ),
@@ -369,7 +369,7 @@ class ThemeColors {
     ),
     boxShadow: [
       BoxShadow(
-        color: const Color(0xFF0080FF).withValues(alpha: 0.3),
+        color: VagusTokens.primaryDark.withValues(alpha: 0.3),
         blurRadius: 20,
         offset: const Offset(0, 8),
       ),
@@ -386,7 +386,7 @@ class ThemeColors {
     ),
     boxShadow: [
       BoxShadow(
-        color: const Color(0xFF9D6BFF).withValues(alpha: 0.3),
+        color: VagusTokens.secondary.withValues(alpha: 0.3),
         blurRadius: 20,
         offset: const Offset(0, 8),
       ),
@@ -515,8 +515,6 @@ class PremiumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tc = ThemeColors.of(context);
-    
     final card = Container(
       margin: margin,
       padding: padding ?? const EdgeInsets.all(20),
@@ -529,7 +527,7 @@ class PremiumCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00C8FF).withValues(alpha: 0.3),
+            color: VagusTokens.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -661,8 +659,8 @@ class PremiumCheckItem extends StatelessWidget {
 /// Replace usages of:
 /// - Colors.white → context.tc.textPrimary (for text)
 /// - Colors.white70 → context.tc.textSecondary
-/// - DesignTokens.neutralWhite → context.tc.textPrimary
-/// - DesignTokens.cardBackground → context.tc.surface
+/// - VagusTokens.textPrimary → context.tc.textPrimary
+/// - VagusTokens.surfaceGlass → context.tc.surface
 /// - AppTheme.neutralWhite → context.tc.textPrimary
 class AdaptiveColors {
   /// Use instead of Colors.white for text
@@ -674,10 +672,10 @@ class AdaptiveColors {
   /// Use instead of Colors.white for icons
   static Color iconWhite(BuildContext context) => context.tc.icon;
   
-  /// Use instead of DesignTokens.cardBackground
+  /// Use instead of VagusTokens.surfaceGlass
   static Color cardBg(BuildContext context) => context.tc.surface;
   
-  /// Use instead of DesignTokens.primaryDark for backgrounds
+  /// Use instead of VagusTokens.bgBase for backgrounds
   static Color scaffoldBg(BuildContext context) => context.tc.bg;
   
   /// Use instead of hard-coded grey colors

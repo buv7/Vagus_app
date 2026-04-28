@@ -1,5 +1,6 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/design_tokens.dart';
 
@@ -184,7 +185,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
     required Widget child,
     required bool isDark,
   }) {
-    final textColor = isDark ? Colors.white.withValues(alpha: 0.8) : const Color(0xFF1a1a2e);
+    final textColor = isDark ? Colors.white.withValues(alpha: 0.8) : VagusTokens.bgModal;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -219,14 +220,14 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1a1a2e);
+    final textColor = isDark ? Colors.white : VagusTokens.bgModal;
     final subtitleColor = isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF4a4a5a);
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        foregroundColor: isDark ? Colors.white : const Color(0xFF0B1220),
+        foregroundColor: isDark ? Colors.white : VagusTokens.textInverse,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -431,7 +432,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
     String? Function(String?)? validator,
     required bool isDark,
   }) {
-    final textColor = isDark ? Colors.white : const Color(0xFF1a1a2e);
+    final textColor = isDark ? Colors.white : VagusTokens.bgModal;
     final hintColor = isDark ? Colors.white.withValues(alpha: 0.5) : const Color(0xFF6a6a7a);
     
     return Container(
@@ -476,7 +477,7 @@ class _BecomeCoachScreenState extends State<BecomeCoachScreen> {
   }
 
   Widget _buildGlassmorphicDropdown({required bool isDark}) {
-    final textColor = isDark ? Colors.white : const Color(0xFF1a1a2e);
+    final textColor = isDark ? Colors.white : VagusTokens.bgModal;
     final iconColor = isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF4a4a5a);
     
     return Container(

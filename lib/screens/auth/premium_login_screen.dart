@@ -1,5 +1,6 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shimmer/shimmer.dart';
@@ -295,7 +296,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
           delay: const Duration(milliseconds: 200),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'VAGUS',
@@ -315,7 +316,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
           delay: const Duration(milliseconds: 400),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'THE MOST ADVANCED IRAQI ONLINE FITNESS\nCOACHING PLATFORM',
@@ -363,7 +364,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
           delay: const Duration(milliseconds: 200),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'VAGUS',
@@ -380,7 +381,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
           delay: const Duration(milliseconds: 400),
           child: Shimmer.fromColors(
             baseColor: Colors.white,
-            highlightColor: const Color(0xFF00C8FF),
+            highlightColor: VagusTokens.primary,
             period: const Duration(seconds: 3),
             child: const Text(
               'THE MOST ADVANCED IRAQI ONLINE FITNESS\nCOACHING PLATFORM',
@@ -438,7 +439,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF00C8FF).withValues(alpha: 0.9),
+                color: VagusTokens.primary.withValues(alpha: 0.9),
                 letterSpacing: 2,
               ),
             ),
@@ -458,7 +459,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF00C8FF).withValues(alpha: 0.9),
+                color: VagusTokens.primary.withValues(alpha: 0.9),
                 letterSpacing: 2,
               ),
             ),
@@ -487,7 +488,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF00C8FF), width: 2),
+                  borderSide: const BorderSide(color: VagusTokens.primary, width: 2),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -534,7 +535,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF00C8FF), width: 2),
+                  borderSide: const BorderSide(color: VagusTokens.primary, width: 2),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -586,12 +587,12 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
                 onPressed: _isLoading ? null : _handleBiometricLogin,
                 icon: Icon(
                   Icons.fingerprint,
-                  color: const Color(0xFF00C8FF).withValues(alpha: _isLoading ? 0.3 : 1.0),
+                  color: VagusTokens.primary.withValues(alpha: _isLoading ? 0.3 : 1.0),
                 ),
                 label: Text(
                   'Use biometric authentication',
                   style: TextStyle(
-                    color: const Color(0xFF00C8FF).withValues(alpha: _isLoading ? 0.3 : 1.0),
+                    color: VagusTokens.primary.withValues(alpha: _isLoading ? 0.3 : 1.0),
                   ),
                 ),
               ),
@@ -650,7 +651,7 @@ class _PremiumLoginScreenState extends State<PremiumLoginScreen>
                   height: 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF00C8FF).withValues(alpha: 
+                    color: VagusTokens.primary.withValues(alpha: 
                       _dotOpacityAnimations[index].value,
                     ),
                   ),

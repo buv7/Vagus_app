@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/design_tokens.dart';
 import '../../../../models/nutrition/nutrition_plan.dart';
@@ -294,12 +295,12 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             child: CustomPaint(
               painter: _MiniRingPainter(
                 progress: progress,
-                color: const Color(0xFF00D9A3),
+                color: VagusTokens.success,
               ),
               child: const Center(
                 child: Icon(
                   Icons.fitness_center,
-                  color: Color(0xFF00D9A3),
+                  color: VagusTokens.success,
                   size: 20,
                 ),
               ),
@@ -322,7 +323,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
           const Text(
             'Protein',
             style: TextStyle(
-              color: Color(0xFF00D9A3),
+              color: VagusTokens.success,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -359,12 +360,12 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             child: CustomPaint(
               painter: _MiniRingPainter(
                 progress: progress,
-                color: const Color(0xFFFF9A3C),
+                color: VagusTokens.macroCarbs,
               ),
               child: const Center(
                 child: Icon(
                   Icons.grain,
-                  color: Color(0xFFFF9A3C),
+                  color: VagusTokens.macroCarbs,
                   size: 20,
                 ),
               ),
@@ -387,7 +388,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
           const Text(
             'Carbs',
             style: TextStyle(
-              color: Color(0xFFFF9A3C),
+              color: VagusTokens.macroCarbs,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -424,12 +425,12 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
             child: CustomPaint(
               painter: _MiniRingPainter(
                 progress: progress,
-                color: const Color(0xFFFFD93C),
+                color: VagusTokens.macroFat,
               ),
               child: const Center(
                 child: Icon(
                   Icons.eco,
-                  color: Color(0xFFFFD93C),
+                  color: VagusTokens.macroFat,
                   size: 20,
                 ),
               ),
@@ -452,7 +453,7 @@ class _DailyNutritionDashboardState extends State<DailyNutritionDashboard>
           const Text(
             'Fat',
             style: TextStyle(
-              color: Color(0xFFFFD93C),
+              color: VagusTokens.macroFat,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),

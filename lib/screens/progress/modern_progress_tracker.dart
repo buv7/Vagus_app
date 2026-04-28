@@ -1,6 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../theme/design_tokens.dart';
@@ -239,8 +240,8 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildHeader(bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
-    final iconColor = isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
+    final iconColor = isDark ? Colors.white.withValues(alpha: 0.9) : VagusTokens.textInverse;
     
     return ClipRRect(
       child: BackdropFilter(
@@ -376,7 +377,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
 
   Widget _buildTabItem(String value, String label, IconData icon, bool isDark) {
     final isSelected = _selectedTab == value;
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     final inactiveColor = isDark 
         ? Colors.white.withValues(alpha: 0.6) 
         : const Color(0xFF6B7280);
@@ -554,7 +555,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildPhotosTab(bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(DesignTokens.space16),
@@ -582,7 +583,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildProgressSummary(bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     final secondaryTextColor = isDark 
         ? Colors.white.withValues(alpha: 0.7) 
         : const Color(0xFF6B7280);
@@ -857,7 +858,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildProgressPhotoCard(Map<String, dynamic> photo, bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     final secondaryTextColor = isDark 
         ? Colors.white.withValues(alpha: 0.7) 
         : const Color(0xFF6B7280);
@@ -998,7 +999,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildMetricCard(String label, String value, Color color, bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     
     return Container(
       padding: const EdgeInsets.all(DesignTokens.space12),
@@ -1039,7 +1040,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildMeasurementsTab(bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(DesignTokens.space16),
@@ -1065,7 +1066,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
     final isPositive = measurement['trend'] == 'up';
     final changeColor = isPositive ? DesignTokens.accentTeal : DesignTokens.accentOrange;
     final changeIcon = isPositive ? Icons.trending_up : Icons.trending_down;
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     final secondaryTextColor = isDark 
         ? Colors.white.withValues(alpha: 0.6) 
         : const Color(0xFF6B7280);
@@ -1190,7 +1191,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   }
 
   Widget _buildGoalsTab(bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(DesignTokens.space16),
@@ -1215,7 +1216,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
   Widget _buildGoalCard(Map<String, dynamic> goal, bool isDark) {
     final progress = goal['progress'] as double;
     final daysLeft = goal['deadline'].difference(DateTime.now()).inDays;
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     
     // Get status color based on days left
     Color statusColor = daysLeft > 30 
@@ -1382,7 +1383,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
 
   void _showAddPhotoDialog() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     final secondaryTextColor = isDark 
         ? Colors.white.withValues(alpha: 0.7) 
         : const Color(0xFF6B7280);
@@ -1554,7 +1555,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
 
   void _showAddMeasurementDialog() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     final secondaryTextColor = isDark 
         ? Colors.white.withValues(alpha: 0.7) 
         : const Color(0xFF6B7280);
@@ -1838,7 +1839,7 @@ class _ModernProgressTrackerState extends State<ModernProgressTracker> {
 
   void _showAddGoalDialog() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF0B1220);
+    final textColor = isDark ? Colors.white : VagusTokens.textInverse;
     final secondaryTextColor = isDark 
         ? Colors.white.withValues(alpha: 0.7) 
         : const Color(0xFF6B7280);

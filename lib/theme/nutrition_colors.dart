@@ -1,6 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'tokens.dart';
 
 /// Color palette specifically for the Nutrition Platform 2.0.
+///
+/// Status-color constants that duplicate [VagusTokens] are marked @Deprecated.
+/// Macro colors (protein, carbs, fat, calories) are canonical here and also
+/// available as [VagusTokens.macroProtein] etc.
 ///
 /// Defines all colors used in nutrition features including:
 /// - Macro colors (protein, carbs, fat, calories)
@@ -24,32 +29,36 @@ class NutritionColors {
   // ============================================================
 
   /// Protein indicator color (Teal/Aqua)
-  static const Color protein = Color(0xFF00D9A3);
+  static const Color protein = VagusTokens.success;
 
   /// Carbohydrates indicator color (Orange)
-  static const Color carbs = Color(0xFFFF9A3C);
+  static const Color carbs = VagusTokens.macroCarbs;
 
   /// Fat indicator color (Yellow)
-  static const Color fat = Color(0xFFFFD93C);
+  static const Color fat = VagusTokens.macroFat;
 
   /// Calories indicator color (Red)
-  static const Color calories = Color(0xFFFF6B6B);
+  static const Color calories = VagusTokens.error;
 
   // ============================================================
   // STATUS COLORS
   // ============================================================
 
-  /// Success state color (Green/Teal)
-  static const Color success = Color(0xFF00D9A3);
+  /// Success state color — see also [VagusTokens.success]
+  @Deprecated('Use VagusTokens.success')
+  static const Color success = VagusTokens.success;
 
-  /// Warning state color (Amber)
-  static const Color warning = Color(0xFFFFBF47);
+  /// Warning state color — see also [VagusTokens.warning]
+  @Deprecated('Use VagusTokens.warning')
+  static const Color warning = VagusTokens.warning;
 
-  /// Error state color (Red)
-  static const Color error = Color(0xFFFF6B6B);
+  /// Error state color — see also [VagusTokens.error]
+  @Deprecated('Use VagusTokens.error')
+  static const Color error = VagusTokens.error;
 
-  /// Info state color (Blue)
-  static const Color info = Color(0xFF4A90E2);
+  /// Info state color — see also [VagusTokens.info]
+  @Deprecated('Use VagusTokens.info')
+  static const Color info = VagusTokens.info;
 
   // ============================================================
   // BACKGROUND COLORS (Glassmorphism)
@@ -87,17 +96,21 @@ class NutritionColors {
   // TEXT COLORS
   // ============================================================
 
-  /// Primary text color (white)
-  static const Color textPrimary = Color(0xFFFFFFFF);
+  /// Primary text — see also [VagusTokens.textPrimary]
+  @Deprecated('Use VagusTokens.textPrimary')
+  static const Color textPrimary = VagusTokens.textPrimary;
 
-  /// Secondary text color (70% white)
-  static const Color textSecondary = Color(0xB3FFFFFF);
+  /// Secondary text (70 % white) — see also [VagusTokens.textSecondary]
+  @Deprecated('Use VagusTokens.textSecondary')
+  static const Color textSecondary = Color(0xB3FFFFFF);   // 70 % (nutrition variant)
 
-  /// Tertiary text color (50% white)
-  static const Color textTertiary = Color(0x80FFFFFF);
+  /// Tertiary text (50 % white) — see also [VagusTokens.textTertiary]
+  @Deprecated('Use VagusTokens.textTertiary')
+  static const Color textTertiary = Color(0x80FFFFFF);    // 50 % (nutrition variant)
 
-  /// Disabled text color (30% white)
-  static const Color textDisabled = Color(0x4DFFFFFF);
+  /// Disabled text — see also [VagusTokens.textDisabled]
+  @Deprecated('Use VagusTokens.textDisabled')
+  static const Color textDisabled = VagusTokens.textDisabled;
 
   // ============================================================
   // SPECIAL COLORS

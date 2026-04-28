@@ -1,5 +1,6 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 
 class AnimatedGradientBackground extends StatefulWidget {
   const AnimatedGradientBackground({super.key});
@@ -44,7 +45,7 @@ class _AnimatedGradientBackgroundState
               gradient: RadialGradient(
                 colors: [
                   const Color(0xFF0096FF).withValues(alpha: 0.1),
-                  const Color(0xFF00FFC8).withValues(alpha: 0.1),
+                  VagusTokens.primaryLight.withValues(alpha: 0.1),
                   const Color(0xFF0064C8).withValues(alpha: 0.05),
                   const Color(0xFF000000),
                 ],
@@ -60,7 +61,7 @@ class _AnimatedGradientBackgroundState
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF00C8FF).withValues(alpha: 0.08),
+                    VagusTokens.primary.withValues(alpha: 0.08),
                     Colors.transparent,
                   ],
                   stops: const [0.0, 1.0],

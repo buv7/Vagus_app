@@ -1,5 +1,6 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vagus_app/theme/tokens.dart';
 import '../../theme/design_tokens.dart';
 import '../../services/config/feature_flags.dart';
 import '../../services/admin/compliance_service.dart';
@@ -17,12 +18,12 @@ class ExportProgressScreen extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: isDark ? Colors.white : const Color(0xFF0B1220),
+        foregroundColor: isDark ? Colors.white : VagusTokens.textInverse,
         elevation: 0,
         title: Text(
           'Export Progress Data',
           style: TextStyle(
-            color: isDark ? Colors.white : const Color(0xFF0B1220),
+            color: isDark ? Colors.white : VagusTokens.textInverse,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
