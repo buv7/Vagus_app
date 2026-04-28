@@ -1,0 +1,1539 @@
+{
+  "metadata": {
+    "locale": "ku",
+    "script": "Arabic (Sorani Kurdish)",
+    "dialect": "Sorani — Iraqi Kurdistan / Iranian Kurdistan",
+    "note": "NOT Kurmanji. Uses Arabic script. RTL. Many fitness terms are borrowed from English or Arabic.",
+    "generated_by": "POLYGLOT-KU v2",
+    "date": "2026-04-28",
+    "term_count": 218
+  },
+  "terms": [
+    {
+      "category": "workout_training",
+      "en": "workout",
+      "ku": "تەمرین",
+      "transliteration": "temerîn",
+      "notes": "primary term; also وەرزش (werzish) in some regions"
+    },
+    {
+      "category": "workout_training",
+      "en": "exercise",
+      "ku": "تەمرین",
+      "transliteration": "temerîn",
+      "notes": "same root as workout; context differentiates"
+    },
+    {
+      "category": "workout_training",
+      "en": "training",
+      "ku": "تاوتووکردن",
+      "transliteration": "tawtûkirin",
+      "notes": "also تەمرین acceptable"
+    },
+    {
+      "category": "workout_training",
+      "en": "session",
+      "ku": "دانیشتنی تەمرین",
+      "transliteration": "danishtnî temerîn",
+      "notes": "lit. 'training sitting'"
+    },
+    {
+      "category": "workout_training",
+      "en": "sets",
+      "ku": "دەستە",
+      "transliteration": "desta",
+      "notes": "countable unit; plural دەستەکان"
+    },
+    {
+      "category": "workout_training",
+      "en": "reps",
+      "ku": "دووبارەکردنەوە",
+      "transliteration": "dubarekirdinewa",
+      "notes": "repetitions; colloquially also ڕێپس (reps — borrowed)"
+    },
+    {
+      "category": "workout_training",
+      "en": "rest period",
+      "ku": "ماوەی ئاسووده",
+      "transliteration": "maweyî asude",
+      "notes": "rest interval between sets"
+    },
+    {
+      "category": "workout_training",
+      "en": "warm-up",
+      "ku": "گەرمکردن",
+      "transliteration": "germkirin",
+      "notes": "lit. 'making warm'"
+    },
+    {
+      "category": "workout_training",
+      "en": "cool-down",
+      "ku": "ساردکردنەوە",
+      "transliteration": "sardkirdinewa",
+      "notes": "lit. 'making cold again'"
+    },
+    {
+      "category": "workout_training",
+      "en": "stretching",
+      "ku": "کێشانەوەی مووچە",
+      "transliteration": "kêshanewe mûçe",
+      "notes": "lit. 'pulling back muscles'"
+    },
+    {
+      "category": "workout_training",
+      "en": "weight (load)",
+      "ku": "کێش",
+      "transliteration": "kêsh",
+      "notes": "used for barbell/dumbbell weight"
+    },
+    {
+      "category": "workout_training",
+      "en": "volume",
+      "ku": "بڕی تەمرین",
+      "transliteration": "birî temerîn",
+      "notes": "total training volume"
+    },
+    {
+      "category": "workout_training",
+      "en": "intensity",
+      "ku": "توندی",
+      "transliteration": "tundî",
+      "notes": "how hard the workout is"
+    },
+    {
+      "category": "workout_training",
+      "en": "frequency",
+      "ku": "ژمارەی تەمرین",
+      "transliteration": "jhmareyî temerîn",
+      "notes": "times per week"
+    },
+    {
+      "category": "workout_training",
+      "en": "duration",
+      "ku": "ماوە",
+      "transliteration": "mawe",
+      "notes": "length of workout"
+    },
+    {
+      "category": "workout_training",
+      "en": "circuit training",
+      "ku": "تەمرینی دۆرەیی",
+      "transliteration": "temerînî doreyî",
+      "notes": "circuit = دۆرە"
+    },
+    {
+      "category": "workout_training",
+      "en": "round",
+      "ku": "گەڕان",
+      "transliteration": "gerin",
+      "notes": "one round of a circuit"
+    },
+    {
+      "category": "workout_training",
+      "en": "superset",
+      "ku": "سوپەرسێت",
+      "transliteration": "superset",
+      "notes": "borrowed directly from English"
+    },
+    {
+      "category": "workout_training",
+      "en": "drop set",
+      "ku": "دراپسێت",
+      "transliteration": "dropset",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "workout_training",
+      "en": "AMRAP",
+      "ku": "زۆرترین ژمارە لە ماوەی دیاریکراو",
+      "transliteration": "zorterîn jhmare le maweyî diyarîkraw",
+      "notes": "As Many Reps As Possible — expanded form preferred in UI"
+    },
+    {
+      "category": "workout_training",
+      "en": "EMOM",
+      "ku": "لە هەر خولەکدا",
+      "transliteration": "le her xûlekda",
+      "notes": "Every Minute On the Minute"
+    },
+    {
+      "category": "workout_training",
+      "en": "beginner",
+      "ku": "تازەکار",
+      "transliteration": "tazekar",
+      "notes": "lit. 'new worker'"
+    },
+    {
+      "category": "workout_training",
+      "en": "intermediate",
+      "ku": "ناوەند",
+      "transliteration": "nawend",
+      "notes": "mid-level"
+    },
+    {
+      "category": "workout_training",
+      "en": "advanced",
+      "ku": "پێشکەوتوو",
+      "transliteration": "pêshkewtu",
+      "notes": "experienced"
+    },
+    {
+      "category": "workout_training",
+      "en": "form (technique)",
+      "ku": "شێوەی جێبەجێکردن",
+      "transliteration": "shêweyî jêbejêkirin",
+      "notes": "exercise form/technique"
+    },
+    {
+      "category": "workout_training",
+      "en": "program",
+      "ku": "پرۆگرام",
+      "transliteration": "program",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "workout_training",
+      "en": "plan",
+      "ku": "پلان",
+      "transliteration": "plan",
+      "notes": "borrowed; also بەرنامە (bername)"
+    },
+    {
+      "category": "workout_training",
+      "en": "routine",
+      "ku": "ڕووتین",
+      "transliteration": "rûtîn",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "workout_training",
+      "en": "split (training split)",
+      "ku": "دابەشی تەمرین",
+      "transliteration": "dabeshî temerîn",
+      "notes": "e.g. push/pull/legs split"
+    },
+    {
+      "category": "workout_training",
+      "en": "full body",
+      "ku": "تەمامی جەسەد",
+      "transliteration": "tememî jesed",
+      "notes": "full-body workout"
+    },
+    {
+      "category": "exercises",
+      "en": "squat",
+      "ku": "سکوات",
+      "transliteration": "squat",
+      "notes": "borrowed from English; deeply established in Iraqi fitness culture"
+    },
+    {
+      "category": "exercises",
+      "en": "deadlift",
+      "ku": "دێدلیفت",
+      "transliteration": "dêdlift",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "exercises",
+      "en": "bench press",
+      "ku": "پرێسی سنگ",
+      "transliteration": "prêsî sing",
+      "notes": "lit. 'chest press'"
+    },
+    {
+      "category": "exercises",
+      "en": "overhead press",
+      "ku": "پرێسی سەرەوە",
+      "transliteration": "prêsî serewa",
+      "notes": "lit. 'overhead press'"
+    },
+    {
+      "category": "exercises",
+      "en": "push-up",
+      "ku": "هەڵشیاری لە زەوی",
+      "transliteration": "helshyarî le zewî",
+      "notes": "lit. 'rising from the ground'"
+    },
+    {
+      "category": "exercises",
+      "en": "pull-up",
+      "ku": "هەڵکێشان",
+      "transliteration": "helkêshan",
+      "notes": "lit. 'pulling upward'"
+    },
+    {
+      "category": "exercises",
+      "en": "chin-up",
+      "ku": "چینئەپ",
+      "transliteration": "chin-up",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "exercises",
+      "en": "plank",
+      "ku": "پلانک",
+      "transliteration": "plank",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "exercises",
+      "en": "lunge",
+      "ku": "گامبردن",
+      "transliteration": "gambirin",
+      "notes": "lit. 'taking a step'; also لانج (borrowed)"
+    },
+    {
+      "category": "exercises",
+      "en": "burpee",
+      "ku": "بێرپی",
+      "transliteration": "bêrpî",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "exercises",
+      "en": "crunch",
+      "ku": "کرانچ",
+      "transliteration": "kranch",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "exercises",
+      "en": "sit-up",
+      "ku": "دانیشتنەوەی زک",
+      "transliteration": "danishtneweyî zik",
+      "notes": "lit. 'ab sit-up'"
+    },
+    {
+      "category": "exercises",
+      "en": "mountain climber",
+      "ku": "هێرشکاری چیا",
+      "transliteration": "hêrshkarî chiya",
+      "notes": "the exercise, not literal"
+    },
+    {
+      "category": "exercises",
+      "en": "jumping jack",
+      "ku": "جەمپینگ جاک",
+      "transliteration": "jumping jack",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "exercises",
+      "en": "box jump",
+      "ku": "هەڵبووردن لە سەر باکس",
+      "transliteration": "helbûrdin le ser baks",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "kettlebell swing",
+      "ku": "چوولانی کێتلبێل",
+      "transliteration": "chwlanî kêtlbêl",
+      "notes": "کێتلبێل borrowed from English"
+    },
+    {
+      "category": "exercises",
+      "en": "row",
+      "ku": "کێشانی پشت",
+      "transliteration": "kêshanî pisht",
+      "notes": "back row exercise; رۆ also used"
+    },
+    {
+      "category": "exercises",
+      "en": "hip thrust",
+      "ku": "هیپ ترەست",
+      "transliteration": "hip thrust",
+      "notes": "borrowed; also بزووتنی مەگر (mezgir movement)"
+    },
+    {
+      "category": "exercises",
+      "en": "leg press",
+      "ku": "پرێسی لاق",
+      "transliteration": "prêsî laq",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "leg curl",
+      "ku": "کورلی لاق",
+      "transliteration": "korlî laq",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "calf raise",
+      "ku": "هەڵبووردنی مووچەی پێ",
+      "transliteration": "helbûrdnî mûçeyî pê",
+      "notes": "calf = مووچەی خوارەوەی لاق"
+    },
+    {
+      "category": "exercises",
+      "en": "lateral raise",
+      "ku": "هەڵبووردنی لاوەکی",
+      "transliteration": "helbûrdnî lawekî",
+      "notes": "shoulder lateral raise"
+    },
+    {
+      "category": "exercises",
+      "en": "bicep curl",
+      "ku": "کورلی بایسێپس",
+      "transliteration": "korlî baysêps",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "tricep pushdown",
+      "ku": "خستنەخوارەوەی ترایسێپس",
+      "transliteration": "xistinexwarewe traysêps",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "dumbbell",
+      "ku": "دەمبێل",
+      "transliteration": "dembêl",
+      "notes": "borrowed from English; very common in Iraqi gym culture"
+    },
+    {
+      "category": "exercises",
+      "en": "barbell",
+      "ku": "بارگیری گەورە",
+      "transliteration": "bargîrî gewre",
+      "notes": "also بارگیر alone; بارگیر lit. 'weight holder'"
+    },
+    {
+      "category": "exercises",
+      "en": "resistance band",
+      "ku": "بەندی بەرگری",
+      "transliteration": "bendî bergirî",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "Romanian deadlift",
+      "ku": "دێدلیفتی ڕۆمانی",
+      "transliteration": "dêdliftî rômanî",
+      "notes": "RDL"
+    },
+    {
+      "category": "exercises",
+      "en": "face pull",
+      "ku": "کێشانی ڕوو",
+      "transliteration": "kêshanî rû",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "pull-down",
+      "ku": "خستنەخوارەوەی مل",
+      "transliteration": "xistinexwareweyî mil",
+      "notes": "lat pulldown"
+    },
+    {
+      "category": "exercises",
+      "en": "incline press",
+      "ku": "پرێسی ئەیلی سەرەوە",
+      "transliteration": "prêsî eylî serewa",
+      "notes": ""
+    },
+    {
+      "category": "exercises",
+      "en": "decline press",
+      "ku": "پرێسی ئەیلی خوارەوە",
+      "transliteration": "prêsî eylî xwarewe",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "chest",
+      "ku": "سنگ",
+      "transliteration": "sing",
+      "notes": "very common; also ئەستوانە in some dialects"
+    },
+    {
+      "category": "muscles_body",
+      "en": "back",
+      "ku": "پشت",
+      "transliteration": "pisht",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "legs",
+      "ku": "لاقەکان",
+      "transliteration": "laqekan",
+      "notes": "plural of لاق (laq)"
+    },
+    {
+      "category": "muscles_body",
+      "en": "arms",
+      "ku": "دەستەکان",
+      "transliteration": "destekan",
+      "notes": "plural of دەست (dest)"
+    },
+    {
+      "category": "muscles_body",
+      "en": "shoulders",
+      "ku": "مووچەکانی سەرەوە",
+      "transliteration": "mûçekanî serewa",
+      "notes": "also سەر شان (ser shan)"
+    },
+    {
+      "category": "muscles_body",
+      "en": "core",
+      "ku": "ناوەند",
+      "transliteration": "nawend",
+      "notes": "lit. 'center'; کۆر (borrowed) also common in gyms"
+    },
+    {
+      "category": "muscles_body",
+      "en": "abs (abdominals)",
+      "ku": "مووچەی زک",
+      "transliteration": "mûçeyî zik",
+      "notes": "زک = stomach/belly"
+    },
+    {
+      "category": "muscles_body",
+      "en": "biceps",
+      "ku": "بایسێپس",
+      "transliteration": "baysêps",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "muscles_body",
+      "en": "triceps",
+      "ku": "ترایسێپس",
+      "transliteration": "traysêps",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "muscles_body",
+      "en": "forearms",
+      "ku": "پێشدەست",
+      "transliteration": "pêshdest",
+      "notes": "lit. 'front of arm'"
+    },
+    {
+      "category": "muscles_body",
+      "en": "quads (quadriceps)",
+      "ku": "مووچەی پێشی لاق",
+      "transliteration": "mûçeyî pêshî laq",
+      "notes": "front thigh muscle"
+    },
+    {
+      "category": "muscles_body",
+      "en": "hamstrings",
+      "ku": "مووچەی پشتی لاق",
+      "transliteration": "mûçeyî pishtî laq",
+      "notes": "rear thigh muscle"
+    },
+    {
+      "category": "muscles_body",
+      "en": "glutes",
+      "ku": "مووچەی کاسلکان",
+      "transliteration": "mûçeyî kaslkan",
+      "notes": "also گلووتس (borrowed)"
+    },
+    {
+      "category": "muscles_body",
+      "en": "calves",
+      "ku": "مووچەی خوارەوەی لاق",
+      "transliteration": "mûçeyî xwareweyî laq",
+      "notes": "lower leg muscle"
+    },
+    {
+      "category": "muscles_body",
+      "en": "obliques",
+      "ku": "مووچەی لاوەکی زک",
+      "transliteration": "mûçeyî lawekî zik",
+      "notes": "side ab muscles"
+    },
+    {
+      "category": "muscles_body",
+      "en": "lats (latissimus dorsi)",
+      "ku": "مووچەی فراوانی پشت",
+      "transliteration": "mûçeyî firewanî pisht",
+      "notes": "lat muscle"
+    },
+    {
+      "category": "muscles_body",
+      "en": "traps (trapezius)",
+      "ku": "مووچەی تراپێزی",
+      "transliteration": "mûçeyî trapêzî",
+      "notes": "borrowed from English/Latin"
+    },
+    {
+      "category": "muscles_body",
+      "en": "pecs (pectorals)",
+      "ku": "مووچەی سنگ",
+      "transliteration": "mûçeyî sing",
+      "notes": "chest muscle"
+    },
+    {
+      "category": "muscles_body",
+      "en": "muscle",
+      "ku": "مووچە",
+      "transliteration": "mûçe",
+      "notes": "primary term; عەضەلە (from Arabic) also used in formal contexts"
+    },
+    {
+      "category": "muscles_body",
+      "en": "joint",
+      "ku": "بەند",
+      "transliteration": "bend",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "spine",
+      "ku": "ئیستاکا",
+      "transliteration": "istaka",
+      "notes": "backbone; also ستووری پشت"
+    },
+    {
+      "category": "muscles_body",
+      "en": "knee",
+      "ku": "چۆڵکە",
+      "transliteration": "çôlke",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "hip",
+      "ku": "مەگر",
+      "transliteration": "megr",
+      "notes": "hip/pelvic area"
+    },
+    {
+      "category": "muscles_body",
+      "en": "ankle",
+      "ku": "مانچەی پێ",
+      "transliteration": "mançeyî pê",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "elbow",
+      "ku": "ئەژنوو",
+      "transliteration": "ejnû",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "wrist",
+      "ku": "مانچەی دەست",
+      "transliteration": "mançeyî dest",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "neck",
+      "ku": "مل",
+      "transliteration": "mil",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "lower back",
+      "ku": "پشتی خوار",
+      "transliteration": "pishtî xwar",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "upper back",
+      "ku": "پشتی سەرەوە",
+      "transliteration": "pishtî serewa",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "body weight",
+      "ku": "کێشی جەسەد",
+      "transliteration": "kêshî jesed",
+      "notes": ""
+    },
+    {
+      "category": "muscles_body",
+      "en": "height",
+      "ku": "بەرزی",
+      "transliteration": "berzî",
+      "notes": ""
+    },
+    {
+      "category": "nutrition",
+      "en": "calories",
+      "ku": "کالۆری",
+      "transliteration": "kalorî",
+      "notes": "borrowed; universally understood in Iraqi fitness culture"
+    },
+    {
+      "category": "nutrition",
+      "en": "protein",
+      "ku": "پرۆتین",
+      "transliteration": "protîn",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "nutrition",
+      "en": "carbohydrates",
+      "ku": "کاربۆهایدرات",
+      "transliteration": "karbohayidrat",
+      "notes": "borrowed; abbreviated as کاربۆ"
+    },
+    {
+      "category": "nutrition",
+      "en": "fat",
+      "ku": "چەوری",
+      "transliteration": "çewrî",
+      "notes": "native Sorani word for fat/grease"
+    },
+    {
+      "category": "nutrition",
+      "en": "fiber",
+      "ku": "فایبەر",
+      "transliteration": "fayber",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "nutrition",
+      "en": "sugar",
+      "ku": "شەکر",
+      "transliteration": "sheker",
+      "notes": "from Arabic شكر"
+    },
+    {
+      "category": "nutrition",
+      "en": "sodium",
+      "ku": "نەتریوم",
+      "transliteration": "netriyom",
+      "notes": "also سۆدیوم (borrowed)"
+    },
+    {
+      "category": "nutrition",
+      "en": "water",
+      "ku": "ئاو",
+      "transliteration": "aw",
+      "notes": "native Sorani"
+    },
+    {
+      "category": "nutrition",
+      "en": "hydration",
+      "ku": "ئاودانی",
+      "transliteration": "awdanî",
+      "notes": "lit. 'water-having'"
+    },
+    {
+      "category": "nutrition",
+      "en": "meal",
+      "ku": "خواردن",
+      "transliteration": "xwardin",
+      "notes": "also نان (nan) in casual speech"
+    },
+    {
+      "category": "nutrition",
+      "en": "breakfast",
+      "ku": "نانی بەیانی",
+      "transliteration": "nanî beynanî",
+      "notes": "lit. 'morning bread/food'"
+    },
+    {
+      "category": "nutrition",
+      "en": "lunch",
+      "ku": "نانی نیوەڕۆ",
+      "transliteration": "nanî nîwerô",
+      "notes": "lit. 'midday food'"
+    },
+    {
+      "category": "nutrition",
+      "en": "dinner",
+      "ku": "نانی ئێوارە",
+      "transliteration": "nanî êware",
+      "notes": "lit. 'evening food'"
+    },
+    {
+      "category": "nutrition",
+      "en": "snack",
+      "ku": "مزوو",
+      "transliteration": "mizû",
+      "notes": "small bite; also خواردنی بچووک"
+    },
+    {
+      "category": "nutrition",
+      "en": "macros",
+      "ku": "ماکرۆ",
+      "transliteration": "makro",
+      "notes": "borrowed; macronutrients"
+    },
+    {
+      "category": "nutrition",
+      "en": "vitamins",
+      "ku": "فیتامین",
+      "transliteration": "fîtamîn",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "nutrition",
+      "en": "supplement",
+      "ku": "تەکمیلکار",
+      "transliteration": "tekmîlkar",
+      "notes": "also سوپلیمەنت (borrowed)"
+    },
+    {
+      "category": "nutrition",
+      "en": "creatine",
+      "ku": "کرێئاتین",
+      "transliteration": "krêatîn",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "nutrition",
+      "en": "pre-workout",
+      "ku": "پێش تەمرین",
+      "transliteration": "pêsh temerîn",
+      "notes": "also پری-وەرکئاوت (borrowed slang)"
+    },
+    {
+      "category": "nutrition",
+      "en": "post-workout",
+      "ku": "دوای تەمرین",
+      "transliteration": "dway temerîn",
+      "notes": ""
+    },
+    {
+      "category": "nutrition",
+      "en": "whey protein",
+      "ku": "پرۆتینی وێی",
+      "transliteration": "protînî wêy",
+      "notes": "وێی borrowed from English 'whey'"
+    },
+    {
+      "category": "nutrition",
+      "en": "caloric deficit",
+      "ku": "کەمی کالۆری",
+      "transliteration": "kemî kalorî",
+      "notes": "eating below maintenance"
+    },
+    {
+      "category": "nutrition",
+      "en": "caloric surplus",
+      "ku": "زیادی کالۆری",
+      "transliteration": "zîyadî kalorî",
+      "notes": "eating above maintenance; bulking context"
+    },
+    {
+      "category": "nutrition",
+      "en": "maintenance calories",
+      "ku": "کالۆری نگهداری",
+      "transliteration": "kalorî nighdêrî",
+      "notes": "TDEE maintenance level"
+    },
+    {
+      "category": "nutrition",
+      "en": "food log",
+      "ku": "تۆمارکردنی خواردن",
+      "transliteration": "tômarkirdinî xwardin",
+      "notes": ""
+    },
+    {
+      "category": "nutrition",
+      "en": "diet",
+      "ku": "دایێت",
+      "transliteration": "dayêt",
+      "notes": "borrowed from English/French; also ڕێگاچارەی خواردن"
+    },
+    {
+      "category": "nutrition",
+      "en": "meal prep",
+      "ku": "ئامادەکردنی خواردن",
+      "transliteration": "amadekirdnî xwardin",
+      "notes": ""
+    },
+    {
+      "category": "nutrition",
+      "en": "portion",
+      "ku": "بەشی خواردن",
+      "transliteration": "beshî xwardin",
+      "notes": ""
+    },
+    {
+      "category": "nutrition",
+      "en": "omega-3",
+      "ku": "ئۆمیگا-٣",
+      "transliteration": "omega-3",
+      "notes": "borrowed; uses Arabic numeral in Sorani context"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "hypertrophy",
+      "ku": "زیادبوونی گۆشت",
+      "transliteration": "zîyabûnî gosht",
+      "notes": "muscle growth; also هایپەرتروفی (borrowed)"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "strength",
+      "ku": "هێز",
+      "transliteration": "hêz",
+      "notes": "primary native term"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "endurance",
+      "ku": "تاقەت",
+      "transliteration": "taqet",
+      "notes": "from Arabic طاقة; also سەبر (seber)"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "flexibility",
+      "ku": "نەرمی",
+      "transliteration": "nermî",
+      "notes": "lit. 'softness'"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "mobility",
+      "ku": "بزووتنی ئازادانە",
+      "transliteration": "bizûtinî azadane",
+      "notes": "range of movement; also مۆبیلیتی (borrowed)"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "balance",
+      "ku": "هاوسەنگی",
+      "transliteration": "hawsengî",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "power",
+      "ku": "توانا",
+      "transliteration": "twana",
+      "notes": "explosive power in fitness context"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "agility",
+      "ku": "چالاکی",
+      "transliteration": "çalakî",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "speed",
+      "ku": "خێرایی",
+      "transliteration": "xêrayî",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "cardiovascular",
+      "ku": "دل و خوێنبەر",
+      "transliteration": "dil û xwênber",
+      "notes": "heart and blood vessels"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "aerobic",
+      "ku": "هەوایی",
+      "transliteration": "hewayî",
+      "notes": "with oxygen"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "anaerobic",
+      "ku": "بێهەوایی",
+      "transliteration": "bêhewayî",
+      "notes": "without oxygen"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "heart rate",
+      "ku": "لێدانی دل",
+      "transliteration": "lêdanî dil",
+      "notes": "beats per minute"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "max heart rate",
+      "ku": "زۆرترین لێدانی دل",
+      "transliteration": "zorterîn lêdanî dil",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "resting heart rate",
+      "ku": "لێدانی دل لە ئاسووده‌دا",
+      "transliteration": "lêdanî dil le asûdêda",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "cardio",
+      "ku": "کاردیۆ",
+      "transliteration": "kardyo",
+      "notes": "borrowed; very common in Iraqi gym culture"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "HIIT",
+      "ku": "تەمرینی زۆرتوند کورتماوە",
+      "transliteration": "temerînî zortwend kurtmawe",
+      "notes": "High Intensity Interval Training — spell out in UI"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "fat burning",
+      "ku": "سووتاندنی چەوری",
+      "transliteration": "sûtandnî çewrî",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "metabolism",
+      "ku": "مەتابۆلیزم",
+      "transliteration": "metabôlizm",
+      "notes": "borrowed; also گۆڕانکاری مادەکان (lit. 'matter transformation')"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "BMR",
+      "ku": "ڕێژەی بنچینەی مەتابۆلیزم",
+      "transliteration": "rêzheyî benchîneyî metabôlizm",
+      "notes": "Basal Metabolic Rate"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "TDEE",
+      "ku": "کۆی کالۆری ڕۆژانە",
+      "transliteration": "kôy kalorî rôjane",
+      "notes": "Total Daily Energy Expenditure"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "muscle mass",
+      "ku": "گرانی گۆشت",
+      "transliteration": "giranî gosht",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "body fat percentage",
+      "ku": "ڕێژەی چەوری جەسەد",
+      "transliteration": "rêzheyî çewrî jesed",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "lean body mass",
+      "ku": "گرانی بێچەوری جەسەد",
+      "transliteration": "giranî bêçewrî jesed",
+      "notes": ""
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "progressive overload",
+      "ku": "زیادکردنی هێندەک هێندەک",
+      "transliteration": "zîyadkirdinî hêndek hêndek",
+      "notes": "lit. 'gradually increasing'"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "periodization",
+      "ku": "ماوەبەندی تەمرین",
+      "transliteration": "maweBendî temerîn",
+      "notes": "structured training phases"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "deload",
+      "ku": "ئاسانکردنی تەمرین",
+      "transliteration": "asankirdinî temerîn",
+      "notes": "reduced training week"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "plateau",
+      "ku": "راوەستانی پێشکەوتن",
+      "transliteration": "rawistanî pêshkewtin",
+      "notes": "stall in progress"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "BMI",
+      "ku": "شاخسی گەورەیی جەسەد",
+      "transliteration": "shaxsî gewreyî jesed",
+      "notes": "Body Mass Index; بی ئێم ئای also used"
+    },
+    {
+      "category": "fitness_concepts",
+      "en": "one rep max (1RM)",
+      "ku": "زۆرترین کێشی یەک جار",
+      "transliteration": "zorterîn kêshî yek car",
+      "notes": "maximum weight for one repetition"
+    },
+    {
+      "category": "health_recovery",
+      "en": "recovery",
+      "ku": "باشبوونەوە",
+      "transliteration": "bashbûnewe",
+      "notes": "physical recovery after training"
+    },
+    {
+      "category": "health_recovery",
+      "en": "sleep",
+      "ku": "خەو",
+      "transliteration": "xew",
+      "notes": "primary Sorani term"
+    },
+    {
+      "category": "health_recovery",
+      "en": "fatigue",
+      "ku": "ماندووبوون",
+      "transliteration": "mandûbûn",
+      "notes": "physical tiredness"
+    },
+    {
+      "category": "health_recovery",
+      "en": "muscle soreness",
+      "ku": "ئێشاکی مووچە",
+      "transliteration": "êshakî mûçe",
+      "notes": "post-workout soreness"
+    },
+    {
+      "category": "health_recovery",
+      "en": "DOMS",
+      "ku": "ئێشاکی دواخوازی مووچە",
+      "transliteration": "êshakî dwaxwazî mûçe",
+      "notes": "Delayed Onset Muscle Soreness — spell out preferred"
+    },
+    {
+      "category": "health_recovery",
+      "en": "injury",
+      "ku": "برینداربوون",
+      "transliteration": "brindarbûn",
+      "notes": ""
+    },
+    {
+      "category": "health_recovery",
+      "en": "pain",
+      "ku": "ئێش",
+      "transliteration": "êsh",
+      "notes": ""
+    },
+    {
+      "category": "health_recovery",
+      "en": "inflammation",
+      "ku": "خوشکبوون",
+      "transliteration": "xwishkbûn",
+      "notes": "swelling/inflammation"
+    },
+    {
+      "category": "health_recovery",
+      "en": "foam rolling",
+      "ku": "ماساژی فۆم",
+      "transliteration": "masajî fom",
+      "notes": "self-myofascial release"
+    },
+    {
+      "category": "health_recovery",
+      "en": "massage",
+      "ku": "ماساژ",
+      "transliteration": "masaj",
+      "notes": "borrowed from French via Arabic/English"
+    },
+    {
+      "category": "health_recovery",
+      "en": "active recovery",
+      "ku": "باشبوونەوەی چالاک",
+      "transliteration": "bashbûneweyî çalak",
+      "notes": "light activity recovery day"
+    },
+    {
+      "category": "health_recovery",
+      "en": "posture",
+      "ku": "شێوەی ڕاستەوخۆی جەسەد",
+      "transliteration": "shêweyî rastexôî jesed",
+      "notes": "body posture/alignment"
+    },
+    {
+      "category": "health_recovery",
+      "en": "breathing",
+      "ku": "هەناسە",
+      "transliteration": "henase",
+      "notes": ""
+    },
+    {
+      "category": "health_recovery",
+      "en": "stress",
+      "ku": "تەنش",
+      "transliteration": "tênsh",
+      "notes": "also فشار (fishêr); borrowed and native both used"
+    },
+    {
+      "category": "health_recovery",
+      "en": "overtraining",
+      "ku": "زیادی تەمرین",
+      "transliteration": "zîyadî temerîn",
+      "notes": "too much training without recovery"
+    },
+    {
+      "category": "health_recovery",
+      "en": "adaptation",
+      "ku": "گونجاندن",
+      "transliteration": "gunjandan",
+      "notes": "body's adaptation to training stimulus"
+    },
+    {
+      "category": "health_recovery",
+      "en": "cortisol",
+      "ku": "کۆرتیزۆل",
+      "transliteration": "kortiZôl",
+      "notes": "stress hormone; borrowed"
+    },
+    {
+      "category": "health_recovery",
+      "en": "testosterone",
+      "ku": "تێستۆستێرۆن",
+      "transliteration": "têstôstêrôn",
+      "notes": "borrowed; hormone discussed in fitness contexts"
+    },
+    {
+      "category": "app_features",
+      "en": "goal",
+      "ku": "ئامانج",
+      "transliteration": "amanj",
+      "notes": "target/objective; هەدەف (hedefe) also acceptable"
+    },
+    {
+      "category": "app_features",
+      "en": "progress",
+      "ku": "پێشکەوتن",
+      "transliteration": "pêshkewtin",
+      "notes": "primary Sorani term for progress"
+    },
+    {
+      "category": "app_features",
+      "en": "achievement",
+      "ku": "دەستکەوت",
+      "transliteration": "destkewt",
+      "notes": "accomplishment"
+    },
+    {
+      "category": "app_features",
+      "en": "streak",
+      "ku": "بەردەوامی",
+      "transliteration": "berdewamî",
+      "notes": "consecutive days; also ستریک (borrowed)"
+    },
+    {
+      "category": "app_features",
+      "en": "challenge",
+      "ku": "ئازموون",
+      "transliteration": "azmon",
+      "notes": "fitness challenge; چالێنج (borrowed) also common"
+    },
+    {
+      "category": "app_features",
+      "en": "coach",
+      "ku": "کۆچ",
+      "transliteration": "koç",
+      "notes": "borrowed from English; very common in Iraqi fitness culture"
+    },
+    {
+      "category": "app_features",
+      "en": "profile",
+      "ku": "پرۆفایل",
+      "transliteration": "profayil",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "app_features",
+      "en": "settings",
+      "ku": "ڕێکخستن",
+      "transliteration": "rêkxistin",
+      "notes": "app settings"
+    },
+    {
+      "category": "app_features",
+      "en": "notification",
+      "ku": "ئاگادارکردنەوە",
+      "transliteration": "agadarkirdinewa",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "subscription",
+      "ku": "بەشداربوون",
+      "transliteration": "beshdarbûn",
+      "notes": "also ئەبۆنە (borrowed from Arabic/Turkish)"
+    },
+    {
+      "category": "app_features",
+      "en": "premium",
+      "ku": "پریمیوم",
+      "transliteration": "prîmiyom",
+      "notes": "borrowed from English"
+    },
+    {
+      "category": "app_features",
+      "en": "free",
+      "ku": "بەخۆڕایی",
+      "transliteration": "bexôrayî",
+      "notes": "free tier"
+    },
+    {
+      "category": "app_features",
+      "en": "dashboard",
+      "ku": "پانێلی سەرەکی",
+      "transliteration": "panêlî serekî",
+      "notes": "main screen"
+    },
+    {
+      "category": "app_features",
+      "en": "calendar",
+      "ku": "ڕۆژژمێر",
+      "transliteration": "rôjjhmêr",
+      "notes": "lit. 'day counter'"
+    },
+    {
+      "category": "app_features",
+      "en": "history",
+      "ku": "مێژوو",
+      "transliteration": "mêjhû",
+      "notes": "workout history"
+    },
+    {
+      "category": "app_features",
+      "en": "log",
+      "ku": "تۆمار",
+      "transliteration": "tômar",
+      "notes": "training log/record"
+    },
+    {
+      "category": "app_features",
+      "en": "start",
+      "ku": "دەستپێکردن",
+      "transliteration": "desptêkirin",
+      "notes": "start workout button"
+    },
+    {
+      "category": "app_features",
+      "en": "finish",
+      "ku": "تەواوکردن",
+      "transliteration": "tewawkirin",
+      "notes": "complete/finish"
+    },
+    {
+      "category": "app_features",
+      "en": "save",
+      "ku": "پاشەکەوتکردن",
+      "transliteration": "pashekewtkirin",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "cancel",
+      "ku": "هەڵوەشاندنەوە",
+      "transliteration": "helweshandinewe",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "next",
+      "ku": "دواتر",
+      "transliteration": "dwater",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "back",
+      "ku": "گەڕانەوە",
+      "transliteration": "geranewe",
+      "notes": "navigation back; different from پشت (back muscle)"
+    },
+    {
+      "category": "app_features",
+      "en": "skip",
+      "ku": "تێپەڕاندن",
+      "transliteration": "têperandan",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "timer",
+      "ku": "کاتژمێر",
+      "transliteration": "katjhmêr",
+      "notes": "countdown timer"
+    },
+    {
+      "category": "app_features",
+      "en": "today",
+      "ku": "ئەمڕۆ",
+      "transliteration": "emrô",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "week",
+      "ku": "هەفتە",
+      "transliteration": "hefte",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "month",
+      "ku": "مانگ",
+      "transliteration": "mang",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "year",
+      "ku": "ساڵ",
+      "transliteration": "sal",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "steps",
+      "ku": "هەنگاو",
+      "transliteration": "hengaw",
+      "notes": "steps walked"
+    },
+    {
+      "category": "app_features",
+      "en": "distance",
+      "ku": "دووری",
+      "transliteration": "dûrî",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "search",
+      "ku": "گەڕان",
+      "transliteration": "geran",
+      "notes": "search/browse"
+    },
+    {
+      "category": "app_features",
+      "en": "filter",
+      "ku": "فلتەر / پاڵاوتن",
+      "transliteration": "filter / palawtin",
+      "notes": "فلتەر borrowed; پاڵاوتن native"
+    },
+    {
+      "category": "app_features",
+      "en": "share",
+      "ku": "هاوبەشکردن",
+      "transliteration": "hawbeshkirin",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "edit",
+      "ku": "دەستکاریکردن",
+      "transliteration": "destkariykirin",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "delete",
+      "ku": "سڕینەوە",
+      "transliteration": "sirinewe",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "add",
+      "ku": "زیادکردن",
+      "transliteration": "zîyadkirin",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "loading",
+      "ku": "بارکردن",
+      "transliteration": "barkirin",
+      "notes": "loading state"
+    },
+    {
+      "category": "app_features",
+      "en": "error",
+      "ku": "هەڵە",
+      "transliteration": "hele",
+      "notes": "error message"
+    },
+    {
+      "category": "app_features",
+      "en": "success",
+      "ku": "سەرکەوتن",
+      "transliteration": "serkewtin",
+      "notes": ""
+    },
+    {
+      "category": "app_features",
+      "en": "confirm",
+      "ku": "پشتڕاستکردنەوە",
+      "transliteration": "pishtrastkirdinewa",
+      "notes": ""
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "weight loss",
+      "ku": "کەمکردنەوەی کێش",
+      "transliteration": "kemkirdineweyî kêsh",
+      "notes": ""
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "weight gain",
+      "ku": "زیادکردنی کێش",
+      "transliteration": "zîyadkirdinî kêsh",
+      "notes": "gaining weight/muscle"
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "bulking",
+      "ku": "گەورەکردنی مووچە",
+      "transliteration": "gewrekirdinî mûçe",
+      "notes": "muscle building phase; بڵکینگ (borrowed) also heard"
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "cutting",
+      "ku": "کوتکردنی چەوری",
+      "transliteration": "kutkirdnî çewrî",
+      "notes": "fat loss phase; کاتینگ (borrowed) also heard"
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "recomposition",
+      "ku": "دووبارە ئامادەکردنی جەسەد",
+      "transliteration": "dubare amadekirdnî jesed",
+      "notes": "body recomp"
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "measurements",
+      "ku": "پێوانەکان",
+      "transliteration": "pêwanekan",
+      "notes": "body measurements"
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "waist",
+      "ku": "کەمەر",
+      "transliteration": "kemer",
+      "notes": "waist measurement"
+    },
+    {
+      "category": "body_composition_metrics",
+      "en": "hips (measurement)",
+      "ku": "مەگر",
+      "transliteration": "megr",
+      "notes": "hip circumference measurement"
+    }
+  ]
+}
