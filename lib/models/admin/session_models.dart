@@ -23,26 +23,22 @@ class DeviceSnapshot {
 class UserRuntimeFlags {
   final bool verboseLogging;
   final bool betaNutrition;
-  final bool betaMusic;
   final bool forceLiteAnimations;
-  
+
   const UserRuntimeFlags({
     this.verboseLogging = false,
     this.betaNutrition = false,
-    this.betaMusic = false,
     this.forceLiteAnimations = false,
   });
-  
+
   UserRuntimeFlags copyWith({
     bool? verboseLogging,
     bool? betaNutrition,
-    bool? betaMusic,
     bool? forceLiteAnimations,
   }) =>
       UserRuntimeFlags(
         verboseLogging: verboseLogging ?? this.verboseLogging,
         betaNutrition: betaNutrition ?? this.betaNutrition,
-        betaMusic: betaMusic ?? this.betaMusic,
         forceLiteAnimations: forceLiteAnimations ?? this.forceLiteAnimations,
       );
 }

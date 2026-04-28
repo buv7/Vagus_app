@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - **Health Integration**: Health rings dashboard and OCR cardio workout parsing
 - **Coach Supplements UI**: Enhanced coach interface for managing client supplement plans
 - **Intake Forms**: Comprehensive intake wizard with coach approval workflow
-- **Music Integration**: Spotify and SoundCloud integration for workout plans
+- ~~**Music Integration**: Spotify and SoundCloud integration for workout plans~~ — _retired pre-v1; see entry below_
 - **Google Apps Integration**: Google Drive attachment and export capabilities
 - **Referrals & Affiliates**: Complete referral system with rewards and affiliate tracking
 - **AI Usage Meter**: Real-time AI usage tracking and rate limiting

@@ -58,7 +58,7 @@ class UserInspectorSheet extends StatelessWidget {
             // Simple placeholders; wire to existing data where available
             _section('Profile', const Text('Name, role, created_at, last_login…')),
             _section('Subscriptions', const Text('Plan, renewal, status…')),
-            _section('Connections', const Text('Health (Fit/HealthKit), Music, Google Drive…')),
+            _section('Connections', const Text('Health (Fit/HealthKit), Google Drive…')),
             _section('Intake & Supplements', const Text('Intake status, current supplements…')),
             _section('Audit', const Text('Recent actions & notes…')),
               ],

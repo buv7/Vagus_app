@@ -9,7 +9,6 @@ import '../../components/settings/language_selector.dart';
 import '../../components/settings/reminder_defaults.dart';
 import '../../widgets/settings/workout_popout_prefs_section.dart';
 import '../../theme/design_tokens.dart';
-import 'music_settings_screen.dart';
 import 'google_integrations_screen.dart';
 import 'earn_rewards_screen.dart';
 
@@ -331,38 +330,6 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                         icon: Icons.fitness_center,
                         title: 'Workout Preferences',
                         child: const WorkoutPopoutPrefsSection(),
-                      ),
-
-                      // Music Settings Card
-                      _buildGlassmorphicCard(
-                        context: context,
-                        icon: Icons.music_note,
-                        title: 'Music Integration',
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Configure music app preferences and auto-open settings',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7),
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            _buildGlassmorphicButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MusicSettingsScreen(),
-                                  ),
-                                );
-                              },
-                              icon: Icons.settings,
-                              label: 'Music Settings',
-                            ),
-                          ],
-                        ),
                       ),
 
                       // Google Integrations Card — gated until the
