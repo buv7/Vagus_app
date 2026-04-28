@@ -41,6 +41,8 @@ import 'screens/settings/devices_screen.dart';
 import 'screens/settings/profile_edit_screen.dart';
 import 'screens/support/support_screen.dart';
 import 'screens/coaches/coach_application_screen.dart';
+import 'services/iap/apple_iap_service.dart';
+import 'services/iap/tier_service.dart';
 
 Future<void> main() async {
   // DSN injected at build time: flutter run --dart-define=SENTRY_DSN=https://...
@@ -114,12 +116,16 @@ Future<void> _bootstrap() async {
   final settings = SettingsController();
   await settings.load();
 
+  // Initialize Apple IAP and tier service (no-op on non-iOS platforms).
+  await AppleIAPService.instance.init();
+  await TierService.instance.init();
+
   runZonedGuarded(
     () => runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ReduceMotion()),
-          // keep other providers if any
+          ChangeNotifierProvider.value(value: TierService.instance),
         ],
         child: VagusMainApp(settings: settings),
       ),
