@@ -18,12 +18,14 @@ PR opened: [SIGNAL v2] FCM + notification system.
 - [x] lib/services/notifications/fcm_service.dart — FCM singleton (init, permission, token, foreground, tap)
 - [x] lib/main.dart — Firebase init + FCM init on startup, navigator key wired
 - [x] lib/screens/auth/auth_gate.dart — FcmService.onSignedIn() called on sign-in
-- [x] lib/widgets/notifications/in_app_notification_banner.dart — foreground in-app banner
+- [x] lib/widgets/notifications/in_app_notification_banner.dart — foreground in-app banner (wired into MaterialApp.builder)
 - [x] lib/screens/settings/notification_preferences_screen.dart — full FCM category UI
+- [x] lib/screens/settings/notifications_settings_screen.dart — shim to new screen (old callers unchanged)
+- [x] /notification-preferences route added to main.dart route table
 - [x] supabase/migrations/20260428000001_user_devices_fcm.sql — fcm_token column + templates + preferences
 - [x] supabase/functions/send-push/index.ts — FCM v1 Edge Function (locale-aware templates)
 - [x] test/notifications/fcm_service_test.dart — unit tests (categories, defaults, stream)
-- [x] .gitignore — Firebase config files excluded
+- [x] .gitignore — google-services.json + GoogleService-Info.plist excluded; firebase_options.dart committed as stub
 - [x] .env.example — FCM setup documented
 - [x] E-003 filed in .oxbar/escalations.md (Firebase + APNs human action needed)
 
