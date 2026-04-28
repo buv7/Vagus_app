@@ -1,24 +1,5 @@
-# POLYGLOT-KU status: PENDING
+# POLYGLOT-KU status: ABANDONED
 
-**Started:** —
-**Last update:** 2026-04-27 20:49 UTC
-**Branch:** —
-**Mission:** (see AGENT_PROMPTS.md)
-
-## Current state
-PENDING: agent has not been launched yet by OXBAR.
-
-## Progress
-- [ ] Awaiting launch
-
-## Files touched
-(none)
-
-## Questions for OXBAR
-(none)
-
-## Blockers
-(none)
-
-## Next step
-Wait for OXBAR to launch.
+**Last update:** 2026-04-28
+**Reason:** Punted to v1.1 per Alhassan decision 2026-04-28 (E-002). Launch scope is EN + AR only.
+**Branches preserved:** agent/polyglot-ku-v2, agent/polyglot-ku-translations (kept on origin for v1.1 pickup).

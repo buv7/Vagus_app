@@ -44,3 +44,8 @@ When this PR merges to `main`, `.github/workflows/deploy.yml` runs `supabase db 
 **Blocking:** POLYGLOT-KU progress past PENDING-glossary work. Not blocking other agents.
 
 **OXBAR note:** This is correctly outside OXBAR authority (scope/quality call). Same question latently applies to POLYGLOT-AR — Arabic has higher LLM quality but a native reviewer is still mission-required for medical/cultural strings. If Alhassan picks (2), POLYGLOT-AR remains in scope; if (1), the same Gemini key + reviewer arrangement covers AR too.
+
+---
+2026-04-28 — RESOLVED by Alhassan
+E-001: APPROVED — pg_dump the 4 music tables to /backups/2026-04-28_music_purge/ BEFORE the DROP CASCADE runs against prod. PR #7 unblocked, but merge gate is now "backup verified", not "human approval".
+E-002: PUNT — Sorani Kurdish deferred to v1.1. Launch scope = EN + AR only. POLYGLOT-KU stand down.

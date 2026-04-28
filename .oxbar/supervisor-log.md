@@ -53,3 +53,13 @@ Coordination skeleton being assembled now.
 **22:42 UTC** — Worktree contention RESOLVED. Created OXBAR's own physical worktree at `C:\Users\alhas\StudioProjects\vagus_app_oxbar` on branch `oxbar-workspace` (tracks `origin/main`, HEAD f6f5bf1). All future OXBAR local git ops happen there; the shared `vagus_app` clone stays for worker traffic. Saved to user-memory `feedback_oxbar_worktree_isolation.md` so future OXBAR sessions auto-pick it up. Other agents are already isolated by their own worktrees: GUARDIAN, MASON (×2), TIER, VAULT. Any worker still using the shared clone (HARBOR, KEEL, TONGUE, MEDIC, MUSIC-PURGE, SHIELD, THRIFT) keeps doing so — they self-coordinate.
 
 ---
+
+---
+2026-04-28 — Power outage interrupted KEEL rebase. Recovery phase 2:
+- KEEL rebase aborted (will be redone fresh)
+- All local agent/* branches pushed to origin
+- Stray Windows artifacts swept
+- 19 Wave-B PRs still open and pending review
+- Status files remain stale (never maintained by workers); real state is in git/gh
+
+2026-04-28 — E-001 APPROVED (dump-then-drop; PR #7 gate now "backup verified"). E-002 PUNTED (KU → v1.1; AR-only launch). POLYGLOT-KU stood down. Existing KU branches (polyglot-ku-v2, polyglot-ku-translations) preserved for v1.1.
