@@ -12,8 +12,14 @@
 --
 -- Blast radius: 0 callers today (medical-data domain agents are still in PR
 -- review or BLOCKED). Refactor is preemptive infra fix.
+--
+-- NOTE: DROP + CREATE (not CREATE OR REPLACE) because PostgreSQL 42P13 forbids
+-- renaming input parameters via OR REPLACE. Original PR #6 used p_plaintext /
+-- p_ciphertext; this refactor standardises to plaintext / ciphertext.
 
-create or replace function public.vault_encrypt_text(plaintext text)
+drop function if exists public.vault_encrypt_text(text);
+
+create function public.vault_encrypt_text(plaintext text)
 returns bytea
 language plpgsql
 security definer
@@ -40,7 +46,9 @@ begin
 end;
 $$;
 
-create or replace function public.vault_decrypt_text(ciphertext bytea)
+drop function if exists public.vault_decrypt_text(bytea);
+
+create function public.vault_decrypt_text(ciphertext bytea)
 returns text
 language plpgsql
 security definer
