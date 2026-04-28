@@ -18,6 +18,7 @@ import 'screens/splash/animated_splash_screen.dart';
 // OneSignal service archived - no longer in use
 // import 'services/notifications/onesignal_service.dart';
 import 'services/notifications/notification_helper.dart';
+import 'services/notifications/fcm_service.dart';
 import 'services/settings/settings_controller.dart';
 import 'services/settings/reduce_motion.dart';
 import 'services/motion_service.dart';
@@ -106,6 +107,11 @@ Future<void> _bootstrap() async {
   // OneSignal notifications disabled - service archived
   // await OneSignalService.instance.init();
 
+  // Initialize FCM (Firebase Cloud Messaging). Skip on web — not supported.
+  if (!kIsWeb) {
+    await FcmService.instance.init();
+  }
+
   // Initialize local notifications for calendar reminders.
   // flutter_local_notifications has no web implementation — skip on web.
   if (!kIsWeb) {
@@ -149,8 +155,8 @@ class _VagusMainAppState extends State<VagusMainApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // app_links plugin uses platform channels not available on web.
     if (!kIsWeb) {
+      FcmService.instance.setNavigatorKey(navigatorKey);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _initializeDeepLinks();
       });
