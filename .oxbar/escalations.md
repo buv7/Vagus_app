@@ -49,3 +49,30 @@ When this PR merges to `main`, `.github/workflows/deploy.yml` runs `supabase db 
 2026-04-28 — RESOLVED by Alhassan
 E-001: APPROVED — pg_dump the 4 music tables to /backups/2026-04-28_music_purge/ BEFORE the DROP CASCADE runs against prod. PR #7 unblocked, but merge gate is now "backup verified", not "human approval".
 E-002: PUNT — Sorani Kurdish deferred to v1.1. Launch scope = EN + AR only. POLYGLOT-KU stand down.
+
+---
+E-003 · 2026-04-28 · VAULT · Provision app_vault_data_key on PROD Supabase
+  Status: PENDING ALHASSAN
+  Why: PR #38 merged the GUC → vault.decrypted_secrets refactor.
+       Helpers now look up the key by `name = 'app_vault_data_key'` in
+       vault.decrypted_secrets. Staging has the secret (ID
+       670d52fa-0023-4236-96bd-da9b55c64da5). Prod does NOT.
+  Blocks: PR #36 (PERIODS-FORGE) and any future medical-data PR that
+          encrypts columns. Without the secret on prod, every encrypted
+          insert raises "app_vault_data_key secret not found".
+  Action required from Alhassan:
+    1. Open Supabase dashboard → Vagus prod project (kydrpnrmqbedjflklgue)
+    2. Confirm supabase_vault extension is enabled
+       (Database → Extensions → supabase_vault, toggle on if not).
+    3. Run one SQL statement in the SQL editor:
+         select vault.create_secret(
+           '<256-bit hex key, generate with: openssl rand -hex 32>',
+           'app_vault_data_key',
+           'AES-256 key for column-level encryption of medical/PII data'
+         );
+    4. IMPORTANT: the same hex key must be used as the one on staging IF
+       any encrypted data is ever migrated between environments. If the
+       two environments will never share encrypted blobs (likely true —
+       staging usually has fake data), generate a fresh key for prod.
+    5. Reply in this file with: "E-003 RESOLVED <date>" once the secret
+       is created. Do NOT paste the key value.

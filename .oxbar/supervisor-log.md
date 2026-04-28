@@ -65,3 +65,29 @@ Coordination skeleton being assembled now.
 2026-04-28 — E-001 APPROVED (dump-then-drop; PR #7 gate now "backup verified"). E-002 PUNTED (KU → v1.1; AR-only launch). POLYGLOT-KU stood down. Existing KU branches (polyglot-ku-v2, polyglot-ku-translations) preserved for v1.1.
 
 2026-04-28 — Phase 7: PR #37 merged via admin (KEEL trial_flow fixup). Deploy workflow on main: SUCCESS (run 25078042609, sha db09a68). Re-triggered CI on PRs #14, #27, #28, #36 (the 4 previously masked as RED by the entitlements_v failure cascading through Supabase Preview). GitHub Actions checks (Flutter Analyze, VAULT) already SUCCESS on #27/#28/#36. PR #14 had zero runs — manually dispatched Flutter Analyze (run 25078225600, queued). Supabase Preview check remains CANCELLED on all 4 PRs (external check, needs push or Supabase branch rebase to re-trigger — not done per no-rebase constraint).
+
+2026-04-28 — Phase 11: PR #38 (VAULT GUC refactor) merged + deploy fixed + confirmed.
+PR #28 (TIER v2) merged + deploy fixed + confirmed. Both deploys green.
+
+Two migration bugs caught and fixed on main (not in PRs — migrations were never applied):
+  1. VAULT 42P13: CREATE OR REPLACE can't rename input parameters. Fixed in-place
+     (DROP IF EXISTS + CREATE) since migration was unapplied when deploy failed.
+  2. TIER 42703: COMMENT ON COLUMN receipt_data before ALTER TABLE ADD COLUMN IF
+     NOT EXISTS. subscriptions table pre-existed on prod without the column. Fixed
+     ordering so ALTER TABLE runs before the COMMENT.
+
+Escalation E-003 opened: prod secret provisioning (app_vault_data_key) needed
+before PR #36 (PERIODS-FORGE) can land. Without it every encrypted insert raises.
+
+Timestamp-collision pattern documented in decisions.md (now a hard OXBAR reject
+for timestamps ending in six zeros — covers the known #36 rename + all future PRs).
+
+16 PRs remain open. Hard-RED CI:
+  #8 GUARDIAN — RLS validation failure
+  #16 PRISM — flutter analyze + golden snapshot
+  #26 SHEETIFY — flutter analyze
+  #32 LABKIT — flutter analyze
+  #30 WEARABLE-HUB — Supabase Preview only (may be environment, not code)
+HOLD-7: #7 MUSIC-PURGE (dump-then-drop gate, not yet verified)
+VAULT-blocked: #36 PERIODS-FORGE (waiting on E-003 + timestamp rename)
+Rest are UNKNOWN state (need CI re-trigger or rebase).

@@ -56,3 +56,13 @@ Why: Apple App Store and Google Play both prohibit arbitrary variable-price cons
 **22:38 UTC · OXBAR no longer touches local worktree**
 What: 8+ worker terminals share the same local clone and switch branches via `git checkout`. OXBAR's `git commit` on local main (commit `ea21b25`) was orphaned when a worker switched branches mid-write. Going forward, all OXBAR commits to `main` go via `gh api PUT contents/...` (REST contents endpoint). Local `git push`/`git checkout`/`git commit` from OXBAR's terminal are banned.
 Why: Local-worktree contention is unfixable while many agents share the directory. The REST API treats main as a remote append target, sidesteps the worktree entirely. Workers continue using local checkouts on their own branches.
+
+2026-04-28 — Timestamp collision pattern detected (3 occurrences):
+  trial_flow vs ux_adapt vs periods_forge all chose 20260428000000_*.
+  Workers picked the start-of-day UTC timestamp instead of the actual
+  creation time. Decision: workers should use the literal output of
+  `date -u +%Y%m%d%H%M%S` at file creation, not a rounded date stamp.
+  Going forward, OXBAR rejects any PR whose migration timestamp ends in
+  six zeros unless explicitly justified. No code change to enforce this
+  yet — manual review at PR time is sufficient given remaining migration
+  count is small.
