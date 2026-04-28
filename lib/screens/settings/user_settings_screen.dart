@@ -9,6 +9,7 @@ import '../../components/settings/language_selector.dart';
 import '../../components/settings/reminder_defaults.dart';
 import '../../widgets/settings/workout_popout_prefs_section.dart';
 import '../../theme/design_tokens.dart';
+import '../diagnostics_screen.dart';
 import 'music_settings_screen.dart';
 import 'google_integrations_screen.dart';
 import 'earn_rewards_screen.dart';
@@ -22,6 +23,7 @@ class UserSettingsScreen extends StatefulWidget {
 
 class _UserSettingsScreenState extends State<UserSettingsScreen> {
   late SettingsController _settingsController;
+  int _titleTapCount = 0;
 
   @override
   void initState() {
@@ -29,6 +31,16 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
     // Get the settings controller from the app
     _settingsController = SettingsController();
     _loadSettings();
+  }
+
+  void _onTitleTap() {
+    _titleTapCount++;
+    if (_titleTapCount >= 5) {
+      _titleTapCount = 0;
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const DiagnosticsScreen()),
+      );
+    }
   }
 
   Future<void> _loadSettings() async {
@@ -247,15 +259,19 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                               ),
                             ),
                           ),
-                          const Expanded(
-                            child: Text(
-                              'Settings',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _onTitleTap,
+                              behavior: HitTestBehavior.opaque,
+                              child: const Text(
+                                'Settings',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ),
                           const SizedBox(width: 48), // Balance the back button
