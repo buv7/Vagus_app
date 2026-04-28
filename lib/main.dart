@@ -21,6 +21,8 @@ import 'services/notifications/notification_helper.dart';
 import 'services/settings/settings_controller.dart';
 import 'services/settings/reduce_motion.dart';
 import 'services/motion_service.dart';
+import 'providers/ux_mode_provider.dart';
+import 'widgets/ux/ux_promotion_dialog.dart';
 import 'services/deep_link_service.dart';
 import 'theme/app_theme.dart';
 import 'screens/settings/user_settings_screen.dart';
@@ -119,7 +121,7 @@ Future<void> _bootstrap() async {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ReduceMotion()),
-          // keep other providers if any
+          ChangeNotifierProvider(create: (_) => UxModeProvider()),
         ],
         child: VagusMainApp(settings: settings),
       ),
@@ -200,8 +202,10 @@ class _VagusMainAppState extends State<VagusMainApp>
             Locale('ar'),
             Locale('ku'),
           ],
-          home: AnimatedSplashScreen(
-            nextBuilder: (_) => const AuthGate(),
+          home: UxPromotionListener(
+            child: AnimatedSplashScreen(
+              nextBuilder: (_) => const AuthGate(),
+            ),
           ),
           onGenerateRoute: (settings) {
             // Handle routes with arguments
