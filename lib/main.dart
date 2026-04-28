@@ -75,13 +75,15 @@ Future<void> _bootstrap() async {
     FlutterError.presentError(details);
     ShieldStore.instance.recordError(details.exception, details.stack ?? StackTrace.empty,
         context: details.library);
-    Sentry.captureException(details.exception, stackTrace: details.stack);
+    // ignore: unawaited_futures — sync callback, fire-and-forget is intentional
+    Sentry.captureException(details.exception, stackTrace: details.stack).ignore();
   };
 
   // Route platform/async errors to Sentry and the local store.
   PlatformDispatcher.instance.onError = (error, stack) {
     ShieldStore.instance.recordError(error, stack, context: 'PlatformDispatcher');
-    Sentry.captureException(error, stackTrace: stack);
+    // ignore: unawaited_futures — sync callback, fire-and-forget is intentional
+    Sentry.captureException(error, stackTrace: stack).ignore();
     return true; // mark as handled so Flutter doesn't also print it
   };
 
@@ -124,7 +126,8 @@ Future<void> _bootstrap() async {
     ),
     (error, stack) {
       ShieldStore.instance.recordError(error, stack, context: 'runZonedGuarded');
-      Sentry.captureException(error, stackTrace: stack);
+      // ignore: unawaited_futures — sync zone error handler, fire-and-forget
+      Sentry.captureException(error, stackTrace: stack).ignore();
     },
   );
 }

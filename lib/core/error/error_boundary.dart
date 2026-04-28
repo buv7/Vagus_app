@@ -9,7 +9,9 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 void installGlobalErrorBoundary() {
   if (kDebugMode) return;
   ErrorWidget.builder = (FlutterErrorDetails details) {
-    Sentry.captureException(details.exception, stackTrace: details.stack);
+    // Fire-and-forget: builder must return synchronously, so we can't await.
+    Sentry.captureException(details.exception, stackTrace: details.stack)
+        .ignore();
     return const _FallbackWidget();
   };
 }
