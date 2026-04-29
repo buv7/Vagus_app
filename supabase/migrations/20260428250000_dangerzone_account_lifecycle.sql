@@ -177,7 +177,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.request_account_deactivation IS
+COMMENT ON FUNCTION public.request_account_deactivation(text) IS
   'Creates a 30-day deactivation grace period. User is hidden from coach lists '
   'immediately via active_profiles view. Purge runs on day 30 unless restored.';
 
@@ -222,7 +222,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.request_account_deletion IS
+COMMENT ON FUNCTION public.request_account_deletion(text) IS
   'Creates a 7-day deletion grace period. Full cascading purge (all user data, '
   'auth.users row, storage) runs on day 7 unless the user signs in to restore.';
 
@@ -270,7 +270,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.restore_account IS
+COMMENT ON FUNCTION public.restore_account() IS
   'Cancels the pending deactivation or deletion during the grace period. '
   'Idempotent: returns false if no pending action exists.';
 
@@ -312,7 +312,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_account_lifecycle_status IS
+COMMENT ON FUNCTION public.get_account_lifecycle_status() IS
   'Returns the current pending lifecycle action for the caller, with days_remaining. '
   'Returns empty set if no pending action exists.';
 

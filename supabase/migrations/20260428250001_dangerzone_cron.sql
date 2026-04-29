@@ -31,7 +31,7 @@ AS $$
     AND  status = 'pending';
 $$;
 
-COMMENT ON FUNCTION public.merge_lifecycle_flag IS
+COMMENT ON FUNCTION public.merge_lifecycle_flag(uuid, text) IS
   'DANGERZONE (service-role only). Merges a single boolean flag into notification_flags '
   'using the JSONB || operator to avoid overwriting previously set flags.';
 
