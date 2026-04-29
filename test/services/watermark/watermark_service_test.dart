@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vagus_app/models/watermark/watermark_models.dart';
-import 'package:vagus_app/services/subscription/tier_service.dart';
+import 'package:vagus_app/models/subscription/tier.dart';
 
 void main() {
   // ── WatermarkSettings serialisation ──────────────────────────────────────
@@ -33,45 +33,24 @@ void main() {
     });
   });
 
-  // ── TierService policy helpers ────────────────────────────────────────────
-
-  group('TierService policy', () {
-    final svc = TierService.instance;
-
-    test('free tier has mandatory watermark and cannot toggle', () {
-      expect(svc.mandatoryWatermark(UserTier.free), isTrue);
-      expect(svc.canToggleWatermark(UserTier.free), isFalse);
-    });
-
-    test('pro tier can toggle, watermark not mandatory', () {
-      expect(svc.mandatoryWatermark(UserTier.pro), isFalse);
-      expect(svc.canToggleWatermark(UserTier.pro), isTrue);
-    });
-
-    test('ultimate tier can toggle, watermark not mandatory', () {
-      expect(svc.mandatoryWatermark(UserTier.ultimate), isFalse);
-      expect(svc.canToggleWatermark(UserTier.ultimate), isTrue);
-    });
-  });
-
   // ── WatermarkPolicy ───────────────────────────────────────────────────────
 
   group('WatermarkPolicy.forTier', () {
     test('free → mandatory=true, canToggle=false', () {
-      final p = WatermarkPolicy.forTier(UserTier.free);
+      final p = WatermarkPolicy.forTier(Tier.free);
       expect(p.mandatory, isTrue);
       expect(p.canToggle, isFalse);
       expect(p.watermarkRequired, isTrue);
     });
 
     test('pro → mandatory=false, canToggle=true', () {
-      final p = WatermarkPolicy.forTier(UserTier.pro);
+      final p = WatermarkPolicy.forTier(Tier.pro);
       expect(p.mandatory, isFalse);
       expect(p.canToggle, isTrue);
     });
 
     test('ultimate → mandatory=false, canToggle=true', () {
-      final p = WatermarkPolicy.forTier(UserTier.ultimate);
+      final p = WatermarkPolicy.forTier(Tier.ultimate);
       expect(p.mandatory, isFalse);
       expect(p.canToggle, isTrue);
     });
