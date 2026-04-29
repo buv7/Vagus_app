@@ -1,4 +1,4 @@
-import '../../services/subscription/tier_service.dart';
+import '../../models/subscription/tier.dart';
 
 enum WatermarkTemplate {
   minimal,    // logo only, subtle
@@ -59,11 +59,11 @@ class WatermarkSettings {
 }
 
 /// Computed policy for a user — callers should ask the service for this rather
-/// than branching on [UserTier] directly.
+/// than branching on [Tier] directly.
 class WatermarkPolicy {
   final bool mandatory;
   final bool canToggle;
-  final UserTier tier;
+  final Tier tier;
 
   const WatermarkPolicy({
     required this.mandatory,
@@ -71,9 +71,9 @@ class WatermarkPolicy {
     required this.tier,
   });
 
-  factory WatermarkPolicy.forTier(UserTier tier) => WatermarkPolicy(
-        mandatory: tier == UserTier.free,
-        canToggle: tier != UserTier.free,
+  factory WatermarkPolicy.forTier(Tier tier) => WatermarkPolicy(
+        mandatory: tier == Tier.free,
+        canToggle: tier != Tier.free,
         tier: tier,
       );
 
