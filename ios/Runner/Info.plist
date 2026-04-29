@@ -57,7 +57,7 @@
 		</dict>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Camera access required for live video calls, food photos, and barcode scanning.</string>
+	<string>Camera access required for live video calls, food photos, and on-device pose detection for workout form checking.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To attach meal photos and export PDFs.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
