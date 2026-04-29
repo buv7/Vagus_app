@@ -48,3 +48,12 @@ select * from (values
 on conflict (code) do nothing;
 
 select 'iap google columns ready' as status;
+
+-- ============================================================================
+-- Rollback
+-- ============================================================================
+-- DELETE FROM public.billing_plans WHERE code IN ('vagus_pro_monthly', 'vagus_ultimate_monthly');
+-- DROP INDEX IF EXISTS subscriptions_user_store_idx;
+-- ALTER TABLE public.subscriptions DROP COLUMN IF EXISTS google_order_id;
+-- ALTER TABLE public.subscriptions DROP COLUMN IF EXISTS purchase_token;
+-- ALTER TABLE public.subscriptions DROP COLUMN IF EXISTS store;
