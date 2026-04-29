@@ -1,0 +1,227 @@
+name: HARBOR — locale parity
+
+# Owned by HARBOR. Runs on every PR to main.
+# Enforces: every key in app_en.arb must appear in app_ar.arb and app_ku.arb.
+#
+# Bootstrap mode: if lib/l10n/app_en.arb does not exist (TONGUE not yet complete)
+# the job passes with a notice and does not block the PR.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: harbor-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  locale-parity:
+    name: harbor-locale-parity
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Bootstrap guard ────────────────────────────────────────────────────
+      - name: Check l10n pipeline state (TONGUE dependency)
+        id: bootstrap
+        shell: bash
+        run: |
+          if [[ -f lib/l10n/app_en.arb ]]; then
+            echo "mode=enforce" >> "$GITHUB_OUTPUT"
+            echo "HARBOR enforce mode — app_en.arb found."
+          else
+            echo "mode=bootstrap" >> "$GITHUB_OUTPUT"
+            echo "::notice title=HARBOR bootstrap::lib/l10n/app_en.arb not found. TONGUE has not shipped the i18n pipeline yet. Parity check skipped."
+          fi
+
+      # ── Flutter setup (only in enforce mode) ───────────────────────────────
+      - name: Setup Flutter
+        if: steps.bootstrap.outputs.mode == 'enforce'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.8'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        if: steps.bootstrap.outputs.mode == 'enforce'
+        run: flutter pub get
+
+      - name: Run flutter gen-l10n
+        if: steps.bootstrap.outputs.mode == 'enforce'
+        run: flutter gen-l10n
+
+      # ── Parity check ───────────────────────────────────────────────────────
+      - name: Check locale parity (EN vs AR, EN vs KU)
+        if: steps.bootstrap.outputs.mode == 'enforce'
+        id: parity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          import json, sys, os
+          from pathlib import Path
+
+          REPORT_FILE = "harbor-report.md"
+
+          def load_arb(path):
+              try:
+                  with open(path, encoding="utf-8") as f:
+                      data = json.load(f)
+                  # Strip metadata keys (@-prefixed, @@locale)
+                  return {k: v for k, v in data.items()
+                          if not k.startswith("@") and k != "@@locale"}
+              except FileNotFoundError:
+                  return None
+              except json.JSONDecodeError as e:
+                  print(f"::error::HARBOR: {path} is not valid JSON: {e}")
+                  sys.exit(1)
+
+          en = load_arb("lib/l10n/app_en.arb")
+          ar = load_arb("lib/l10n/app_ar.arb")
+          ku = load_arb("lib/l10n/app_ku.arb")
+
+          if en is None:
+              print("HARBOR: app_en.arb not found — skipping (TONGUE not complete).")
+              sys.exit(0)
+
+          en_keys = set(en)
+          ar_keys = set(ar) if ar is not None else set()
+          ku_keys = set(ku) if ku is not None else set()
+
+          missing_ar = sorted(en_keys - ar_keys)
+          missing_ku = sorted(en_keys - ku_keys)
+
+          ar_status  = "FILE MISSING" if ar is None else f"{len(ar_keys)}/{len(en_keys)}"
+          ku_status  = "FILE MISSING" if ku is None else f"{len(ku_keys)}/{len(en_keys)}"
+
+          print(f"EN keys  : {len(en_keys)}")
+          print(f"AR keys  : {ar_status}")
+          print(f"KU keys  : {ku_status}")
+          print(f"Missing AR: {len(missing_ar)}")
+          print(f"Missing KU: {len(missing_ku)}")
+
+          # Write GITHUB_OUTPUT summary counts
+          gho = os.environ.get("GITHUB_OUTPUT", "/dev/null")
+          with open(gho, "a") as f:
+              f.write(f"missing_ar={len(missing_ar)}\n")
+              f.write(f"missing_ku={len(missing_ku)}\n")
+              f.write(f"en_total={len(en_keys)}\n")
+
+          if not missing_ar and not missing_ku:
+              print("\nAll locales in parity. ✓")
+              # Write a passing report so the comment step can update a stale failure comment.
+              with open(REPORT_FILE, "w") as f:
+                  f.write(
+                      f"## HARBOR Locale Parity ✅\n\n"
+                      f"All {len(en_keys)} EN keys are present in both `app_ar.arb` and `app_ku.arb`.\n"
+                  )
+              sys.exit(0)
+
+          # ── Build the markdown failure report ──────────────────────────────
+          lines = []
+          lines.append("## HARBOR Locale Parity ❌\n")
+          lines.append(
+              f"> **{len(missing_ar)} key(s) missing in Arabic** · "
+              f"**{len(missing_ku)} key(s) missing in Kurdish-Sorani**\n"
+          )
+          lines.append(
+              f"| Locale | Status |\n"
+              f"|--------|--------|\n"
+              f"| EN     | {len(en_keys)} keys (source of truth) |\n"
+              f"| AR     | {ar_status} — owner: **POLYGLOT-AR** |\n"
+              f"| KU     | {ku_status} — owner: **POLYGLOT-KU** |\n"
+          )
+          lines.append("\n---\n")
+
+          if missing_ar:
+              lines.append(f"### Missing in `app_ar.arb` ({len(missing_ar)} keys)\n")
+              lines.append("Add these keys to `lib/l10n/app_ar.arb`. "
+                           "Consult `lib/l10n/glossary.json` for consistent fitness terminology.\n")
+              lines.append("```")
+              for k in missing_ar[:50]:
+                  safe = en[k].replace("`", "'")
+                  lines.append(f'"{k}": "{safe}"')
+              if len(missing_ar) > 50:
+                  lines.append(f"... and {len(missing_ar) - 50} more")
+              lines.append("```\n")
+
+          if missing_ku:
+              lines.append(f"### Missing in `app_ku.arb` ({len(missing_ku)} keys)\n")
+              lines.append("Add these keys to `lib/l10n/app_ku.arb`. "
+                           "Consult `lib/l10n/glossary.json` for consistent Sorani terminology.\n")
+              lines.append("```")
+              for k in missing_ku[:50]:
+                  safe = en[k].replace("`", "'")
+                  lines.append(f'"{k}": "{safe}"')
+              if len(missing_ku) > 50:
+                  lines.append(f"... and {len(missing_ku) - 50} more")
+              lines.append("```\n")
+
+          lines.append("---\n")
+          lines.append(
+              "_Enforced by HARBOR. Do not merge until all locales are in parity. "
+              "If you believe a string should be exempt, add `// harbor-exempt` comment "
+              "in the source and open a separate PR for OXBAR review._"
+          )
+
+          report = "\n".join(lines)
+          print("\n" + report)
+
+          with open(REPORT_FILE, "w") as f:
+              f.write(report)
+
+          sys.exit(1)
+          PY
+
+      # ── PR comment ─────────────────────────────────────────────────────────
+      # Always runs on PR events (pass or fail) so stale failure comments get updated.
+      - name: Post / update parity report on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'harbor-report.md';
+            if (!fs.existsSync(reportPath)) {
+              console.log('No harbor-report.md to post.');
+              return;
+            }
+            const body = fs.readFileSync(reportPath, 'utf8');
+            const marker = '<!-- harbor-locale-parity -->';
+            const fullBody = `${marker}\n${body}`;
+
+            // Find an existing HARBOR comment to update (avoids spam).
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find(c => c.body && c.body.startsWith(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: fullBody,
+              });
+              console.log(`Updated existing HARBOR comment #${existing.id}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: fullBody,
+              });
+              console.log('Created new HARBOR comment.');
+            }
