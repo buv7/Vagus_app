@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/account_switcher.dart';
+import '../../services/notifications/fcm_service.dart';
 import '../../services/session/session_service.dart';
 import '../../services/settings/settings_service.dart';
 
@@ -108,6 +109,9 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
       await SessionService.instance.checkRevocation();
       debugPrint('🔧 AuthGate: Revocation check completed');
       
+      // Register FCM token now that we have an authenticated user.
+      unawaited(FcmService.instance.onSignedIn());
+
       // Load user settings
       debugPrint('🔧 AuthGate: Loading user settings...');
       await SettingsService.instance.loadForCurrentUser();

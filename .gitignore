@@ -69,3 +69,8 @@ ARCHIVE/
 
 # Supabase CLI version cache — phantom dirt across worktrees
 supabase/.temp/
+
+# Firebase native config files — contain client IDs, obtained from Firebase Console
+# lib/firebase_options.dart is committed as a stub; replace via `flutterfire configure`
+google-services.json
+GoogleService-Info.plist

@@ -18,6 +18,7 @@ import 'screens/splash/animated_splash_screen.dart';
 // OneSignal service archived - no longer in use
 // import 'services/notifications/onesignal_service.dart';
 import 'services/notifications/notification_helper.dart';
+import 'services/notifications/fcm_service.dart';
 import 'services/settings/settings_controller.dart';
 import 'services/settings/reduce_motion.dart';
 import 'services/motion_service.dart';
@@ -43,6 +44,8 @@ import 'screens/settings/devices_screen.dart';
 import 'screens/settings/profile_edit_screen.dart';
 import 'screens/support/support_screen.dart';
 import 'screens/coaches/coach_application_screen.dart';
+import 'screens/settings/notification_preferences_screen.dart';
+import 'widgets/notifications/in_app_notification_banner.dart';
 
 Future<void> main() async {
   // DSN injected at build time: flutter run --dart-define=SENTRY_DSN=https://...
@@ -106,6 +109,11 @@ Future<void> _bootstrap() async {
   // OneSignal notifications disabled - service archived
   // await OneSignalService.instance.init();
 
+  // Initialize FCM (Firebase Cloud Messaging). Skip on web — not supported.
+  if (!kIsWeb) {
+    await FcmService.instance.init();
+  }
+
   // Initialize local notifications for calendar reminders.
   // flutter_local_notifications has no web implementation — skip on web.
   if (!kIsWeb) {
@@ -149,8 +157,8 @@ class _VagusMainAppState extends State<VagusMainApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // app_links plugin uses platform channels not available on web.
     if (!kIsWeb) {
+      FcmService.instance.setNavigatorKey(navigatorKey);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _initializeDeepLinks();
       });
@@ -202,6 +210,7 @@ class _VagusMainAppState extends State<VagusMainApp>
             Locale('ar'),
             Locale('ku'),
           ],
+          builder: (context, child) => InAppNotificationBanner(child: child!),
           home: UxPromotionListener(
             child: AnimatedSplashScreen(
               nextBuilder: (_) => const AuthGate(),
@@ -255,6 +264,8 @@ class _VagusMainAppState extends State<VagusMainApp>
             '/export': (context) => const DataExportScreen(),
             '/apply-coach': (context) => const CoachApplicationScreen(),
             '/support': (context) => const SupportScreen(),
+            '/notification-preferences': (context) =>
+                const NotificationPreferencesScreen(),
           },
         );
       },

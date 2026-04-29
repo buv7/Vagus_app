@@ -28,6 +28,57 @@ When this PR merges to `main`, `.github/workflows/deploy.yml` runs `supabase db 
 
 ---
 
+## E-003 · 2026-04-28 · SIGNAL · Firebase + APNs setup requires human action
+
+**Trigger:** SIGNAL cannot provision Firebase credentials or APNs keys — these require Apple Developer Portal and Firebase Console access.
+
+**Actions required from Alhassan:**
+
+1. **Create Firebase project** (or reuse existing one):
+   - Go to Firebase Console → Add project → name it `vagus-app`
+   - Enable Cloud Messaging (FCM) under Project Settings → Cloud Messaging
+
+2. **Download platform config files:**
+   - Android: `google-services.json` → place at `android/app/google-services.json`
+   - iOS: `GoogleService-Info.plist` → place at `ios/Runner/GoogleService-Info.plist`
+
+3. **Generate `lib/firebase_options.dart`** (requires FlutterFire CLI):
+   ```bash
+   dart pub global activate flutterfire_cli
+   flutterfire configure --project=<your-firebase-project-id>
+   ```
+   This file is gitignored — it lives only on local dev machines and in CI secrets.
+
+4. **APNs key for iOS push:**
+   - Apple Developer Portal → Certificates, Identifiers & Profiles → Keys → Create new key
+   - Enable "Apple Push Notifications service (APNs)"
+   - Download the `.p8` key file
+   - Upload to Firebase Console → Project Settings → Cloud Messaging → iOS app → APNs Authentication Key
+
+5. **Set Supabase secrets for the `send-push` Edge Function:**
+   ```bash
+   supabase secrets set FCM_PROJECT_ID=your-firebase-project-id
+   supabase secrets set FCM_SERVICE_ACCOUNT_JSON="$(cat path/to/service-account.json)"
+   ```
+   Service account JSON: Firebase Console → Project Settings → Service Accounts → Generate new private key
+
+6. **Xcode: enable Push Notifications capability:**
+   - Open `ios/Runner.xcworkspace` in Xcode
+   - Runner target → Signing & Capabilities → + Capability → Push Notifications
+   - Verify `Runner.entitlements` shows `aps-environment: development`
+   - For production: change to `production` before App Store build
+
+**SIGNAL has already:**
+- Added `firebase_core` + `firebase_messaging` to pubspec.yaml
+- Created stub `lib/firebase_options.dart` (placeholder values — replace with FlutterFire output)
+- Added google-services plugin to Android build files
+- Created iOS `Runner.entitlements` + `UIBackgroundModes` in Info.plist
+- Created FCM service, Edge Function, migration, UI, and tests
+
+**Status:** SIGNAL code is complete. Blocked on Firebase credentials from human owner.
+
+---
+
 ## E-002 · 2026-04-27 · POLYGLOT-KU · Kurdish-Sorani translation pipeline needs human-in-the-loop arrangement
 
 **Decision needed:** How should POLYGLOT-KU produce `lib/l10n/app_ku.arb` at the quality bar the mission demands?
