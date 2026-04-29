@@ -61,6 +61,8 @@ dependencies:
   google_generative_ai: ^0.4.6  # Google Gemini AI for food recognition
   sentry_flutter: ^8.14.2
   connectivity_plus: ^6.1.4
+  in_app_purchase: ^3.2.0
+  in_app_purchase_android: ^0.3.5
 
 dev_dependencies:
   flutter_test:
