@@ -17,16 +17,19 @@ CREATE TABLE IF NOT EXISTS watermark_settings (
 ALTER TABLE watermark_settings ENABLE ROW LEVEL SECURITY;
 
 -- Users can read their own row.
+DROP POLICY IF EXISTS "watermark_settings_select_own" ON watermark_settings;
 CREATE POLICY "watermark_settings_select_own"
   ON watermark_settings FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Users can insert/update their own row — but a DB function enforces
 -- that free-tier users cannot set enabled=FALSE (belt-and-suspenders).
+DROP POLICY IF EXISTS "watermark_settings_upsert_own" ON watermark_settings;
 CREATE POLICY "watermark_settings_upsert_own"
   ON watermark_settings FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "watermark_settings_update_own" ON watermark_settings;
 CREATE POLICY "watermark_settings_update_own"
   ON watermark_settings FOR UPDATE
   USING (auth.uid() = user_id)
@@ -53,6 +56,17 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_enforce_watermark_free ON watermark_settings;
 CREATE TRIGGER trg_enforce_watermark_free
   BEFORE INSERT OR UPDATE ON watermark_settings
   FOR EACH ROW EXECUTE FUNCTION enforce_watermark_for_free_tier();
+
+-- ============================================================================
+-- Rollback
+-- ============================================================================
+-- DROP TRIGGER IF EXISTS trg_enforce_watermark_free ON watermark_settings;
+-- DROP FUNCTION IF EXISTS public.enforce_watermark_for_free_tier();
+-- DROP POLICY IF EXISTS "watermark_settings_update_own" ON watermark_settings;
+-- DROP POLICY IF EXISTS "watermark_settings_upsert_own" ON watermark_settings;
+-- DROP POLICY IF EXISTS "watermark_settings_select_own" ON watermark_settings;
+-- DROP TABLE IF EXISTS public.watermark_settings;
