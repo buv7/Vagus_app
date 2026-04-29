@@ -15,6 +15,7 @@ class CallControls extends StatelessWidget {
   final VoidCallback onToggleChat;
   final VoidCallback onEndCall;
   final VoidCallback onToggleControls;
+  final VoidCallback onSwitchCamera;
 
   const CallControls({
     super.key,
@@ -29,6 +30,7 @@ class CallControls extends StatelessWidget {
     required this.onToggleChat,
     required this.onEndCall,
     required this.onToggleControls,
+    required this.onSwitchCamera,
   });
 
   @override
@@ -218,9 +220,7 @@ class CallControls extends StatelessWidget {
         _buildSecondaryButton(
           icon: Icons.flip_camera_ios,
           tooltip: 'Switch camera',
-          onPressed: () {
-            // TODO: Implement camera switch
-          },
+          onPressed: onSwitchCamera,
         ),
         
         // More options button
