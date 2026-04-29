@@ -63,3 +63,9 @@ ARCHIVE/
 
 # OXBAR staging secrets - NEVER COMMIT
 .oxbar/staging-secrets.md
+
+# Local IDE / Claude Code config — never commit
+.claude/settings.local.json
+
+# Supabase CLI version cache — phantom dirt across worktrees
+supabase/.temp/
