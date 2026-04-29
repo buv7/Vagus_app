@@ -52,13 +52,13 @@ class _FormCheckScreenState extends State<FormCheckScreen>
   }
 
   Future<void> _init() async {
-    final hasAccess = await TierService.instance.isPoseKitEnabled();
+    final check = await TierService.instance.checkPoseDetection();
     if (!mounted) return;
     setState(() {
       _tierChecked = true;
-      _hasAccess = hasAccess;
+      _hasAccess = check.allowed;
     });
-    if (!hasAccess) return;
+    if (!check.allowed) return;
 
     final status = await Permission.camera.request();
     if (!mounted) return;
